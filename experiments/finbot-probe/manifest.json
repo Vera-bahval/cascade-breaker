@@ -1,0 +1,364 @@
+{
+  "batches": [
+    {
+      "label": "debug-stage2",
+      "file": "runs/debug-stage2.jsonl",
+      "argv": [
+        "--label",
+        "debug-stage2",
+        "--sets",
+        "attacks",
+        "--only",
+        "baseline_clean",
+        "--attack-reps",
+        "1",
+        "--concurrency",
+        "1"
+      ],
+      "git_sha": "5319e7f61dc6ba48b8a931d037a6c9b59ddb41e9",
+      "roles_sha256": "c7e984e7086d60eabc4349636f1bb6642ccfcb2bfc07a8b845827f41d7c6233d",
+      "model": "openai/gpt-4o-mini-2024-07-18",
+      "provider_pin": "openai",
+      "temperature": 0.0,
+      "seed": null,
+      "started_at": "2026-10-04T16:02:58.803967+00:00",
+      "key_usage_before": {
+        "limit": 15,
+        "usage": 0.04458255,
+        "limit_remaining": 14.95541745
+      },
+      "finished_at": "2026-10-04T16:03:59.294341+00:00",
+      "runs_written": 1,
+      "cost_usd": 0.015664,
+      "stopped_early": false,
+      "key_usage_after": {
+        "limit": 15,
+        "usage": 0.05466045,
+        "limit_remaining": 14.94533955
+      }
+    },
+    {
+      "label": "shadow-main",
+      "file": "runs/shadow-main.jsonl",
+      "argv": [
+        "--label",
+        "shadow-main",
+        "--sets",
+        "attacks",
+        "clean",
+        "bases",
+        "injections",
+        "--mode",
+        "shadow",
+        "--concurrency",
+        "4"
+      ],
+      "git_sha": "631100dc56f47a90f272b00ef01ee08b24d7d9d8",
+      "roles_sha256": "c7e984e7086d60eabc4349636f1bb6642ccfcb2bfc07a8b845827f41d7c6233d",
+      "model": "openai/gpt-4o-mini-2024-07-18",
+      "provider_pin": "openai",
+      "temperature": 0.0,
+      "seed": null,
+      "started_at": "2026-10-04T16:12:31.534469+00:00",
+      "key_usage_before": {
+        "limit": 15,
+        "usage": 0.08018805,
+        "limit_remaining": 14.91981195
+      },
+      "finished_at": "2026-10-04T17:00:15.805182+00:00",
+      "runs_written": 234,
+      "cost_usd": 3.963252,
+      "stopped_early": false,
+      "key_usage_after": {
+        "limit": 15,
+        "usage": 4.0259502,
+        "limit_remaining": 10.9740498
+      }
+    },
+    {
+      "label": "control-off",
+      "file": "runs/control-off.jsonl",
+      "argv": [
+        "--label",
+        "control-off",
+        "--sets",
+        "clean",
+        "--clean-limit",
+        "5",
+        "--clean-reps",
+        "1",
+        "--mode",
+        "off",
+        "--no-p7",
+        "--concurrency",
+        "4"
+      ],
+      "git_sha": "8dbdf36077b349415bcf8e8968962925034f2cdc",
+      "roles_sha256": "c7e984e7086d60eabc4349636f1bb6642ccfcb2bfc07a8b845827f41d7c6233d",
+      "model": "openai/gpt-4o-mini-2024-07-18",
+      "provider_pin": "openai",
+      "temperature": 0.0,
+      "seed": null,
+      "started_at": "2026-10-04T17:00:31.342434+00:00",
+      "key_usage_before": {
+        "limit": 15,
+        "usage": 4.04215875,
+        "limit_remaining": 10.957841250000001
+      },
+      "finished_at": "2026-10-04T17:01:38.841932+00:00",
+      "runs_written": 5,
+      "cost_usd": 0.037997,
+      "stopped_early": false,
+      "key_usage_after": {
+        "limit": 15,
+        "usage": 4.07301285,
+        "limit_remaining": 10.92698715
+      }
+    },
+    {
+      "label": "channel",
+      "file": "runs/channel.jsonl",
+      "argv": [
+        "--label",
+        "channel",
+        "--sets",
+        "channel",
+        "--injection-reps",
+        "3",
+        "--mode",
+        "shadow",
+        "--concurrency",
+        "3"
+      ],
+      "git_sha": "7b492a16dde1fe31b497230be8e849d9d1cc40fb",
+      "roles_sha256": "c7e984e7086d60eabc4349636f1bb6642ccfcb2bfc07a8b845827f41d7c6233d",
+      "model": "openai/gpt-4o-mini-2024-07-18",
+      "provider_pin": "openai",
+      "temperature": 0.0,
+      "seed": null,
+      "started_at": "2026-10-04T17:04:28.110983+00:00",
+      "key_usage_before": {
+        "limit": 15,
+        "usage": 4.08143715,
+        "limit_remaining": 10.91856285
+      },
+      "finished_at": "2026-10-04T17:06:52.809943+00:00",
+      "runs_written": 9,
+      "cost_usd": 0.136076,
+      "stopped_early": false,
+      "key_usage_after": {
+        "limit": 15,
+        "usage": 4.2130518,
+        "limit_remaining": 10.786948200000001
+      }
+    },
+    {
+      "label": "enforce-p2a-v3",
+      "file": "runs/enforce-p2a-v3.jsonl",
+      "argv": [
+        "--label",
+        "enforce-p2a-v3",
+        "--sets",
+        "clean",
+        "--clean-limit",
+        "10",
+        "--clean-reps",
+        "2",
+        "--mode",
+        "enforce",
+        "--no-p7",
+        "--concurrency",
+        "4",
+        "--enforce",
+        "P2.invoice_agent=V3"
+      ],
+      "git_sha": "698cf650a5ffee4d400274158bc9f1ef1c0ab67b",
+      "roles_sha256": "c7e984e7086d60eabc4349636f1bb6642ccfcb2bfc07a8b845827f41d7c6233d",
+      "model": "openai/gpt-4o-mini-2024-07-18",
+      "provider_pin": "openai",
+      "temperature": 0.0,
+      "seed": null,
+      "started_at": "2026-10-04T17:08:36.966511+00:00",
+      "key_usage_before": {
+        "limit": 15,
+        "usage": 4.27986795,
+        "limit_remaining": 10.72013205
+      },
+      "finished_at": "2026-10-04T17:11:37.245153+00:00",
+      "runs_written": 20,
+      "cost_usd": 0.157092,
+      "stopped_early": false,
+      "key_usage_after": {
+        "limit": 15,
+        "usage": 4.44594435,
+        "limit_remaining": 10.554055649999999
+      },
+      "invocations": [
+        {
+          "sets": "attacks bases (7 scenarios + base_hold_large, 2 reps)",
+          "runs_written": 16,
+          "cost_usd": 0.0474,
+          "note": "reconstructed from runs/enforce.log"
+        },
+        {
+          "sets": "clean (first 10 variants, 2 reps)",
+          "runs_written": 20,
+          "cost_usd": 0.157092
+        }
+      ],
+      "runs_total": 36,
+      "cost_total_usd": 0.2045
+    },
+    {
+      "label": "enforce-p2a-v3-p4-v1",
+      "file": "runs/enforce-p2a-v3-p4-v1.jsonl",
+      "argv": [
+        "--label",
+        "enforce-p2a-v3-p4-v1",
+        "--sets",
+        "clean",
+        "--clean-limit",
+        "10",
+        "--clean-reps",
+        "2",
+        "--mode",
+        "enforce",
+        "--no-p7",
+        "--concurrency",
+        "4",
+        "--enforce",
+        "P2.invoice_agent=V3",
+        "P4=V1"
+      ],
+      "git_sha": "698cf650a5ffee4d400274158bc9f1ef1c0ab67b",
+      "roles_sha256": "c7e984e7086d60eabc4349636f1bb6642ccfcb2bfc07a8b845827f41d7c6233d",
+      "model": "openai/gpt-4o-mini-2024-07-18",
+      "provider_pin": "openai",
+      "temperature": 0.0,
+      "seed": null,
+      "started_at": "2026-10-04T17:13:02.027691+00:00",
+      "key_usage_before": {
+        "limit": 15,
+        "usage": 4.51653015,
+        "limit_remaining": 10.483469849999999
+      },
+      "finished_at": "2026-10-04T17:15:46.745978+00:00",
+      "runs_written": 20,
+      "cost_usd": 0.139416,
+      "stopped_early": false,
+      "key_usage_after": {
+        "limit": 15,
+        "usage": 4.66779225,
+        "limit_remaining": 10.33220775
+      },
+      "invocations": [
+        {
+          "sets": "attacks bases (7 scenarios + base_hold_large, 2 reps)",
+          "runs_written": 16,
+          "cost_usd": 0.0715,
+          "note": "reconstructed from runs/enforce.log"
+        },
+        {
+          "sets": "clean (first 10 variants, 2 reps)",
+          "runs_written": 20,
+          "cost_usd": 0.139416
+        }
+      ],
+      "runs_total": 36,
+      "cost_total_usd": 0.2109
+    },
+    {
+      "label": "enforce-all-v3",
+      "file": "runs/enforce-all-v3.jsonl",
+      "argv": [
+        "--label",
+        "enforce-all-v3",
+        "--sets",
+        "clean",
+        "--clean-limit",
+        "10",
+        "--clean-reps",
+        "2",
+        "--mode",
+        "enforce",
+        "--no-p7",
+        "--concurrency",
+        "4",
+        "--enforce",
+        "P0=V3",
+        "P1=V3",
+        "P2=V3",
+        "P3=V3",
+        "P4=V3"
+      ],
+      "git_sha": "698cf650a5ffee4d400274158bc9f1ef1c0ab67b",
+      "roles_sha256": "c7e984e7086d60eabc4349636f1bb6642ccfcb2bfc07a8b845827f41d7c6233d",
+      "model": "openai/gpt-4o-mini-2024-07-18",
+      "provider_pin": "openai",
+      "temperature": 0.0,
+      "seed": null,
+      "started_at": "2026-10-04T17:16:38.680163+00:00",
+      "key_usage_before": {
+        "limit": 15,
+        "usage": 4.69809435,
+        "limit_remaining": 10.30190565
+      },
+      "finished_at": "2026-10-04T17:19:24.922360+00:00",
+      "runs_written": 20,
+      "cost_usd": 0.134556,
+      "stopped_early": false,
+      "key_usage_after": {
+        "limit": 15,
+        "usage": 4.83003645,
+        "limit_remaining": 10.16996355
+      },
+      "invocations": [
+        {
+          "sets": "attacks bases (7 scenarios + base_hold_large, 2 reps)",
+          "runs_written": 16,
+          "cost_usd": 0.0278,
+          "note": "reconstructed from runs/enforce.log"
+        },
+        {
+          "sets": "clean (first 10 variants, 2 reps)",
+          "runs_written": 20,
+          "cost_usd": 0.134556
+        }
+      ],
+      "runs_total": 36,
+      "cost_total_usd": 0.1624
+    }
+  ],
+  "pilot": {
+    "task": "notes/task-finbot-feasibility-probe.md",
+    "report": "notes/finbot-probe-report.md",
+    "finbot_repo": "repos/finbot-ctf",
+    "branch": "cascade-control-probe",
+    "base_commit": "a7f6964",
+    "model": "openai/gpt-4o-mini-2024-07-18",
+    "provider": "OpenRouter, pinned to OpenAI, allow_fallbacks=false",
+    "temperature": {
+      "agents": 0,
+      "V3": 0,
+      "V4": 0.7,
+      "V5": 0
+    },
+    "seed": "not available via OpenRouter Responses API",
+    "vendor_profile": {
+      "status": "active",
+      "trust_level": "standard",
+      "risk_level": "low"
+    },
+    "clean_generator_seed": 20261004,
+    "budget_usd": 15,
+    "spent_usd_key": 4.83,
+    "date": "2026-10-04",
+    "stage0_1": [
+      "stage0/smoke.json",
+      "stage1/dry_run.jsonl",
+      "stage1/summary.md",
+      "stage1/budget_plan.md"
+    ],
+    "analysis": "uv run --no-project --with numpy --with matplotlib python analysis.py"
+  }
+}
