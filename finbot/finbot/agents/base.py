@@ -17,6 +17,8 @@ from finbot.core.messaging import event_bus
 from finbot.guardrails.schemas import HookKind
 from finbot.guardrails.service import GuardrailHookService
 from finbot.mcp.provider import MCPToolProvider
+from finbot.probe import trace as probe_trace
+from finbot.probe.guards import runtime as probe_guards
 
 logger = logging.getLogger(__name__)
 
@@ -156,6 +158,13 @@ class BaseAgent(ABC):
                                     tool_source=tool_source,
                                     tool_arguments=tool_call.get("arguments"),
                                 )
+                                await probe_guards.before_tool(
+                                    self.agent_name,
+                                    tool_call_name,
+                                    tool_call.get("arguments") or {},
+                                )
+                                probe_started_ms = probe_trace.now_ms()
+                                probe_error = None
                                 try:
                                     logger.debug(
                                         "Calling callable %s with arguments %s",
@@ -166,6 +175,11 @@ class BaseAgent(ABC):
                                         **tool_call["arguments"]
                                     )
                                     logger.debug("Function output: %s", function_output)
+                                    probe_trace.record_tool(
+                                        self.agent_name, tool_call_name, tool_source,
+                                        tool_call.get("arguments"), function_output,
+                                        probe_started_ms,
+                                    )
                                     if tool_call_name == "complete_task":
                                         # this will end the agent loop and
                                         # return the task status and summary
@@ -181,6 +195,12 @@ class BaseAgent(ABC):
                                         "error": f"Tool call {tool_call['name']} \
                                             failed: {str(e)}. Please try again.",
                                     }
+                                    probe_error = str(e)
+                                    probe_trace.record_tool(
+                                        self.agent_name, tool_call_name, tool_source,
+                                        tool_call.get("arguments"), None,
+                                        probe_started_ms, error=probe_error,
+                                    )
                                 await self._guardrail_service.invoke(
                                     HookKind.after_tool,
                                     tool_name=tool_call_name,
@@ -188,6 +208,13 @@ class BaseAgent(ABC):
                                     tool_arguments=tool_call.get("arguments"),
                                     tool_result=str(function_output),
                                 )
+                                if probe_error is None:
+                                    await probe_guards.after_tool(
+                                        self.agent_name,
+                                        tool_call_name,
+                                        tool_call.get("arguments") or {},
+                                        function_output,
+                                    )
                             else:
                                 # Emit invalid tool call event
                                 await event_bus.emit_agent_event(
@@ -208,6 +235,12 @@ class BaseAgent(ABC):
                                     "error": f"Invalid tool call: {tool_call['name']} \
                                         Please try again.",
                                 }
+                                probe_trace.record(
+                                    "invalid_tool",
+                                    agent=self.agent_name,
+                                    name=tool_call_name,
+                                    arguments=tool_call.get("arguments"),
+                                )
                             function_output_str = function_output
                             if not isinstance(function_output_str, str):
                                 try:

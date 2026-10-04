@@ -114,6 +114,8 @@ class Settings(BaseSettings):
     LLM_SEED: int | None = None
     # Probe: path to a role -> model table (finbot/probe/roles.json); unset = off
     CASCADE_PROBE_ROLES: str | None = None
+    # Probe: control points off | shadow (record only) | enforce (stop on block)
+    CASCADE_GUARD_MODE: Literal["off", "shadow", "enforce"] = "off"
 
     # Ollama
     OLLAMA_BASE_URL: str = "http://localhost:11434"

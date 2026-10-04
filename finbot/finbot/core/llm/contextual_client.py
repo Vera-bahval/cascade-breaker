@@ -16,6 +16,8 @@ from finbot.core.messaging import event_bus
 from finbot.guardrails.schemas import HookKind
 from finbot.guardrails.service import GuardrailHookService
 from finbot.probe import ledger as probe_ledger
+from finbot.probe import trace as probe_trace
+from finbot.probe.guards import runtime as probe_guards
 from finbot.probe.roles import load_roles
 
 logger = logging.getLogger(__name__)
@@ -118,6 +120,7 @@ class ContextualLLMClient:
         """
 
         probe_ledger.raise_if_halted()
+        probe_guards.raise_if_stopped()
         if settings.CASCADE_PROBE_ROLES and request.model is None:
             roles = load_roles(settings.CASCADE_PROBE_ROLES)
             request = request.model_copy(
@@ -167,6 +170,8 @@ class ContextualLLMClient:
         )
 
         start_time = datetime.now(UTC)
+        probe_started_ms = probe_trace.now_ms()
+        probe_recorded = False
 
         try:
             # Pass original request unchanged — underlying client resolves its own defaults
@@ -175,6 +180,11 @@ class ContextualLLMClient:
 
             duration_ms = int((datetime.now(UTC) - start_time).total_seconds() * 1000)
 
+            probe_trace.record_llm(
+                self.agent_name, request, response, probe_started_ms,
+                resolved_model, resolved_temperature,
+            )
+            probe_recorded = True
             run_ledger = probe_ledger.active_ledger()
             if run_ledger is not None:
                 if response.success:
@@ -221,6 +231,11 @@ class ContextualLLMClient:
 
         except Exception as e:  # pylint: disable=broad-exception-caught
             duration_ms = int((datetime.now(UTC) - start_time).total_seconds() * 1000)
+            if not probe_recorded:
+                probe_trace.record_llm(
+                    self.agent_name, request, None, probe_started_ms,
+                    resolved_model, resolved_temperature, error=str(e),
+                )
 
             # Emit error event
             await event_bus.emit_agent_event(
