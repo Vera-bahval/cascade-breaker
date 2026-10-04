@@ -1,0 +1,64 @@
+From 698cf650a5ffee4d400274158bc9f1ef1c0ab67b Mon Sep 17 00:00:00 2001
+From: dseredkin <vdsered@gmail.com>
+Date: Sun, 4 Oct 2026 20:06:21 +0300
+Subject: [PATCH 20/21] Allow enforcing a single control point
+
+---
+ finbot/probe/guards/runtime.py         |  8 ++++----
+ tests/unit/probe/test_guard_runtime.py | 10 ++++++++++
+ 2 files changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/finbot/probe/guards/runtime.py b/finbot/probe/guards/runtime.py
+index 7d5e6ef..f19769a 100644
+--- a/finbot/probe/guards/runtime.py
++++ b/finbot/probe/guards/runtime.py
+@@ -45,13 +45,13 @@ class GuardRuntime:
+     run_id: str
+     verifiers: list[Verifier]
+     snapshot: Callable[[], dict[str, Any]]
+-    # enforce mode: family -> verifier name active at that family
++    # enforce mode: point ("P2.invoice_agent") or family ("P4") -> verifier name
+     enforce: dict[str, str] = field(default_factory=dict)
+     stopped_by: dict[str, Any] | None = None
+ 
+-    def _applicable(self, family: str) -> list[Verifier]:
++    def _applicable(self, point: str, family: str) -> list[Verifier]:
+         if self.mode == "enforce":
+-            name = self.enforce.get(family)
++            name = self.enforce.get(point) or self.enforce.get(family)
+             return [v for v in self.verifiers if v.name == name and family in v.families]
+         return [v for v in self.verifiers if family in v.families]
+ 
+@@ -59,7 +59,7 @@ class GuardRuntime:
+         if self.stopped_by is not None:
+             raise GuardStop(f"workflow stopped at {self.stopped_by['point']}")
+         family = point.split(".", 1)[0]
+-        verifiers = self._applicable(family)
++        verifiers = self._applicable(point, family)
+         if not verifiers:
+             return
+         recorder = probe_trace.active_recorder()
+diff --git a/tests/unit/probe/test_guard_runtime.py b/tests/unit/probe/test_guard_runtime.py
+index e05a8a9..c3b6704 100644
+--- a/tests/unit/probe/test_guard_runtime.py
++++ b/tests/unit/probe/test_guard_runtime.py
+@@ -64,6 +64,16 @@ async def test_enforce_runs_only_configured_pair_and_stops():
+     assert [s["verifier"] for s in rec.steps if s["kind"] == "guard"] == ["block_all"]
+ 
+ 
++@pytest.mark.unit
++@pytest.mark.asyncio
++async def test_enforce_accepts_a_single_point():
++    runtime = _runtime("enforce", {"P4.process_payment": "block_all"})
++    with probe_trace.open_recorder(), probe_guards.open_runtime(runtime):
++        await probe_guards.before_tool("payments_agent", "finstripe__create_transfer", {})
++        with pytest.raises(probe_guards.GuardStop):
++            await probe_guards.before_tool("payments_agent", "process_payment", {})
++
++
+ @pytest.mark.unit
+ @pytest.mark.parametrize(
+     "agent, tool, point",
+-- 
+2.50.1 (Apple Git-155)
+

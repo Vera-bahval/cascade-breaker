@@ -1,0 +1,33 @@
+From c3f1a915cd1be92df01354c2beaac0dd5ae72e93 Mon Sep 17 00:00:00 2001
+From: dseredkin <vdsered@gmail.com>
+Date: Sun, 4 Oct 2026 20:20:51 +0300
+Subject: [PATCH 21/21] Keep every invocation of a batch label in the manifest
+
+---
+ scripts/probe/run_batch.py | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/scripts/probe/run_batch.py b/scripts/probe/run_batch.py
+index 5cac4f5..5014a70 100644
+--- a/scripts/probe/run_batch.py
++++ b/scripts/probe/run_batch.py
+@@ -63,7 +63,16 @@ def _done_keys(path: Path) -> set[str]:
+ 
+ 
+ def _update_manifest(entry: dict) -> None:
++    """One manifest entry per label; repeated invocations of a label are listed under it."""
+     data = json.loads(MANIFEST.read_text(encoding="utf-8")) if MANIFEST.exists() else {"batches": []}
++    previous = next((b for b in data["batches"] if b["label"] == entry["label"]), None)
++    if previous is not None:
++        invocations = previous.get("invocations") or [
++            {k: v for k, v in previous.items() if k not in ("invocations", "runs_total", "cost_total_usd")}
++        ]
++        entry = {**entry, "invocations": invocations + [dict(entry)]}
++        entry["runs_total"] = sum(i["runs_written"] for i in entry["invocations"])
++        entry["cost_total_usd"] = round(sum(i["cost_usd"] for i in entry["invocations"]), 6)
+     data["batches"] = [b for b in data["batches"] if b["label"] != entry["label"]] + [entry]
+     MANIFEST.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+ 
+-- 
+2.50.1 (Apple Git-155)
+

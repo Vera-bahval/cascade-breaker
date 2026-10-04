@@ -1,0 +1,653 @@
+From 00a03836089b774243fb94bd32211218166d658d Mon Sep 17 00:00:00 2001
+From: dseredkin <vdsered@gmail.com>
+Date: Sun, 4 Oct 2026 18:58:13 +0300
+Subject: [PATCH 09/21] Add probe trace recorder and control points
+
+---
+ finbot/agents/base.py                  |  33 +++++
+ finbot/config.py                       |   2 +
+ finbot/core/llm/contextual_client.py   |  15 +++
+ finbot/probe/guards/__init__.py        |   1 +
+ finbot/probe/guards/base.py            |  44 ++++++
+ finbot/probe/guards/runtime.py         | 180 +++++++++++++++++++++++++
+ finbot/probe/trace.py                  | 148 ++++++++++++++++++++
+ tests/unit/probe/test_guard_runtime.py |  80 +++++++++++
+ 8 files changed, 503 insertions(+)
+ create mode 100644 finbot/probe/guards/__init__.py
+ create mode 100644 finbot/probe/guards/base.py
+ create mode 100644 finbot/probe/guards/runtime.py
+ create mode 100644 finbot/probe/trace.py
+ create mode 100644 tests/unit/probe/test_guard_runtime.py
+
+diff --git a/finbot/agents/base.py b/finbot/agents/base.py
+index 027a39d..16d18ec 100644
+--- a/finbot/agents/base.py
++++ b/finbot/agents/base.py
+@@ -17,6 +17,8 @@ from finbot.core.messaging import event_bus
+ from finbot.guardrails.schemas import HookKind
+ from finbot.guardrails.service import GuardrailHookService
+ from finbot.mcp.provider import MCPToolProvider
++from finbot.probe import trace as probe_trace
++from finbot.probe.guards import runtime as probe_guards
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -156,6 +158,13 @@ class BaseAgent(ABC):
+                                     tool_source=tool_source,
+                                     tool_arguments=tool_call.get("arguments"),
+                                 )
++                                await probe_guards.before_tool(
++                                    self.agent_name,
++                                    tool_call_name,
++                                    tool_call.get("arguments") or {},
++                                )
++                                probe_started_ms = probe_trace.now_ms()
++                                probe_error = None
+                                 try:
+                                     logger.debug(
+                                         "Calling callable %s with arguments %s",
+@@ -166,6 +175,11 @@ class BaseAgent(ABC):
+                                         **tool_call["arguments"]
+                                     )
+                                     logger.debug("Function output: %s", function_output)
++                                    probe_trace.record_tool(
++                                        self.agent_name, tool_call_name, tool_source,
++                                        tool_call.get("arguments"), function_output,
++                                        probe_started_ms,
++                                    )
+                                     if tool_call_name == "complete_task":
+                                         # this will end the agent loop and
+                                         # return the task status and summary
+@@ -181,6 +195,12 @@ class BaseAgent(ABC):
+                                         "error": f"Tool call {tool_call['name']} \
+                                             failed: {str(e)}. Please try again.",
+                                     }
++                                    probe_error = str(e)
++                                    probe_trace.record_tool(
++                                        self.agent_name, tool_call_name, tool_source,
++                                        tool_call.get("arguments"), None,
++                                        probe_started_ms, error=probe_error,
++                                    )
+                                 await self._guardrail_service.invoke(
+                                     HookKind.after_tool,
+                                     tool_name=tool_call_name,
+@@ -188,6 +208,13 @@ class BaseAgent(ABC):
+                                     tool_arguments=tool_call.get("arguments"),
+                                     tool_result=str(function_output),
+                                 )
++                                if probe_error is None:
++                                    await probe_guards.after_tool(
++                                        self.agent_name,
++                                        tool_call_name,
++                                        tool_call.get("arguments") or {},
++                                        function_output,
++                                    )
+                             else:
+                                 # Emit invalid tool call event
+                                 await event_bus.emit_agent_event(
+@@ -208,6 +235,12 @@ class BaseAgent(ABC):
+                                     "error": f"Invalid tool call: {tool_call['name']} \
+                                         Please try again.",
+                                 }
++                                probe_trace.record(
++                                    "invalid_tool",
++                                    agent=self.agent_name,
++                                    name=tool_call_name,
++                                    arguments=tool_call.get("arguments"),
++                                )
+                             function_output_str = function_output
+                             if not isinstance(function_output_str, str):
+                                 try:
+diff --git a/finbot/config.py b/finbot/config.py
+index 2eb7994..7a26eaa 100644
+--- a/finbot/config.py
++++ b/finbot/config.py
+@@ -114,6 +114,8 @@ class Settings(BaseSettings):
+     LLM_SEED: int | None = None
+     # Probe: path to a role -> model table (finbot/probe/roles.json); unset = off
+     CASCADE_PROBE_ROLES: str | None = None
++    # Probe: control points off | shadow (record only) | enforce (stop on block)
++    CASCADE_GUARD_MODE: Literal["off", "shadow", "enforce"] = "off"
+ 
+     # Ollama
+     OLLAMA_BASE_URL: str = "http://localhost:11434"
+diff --git a/finbot/core/llm/contextual_client.py b/finbot/core/llm/contextual_client.py
+index acb8c8a..a1555fb 100644
+--- a/finbot/core/llm/contextual_client.py
++++ b/finbot/core/llm/contextual_client.py
+@@ -16,6 +16,8 @@ from finbot.core.messaging import event_bus
+ from finbot.guardrails.schemas import HookKind
+ from finbot.guardrails.service import GuardrailHookService
+ from finbot.probe import ledger as probe_ledger
++from finbot.probe import trace as probe_trace
++from finbot.probe.guards import runtime as probe_guards
+ from finbot.probe.roles import load_roles
+ 
+ logger = logging.getLogger(__name__)
+@@ -118,6 +120,7 @@ class ContextualLLMClient:
+         """
+ 
+         probe_ledger.raise_if_halted()
++        probe_guards.raise_if_stopped()
+         if settings.CASCADE_PROBE_ROLES and request.model is None:
+             roles = load_roles(settings.CASCADE_PROBE_ROLES)
+             request = request.model_copy(
+@@ -167,6 +170,8 @@ class ContextualLLMClient:
+         )
+ 
+         start_time = datetime.now(UTC)
++        probe_started_ms = probe_trace.now_ms()
++        probe_recorded = False
+ 
+         try:
+             # Pass original request unchanged — underlying client resolves its own defaults
+@@ -175,6 +180,11 @@ class ContextualLLMClient:
+ 
+             duration_ms = int((datetime.now(UTC) - start_time).total_seconds() * 1000)
+ 
++            probe_trace.record_llm(
++                self.agent_name, request, response, probe_started_ms,
++                resolved_model, resolved_temperature,
++            )
++            probe_recorded = True
+             run_ledger = probe_ledger.active_ledger()
+             if run_ledger is not None:
+                 if response.success:
+@@ -221,6 +231,11 @@ class ContextualLLMClient:
+ 
+         except Exception as e:  # pylint: disable=broad-exception-caught
+             duration_ms = int((datetime.now(UTC) - start_time).total_seconds() * 1000)
++            if not probe_recorded:
++                probe_trace.record_llm(
++                    self.agent_name, request, None, probe_started_ms,
++                    resolved_model, resolved_temperature, error=str(e),
++                )
+ 
+             # Emit error event
+             await event_bus.emit_agent_event(
+diff --git a/finbot/probe/guards/__init__.py b/finbot/probe/guards/__init__.py
+new file mode 100644
+index 0000000..eabc454
+--- /dev/null
++++ b/finbot/probe/guards/__init__.py
+@@ -0,0 +1 @@
++"""Control points and verifiers for the cascade-control probe."""
+diff --git a/finbot/probe/guards/base.py b/finbot/probe/guards/base.py
+new file mode 100644
+index 0000000..60ff619
+--- /dev/null
++++ b/finbot/probe/guards/base.py
+@@ -0,0 +1,44 @@
++"""Verifier interface shared by every control point."""
++
++from __future__ import annotations
++
++from dataclasses import dataclass, field
++from typing import Any, Literal, Protocol
++
++GuardDecision = Literal["allow", "block"]
++
++# Point families. P0-P4 sit on the critical path before the payment;
++# P5 sees the final answer and can only detect.
++PREVENTION_FAMILIES = ("P0", "P1", "P2", "P3", "P4")
++ALL_FAMILIES = (*PREVENTION_FAMILIES, "P5")
++
++
++@dataclass
++class GuardContext:
++    run_id: str
++    point: str  # e.g. "P2.invoice_agent", "P4.finstripe__create_transfer"
++    agent: str | None
++    payload: dict[str, Any]
++    db_snapshot: dict[str, Any]
++    trace_so_far: list[dict[str, Any]] = field(default_factory=list)
++
++    @property
++    def family(self) -> str:
++        return self.point.split(".", 1)[0]
++
++
++@dataclass
++class GuardResult:
++    decision: GuardDecision
++    reason: str
++    latency_ms: float = 0.0
++    tokens_in: int = 0
++    tokens_out: int = 0
++    cost_usd: float = 0.0
++
++
++class Verifier(Protocol):
++    name: str
++    families: frozenset[str]
++
++    async def check(self, ctx: GuardContext) -> GuardResult: ...
+diff --git a/finbot/probe/guards/runtime.py b/finbot/probe/guards/runtime.py
+new file mode 100644
+index 0000000..7d5e6ef
+--- /dev/null
++++ b/finbot/probe/guards/runtime.py
+@@ -0,0 +1,180 @@
++"""Guard runtime: runs verifiers at control points in shadow or enforce mode.
++
++Inactive unless a runner opens one with `open_runtime()` (and the runner only
++does so when CASCADE_GUARD_MODE is not "off"); every hook is a no-op then.
++
++shadow   every applicable verifier runs at every point; verdicts are only
++         recorded, execution never changes.
++enforce  only the configured (family, verifier) pairs run; the first block
++         stops the workflow ("stop and escalate"): the blocked action does not
++         run and every later LLM call or tool call raises GuardStop.
++"""
++
++from __future__ import annotations
++
++import asyncio
++import contextlib
++import contextvars
++import time
++from collections.abc import Callable, Iterator
++from dataclasses import dataclass, field
++from typing import Any
++
++from finbot.probe import trace as probe_trace
++from finbot.probe.guards.base import GuardContext, GuardResult, Verifier
++
++_runtime: contextvars.ContextVar[GuardRuntime | None] = contextvars.ContextVar(
++    "probe_guard_runtime", default=None
++)
++
++DELEGATE_PREFIX = "delegate_to_"
++STATE_CHANGING_TOOLS = frozenset(
++    {"update_invoice_status", "flag_invoice_for_review", "update_vendor_risk"}
++)
++PAYMENT_TOOLS = frozenset({"finstripe__create_transfer", "process_payment"})
++P2_AGENTS = frozenset({"invoice_agent", "fraud_agent", "payments_agent"})
++
++
++class GuardStop(RuntimeError):
++    """The workflow was stopped by a blocking verdict (enforce mode)."""
++
++
++@dataclass
++class GuardRuntime:
++    mode: str  # "shadow" | "enforce"
++    run_id: str
++    verifiers: list[Verifier]
++    snapshot: Callable[[], dict[str, Any]]
++    # enforce mode: family -> verifier name active at that family
++    enforce: dict[str, str] = field(default_factory=dict)
++    stopped_by: dict[str, Any] | None = None
++
++    def _applicable(self, family: str) -> list[Verifier]:
++        if self.mode == "enforce":
++            name = self.enforce.get(family)
++            return [v for v in self.verifiers if v.name == name and family in v.families]
++        return [v for v in self.verifiers if family in v.families]
++
++    async def check(self, point: str, agent: str | None, payload: dict[str, Any]) -> None:
++        if self.stopped_by is not None:
++            raise GuardStop(f"workflow stopped at {self.stopped_by['point']}")
++        family = point.split(".", 1)[0]
++        verifiers = self._applicable(family)
++        if not verifiers:
++            return
++        recorder = probe_trace.active_recorder()
++        ctx = GuardContext(
++            run_id=self.run_id,
++            point=point,
++            agent=agent,
++            payload=payload,
++            db_snapshot=self.snapshot(),
++            trace_so_far=list(recorder.steps) if recorder else [],
++        )
++        started = time.perf_counter()
++        results = await asyncio.gather(*(self._timed(v, ctx) for v in verifiers))
++        pause_ms = round((time.perf_counter() - started) * 1000, 1)
++        context_step = None
++        if recorder is not None:
++            context_step = recorder.add(
++                "guard_context", point=point, family=family, agent=agent,
++                payload=payload, db_snapshot=ctx.db_snapshot, pause_ms=pause_ms,
++            )["seq"]
++        blocking = None
++        for verifier, result in zip(verifiers, results):
++            probe_trace.record(
++                "guard", point=point, family=family, agent=agent,
++                verifier=verifier.name, context_seq=context_step,
++                decision=result.decision, reason=result.reason,
++                latency_ms=result.latency_ms, tokens_in=result.tokens_in,
++                tokens_out=result.tokens_out, cost_usd=result.cost_usd,
++            )
++            if result.decision == "block" and blocking is None:
++                blocking = verifier.name
++        if self.mode == "enforce" and blocking is not None:
++            self.stopped_by = {"point": point, "verifier": blocking}
++            probe_trace.record("guard_stop", point=point, verifier=blocking)
++            raise GuardStop(f"blocked at {point} by {blocking}")
++
++    @staticmethod
++    async def _timed(verifier: Verifier, ctx: GuardContext) -> GuardResult:
++        started = time.perf_counter()
++        try:
++            result = await verifier.check(ctx)
++        except Exception as e:  # pylint: disable=broad-exception-caught
++            # A verifier failure must not change the run; it fails open and is logged.
++            result = GuardResult(decision="allow", reason=f"verifier_error: {e}"[:300])
++        result.latency_ms = round((time.perf_counter() - started) * 1000, 1)
++        return result
++
++
++def active_runtime() -> GuardRuntime | None:
++    return _runtime.get()
++
++
++@contextlib.contextmanager
++def open_runtime(runtime: GuardRuntime) -> Iterator[GuardRuntime]:
++    token = _runtime.set(runtime)
++    try:
++        yield runtime
++    finally:
++        _runtime.reset(token)
++
++
++def raise_if_stopped() -> None:
++    runtime = _runtime.get()
++    if runtime is not None and runtime.stopped_by is not None:
++        raise GuardStop(f"workflow stopped at {runtime.stopped_by['point']}")
++
++
++def _point_before_tool(agent: str, tool_name: str) -> str | None:
++    if agent == "orchestrator_agent":
++        if tool_name.startswith(DELEGATE_PREFIX):
++            return f"P1.{tool_name}"
++        if tool_name == "complete_task":
++            return "P5.final"
++        return None
++    if tool_name in PAYMENT_TOOLS:
++        return f"P4.{tool_name}"
++    if tool_name in STATE_CHANGING_TOOLS:
++        return f"P3.{tool_name}"
++    return None
++
++
++async def before_tool(agent: str, tool_name: str, arguments: dict[str, Any]) -> None:
++    runtime = _runtime.get()
++    if runtime is None:
++        return
++    point = _point_before_tool(agent, tool_name)
++    if point is None:
++        raise_if_stopped()
++        return
++    await runtime.check(point, agent, {"tool": tool_name, "arguments": arguments})
++
++
++async def after_tool(agent: str, tool_name: str, arguments: dict[str, Any], output: Any) -> None:
++    """P2: an agent's summary at the boundary, before the orchestrator passes it on."""
++    runtime = _runtime.get()
++    if runtime is None or agent != "orchestrator_agent":
++        return
++    if not tool_name.startswith(DELEGATE_PREFIX) or not isinstance(output, dict):
++        return
++    target = tool_name[len(DELEGATE_PREFIX):] + "_agent"
++    if target not in P2_AGENTS:
++        return
++    await runtime.check(
++        f"P2.{target}",
++        target,
++        {
++            "agent": target,
++            "task_status": output.get("task_status"),
++            "task_summary": output.get("task_summary"),
++        },
++    )
++
++
++async def check_input(payload: dict[str, Any]) -> None:
++    """P0: the invoice record before the workflow starts."""
++    runtime = _runtime.get()
++    if runtime is not None:
++        await runtime.check("P0.input", None, payload)
+diff --git a/finbot/probe/trace.py b/finbot/probe/trace.py
+new file mode 100644
+index 0000000..0ade285
+--- /dev/null
++++ b/finbot/probe/trace.py
+@@ -0,0 +1,148 @@
++"""Full per-run trace for the cascade-control probe.
++
++A runner opens a recorder with `open_recorder()`; while none is open every
++hook here is a no-op. Steps are appended in execution order, each with a
++sequence number and a timestamp in milliseconds from the start of the run:
++
++    llm             one LLM call: full input messages, tool names, output
++    tool            one tool call: arguments, output, duration, error
++    delegation      orchestrator -> agent: raw and enriched task text
++    summary         an agent's task_status / task_summary as captured
++    injection       a fault injected into the run (node, type, before/after)
++    guard_context   what a control point saw (payload, DB snapshot)
++    guard           one verifier verdict at a control point
++"""
++
++from __future__ import annotations
++
++import contextlib
++import contextvars
++import hashlib
++import json
++import time
++from collections.abc import Iterator
++from dataclasses import dataclass, field
++from typing import Any
++
++_recorder: contextvars.ContextVar[RunRecorder | None] = contextvars.ContextVar(
++    "probe_recorder", default=None
++)
++
++
++def _jsonable(value: Any) -> Any:
++    """Round-trip through JSON so the trace never holds live objects."""
++    return json.loads(json.dumps(value, default=str))
++
++
++@dataclass
++class RunRecorder:
++    started: float = field(default_factory=time.perf_counter)
++    steps: list[dict[str, Any]] = field(default_factory=list)
++    tool_defs: dict[str, list[dict[str, Any]]] = field(default_factory=dict)
++
++    def now_ms(self) -> float:
++        return round((time.perf_counter() - self.started) * 1000, 1)
++
++    def add(self, kind: str, **fields: Any) -> dict[str, Any]:
++        step = {"seq": len(self.steps), "kind": kind, "t_ms": self.now_ms()}
++        step.update(_jsonable(fields))
++        self.steps.append(step)
++        return step
++
++    def register_tools(self, tools: list[dict[str, Any]] | None) -> str | None:
++        if not tools:
++            return None
++        canonical = json.dumps(tools, sort_keys=True, default=str)
++        sha = hashlib.sha256(canonical.encode()).hexdigest()[:16]
++        self.tool_defs.setdefault(sha, _jsonable(tools))
++        return sha
++
++
++def active_recorder() -> RunRecorder | None:
++    return _recorder.get()
++
++
++@contextlib.contextmanager
++def open_recorder() -> Iterator[RunRecorder]:
++    recorder = RunRecorder()
++    token = _recorder.set(recorder)
++    try:
++        yield recorder
++    finally:
++        _recorder.reset(token)
++
++
++def record_llm(
++    agent: str,
++    request: Any,
++    response: Any | None,
++    started_ms: float,
++    model: str | None,
++    temperature: float | None,
++    error: str | None = None,
++) -> None:
++    recorder = _recorder.get()
++    if recorder is None:
++        return
++    tools = request.tools or []
++    output = None
++    usage = None
++    served_model = None
++    if response is not None:
++        output = {"content": response.content, "tool_calls": response.tool_calls}
++        metadata = response.metadata or {}
++        usage = metadata.get("usage")
++        served_model = metadata.get("model")
++        if not response.success and error is None:
++            error = response.content
++    recorder.add(
++        "llm",
++        agent=agent,
++        t_start_ms=started_ms,
++        duration_ms=round(recorder.now_ms() - started_ms, 1),
++        model=model,
++        served_model=served_model,
++        temperature=temperature,
++        messages=request.messages or [],
++        tools=[t.get("name") for t in tools],
++        tools_sha=recorder.register_tools(tools),
++        output=output,
++        usage=usage,
++        error=error,
++    )
++
++
++def record_tool(
++    agent: str,
++    name: str,
++    source: str,
++    arguments: Any,
++    output: Any,
++    started_ms: float,
++    error: str | None = None,
++) -> None:
++    recorder = _recorder.get()
++    if recorder is None:
++        return
++    recorder.add(
++        "tool",
++        agent=agent,
++        name=name,
++        source=source,
++        arguments=arguments,
++        output=output,
++        t_start_ms=started_ms,
++        duration_ms=round(recorder.now_ms() - started_ms, 1),
++        error=error,
++    )
++
++
++def record(kind: str, **fields: Any) -> None:
++    recorder = _recorder.get()
++    if recorder is not None:
++        recorder.add(kind, **fields)
++
++
++def now_ms() -> float:
++    recorder = _recorder.get()
++    return recorder.now_ms() if recorder is not None else 0.0
+diff --git a/tests/unit/probe/test_guard_runtime.py b/tests/unit/probe/test_guard_runtime.py
+new file mode 100644
+index 0000000..e05a8a9
+--- /dev/null
++++ b/tests/unit/probe/test_guard_runtime.py
+@@ -0,0 +1,80 @@
++"""Unit tests for the probe guard runtime and trace recorder."""
++
++import pytest
++
++from finbot.probe import trace as probe_trace
++from finbot.probe.guards import runtime as probe_guards
++from finbot.probe.guards.base import GuardResult
++
++
++class _Fixed:
++    def __init__(self, name, decision, families=("P1", "P4")):
++        self.name = name
++        self.families = frozenset(families)
++        self.decision = decision
++
++    async def check(self, ctx):
++        return GuardResult(decision=self.decision, reason=f"{self.name} at {ctx.point}")
++
++
++def _runtime(mode, enforce=None):
++    return probe_guards.GuardRuntime(
++        mode=mode,
++        run_id="r1",
++        verifiers=[_Fixed("allow_all", "allow"), _Fixed("block_all", "block")],
++        snapshot=lambda: {"invoice": {"status": "approved"}},
++        enforce=enforce or {},
++    )
++
++
++@pytest.mark.unit
++@pytest.mark.asyncio
++async def test_hooks_are_noops_without_runtime():
++    await probe_guards.before_tool("payments_agent", "finstripe__create_transfer", {})
++    await probe_guards.check_input({"amount": 1})
++    probe_guards.raise_if_stopped()
++
++
++@pytest.mark.unit
++@pytest.mark.asyncio
++async def test_shadow_records_every_verdict_and_never_blocks():
++    with probe_trace.open_recorder() as rec, probe_guards.open_runtime(_runtime("shadow")):
++        await probe_guards.before_tool("payments_agent", "finstripe__create_transfer", {"amount": 5})
++        await probe_guards.before_tool("payments_agent", "get_vendor_details", {})
++        probe_guards.raise_if_stopped()
++    guards = [s for s in rec.steps if s["kind"] == "guard"]
++    assert {g["verifier"] for g in guards} == {"allow_all", "block_all"}
++    assert all(g["point"] == "P4.finstripe__create_transfer" for g in guards)
++    assert [s["kind"] for s in rec.steps].count("guard_context") == 1
++
++
++@pytest.mark.unit
++@pytest.mark.asyncio
++async def test_enforce_runs_only_configured_pair_and_stops():
++    runtime = _runtime("enforce", {"P4": "block_all"})
++    with probe_trace.open_recorder() as rec, probe_guards.open_runtime(runtime):
++        await probe_guards.before_tool("orchestrator_agent", "delegate_to_invoice", {})
++        with pytest.raises(probe_guards.GuardStop):
++            await probe_guards.before_tool("payments_agent", "finstripe__create_transfer", {})
++        with pytest.raises(probe_guards.GuardStop):
++            await probe_guards.before_tool("payments_agent", "get_vendor_details", {})
++        with pytest.raises(probe_guards.GuardStop):
++            probe_guards.raise_if_stopped()
++    assert runtime.stopped_by == {"point": "P4.finstripe__create_transfer", "verifier": "block_all"}
++    assert [s["verifier"] for s in rec.steps if s["kind"] == "guard"] == ["block_all"]
++
++
++@pytest.mark.unit
++@pytest.mark.parametrize(
++    "agent, tool, point",
++    [
++        ("orchestrator_agent", "delegate_to_fraud", "P1.delegate_to_fraud"),
++        ("orchestrator_agent", "complete_task", "P5.final"),
++        ("invoice_agent", "update_invoice_status", "P3.update_invoice_status"),
++        ("payments_agent", "process_payment", "P4.process_payment"),
++        ("invoice_agent", "get_invoice_details", None),
++        ("invoice_agent", "complete_task", None),
++    ],
++)
++def test_point_mapping(agent, tool, point):
++    assert probe_guards._point_before_tool(agent, tool) == point  # pylint: disable=protected-access
+-- 
+2.50.1 (Apple Git-155)
+

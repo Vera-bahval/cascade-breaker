@@ -1,0 +1,39 @@
+From 180cdb1625b5d91cd42fdd2d3221cab346877d8f Mon Sep 17 00:00:00 2001
+From: dseredkin <vdsered@gmail.com>
+Date: Sun, 4 Oct 2026 18:27:00 +0300
+Subject: [PATCH 01/21] Add configurable OpenAI base URL
+
+---
+ finbot/config.py                 | 1 +
+ finbot/core/llm/openai_client.py | 3 +++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/finbot/config.py b/finbot/config.py
+index df362f5..2ab6d38 100644
+--- a/finbot/config.py
++++ b/finbot/config.py
+@@ -108,6 +108,7 @@ class Settings(BaseSettings):
+ 
+     # OpenAI Config
+     OPENAI_API_KEY: str = ""
++    OPENAI_BASE_URL: str | None = None  # e.g. https://openrouter.ai/api/v1
+ 
+     # Ollama
+     OLLAMA_BASE_URL: str = "http://localhost:11434"
+diff --git a/finbot/core/llm/openai_client.py b/finbot/core/llm/openai_client.py
+index 271214b..e316399 100644
+--- a/finbot/core/llm/openai_client.py
++++ b/finbot/core/llm/openai_client.py
+@@ -26,6 +26,9 @@ class OpenAIClient:
+ 
+     def _get_client(self):
+         """Get the OpenAI client"""
++        base_url = settings.OPENAI_BASE_URL
++        if isinstance(base_url, str) and base_url:
++            return AsyncOpenAI(api_key=settings.OPENAI_API_KEY, base_url=base_url)
+         return AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+ 
+     async def chat(
+-- 
+2.50.1 (Apple Git-155)
+

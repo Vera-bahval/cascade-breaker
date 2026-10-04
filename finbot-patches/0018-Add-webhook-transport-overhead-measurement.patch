@@ -1,0 +1,145 @@
+From 8dbdf36077b349415bcf8e8968962925034f2cdc Mon Sep 17 00:00:00 2001
+From: dseredkin <vdsered@gmail.com>
+Date: Sun, 4 Oct 2026 19:18:57 +0300
+Subject: [PATCH 18/21] Add webhook transport overhead measurement
+
+---
+ scripts/probe/webhook_overhead.py | 126 ++++++++++++++++++++++++++++++
+ 1 file changed, 126 insertions(+)
+ create mode 100644 scripts/probe/webhook_overhead.py
+
+diff --git a/scripts/probe/webhook_overhead.py b/scripts/probe/webhook_overhead.py
+new file mode 100644
+index 0000000..b229b4f
+--- /dev/null
++++ b/scripts/probe/webhook_overhead.py
+@@ -0,0 +1,126 @@
++"""One-off measurement: webhook transport overhead of GuardrailHookService.
++
++The probe calls verifiers in process. FinBot's own guardrail hooks go over an
++HTTP webhook instead; this script measures what that transport alone adds,
++against a local webhook that answers "allow" immediately, and compares it
++with an in-process call of the V1 verifier through the probe runtime.
++
++No API calls. Uses a scratch SQLite database.
++
++Usage (from repos/finbot-ctf):
++    uv run python scripts/probe/webhook_overhead.py
++Writes experiments/finbot-probe/results/webhook_overhead.json.
++"""
++
++import os
++import sys
++import tempfile
++from pathlib import Path
++
++_SCRATCH = Path(tempfile.mkdtemp(prefix="finbot-webhook-"))
++os.environ["DATABASE_URL"] = f"sqlite:///{_SCRATCH / 'webhook.db'}"
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
++sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
++sys.path.insert(0, str(Path(__file__).resolve().parent))
++
++# pylint: disable=wrong-import-position
++# ruff: noqa: E402
++import asyncio
++import json
++import logging
++import statistics
++import threading
++import time
++from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
++
++from alembic import command
++from cascade_failure_demo import _ensure_event_bus
++from common import EXPERIMENT_DIR, write_json
++from harness import build_session
++
++from db import get_alembic_config  # scripts/db.py
++from finbot.core.data.database import db_session
++from finbot.core.data.models import LabsGuardrailConfig
++from finbot.guardrails.schemas import HookKind
++from finbot.guardrails.service import GuardrailHookService
++from finbot.probe.guards import runtime as probe_guards
++from finbot.probe.guards.invariants import InvariantVerifier
++
++N = 200
++PORT = 18765
++
++
++class _Allow(BaseHTTPRequestHandler):
++    def do_POST(self):  # noqa: N802
++        self.rfile.read(int(self.headers.get("Content-Length", 0)))
++        body = b'{"verdict": "allow"}'
++        self.send_response(200)
++        self.send_header("Content-Type", "application/json")
++        self.send_header("Content-Length", str(len(body)))
++        self.end_headers()
++        self.wfile.write(body)
++
++    def log_message(self, *args):
++        pass
++
++
++def _summary(samples: list[float]) -> dict[str, float]:
++    s = sorted(samples)
++    return {"n": len(s), "p50_ms": statistics.median(s), "p95_ms": s[int(0.95 * (len(s) - 1))],
++            "mean_ms": statistics.fmean(s)}
++
++
++async def main() -> None:
++    logging.disable(logging.INFO)
++    command.upgrade(get_alembic_config(), "head")
++    await _ensure_event_bus()
++    server = ThreadingHTTPServer(("127.0.0.1", PORT), _Allow)
++    threading.Thread(target=server.serve_forever, daemon=True).start()
++
++    session = build_session("probe-webhook")
++    with db_session() as db:
++        db.add(LabsGuardrailConfig(
++            namespace=session.namespace, user_id=session.user_id,
++            webhook_url=f"http://127.0.0.1:{PORT}/hook", signing_secret="probe-secret",
++            enabled=True, hooks_json=json.dumps({"before_tool": True}), timeout_seconds=5,
++        ))
++        db.commit()
++    service = GuardrailHookService(session_context=session, workflow_id="wf", agent_name="payments_agent")
++    args = {"vendor_account": "1234567890", "amount": 800.0, "vendor_id": 2, "invoice_id": 5}
++
++    webhook = []
++    outcomes = set()
++    for _ in range(N):
++        t = time.perf_counter()
++        outcome = await service.invoke(HookKind.before_tool, tool_name="finstripe__create_transfer",
++                                       tool_source="mcp", tool_arguments=args)
++        webhook.append((time.perf_counter() - t) * 1000)
++        outcomes.add(outcome.value)
++
++    snap = {
++        "invoice": {"id": 5, "status": "approved", "amount": 800.0, "vendor_id": 2},
++        "vendor": {"id": 2, "status": "active", "bank_account_number": "1234567890"},
++        "transactions": [],
++    }
++    runtime = probe_guards.GuardRuntime(mode="shadow", run_id="w", verifiers=[InvariantVerifier()],
++                                        snapshot=lambda: snap)
++    inproc = []
++    with probe_guards.open_runtime(runtime):
++        for _ in range(N):
++            t = time.perf_counter()
++            await probe_guards.before_tool("payments_agent", "finstripe__create_transfer", args)
++            inproc.append((time.perf_counter() - t) * 1000)
++    server.shutdown()
++    result = {
++        "webhook_round_trip": _summary(webhook), "webhook_outcomes": sorted(outcomes),
++        "in_process_v1": _summary(inproc),
++        "note": "Local webhook answering 'allow' at once; includes config lookup (cached), HMAC "
++                "signing, HTTP POST over loopback and verdict parsing. Event emission disabled (no Redis).",
++    }
++    write_json(EXPERIMENT_DIR / "results" / "webhook_overhead.json", result)
++    print(json.dumps(result, indent=1))
++
++
++if __name__ == "__main__":
++    asyncio.run(main())
+-- 
+2.50.1 (Apple Git-155)
+

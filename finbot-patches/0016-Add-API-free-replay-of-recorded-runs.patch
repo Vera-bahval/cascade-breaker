@@ -1,0 +1,263 @@
+From e41eaafbdf70c7d25f09a8e49daf738f2fb4621d Mon Sep 17 00:00:00 2001
+From: dseredkin <vdsered@gmail.com>
+Date: Sun, 4 Oct 2026 19:11:08 +0300
+Subject: [PATCH 16/21] Add API-free replay of recorded runs
+
+---
+ scripts/probe/replay.py | 244 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 244 insertions(+)
+ create mode 100644 scripts/probe/replay.py
+
+diff --git a/scripts/probe/replay.py b/scripts/probe/replay.py
+new file mode 100644
+index 0000000..9e34f98
+--- /dev/null
++++ b/scripts/probe/replay.py
+@@ -0,0 +1,244 @@
++"""Replay a recorded run without the API and compare the outcome.
++
++The replay rebuilds the run's vendor and invoice (same ids, namespace and
++dates) in a scratch SQLite database, then runs the real orchestrator and
++agents with every LLM call answered from the trace, in order, per agent.
++Tools, MCP servers and the database run for real, so the replay checks that
++the recorded model outputs alone reproduce the outcome. Control points are
++off during replay (in shadow mode they never change the trajectory).
++
++The API is made unreachable for the replay process (dummy key, dead base URL),
++so a stray call fails instead of costing money.
++
++Usage (from repos/finbot-ctf):
++    uv run python scripts/probe/replay.py runs/shadow-main.jsonl --run-id att-baseline_clean-1a2b3c
++    uv run python scripts/probe/replay.py runs/shadow-main.jsonl --all --limit 5
++"""
++
++import os
++import sys
++import tempfile
++from pathlib import Path
++
++_SCRATCH = Path(tempfile.mkdtemp(prefix="finbot-replay-"))
++os.environ["DATABASE_URL"] = f"sqlite:///{_SCRATCH / 'replay.db'}"
++os.environ["OPENAI_API_KEY"] = "replay-no-api"
++os.environ["OPENAI_BASE_URL"] = "http://127.0.0.1:9/v1"
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
++sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
++sys.path.insert(0, str(Path(__file__).resolve().parent))
++
++# pylint: disable=wrong-import-position
++# ruff: noqa: E402
++import argparse
++import asyncio
++import json
++import logging
++import re
++from collections import defaultdict, deque
++from datetime import datetime
++from typing import Any
++
++from alembic import command
++from cascade_failure_demo import _ensure_event_bus
++from common import EXPERIMENT_DIR, write_json
++from harness import TASK_DESCRIPTION, build_session, create_invoice, create_vendor, snapshot
++from sqlalchemy import text
++
++from finbot.agents.cascade import run_cascade_orchestrator
++from finbot.core.data.database import db_session
++from finbot.core.data.models import LLMResponse
++from finbot.core.llm.client import get_llm_client
++from finbot.probe import injections as probe_injections
++from finbot.probe import trace as probe_trace
++
++from db import get_alembic_config  # scripts/db.py
++
++
++class ReplayClient:
++    """Answers LLM calls from recorded steps, in order, per agent."""
++
++    default_model = "replay"
++    default_temperature = 0
++
++    def __init__(self, steps: list[dict[str, Any]]):
++        self.queues: dict[str, deque] = defaultdict(deque)
++        for s in steps:
++            if s["kind"] == "llm":
++                self.queues[s["agent"]].append(s)
++        self.request_matches = 0
++        self.request_mismatches = 0
++        self.exhausted: list[str] = []
++
++    async def chat(self, request):
++        agent = _current_agent()
++        queue = self.queues.get(agent)
++        if not queue:
++            self.exhausted.append(agent)
++            raise RuntimeError(f"replay: no recorded LLM call left for {agent}")
++        step = queue.popleft()
++        if _normalize(request.messages) == _normalize(step["messages"]):
++            self.request_matches += 1
++        else:
++            self.request_mismatches += 1
++        output = step.get("output") or {}
++        content = output.get("content")
++        tool_calls = output.get("tool_calls") or []
++        new_entries: list[dict[str, Any]] = []
++        if content:
++            new_entries.append({"role": "assistant", "content": content})
++        for call in tool_calls:
++            new_entries.append({
++                "type": "function_call", "name": call["name"], "call_id": call["call_id"],
++                "arguments": json.dumps(call["arguments"]),
++            })
++        return LLMResponse(
++            content=content or "",
++            provider="openai",
++            success=step.get("error") is None,
++            metadata={"replayed_seq": step["seq"]},
++            messages=list(request.messages or []) + new_entries,
++            tool_calls=tool_calls,
++        )
++
++
++def _current_agent() -> str:
++    from finbot.probe import ledger as probe_ledger  # pylint: disable=import-outside-toplevel
++
++    return probe_ledger._agent.get() or "unknown"  # pylint: disable=protected-access
++
++
++_TIMESTAMP = re.compile(r"\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?Z?")
++
++
++def _normalize(messages: list[dict[str, Any]] | None) -> str:
++    """Compare requests ignoring the current time in prompts and argument formatting."""
++    norm = []
++    for m in messages or []:
++        m = dict(m)
++        if m.get("type") == "function_call" and isinstance(m.get("arguments"), str):
++            try:
++                m["arguments"] = json.loads(m["arguments"])
++            except ValueError:
++                pass
++        norm.append(m)
++    return _TIMESTAMP.sub("<time>", json.dumps(norm, sort_keys=True, default=str))
++
++
++def _rebuild_records(rec: dict[str, Any]) -> None:
++    """Recreate vendor and invoice with the recorded ids, namespace and dates."""
++    ns, inv, ven = rec["namespace"], rec["db_initial"]["invoice"], rec["db_initial"]["vendor"]
++    tag = rec["run_id"]
++    profile = {k: ven[k] for k in ("status", "trust_level", "risk_level")}
++    new_vendor = create_vendor(ns, tag, profile)
++    spec = {"invoice_prefix": "", "amount": inv["amount"], "description": inv["description"],
++            "due_date_offset_days": 0}
++    new_invoice = create_invoice(ns, new_vendor, spec, tag)
++    with db_session() as db:
++        # Foreign keys are checked at commit, when both ids have been moved.
++        db.execute(text("PRAGMA defer_foreign_keys = ON"))
++        db.execute(text("UPDATE invoices SET vendor_id = :old WHERE id = :new"),
++                   {"old": ven["id"], "new": new_invoice})
++        db.execute(text("UPDATE vendors SET id = :old WHERE id = :new"),
++                   {"old": ven["id"], "new": new_vendor})
++        db.execute(
++            text("UPDATE invoices SET id = :old, invoice_number = :num, invoice_date = :d1, "
++                 "due_date = :d2 WHERE id = :new"),
++            {"old": inv["id"], "new": new_invoice, "num": inv["invoice_number"],
++             "d1": datetime.fromisoformat(inv["invoice_date"]),
++             "d2": datetime.fromisoformat(inv["due_date"])},
++        )
++        db.commit()
++
++
++def _outcome(snap: dict[str, Any]) -> dict[str, Any]:
++    return {
++        "invoice_status": snap["invoice"]["status"],
++        "transfers": [(t["amount"], t["vendor_id"], t["status"]) for t in snap["transactions"]],
++        "vendor_risk": snap["vendor"]["risk_level"],
++    }
++
++
++def _tool_sequence(steps: list[dict[str, Any]]) -> list[str]:
++    return [f"{s['agent']}.{s['name']}{'!' if s.get('error') else ''}" for s in steps if s["kind"] == "tool"]
++
++
++async def replay_one(rec: dict[str, Any]) -> dict[str, Any]:
++    _rebuild_records(rec)
++    client = ReplayClient(rec["steps"])
++    llm = get_llm_client()
++    original = llm.client
++    llm.client = client
++    spec = None
++    if rec.get("injection"):
++        node, fault = rec["injection"]
++        spec = probe_injections.InjectionSpec(node, fault, rec["invoice_id"])
++    try:
++        with probe_trace.open_recorder() as recorder, probe_injections.open_injection(spec):
++            await run_cascade_orchestrator(
++                task_data={"invoice_id": rec["invoice_id"], "vendor_id": rec["vendor_id"],
++                           "description": TASK_DESCRIPTION},
++                session_context=build_session(rec["namespace"], rec["vendor_id"]),
++                workflow_id=f"replay_{rec['run_id']}",
++            )
++    finally:
++        llm.client = original
++    final = snapshot(rec["namespace"], rec["vendor_id"], rec["invoice_id"])
++    recorded_outcome = _outcome(rec["db_final"])
++    replayed_outcome = _outcome(final)
++    recorded_tools = _tool_sequence(rec["steps"])
++    replayed_tools = _tool_sequence(recorder.steps)
++    leftover = sum(len(q) for q in client.queues.values())
++    return {
++        "run_id": rec["run_id"],
++        "key": rec["key"],
++        "same_outcome": recorded_outcome == replayed_outcome,
++        "same_tool_sequence": recorded_tools == replayed_tools,
++        "recorded_outcome": recorded_outcome,
++        "replayed_outcome": replayed_outcome,
++        "llm_calls_replayed": client.request_matches + client.request_mismatches,
++        "request_matches": client.request_matches,
++        "request_mismatches": client.request_mismatches,
++        "unused_recorded_calls": leftover,
++        "exhausted_agents": client.exhausted,
++    }
++
++
++async def main() -> None:
++    parser = argparse.ArgumentParser()
++    parser.add_argument("trace_file", help="path relative to experiments/finbot-probe")
++    parser.add_argument("--run-id")
++    parser.add_argument("--all", action="store_true")
++    parser.add_argument("--limit", type=int)
++    parser.add_argument("--out", default="replay/replay-check.json")
++    args = parser.parse_args()
++
++    logging.disable(logging.INFO)
++    command.upgrade(get_alembic_config(), "head")
++    await _ensure_event_bus()
++    with (EXPERIMENT_DIR / args.trace_file).open(encoding="utf-8") as f:
++        records = [json.loads(line) for line in f if line.strip()]
++    if args.run_id:
++        records = [r for r in records if r["run_id"] == args.run_id]
++    elif not args.all:
++        records = records[:1]
++    if args.limit:
++        records = records[: args.limit]
++    results = []
++    for rec in records:
++        res = await replay_one(rec)
++        results.append(res)
++        print(
++            f"{res['key']:<55} outcome={'same' if res['same_outcome'] else 'DIFF'} "
++            f"tools={'same' if res['same_tool_sequence'] else 'DIFF'} "
++            f"llm={res['llm_calls_replayed']} req_match={res['request_matches']}/"
++            f"{res['llm_calls_replayed']} unused={res['unused_recorded_calls']}"
++        )
++    same = sum(r["same_outcome"] for r in results)
++    print(f"{same}/{len(results)} replays reproduce the recorded outcome (no API calls)")
++    write_json(EXPERIMENT_DIR / args.out, {"trace_file": args.trace_file, "results": results})
++
++
++if __name__ == "__main__":
++    asyncio.run(main())
+-- 
+2.50.1 (Apple Git-155)
+

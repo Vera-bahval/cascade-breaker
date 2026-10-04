@@ -1,0 +1,39 @@
+From 7b492a16dde1fe31b497230be8e849d9d1cc40fb Mon Sep 17 00:00:00 2001
+From: dseredkin <vdsered@gmail.com>
+Date: Sun, 4 Oct 2026 20:04:26 +0300
+Subject: [PATCH 19/21] Add channel test set to the batch runner
+
+---
+ scripts/probe/harness.py | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/scripts/probe/harness.py b/scripts/probe/harness.py
+index 295835f..276b554 100644
+--- a/scripts/probe/harness.py
++++ b/scripts/probe/harness.py
+@@ -29,6 +29,10 @@ from finbot.probe.guards.invariants import InvariantVerifier, TextRuleVerifier
+ from finbot.probe.guards.llm import ConsistencyVerifier, MastAnnotator, SelfConsistencyVerifier
+ from finbot.probe.roles import load_roles
+ 
++# Channel test: faults on a scenario the invoice agent reliably holds ("processing"),
++# so a payment can only follow if the fault travels through text or through the DB.
++CHANNEL_CASE = "confidence_degradation"
++CHANNEL_FAULTS = [("invoice", "instruction"), ("invoice", "response"), ("fraud", "response")]
+ CLEAN_PATH = Path(__file__).resolve().parents[2] / "finbot" / "agents" / "cascade_clean_scenarios.json"
+ TASK_DESCRIPTION = (
+     "A new invoice has been submitted. Process the invoice and "
+@@ -71,6 +75,11 @@ def load_cases(sets: list[str], attack_reps: int, clean_reps: int,
+             for rep in range(base_reps):
+                 split = "A" if rep < base_reps / 2 else "B"
+                 cases.append(Case("bases", base["id"], base["invoice"], rep, split))
++    if "channel" in sets:
++        sc = next(s for s in load_scenarios_file()["scenarios"] if s["id"] == CHANNEL_CASE)
++        for fault in CHANNEL_FAULTS:
++            for rep in range(injection_reps):
++                cases.append(Case("channel", sc["id"], sc["invoice"], rep, "B", fault))
+     if "injections" in sets:
+         for base in clean["injection_bases"]:
+             for node in probe_injections.NODES:
+-- 
+2.50.1 (Apple Git-155)
+

@@ -1,0 +1,88 @@
+From 47aba6b50f6e46bc2b27482c8f851762b80a3ab1 Mon Sep 17 00:00:00 2001
+From: dseredkin <vdsered@gmail.com>
+Date: Sun, 4 Oct 2026 18:54:34 +0300
+Subject: [PATCH 08/21] Add agent name to guardrail hook envelope
+
+---
+ finbot/agents/base.py                | 1 +
+ finbot/agents/chat.py                | 1 +
+ finbot/core/llm/contextual_client.py | 1 +
+ finbot/guardrails/schemas.py         | 1 +
+ finbot/guardrails/service.py         | 3 +++
+ 5 files changed, 7 insertions(+)
+
+diff --git a/finbot/agents/base.py b/finbot/agents/base.py
+index a65eeaf..027a39d 100644
+--- a/finbot/agents/base.py
++++ b/finbot/agents/base.py
+@@ -47,6 +47,7 @@ class BaseAgent(ABC):
+         self._guardrail_service = GuardrailHookService(
+             session_context=session_context,
+             workflow_id=self.workflow_id,
++            agent_name=self.agent_name,
+         )
+ 
+         logger.info(
+diff --git a/finbot/agents/chat.py b/finbot/agents/chat.py
+index 424a64e..d1d4594 100644
+--- a/finbot/agents/chat.py
++++ b/finbot/agents/chat.py
+@@ -77,6 +77,7 @@ class ChatAssistantBase:
+         self._guardrail_service = GuardrailHookService(
+             session_context=session_context,
+             workflow_id=self._workflow_id,
++            agent_name=self.agent_name,
+         )
+ 
+     def _resolve_workflow_id(self) -> str:
+diff --git a/finbot/core/llm/contextual_client.py b/finbot/core/llm/contextual_client.py
+index 27691b1..acb8c8a 100644
+--- a/finbot/core/llm/contextual_client.py
++++ b/finbot/core/llm/contextual_client.py
+@@ -55,6 +55,7 @@ class ContextualLLMClient:
+         self._guardrail_service = GuardrailHookService(
+             session_context=session_context,
+             workflow_id=self.workflow_id,
++            agent_name=agent_name,
+         )
+ 
+         logger.debug(
+diff --git a/finbot/guardrails/schemas.py b/finbot/guardrails/schemas.py
+index 0701aaa..284d081 100644
+--- a/finbot/guardrails/schemas.py
++++ b/finbot/guardrails/schemas.py
+@@ -26,6 +26,7 @@ class HookEnvelope(BaseModel):
+     hook_kind: HookKind
+     session_id: str
+     workflow_id: str
++    agent_name: str | None = None
+     tool_name: str | None = None
+     tool_source: str | None = None  # "native" | "mcp"
+     tool_arguments: dict[str, Any] | None = None
+diff --git a/finbot/guardrails/service.py b/finbot/guardrails/service.py
+index dc437e2..ffdd0ad 100644
+--- a/finbot/guardrails/service.py
++++ b/finbot/guardrails/service.py
+@@ -43,9 +43,11 @@ class GuardrailHookService:
+         self,
+         session_context: SessionContext,
+         workflow_id: str | None = None,
++        agent_name: str | None = None,
+     ):
+         self._session_context = session_context
+         self._workflow_id = workflow_id or ""
++        self._agent_name = agent_name
+         self._config: LabsGuardrailConfig | None = None
+         self._config_loaded = False
+ 
+@@ -106,6 +108,7 @@ class GuardrailHookService:
+             hook_kind=kind,
+             session_id=self._session_context.session_id,
+             workflow_id=self._workflow_id,
++            agent_name=self._agent_name,
+             tool_name=tool_name,
+             tool_source=tool_source,
+             tool_arguments=tool_arguments,
+-- 
+2.50.1 (Apple Git-155)
+

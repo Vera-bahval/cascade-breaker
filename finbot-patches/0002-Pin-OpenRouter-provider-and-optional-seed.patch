@@ -1,0 +1,60 @@
+From c7fab1c71eb95059ebd140ad67c71003885e27ad Mon Sep 17 00:00:00 2001
+From: dseredkin <vdsered@gmail.com>
+Date: Sun, 4 Oct 2026 18:29:44 +0300
+Subject: [PATCH 02/21] Pin OpenRouter provider and optional seed
+
+---
+ finbot/config.py                 |  3 +++
+ finbot/core/llm/openai_client.py | 15 +++++++++++++++
+ 2 files changed, 18 insertions(+)
+
+diff --git a/finbot/config.py b/finbot/config.py
+index 2ab6d38..4f18b0c 100644
+--- a/finbot/config.py
++++ b/finbot/config.py
+@@ -109,6 +109,9 @@ class Settings(BaseSettings):
+     # OpenAI Config
+     OPENAI_API_KEY: str = ""
+     OPENAI_BASE_URL: str | None = None  # e.g. https://openrouter.ai/api/v1
++    # OpenRouter routing: pin one upstream provider, no fallbacks (unset = off)
++    LLM_PROVIDER_PIN: str | None = None
++    LLM_SEED: int | None = None
+ 
+     # Ollama
+     OLLAMA_BASE_URL: str = "http://localhost:11434"
+diff --git a/finbot/core/llm/openai_client.py b/finbot/core/llm/openai_client.py
+index e316399..e5f54ec 100644
+--- a/finbot/core/llm/openai_client.py
++++ b/finbot/core/llm/openai_client.py
+@@ -31,6 +31,17 @@ class OpenAIClient:
+             return AsyncOpenAI(api_key=settings.OPENAI_API_KEY, base_url=base_url)
+         return AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+ 
++    def _extra_body(self) -> dict[str, Any]:
++        """OpenRouter-specific request fields; empty unless configured."""
++        extra: dict[str, Any] = {}
++        pin = settings.LLM_PROVIDER_PIN
++        if isinstance(pin, str) and pin:
++            extra["provider"] = {"order": [pin], "allow_fallbacks": False}
++        seed = settings.LLM_SEED
++        if isinstance(seed, int) and not isinstance(seed, bool):
++            extra["seed"] = seed
++        return extra
++
+     async def chat(
+         self,
+         request: LLMRequest,
+@@ -82,6 +93,10 @@ class OpenAIClient:
+             if request.previous_response_id:
+                 create_params["previous_response_id"] = request.previous_response_id
+ 
++            extra_body = self._extra_body()
++            if extra_body:
++                create_params["extra_body"] = extra_body
++
+             response = await self._client.responses.create(**create_params)
+ 
+ 
+-- 
+2.50.1 (Apple Git-155)
+

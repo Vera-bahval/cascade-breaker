@@ -1,0 +1,152 @@
+From dc1630eae87a79b7fef263e62de23db8d78ba431 Mon Sep 17 00:00:00 2001
+From: dseredkin <vdsered@gmail.com>
+Date: Sun, 4 Oct 2026 18:33:53 +0300
+Subject: [PATCH 05/21] Add role-based model config for probe runs
+
+---
+ finbot/config.py                     |  2 ++
+ finbot/core/llm/contextual_client.py |  7 +++++
+ finbot/probe/roles.json              | 17 +++++++++++++
+ finbot/probe/roles.py                | 38 ++++++++++++++++++++++++++++
+ tests/unit/probe/test_roles.py       | 15 +++++++++++
+ 5 files changed, 79 insertions(+)
+ create mode 100644 finbot/probe/roles.json
+ create mode 100644 finbot/probe/roles.py
+ create mode 100644 tests/unit/probe/test_roles.py
+
+diff --git a/finbot/config.py b/finbot/config.py
+index 4f18b0c..2eb7994 100644
+--- a/finbot/config.py
++++ b/finbot/config.py
+@@ -112,6 +112,8 @@ class Settings(BaseSettings):
+     # OpenRouter routing: pin one upstream provider, no fallbacks (unset = off)
+     LLM_PROVIDER_PIN: str | None = None
+     LLM_SEED: int | None = None
++    # Probe: path to a role -> model table (finbot/probe/roles.json); unset = off
++    CASCADE_PROBE_ROLES: str | None = None
+ 
+     # Ollama
+     OLLAMA_BASE_URL: str = "http://localhost:11434"
+diff --git a/finbot/core/llm/contextual_client.py b/finbot/core/llm/contextual_client.py
+index b4a2466..27691b1 100644
+--- a/finbot/core/llm/contextual_client.py
++++ b/finbot/core/llm/contextual_client.py
+@@ -8,6 +8,7 @@ import secrets
+ import uuid
+ from datetime import UTC, datetime
+ from typing import Any
++from finbot.config import settings
+ from finbot.core.auth.session import SessionContext
+ from finbot.core.data.models import LLMRequest, LLMResponse
+ from finbot.core.llm.client import LLMClient, get_llm_client
+@@ -15,6 +16,7 @@ from finbot.core.messaging import event_bus
+ from finbot.guardrails.schemas import HookKind
+ from finbot.guardrails.service import GuardrailHookService
+ from finbot.probe import ledger as probe_ledger
++from finbot.probe.roles import load_roles
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -115,6 +117,11 @@ class ContextualLLMClient:
+         """
+ 
+         probe_ledger.raise_if_halted()
++        if settings.CASCADE_PROBE_ROLES and request.model is None:
++            roles = load_roles(settings.CASCADE_PROBE_ROLES)
++            request = request.model_copy(
++                update={"model": roles.model_for(self.agent_name)}
++            )
+         interaction_id = str(uuid.uuid4())
+         self.call_count += 1
+ 
+diff --git a/finbot/probe/roles.json b/finbot/probe/roles.json
+new file mode 100644
+index 0000000..0152f7a
+--- /dev/null
++++ b/finbot/probe/roles.json
+@@ -0,0 +1,17 @@
++{
++  "version": 1,
++  "default": "openai/gpt-4o-mini-2024-07-18",
++  "roles": {
++    "orchestrator_agent": "openai/gpt-4o-mini-2024-07-18",
++    "invoice_agent": "openai/gpt-4o-mini-2024-07-18",
++    "fraud_agent": "openai/gpt-4o-mini-2024-07-18",
++    "payments_agent": "openai/gpt-4o-mini-2024-07-18",
++    "communication_agent": "openai/gpt-4o-mini-2024-07-18",
++    "verifier.v3": "openai/gpt-4o-mini-2024-07-18",
++    "verifier.v4": "openai/gpt-4o-mini-2024-07-18",
++    "verifier.v5": "openai/gpt-4o-mini-2024-07-18"
++  },
++  "price_per_mtok": {"input": 0.15, "output": 0.6},
++  "price_source": "openrouter.ai/api/v1/models/openai/gpt-4o-mini-2024-07-18/endpoints",
++  "price_date": "2026-10-04"
++}
+diff --git a/finbot/probe/roles.py b/finbot/probe/roles.py
+new file mode 100644
+index 0000000..4bb30f5
+--- /dev/null
++++ b/finbot/probe/roles.py
+@@ -0,0 +1,38 @@
++"""Role -> model table for the cascade-control probe.
++
++Models come from a committed JSON config, not from code; the config hash goes
++into every trace so a run can be tied to the exact table it used.
++"""
++
++from __future__ import annotations
++
++import hashlib
++import json
++from dataclasses import dataclass
++from functools import lru_cache
++from pathlib import Path
++
++DEFAULT_ROLES_PATH = Path(__file__).parent / "roles.json"
++
++
++@dataclass(frozen=True)
++class RoleConfig:
++    default: str
++    roles: dict[str, str]
++    price_per_mtok: dict[str, float]
++    sha256: str
++
++    def model_for(self, role: str) -> str:
++        return self.roles.get(role, self.default)
++
++
++@lru_cache(maxsize=4)
++def load_roles(path: str | Path = DEFAULT_ROLES_PATH) -> RoleConfig:
++    raw = json.loads(Path(path).read_text(encoding="utf-8"))
++    canonical = json.dumps(raw, sort_keys=True, separators=(",", ":"))
++    return RoleConfig(
++        default=raw["default"],
++        roles=dict(raw.get("roles", {})),
++        price_per_mtok=dict(raw["price_per_mtok"]),
++        sha256=hashlib.sha256(canonical.encode()).hexdigest(),
++    )
+diff --git a/tests/unit/probe/test_roles.py b/tests/unit/probe/test_roles.py
+new file mode 100644
+index 0000000..cec963d
+--- /dev/null
++++ b/tests/unit/probe/test_roles.py
+@@ -0,0 +1,15 @@
++"""Unit tests for the probe role -> model table."""
++
++import pytest
++
++from finbot.probe.roles import load_roles
++
++
++@pytest.mark.unit
++def test_committed_roles_cover_agents_and_verifiers():
++    roles = load_roles()
++    for role in ("orchestrator_agent", "invoice_agent", "fraud_agent",
++                 "payments_agent", "communication_agent", "verifier.v3"):
++        assert roles.model_for(role) == "openai/gpt-4o-mini-2024-07-18"
++    assert roles.model_for("unknown_agent") == roles.default
++    assert len(roles.sha256) == 64
+-- 
+2.50.1 (Apple Git-155)
+

@@ -1,0 +1,368 @@
+From a66feb79e2074b174c84ef64a7b36ba0ba688e7a Mon Sep 17 00:00:00 2001
+From: dseredkin <vdsered@gmail.com>
+Date: Sun, 4 Oct 2026 18:36:10 +0300
+Subject: [PATCH 06/21] Add OpenRouter smoke test for stage 0
+
+---
+ scripts/probe/common.py           |  83 ++++++++++
+ scripts/probe/openrouter_smoke.py | 258 ++++++++++++++++++++++++++++++
+ 2 files changed, 341 insertions(+)
+ create mode 100644 scripts/probe/common.py
+ create mode 100644 scripts/probe/openrouter_smoke.py
+
+diff --git a/scripts/probe/common.py b/scripts/probe/common.py
+new file mode 100644
+index 0000000..83b1ab9
+--- /dev/null
++++ b/scripts/probe/common.py
+@@ -0,0 +1,83 @@
++"""Shared helpers for probe runner scripts (paths, budget, provenance)."""
++
++import json
++import subprocess
++from datetime import UTC, datetime
++from pathlib import Path
++from typing import Any
++
++import httpx
++
++from finbot.config import settings
++
++FINBOT_ROOT = Path(__file__).resolve().parents[2]
++EXPERIMENT_DIR = FINBOT_ROOT.parent.parent / "experiments" / "finbot-probe"
++SPEND_LOG = EXPERIMENT_DIR / "spend.jsonl"
++BUDGET_USD = 15.0
++STOP_FRACTION = 0.8
++
++
++def git_sha() -> str:
++    return subprocess.run(
++        ["git", "rev-parse", "HEAD"],
++        cwd=FINBOT_ROOT, capture_output=True, text=True, check=True,
++    ).stdout.strip()
++
++
++def git_dirty() -> bool:
++    out = subprocess.run(
++        ["git", "status", "--porcelain", "--untracked-files=no"],
++        cwd=FINBOT_ROOT, capture_output=True, text=True, check=True,
++    ).stdout
++    return bool(out.strip())
++
++
++def key_usage() -> dict[str, Any]:
++    """Spend and limit of the OpenRouter key, as reported by OpenRouter."""
++    base = (settings.OPENAI_BASE_URL or "https://openrouter.ai/api/v1").rstrip("/")
++    resp = httpx.get(
++        f"{base}/key",
++        headers={"Authorization": f"Bearer {settings.OPENAI_API_KEY}"},
++        timeout=30,
++    )
++    resp.raise_for_status()
++    data = resp.json()["data"]
++    return {k: data.get(k) for k in ("limit", "usage", "limit_remaining")}
++
++
++def logged_spend() -> float:
++    if not SPEND_LOG.exists():
++        return 0.0
++    with SPEND_LOG.open(encoding="utf-8") as f:
++        return sum(json.loads(line)["cost_usd"] for line in f if line.strip())
++
++
++def append_spend(label: str, cost_usd: float, **extra: Any) -> None:
++    SPEND_LOG.parent.mkdir(parents=True, exist_ok=True)
++    entry = {
++        "ts": datetime.now(UTC).isoformat(),
++        "label": label,
++        "cost_usd": cost_usd,
++        "git_sha": git_sha(),
++        **extra,
++    }
++    with SPEND_LOG.open("a", encoding="utf-8") as f:
++        f.write(json.dumps(entry) + "\n")
++
++
++def check_budget(forecast_usd: float) -> None:
++    """Print the forecast and refuse to start past 80% of the pilot budget."""
++    usage = key_usage()
++    spent = max(float(usage["usage"] or 0), logged_spend())
++    limit = BUDGET_USD * STOP_FRACTION
++    print(
++        f"Budget: spent ${spent:.4f} (key ${usage['usage']}, log ${logged_spend():.4f}), "
++        f"forecast +${forecast_usd:.4f}, stop line ${limit:.2f}"
++    )
++    if spent + forecast_usd > limit:
++        raise SystemExit("Forecast crosses 80% of the pilot budget; stopping.")
++
++
++def write_json(path: Path, data: Any) -> None:
++    path.parent.mkdir(parents=True, exist_ok=True)
++    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+diff --git a/scripts/probe/openrouter_smoke.py b/scripts/probe/openrouter_smoke.py
+new file mode 100644
+index 0000000..b70343f
+--- /dev/null
++++ b/scripts/probe/openrouter_smoke.py
+@@ -0,0 +1,258 @@
++"""Stage 0 smoke test of FinBot's OpenAI client against OpenRouter.
++
++Checks, through the same client the agents use:
++  1. a plain reply (served model, usage, cost);
++  2. a tool call and its result fed back in FinBot's history format;
++  3. provider pinning (control call via Chat Completions, plus a pin to a
++     provider that does not serve the model, which must fail, not fall back);
++  4. whether `temperature` reaches the model;
++  5. whether `seed` reaches the model.
++
++Usage (from repos/finbot-ctf):
++    uv run python scripts/probe/openrouter_smoke.py
++Writes experiments/finbot-probe/stage0/smoke.json in the parent repo.
++"""
++
++import asyncio
++import json
++import sys
++import time
++from pathlib import Path
++from typing import Any
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
++sys.path.insert(0, str(Path(__file__).resolve().parent))
++
++# pylint: disable=wrong-import-position
++# ruff: noqa: E402
++from common import EXPERIMENT_DIR, append_spend, check_budget, git_sha, key_usage, write_json
++
++from finbot.config import settings
++from finbot.core.data.models import LLMRequest
++from finbot.core.llm.openai_client import OpenAIClient
++from finbot.probe import ledger as probe_ledger
++from finbot.probe.roles import load_roles
++
++INVOICE_TOOL = {
++    "type": "function",
++    "name": "get_invoice_details",
++    "strict": True,
++    "description": "Retrieve complete invoice details based on the invoice ID",
++    "parameters": {
++        "type": "object",
++        "properties": {
++            "invoice_id": {"type": "integer", "description": "The ID of the invoice"}
++        },
++        "required": ["invoice_id"],
++        "additionalProperties": False,
++    },
++}
++REPEATS = 4
++
++
++async def _chat(client: OpenAIClient, request: LLMRequest):
++    """Call the agents' client and book the call in the open ledger."""
++    started = time.perf_counter()
++    resp = await client.chat(request)
++    run_ledger = probe_ledger.active_ledger()
++    if run_ledger is not None:
++        run_ledger.record_response(
++            "smoke", client.default_model, resp.metadata,
++            round((time.perf_counter() - started) * 1000),
++        )
++    return resp
++
++
++async def _ask(client: OpenAIClient, prompt: str, temperature: float) -> dict[str, Any]:
++    started = time.perf_counter()
++    resp = await _chat(
++        client,
++        LLMRequest(messages=[{"role": "user", "content": prompt}], temperature=temperature),
++    )
++    return {
++        "content": (resp.content or "").strip(),
++        "metadata": resp.metadata,
++        "wall_ms": round((time.perf_counter() - started) * 1000),
++    }
++
++
++async def plain_reply(client: OpenAIClient) -> dict[str, Any]:
++    out = await _ask(client, "Reply with the word OK", 0)
++    meta = out["metadata"] or {}
++    return {
++        **out,
++        "ok": out["content"].upper().startswith("OK")
++        and meta.get("model") == client.default_model,
++        "cost_reported": "cost" in (meta.get("usage") or {}),
++    }
++
++
++async def tool_round_trip(client: OpenAIClient) -> dict[str, Any]:
++    """Mirror finbot/agents/base.py: function_call in history, then its output."""
++    messages: list[dict[str, Any]] = [
++        {"role": "system", "content": "You are an invoice agent. Always look data up with tools."},
++        {"role": "user", "content": "What is the amount of invoice 42? Look it up, then answer."},
++    ]
++    first = await _chat(client, LLMRequest(messages=messages, tools=[INVOICE_TOOL], temperature=0))
++    calls = first.tool_calls or []
++    result: dict[str, Any] = {"first_tool_calls": calls, "history_items": None}
++    if not calls:
++        result["ok"] = False
++        result["error"] = "model did not call the tool"
++        return result
++    messages = list(first.messages or [])
++    for call in calls:
++        messages.append(
++            {
++                "type": "function_call_output",
++                "call_id": call["call_id"],
++                "output": json.dumps({"invoice_id": 42, "amount": 1234.56, "status": "submitted"}),
++            }
++        )
++    result["history_items"] = [m.get("type", m.get("role")) for m in messages]
++    try:
++        second = await _chat(client, LLMRequest(messages=messages, tools=[INVOICE_TOOL], temperature=0))
++    except Exception as e:  # pylint: disable=broad-exception-caught
++        result["ok"] = False
++        result["error"] = str(e)[:500]
++        return result
++    answer = second.content or ""
++    result["answer"] = answer
++    result["ok"] = calls[0]["arguments"].get("invoice_id") == 42 and (
++        "1234.56" in answer or "1,234.56" in answer
++    )
++    return result
++
++
++async def provider_pinning(client: OpenAIClient) -> dict[str, Any]:
++    raw = client._client  # pylint: disable=protected-access
++    control = await raw.chat.completions.create(
++        model=client.default_model,
++        messages=[{"role": "user", "content": "Reply with the word OK"}],
++        max_tokens=5,
++        temperature=0,
++        extra_body=client._extra_body(),  # pylint: disable=protected-access
++    )
++    control_usage = getattr(control, "usage", None)
++    result: dict[str, Any] = {
++        "chat_completions_provider": getattr(control, "provider", None),
++        "chat_completions_model": control.model,
++        "chat_completions_cost": getattr(control_usage, "cost", None),
++    }
++    try:
++        await raw.responses.create(
++            model=client.default_model,
++            input=[{"role": "user", "content": "Reply with the word OK"}],
++            max_output_tokens=16,
++            extra_body={"provider": {"order": ["azure"], "allow_fallbacks": False}},
++        )
++        result["foreign_pin"] = {"rejected": False}
++    except Exception as e:  # pylint: disable=broad-exception-caught
++        result["foreign_pin"] = {
++            "rejected": True,
++            "status_code": getattr(e, "status_code", None),
++            "message": str(e)[:300],
++        }
++    result["ok"] = (
++        result["chat_completions_provider"] == "OpenAI" and result["foreign_pin"]["rejected"]
++    )
++    return result
++
++
++async def temperature_check(client: OpenAIClient) -> dict[str, Any]:
++    prompt = "Write one unusual sentence about a cat."
++    runs = {}
++    for temp in (0.0, 1.5):
++        runs[str(temp)] = [(await _ask(client, prompt, temp))["content"] for _ in range(REPEATS)]
++    distinct = {t: len(set(v)) for t, v in runs.items()}
++    return {
++        "outputs": runs,
++        "distinct": distinct,
++        "passes": distinct["1.5"] > distinct["0.0"] and distinct["1.5"] >= REPEATS - 1,
++    }
++
++
++async def seed_check(client: OpenAIClient) -> dict[str, Any]:
++    prompt = "Pick a random integer between 1 and 1000000. Output the digits only."
++    original = settings.LLM_SEED
++    try:
++        settings.LLM_SEED = 1234
++        same_seed = [(await _ask(client, prompt, 1.0))["content"] for _ in range(REPEATS)]
++        varied_seed = []
++        for seed in range(1, REPEATS + 1):
++            settings.LLM_SEED = seed
++            varied_seed.append((await _ask(client, prompt, 1.0))["content"])
++    finally:
++        settings.LLM_SEED = original
++    # Control: the same seed through Chat Completions, where OpenAI documents it.
++    raw = client._client  # pylint: disable=protected-access
++    control, control_cost, fingerprints = [], 0.0, set()
++    for _ in range(REPEATS):
++        resp = await raw.chat.completions.create(
++            model=client.default_model,
++            messages=[{"role": "user", "content": prompt}],
++            temperature=1.0,
++            seed=1234,
++            extra_body=client._extra_body(),  # pylint: disable=protected-access
++        )
++        control.append((resp.choices[0].message.content or "").strip())
++        control_cost += float(getattr(resp.usage, "cost", 0) or 0)
++        fingerprints.add(resp.system_fingerprint)
++    return {
++        "same_seed_outputs": same_seed,
++        "varied_seed_outputs": varied_seed,
++        "distinct_same_seed": len(set(same_seed)),
++        "distinct_varied_seed": len(set(varied_seed)),
++        "passes": len(set(same_seed)) == 1 and len(set(varied_seed)) > 1,
++        "chat_completions_same_seed_outputs": control,
++        "chat_completions_distinct": len(set(control)),
++        "chat_completions_system_fingerprints": sorted(str(f) for f in fingerprints),
++        "chat_completions_cost": control_cost,
++    }
++
++
++async def main() -> None:
++    check_budget(forecast_usd=0.01)
++    usage_before = key_usage()
++    roles = load_roles()
++    client = OpenAIClient()
++    report: dict[str, Any] = {
++        "git_sha": git_sha(),
++        "roles_sha256": roles.sha256,
++        "model": client.default_model,
++        "base_url": settings.OPENAI_BASE_URL,
++        "provider_pin": settings.LLM_PROVIDER_PIN,
++        "key_usage_before": usage_before,
++    }
++    with probe_ledger.open_ledger(roles.price_per_mtok) as led:
++        for name, check in (
++            ("plain_reply", plain_reply),
++            ("tool_round_trip", tool_round_trip),
++            ("provider_pinning", provider_pinning),
++            ("temperature", temperature_check),
++            ("seed", seed_check),
++        ):
++            print(f"-- {name}")
++            try:
++                report[name] = await check(client)
++            except Exception as e:  # pylint: disable=broad-exception-caught
++                report[name] = {"ok": False, "error": f"{type(e).__name__}: {str(e)[:500]}"}
++            print(json.dumps(report[name], ensure_ascii=False)[:600])
++            if led.halt_reason:
++                print(f"HALT: {led.halt_reason}")
++                break
++    extra_cost = sum(
++        report.get(name, {}).get("chat_completions_cost") or 0.0
++        for name in ("provider_pinning", "seed")
++    )
++    report["ledger"] = led.totals()
++    report["ledger_calls"] = led.call_dicts()
++    report["cost_usd"] = led.totals()["cost_usd"] + float(extra_cost)
++    report["key_usage_after"] = key_usage()
++    write_json(EXPERIMENT_DIR / "stage0" / "smoke.json", report)
++    append_spend("stage0_smoke", report["cost_usd"], llm_calls=led.totals()["llm_calls"] + 1 + REPEATS)
++    print(f"cost ${report['cost_usd']:.6f}; halt={led.halt_reason}")
++
++
++if __name__ == "__main__":
++    asyncio.run(main())
+-- 
+2.50.1 (Apple Git-155)
+
