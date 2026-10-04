@@ -16,6 +16,37 @@ from finbot.core.data.models import LLMRequest, LLMResponse
 logger = logging.getLogger(__name__)
 
 
+def _number(value: Any) -> int | float | None:
+    if isinstance(value, bool):
+        return None
+    return value if isinstance(value, (int, float)) else None
+
+
+def _response_accounting(response: Any) -> dict[str, Any]:
+    """Served model, token usage and cost as reported by the API.
+
+    OpenRouter adds `usage.cost` (USD); plain OpenAI responses omit it.
+    """
+    accounting: dict[str, Any] = {}
+    model = getattr(response, "model", None)
+    if isinstance(model, str):
+        accounting["model"] = model
+    usage = getattr(response, "usage", None)
+    if usage is None:
+        return accounting
+    usage_info: dict[str, Any] = {}
+    for name in ("input_tokens", "output_tokens", "total_tokens", "cost"):
+        value = _number(getattr(usage, name, None))
+        if value is not None:
+            usage_info[name] = value
+    details = getattr(usage, "input_tokens_details", None)
+    cached = _number(getattr(details, "cached_tokens", None))
+    if cached is not None:
+        usage_info["cached_tokens"] = cached
+    accounting["usage"] = usage_info
+    return accounting
+
+
 class OpenAIClient:
     """OpenAI Client with configurable model"""
 
@@ -177,6 +208,7 @@ class OpenAIClient:
 
             metadata = {
                 "response_id": response.id,
+                **_response_accounting(response),
             }
 
             return LLMResponse(
