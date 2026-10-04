@@ -109,6 +109,9 @@ class Settings(BaseSettings):
     # OpenAI Config
     OPENAI_API_KEY: str = ""
     OPENAI_BASE_URL: str | None = None  # e.g. https://openrouter.ai/api/v1
+    # OpenRouter routing: pin one upstream provider, no fallbacks (unset = off)
+    LLM_PROVIDER_PIN: str | None = None
+    LLM_SEED: int | None = None
 
     # Ollama
     OLLAMA_BASE_URL: str = "http://localhost:11434"
