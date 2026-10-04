@@ -26,6 +26,9 @@ class OpenAIClient:
 
     def _get_client(self):
         """Get the OpenAI client"""
+        base_url = settings.OPENAI_BASE_URL
+        if isinstance(base_url, str) and base_url:
+            return AsyncOpenAI(api_key=settings.OPENAI_API_KEY, base_url=base_url)
         return AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
 
     async def chat(

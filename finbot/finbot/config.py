@@ -108,6 +108,7 @@ class Settings(BaseSettings):
 
     # OpenAI Config
     OPENAI_API_KEY: str = ""
+    OPENAI_BASE_URL: str | None = None  # e.g. https://openrouter.ai/api/v1
 
     # Ollama
     OLLAMA_BASE_URL: str = "http://localhost:11434"
