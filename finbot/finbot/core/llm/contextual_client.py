@@ -55,6 +55,7 @@ class ContextualLLMClient:
         self._guardrail_service = GuardrailHookService(
             session_context=session_context,
             workflow_id=self.workflow_id,
+            agent_name=agent_name,
         )
 
         logger.debug(

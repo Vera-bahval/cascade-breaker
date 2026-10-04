@@ -77,6 +77,7 @@ class ChatAssistantBase:
         self._guardrail_service = GuardrailHookService(
             session_context=session_context,
             workflow_id=self._workflow_id,
+            agent_name=self.agent_name,
         )
 
     def _resolve_workflow_id(self) -> str:

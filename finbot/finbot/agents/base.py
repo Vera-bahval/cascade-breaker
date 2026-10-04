@@ -47,6 +47,7 @@ class BaseAgent(ABC):
         self._guardrail_service = GuardrailHookService(
             session_context=session_context,
             workflow_id=self.workflow_id,
+            agent_name=self.agent_name,
         )
 
         logger.info(

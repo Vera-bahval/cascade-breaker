@@ -43,9 +43,11 @@ class GuardrailHookService:
         self,
         session_context: SessionContext,
         workflow_id: str | None = None,
+        agent_name: str | None = None,
     ):
         self._session_context = session_context
         self._workflow_id = workflow_id or ""
+        self._agent_name = agent_name
         self._config: LabsGuardrailConfig | None = None
         self._config_loaded = False
 
@@ -106,6 +108,7 @@ class GuardrailHookService:
             hook_kind=kind,
             session_id=self._session_context.session_id,
             workflow_id=self._workflow_id,
+            agent_name=self._agent_name,
             tool_name=tool_name,
             tool_source=tool_source,
             tool_arguments=tool_arguments,
