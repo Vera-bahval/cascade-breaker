@@ -12,6 +12,7 @@ from openai import AsyncOpenAI
 
 from finbot.config import settings
 from finbot.core.data.models import LLMRequest, LLMResponse
+from finbot.probe import ledger as probe_ledger
 
 logger = logging.getLogger(__name__)
 
@@ -221,4 +222,5 @@ class OpenAIClient:
             )
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("OpenAI chat failed: %s", e)
+            probe_ledger.record_error(e)
             raise Exception(f"OpenAI chat failed: {e}") from e  # pylint: disable=broad-exception-raised

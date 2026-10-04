@@ -14,6 +14,7 @@ from finbot.core.llm.client import LLMClient, get_llm_client
 from finbot.core.messaging import event_bus
 from finbot.guardrails.schemas import HookKind
 from finbot.guardrails.service import GuardrailHookService
+from finbot.probe import ledger as probe_ledger
 
 logger = logging.getLogger(__name__)
 
@@ -113,6 +114,7 @@ class ContextualLLMClient:
             LLM response string
         """
 
+        probe_ledger.raise_if_halted()
         interaction_id = str(uuid.uuid4())
         self.call_count += 1
 
@@ -160,9 +162,18 @@ class ContextualLLMClient:
 
         try:
             # Pass original request unchanged — underlying client resolves its own defaults
-            response = await self.llm_client.chat(request=request)
+            with probe_ledger.agent_scope(self.agent_name):
+                response = await self.llm_client.chat(request=request)
 
             duration_ms = int((datetime.now(UTC) - start_time).total_seconds() * 1000)
+
+            run_ledger = probe_ledger.active_ledger()
+            if run_ledger is not None:
+                if response.success:
+                    run_ledger.record_response(
+                        self.agent_name, resolved_model, response.metadata, duration_ms
+                    )
+                probe_ledger.raise_if_halted()
 
             await self._guardrail_service.invoke(
                 HookKind.after_model,
