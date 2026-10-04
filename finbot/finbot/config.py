@@ -112,6 +112,8 @@ class Settings(BaseSettings):
     # OpenRouter routing: pin one upstream provider, no fallbacks (unset = off)
     LLM_PROVIDER_PIN: str | None = None
     LLM_SEED: int | None = None
+    # Probe: path to a role -> model table (finbot/probe/roles.json); unset = off
+    CASCADE_PROBE_ROLES: str | None = None
 
     # Ollama
     OLLAMA_BASE_URL: str = "http://localhost:11434"

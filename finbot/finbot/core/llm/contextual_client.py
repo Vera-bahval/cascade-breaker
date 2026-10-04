@@ -8,6 +8,7 @@ import secrets
 import uuid
 from datetime import UTC, datetime
 from typing import Any
+from finbot.config import settings
 from finbot.core.auth.session import SessionContext
 from finbot.core.data.models import LLMRequest, LLMResponse
 from finbot.core.llm.client import LLMClient, get_llm_client
@@ -15,6 +16,7 @@ from finbot.core.messaging import event_bus
 from finbot.guardrails.schemas import HookKind
 from finbot.guardrails.service import GuardrailHookService
 from finbot.probe import ledger as probe_ledger
+from finbot.probe.roles import load_roles
 
 logger = logging.getLogger(__name__)
 
@@ -115,6 +117,11 @@ class ContextualLLMClient:
         """
 
         probe_ledger.raise_if_halted()
+        if settings.CASCADE_PROBE_ROLES and request.model is None:
+            roles = load_roles(settings.CASCADE_PROBE_ROLES)
+            request = request.model_copy(
+                update={"model": roles.model_for(self.agent_name)}
+            )
         interaction_id = str(uuid.uuid4())
         self.call_count += 1
 
