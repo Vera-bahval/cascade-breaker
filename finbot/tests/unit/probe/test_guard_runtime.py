@@ -65,6 +65,16 @@ async def test_enforce_runs_only_configured_pair_and_stops():
 
 
 @pytest.mark.unit
+@pytest.mark.asyncio
+async def test_enforce_accepts_a_single_point():
+    runtime = _runtime("enforce", {"P4.process_payment": "block_all"})
+    with probe_trace.open_recorder(), probe_guards.open_runtime(runtime):
+        await probe_guards.before_tool("payments_agent", "finstripe__create_transfer", {})
+        with pytest.raises(probe_guards.GuardStop):
+            await probe_guards.before_tool("payments_agent", "process_payment", {})
+
+
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "agent, tool, point",
     [

@@ -45,13 +45,13 @@ class GuardRuntime:
     run_id: str
     verifiers: list[Verifier]
     snapshot: Callable[[], dict[str, Any]]
-    # enforce mode: family -> verifier name active at that family
+    # enforce mode: point ("P2.invoice_agent") or family ("P4") -> verifier name
     enforce: dict[str, str] = field(default_factory=dict)
     stopped_by: dict[str, Any] | None = None
 
-    def _applicable(self, family: str) -> list[Verifier]:
+    def _applicable(self, point: str, family: str) -> list[Verifier]:
         if self.mode == "enforce":
-            name = self.enforce.get(family)
+            name = self.enforce.get(point) or self.enforce.get(family)
             return [v for v in self.verifiers if v.name == name and family in v.families]
         return [v for v in self.verifiers if family in v.families]
 
@@ -59,7 +59,7 @@ class GuardRuntime:
         if self.stopped_by is not None:
             raise GuardStop(f"workflow stopped at {self.stopped_by['point']}")
         family = point.split(".", 1)[0]
-        verifiers = self._applicable(family)
+        verifiers = self._applicable(point, family)
         if not verifiers:
             return
         recorder = probe_trace.active_recorder()
