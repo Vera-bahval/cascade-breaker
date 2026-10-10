@@ -15,7 +15,7 @@
 
 Версия — коммит `a7f6964` (PR #477, GenAI-Security-Project/finbot-ctf). Код FinBot не менялся: прогоны идут через
 guardrail-хуки FinBot в пассивном режиме, обёртки и настройки (`.env`). Как поставить FinBot рядом и запустить —
-`experiments/control-placement/experiments.md`, раздел «Как воспроизвести».
+`experiments/control-placement/docs/01-setup-and-method.md`, раздел «Как воспроизвести».
 
 ## Литература
 
@@ -29,10 +29,11 @@ guardrail-хуки FinBot в пассивном режиме, обёртки и 
 
 | Путь | Что |
 | --- | --- |
-| `experiments/control-placement/experiments.md` | **отчёт:** вопрос, вердикт по ожидаемым результатам, ответ, результаты, выводы, как воспроизвести |
+| `experiments/control-placement/experiments.md` | **начало отчёта:** вопрос, короткий ответ, главные числа, выводы коротко, карта документов |
+| `experiments/control-placement/docs/` | отчёт по частям: методика, каскад, пары, объяснения агентов, устройство FinBot, ограничения |
 | `experiments/control-placement/figures/` | схема каскада |
 | `experiments/control-placement/code/` | проверки, прогонщики, разбор, тесты, наборы счетов |
-| `experiments/control-placement/code/finbot477/` | скрипты прогонов на FinBot, профили поставщика A–F |
+| `experiments/control-placement/code/finbot477/` | скрипты прогонов на FinBot, профили поставщика A–G |
 | `experiments/control-placement/code/runs/` | записи всех прогонов (архивы `*.tar.gz`) |
 | `experiments/control-placement/annotation/` | кодбук MAST v1.1, набор для разметки, ленты по счетам |
 
@@ -42,4 +43,6 @@ guardrail-хуки FinBot в пассивном режиме, обёртки и 
 cd experiments/control-placement/code/runs && for f in *.tar.gz; do tar xzf "$f"; done && cd ..
 python3 orchestrator_stats.py      # воронка каскада
 python3 matrix_analysis.py         # матрица «сценарий × профиль поставщика»
+python3 pairs_analysis.py --views  # пары «тот же счёт с фразой и без»: три ракурса
+python3 pairs_reasoning.py         # объяснения агентов: числа, история, пометки Fraud
 ```

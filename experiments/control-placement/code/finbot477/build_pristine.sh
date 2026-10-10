@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Собирает чистую базу профиля поставщика с хуками на заданный порт: ./build_pristine.sh <A–F> <port>
+# Собирает чистую базу профиля поставщика с хуками на заданный порт: ./build_pristine.sh <A–G> <port>
 # Результат: code/finbot477/pristine/pristine_<prof>_<port>.db (в гит не класть).
 HERE=${0:A:h}; FB=${HERE:h:h}/finbot-pr477; PROF=$1; PORT=$2
 mkdir -p $HERE/pristine; cd $FB

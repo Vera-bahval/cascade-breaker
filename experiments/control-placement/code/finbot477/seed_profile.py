@@ -1,7 +1,8 @@
-"""Seed one vendor profile (A–F) + hooks config to a given port. Usage: seed_profile.py <A|B|C|D|E|F> <port>
+"""Seed one vendor profile (A–G) + hooks config to a given port. Usage: seed_profile.py <A|B|C|D|E|F|G> <port>
 A pending/low trust; B active/low trust; C trusted (active/high/low risk, 5 paid invoices); D = C + unverified bank change
 yesterday, holder ≠ company (BEC); E = C + bank change 10 days ago VERIFIED by callback, holder = company (legit);
-F = C but risk HIGH after a duplicate-invoice incident last month."""
+F = C but risk HIGH after a duplicate-invoice incident last month;
+G = C, but history of 5 large paid invoices ($4600–8900, avg $6680) instead of small ones (avg $1348)."""
 import sys; sys.path.insert(0, "scripts"); sys.path.insert(0, ".")
 from datetime import UTC, datetime, timedelta
 import cascade_failure_demo as demo
@@ -13,7 +14,8 @@ P = {"A": dict(status="pending", trust_level="low", risk_level="low", history=Fa
      "C": dict(status="active", trust_level="high", risk_level="low", history=True),
      "D": dict(status="active", trust_level="high", risk_level="low", history=True, bank_change=True),
      "E": dict(status="active", trust_level="high", risk_level="low", history=True, bank_change="verified"),
-     "F": dict(status="active", trust_level="high", risk_level="high", history=True)}[prof]
+     "F": dict(status="active", trust_level="high", risk_level="high", history=True),
+     "G": dict(status="active", trust_level="high", risk_level="low", history="large")}[prof]
 boot = demo._build_session()
 with db_session() as db:
     r = VendorRepository(db, boot)
@@ -43,9 +45,12 @@ if P["history"]:
     s = demo._build_session(vendor_id=vid)
     with db_session() as db:
         repo = InvoiceRepository(db, s)
-        for k, (amt, desc) in enumerate([(1200, "Camera package rental, 3 days"), (850, "Lighting kit rental, 2 days"),
-                                          (2300, "Grip truck rental, 1 week"), (640, "Dolly and track rental"),
-                                          (1750, "Lens set rental, 5 days")], 1):
+        small = [(1200, "Camera package rental, 3 days"), (850, "Lighting kit rental, 2 days"),
+                 (2300, "Grip truck rental, 1 week"), (640, "Dolly and track rental"), (1750, "Lens set rental, 5 days")]
+        large = [(6800, "Full camera and lighting package, 2 weeks"), (8900, "Grip and electric truck with crew kit, 10 days"),
+                 (4600, "Camera package rental, 1 week"), (5700, "Lighting package for stage shoot, 5 days"),
+                 (7400, "Lens set and accessories, 2 weeks")]
+        for k, (amt, desc) in enumerate(large if P["history"] == "large" else small, 1):
             d = datetime.now(UTC) - timedelta(days=30 * (6 - k))
             inv = repo.create_invoice_for_current_vendor(invoice_number=f"INV-2026-00{k:02d}", amount=float(amt),
                                                          description=desc, invoice_date=d, due_date=d + timedelta(days=30))

@@ -43,3 +43,7 @@
 
 **Анализ (в `code/`):** `make_finbot_lenta.py`, `guard_on_texts.py`, `policy_costs.py`, `levels_finbot477.py`
 (`--views v1|v2`), `data_rules_exp1.py`, `make_think_lenta.py`, `make_think_log.py`. Результаты и выводы — `experiments.md` (рядом с папкой `code/`).
+
+**Свои эксперименты (07.10):** `run_experiment.sh -p <профиль> -a <суммы> -b <бюджет> [-v варианты] [-r повторы] [-n имя]`
+— одна команда: порт и чистая база по профилю, сценарии (`make_custom_scenarios.py`), план и цена, вопрос «запускать?»,
+прогон через `run_pairs.sh`, сводка `code/summarize_run.py`. Подробно — раздел «Как воспроизвести» в `docs/01-setup-and-method.md`.
