@@ -1,0 +1,236 @@
+{
+  "status": "PASS_GENERATION05_SOURCE_AND_FRESH_ORCHESTRATION_PENDING_ROOT_LAUNCH",
+  "hidden_observations_read": false,
+  "hidden_labels_read": false,
+  "external_metrics_read": false,
+  "heavy_inference_calls": 0,
+  "new_module": "cascade_guard/v2_preunblind.py",
+  "new_tests": "tests/test_v2_preunblind.py",
+  "new_tests_passed": 15,
+  "new_module_sha256": "456cbda1b3538b7735c79a95f282129293c4a10cd8ea495e65f27d015a938f0c",
+  "findings": [
+    {
+      "id": "integrity-before-unblind",
+      "classification": "actual_validation_gap",
+      "severity": "must_gate_unblind",
+      "source": "cascade_guard/v2_eval.py:455-460",
+      "finding": "Scorer does not revalidate rows/record hashes or methods-freeze hash against prediction freeze.",
+      "resolution": "New external read-only v2_preunblind validator checks all recorded hashes and exact observation/prediction/available-arm identities; frozen evaluator unchanged."
+    },
+    {
+      "id": "pair-check-before-write",
+      "classification": "actual_failure_atomicity_gap",
+      "severity": "must_gate_unblind",
+      "source": "cascade_guard/v2_eval.py:476-482",
+      "finding": "Metrics are written before mandatory pair validation; a pair error can leave partial unblinded artifacts.",
+      "resolution": "Authorized external validator reads labels only after explicit root marker, validates complete joins/pairs before scorer invocation; existing metrics block retry."
+    },
+    {
+      "id": "jev-evaluator-envelope",
+      "classification": "actual_interface_bug",
+      "severity": "must_adapt_before_fit",
+      "source": "cascade_guard/v2_jev.py:215-223; cascade_guard/cheap_eval.py:38-41",
+      "finding": "Jev feature exports omit required memory/window_count fields.",
+      "resolution": "Independent evaluator owner preparing blind metadata-only adapter; preserve scientific exports and 47 frozen files. Coverage count must mean checkpoint inputs, not text windows; memory unmeasured."
+    },
+    {
+      "id": "base-policy-currency",
+      "classification": "setup_semantics_adaptation",
+      "severity": "report_explicitly",
+      "source": "vendor/finbot/finbot/probe/policy.py:16-22; cascade_guard/v2_hidden_dataset.py:16,51-54",
+      "finding": "FinBot source has USD thresholds; synthetic v2 states major currency units and checks normalized ORIGINAL invoice currency amount without USD conversion. JPY thresholds are therefore synthetic local-major-unit thresholds.",
+      "resolution": "Do not describe inherited policy as literally unchanged FinBot. Freeze remains unchanged; report synthetic task interpretation."
+    },
+    {
+      "id": "threshold-coverage",
+      "classification": "known_coverage_limitation",
+      "severity": "report_explicitly",
+      "source": "cascade_guard/v2_hidden_dataset.py:166-168",
+      "finding": "Declared generator formula yields original amount120..367; 5000/10000/50000 boundaries and human review applicability are not exercised by this design.",
+      "resolution": "No boundary correctness/generalization claim from240. No new cases or threshold changes after freeze."
+    },
+    {
+      "id": "partial-base-policy",
+      "classification": "task_contract_interaction",
+      "severity": "report_explicitly",
+      "source": "cascade_guard/v2_hidden_dataset.py:23,54-63",
+      "finding": "Partial settlement explicitly replaces original-full-amount and one-transfer rules. Review/reject thresholds remain applied to original invoice amount, not residual or FX transfer amount.",
+      "resolution": "Keep this original-obligation policy interpretation separate from residual arithmetic; signed registry alone is not substituted for human_cleared above threshold."
+    },
+    {
+      "id": "sequence-artificial-staging",
+      "classification": "known_external_validity_limitation",
+      "severity": "report_explicitly",
+      "source": "cascade_guard/v2_hidden_dataset.py:245-266",
+      "finding": "All case states authored upfront then revealed in prescribed cumulative native snapshots. No source evidence of future-event leakage: P1 invoice; P2 vendor/compliance/ledger/attempts/backend; P3 validation/registry/budget/FX; P4 proposal plus later revisions.",
+      "resolution": "Call synthetic native stage snapshots, not real LLM trajectories or adaptive cascade prevention. Older timestamps revealed later are delayed observations; scheduled effective timestamps are not automatically future events."
+    },
+    {
+      "id": "probability-target",
+      "classification": "correct_target_separation",
+      "severity": "retain",
+      "source": "cascade_guard/v2_eval.py:414-429",
+      "finding": "External intervention target differs from archive harm-risk; external probability metrics are intentionally suppressed. Modeled backend diagnostic is not observed loss.",
+      "resolution": "Do not pool targets or infer actual FinBot harm prevention."
+    },
+    {
+      "id": "train-cal-control",
+      "classification": "checked_source_design",
+      "severity": "retain",
+      "source": "cascade_guard/v2_eval.py:282-353",
+      "finding": "Candidate selection uses TRAIN inner grouped OOF. Exact fold0 TRAIN model is serialized, thresholded on held-out CAL and reused without refitting. A/B2/Blegacy/C remain separate; reached-safe is primary denominator.",
+      "resolution": "Verify fitted model/training IDs/calibration IDs and thresholds against this design before external predictions."
+    },
+    {
+      "id": "false-trusted-summary-facts",
+      "classification": "actual_feature_semantics_bug",
+      "severity": "restart_requires_new_inputs_and_freeze",
+      "source": "METHOD_FREEZE_04 v2_inputs.canonical:129-139",
+      "finding": "Raw amount equality ignores currency/unit/residual policy, and ANY-ledger settlement existence ignores current invoice binding, yet predicates enter trusted premises with compliance-like names.",
+      "resolution": "Root stopped own inference/watchers and preserves partial04. AMEND05 removes all full-native auto-summary derivation; limited literal source reports get provenance and leave trusted NLI/local premises. Draft source reviewed; final gate pending native hold provenance."
+    },
+    {
+      "id": "boolean-native-hold-bridge",
+      "classification": "actual_type_adapter_bug",
+      "severity": "repair_in05",
+      "source": "METHOD_FREEZE_04 v2_legacy_rules.adapt",
+      "finding": "Native hold=True was passed as boolean fraud_action, while frozen rules compare string HOLD; explicit hold could be ignored.",
+      "resolution": "Bridge v3 normalizes booleans to HOLD/NONE; generic public fixture now R1/R2 block unresolved_hold. No hidden values read."
+    },
+    {
+      "id": "archive-hold-derived-summary",
+      "classification": "source_level_potential_false_native_fact",
+      "severity": "resolve_before05_export",
+      "source": "v2_inputs.from_archive compliance.hold; dataset.active_flags",
+      "finding": "Full archive hold copies old state fraud_action whose derivation ignores nested output errors and native flagged=False. This can contradict newly committed-only flag evidence.",
+      "resolution": "Requested owner derive FULL hold from confirmed native commits or explicit unknown; preserve genuinely limited legacy reports with provenance. Actual selected archive incidence not measured by auditor."
+    }
+  ],
+  "post_unblind_checklist": [
+    "After all model processes exit, verify METHOD_FREEZE_04 and JEV_INPUT_FREEZE hashes, required feature coverage and declared availability before any fit.",
+    "Verify TRAIN/CAL episode/group disjointness; selected config comes only from TRAIN inner OOF; final model is exact stored TRAIN fit with no post-CAL refit.",
+    "Before label authorization, run read-only validator on each prediction destination with expected observation count, all pinned hashes, complete expected arms, matching prefix/episode/cutoff sets.",
+    "Root writes explicit UNBLIND marker binding exact prediction-freeze SHA and sealed label SHA; before this marker never hash/parse hidden labels.",
+    "After authorization, prevalidate exact label joins, boolean contract targets, 120 opposite-target pair groups and six families of40 for independent240; only then invoke immutable scorer once.",
+    "Record counts k/n, all240 observations and120paired groups; do not multiply sample size by seeds or claim120distinct mechanisms.",
+    "Report intervention recall, compliant STOP FPR and UNKNOWN STOP separately; report per-family and matched-pair outcomes, including method availability and source-blind extra contract control.",
+    "Keep archive harm-risk metrics, static contract intervention metrics and local backend potential policy-violating new-effect diagnostic separate; preserve null uncertain backend outcomes.",
+    "Check all scored predictions retain frozen thresholds/configs; no tuning, reruns, case removal, method selection or oracle edits after labels.",
+    "If scorer fails after opening labels, preserve partial outputs and marker; reconcile same frozen predictions rather than refit or rerun model inference.",
+    "Read back exported report against frozen metrics: primary A, C/B sensitivity names, reached-safe versus legacy calibration denominators, known limits on FX/JPY and absent approval boundaries.",
+    "Record observed cache-assisted runtimes, checkpoint-total versus final-incremental latency, cold/warm status, unmeasured memory and overlapping source computation semantics."
+  ],
+  "pending": [
+    "root pins refreshed addon05 and any external Jev resume guard hashes",
+    "future watch-only execution under reviewed manifests; labels remain sealed until explicit root UNBLIND marker"
+  ],
+  "new_tests_sha256": "1e9541afde0aac863f76416f35fe65c9134621001d185545e604b7595d18957e",
+  "archive_split_validation": {
+    "per_seed_fold0_outcomes": {
+      "train": 148,
+      "calibration": 66
+    },
+    "per_seed_fold0_groups": {
+      "train": 36,
+      "calibration": 12
+    },
+    "train_cal_episode_group_disjoint": true,
+    "inner_train_partitions_complete_and_disjoint": true,
+    "episode_allocations_differ_across_seeds": true,
+    "independent_new_test_sample_size_not_multiplied_by_seeds": true
+  },
+  "addon_review": {
+    "runner": "scripts/run_guard_v2_evaluation.py",
+    "metadata_views": "cascade_guard/v2_feature_views.py",
+    "checked": [
+      "no labels/score phase accepted",
+      "barrier requires four N/M/PG successful stages and both Jev exports/model unload",
+      "nonblocking global heavy-model lease through sequential fitting/prediction",
+      "archive-only collection-specific fitting; both model freezes before any external ML prediction",
+      "fixed prospective N/M local/full/facts key projections and UNKNOWN propagation",
+      "original full extractor timing retained, no invented speed savings",
+      "Jev missing memory marked UNMEASURED and count labeled source checkpoints, not text windows",
+      "partial/raw structural timeline blocks omitted rather than all-STOP arms"
+    ],
+    "repair_requested": [],
+    "hidden_instances_or_metrics_inspected": false,
+    "source_gate": "PASS_REPAIRED_PROVENANCE_GLUE; paused05 path/protocol refresh still required",
+    "independent_new_tests": {
+      "path": "tests/test_v2_addon_integrity.py",
+      "passed": 4,
+      "scope": "synthetic stale-freeze/export-tamper/model-substitution/collection-identity checks only"
+    }
+  },
+  "frozen47_modified_by_this_auditor": false,
+  "freeze_status_note": "Audit did not edit47. Root later paused own processes, preserved04, and separately authorized05 source migration by module owners.",
+  "known_archive_flag_diagnostic": {
+    "authorization": "explicit root archive-only event audit",
+    "summary": "audit/archive-flag-diagnostic/summary.json",
+    "runs": 234,
+    "main_nonambiguous": 214,
+    "flag_events": 109,
+    "commit_true": 109,
+    "commit_false": 0,
+    "commit_unknown": 0,
+    "affected_episode_ids": [],
+    "label_changes": 0,
+    "reason_changes": 0,
+    "strict_sequence_changes": 0,
+    "strict_harm_all234": 91,
+    "strict_harm_nonambiguous214": 83,
+    "old_outcomes_overwritten": false,
+    "new_tests_passed": 2
+  },
+  "amendment05_source_review": {
+    "gate": "PASS",
+    "source_sha256": {
+      "v2_inputs.py": "070cb0571fc8a9d5ae433b88745637ac2e1b87298471b09f64214e246ee9ce19",
+      "v2_legacy_rules.py": "e15fc6c2aec42a1619767fa35c485227c9c076bd01f9630893eb151359674cab",
+      "v2_features.py": "0442310e5ec013e67147cdf768dc7c6c4f23b75bb7fa10089212c27a87992fb7"
+    },
+    "checked": [
+      "full native auto-summary derivation removed entirely",
+      "literal source reports carry provenance and are excluded from trusted/local NLI premises",
+      "partial actual raw argument comparison never defaults missing values to match",
+      "native HOLD commits are TRUE/FALSE/UNKNOWN with explicit confirmation and contradictory error checks",
+      "native flag arguments/results must bind same current invoice; foreign subject is not applicable, absent/conflicting binding UNKNOWN",
+      "boolean HOLD is normalized to literal legacy enum",
+      "typed identity aliases preserve currency/unit/quantity/timestamp/prose values"
+    ],
+    "known_archive_evidence": {
+      "confirmed_flags": 109,
+      "argument_invoice_matches_current": 109,
+      "output_invoice_id_present_and_matches_current": 109,
+      "strict_outcome_changes": 0
+    },
+    "hidden_instances_read": false,
+    "hidden_labels_read": false
+  },
+  "frozen54_modified_by_this_auditor": false,
+  "generation05_orchestration": {
+    "gate": "PASS_FOR_FRESH_WATCHER_LAUNCH",
+    "checked": [
+      "PG22->PG86->N->M priority is prospective",
+      "model runner validates CLI absolute deadline and exact model cutoff against MF05",
+      "new external Jev guard binds exact MF05 SHA and validates clocks before frozen watcher execution",
+      "evaluation recognizes actual terminal status enums and requires both watchers unloaded",
+      "before cutoff all six required; after cutoff only exactly complete artifact inventories admitted",
+      "per-model COMPLETE manifest plus exact720 prefix/input-hash identities; partial/empty exit0 artifact excluded without blocking healthy completed models",
+      "Jev five-collection prefix/block inventories and attempted checkpoint evidence checked before model availability",
+      "zero complete pretrained models retains tabular/text/rule controls via empty record files without fabricated scores",
+      "exclusive global heavy lease, no active inference children and sequential process barriers",
+      "archive-only training and both TRAIN/CAL freezes before external predictions; no labels/score path"
+    ],
+    "reserve_boundary_utc": "2026-10-15T21:39:58.072112+00:00",
+    "absolute_deadline_utc": "2026-10-15T22:59:58.072112+00:00",
+    "independent_new_addon_tamper_tests_passed": 8,
+    "source_hashes": {
+      "scripts/run_guard_v2_evaluation.py": "762803827c1281c92783beda6adb18f921d3a2ebe9e48afeee228bf16c84d9b7",
+      "cascade_guard/v2_feature_views.py": "f2e1744e605a105e42394938b01f101da73227e22203a73707f7eafbc005ee1a",
+      "scripts/run_guard_v2_models_v5.py": "38c6690af01f933b67668c8986fe6d068797b9840df7ec249e5831ea254324cd",
+      "scripts/run_guard_v2_jev_serial_v5_guarded.py": "8c7a28f1105a5131d6f3aff132b498a0f3fe02e991120f9fddb2ccfc4ba0d7ff",
+      "tests/test_v2_addon_integrity.py": "c21089166a10d767ad06cf45069392c904d8889504813d9a21f0f09a8458655b"
+    },
+    "resume_limit": "Frozen Jev base does not preserve previous exports in startup state. Fresh launch reviewed. Post-cutoff restart must not overwrite existing completed metadata; external guard refusal/resume-only metadata handling requested, with no frozen54 edit."
+  }
+}

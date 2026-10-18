@@ -1,0 +1,10 @@
+{
+  "version": "archive-latency-v2",
+  "source_sha256": "da5272557cfe2ef1440d0b084db18258492f5573c4f53bd441e7ab983eab1b60",
+  "tests_sha256": "86b16caf6a22f0970a565579459408c4c72cf46d041a8e09aea235d827843973",
+  "source_freeze_sha256": "905199e01d99950fe905cb741d27bee56df5be745819d62d64820fb119747d44",
+  "sample": "Known-feature archive rows only, first 16 prefix IDs ordered by sha256(archive-latency-v2|seed|prefix_id), same sample across heads when eligible inventories match; no outcome-based selection",
+  "execution": "One untimed warmup per model; single-row predict wall time includes its own feature matrix preparation; separate x/render/tabular/rules microprofiles",
+  "deadline": "Cooperative soft budget at most 300 seconds after integrity validation, capped by frozen global deadline; cannot interrupt an individual joblib/predict call. Partial explicit; no pretrained feature-model inference or fitting",
+  "cost": "Cached feature extraction source times retained; sum is reconstructed eager serial path, not live end-to-end; no per-model memory inference"
+}

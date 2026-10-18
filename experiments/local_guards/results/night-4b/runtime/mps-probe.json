@@ -1,0 +1,2165 @@
+{
+  "status": "COMPLETE",
+  "selection": "3 shortest and 3 longest distinct frozen payloads by serialized characters",
+  "model_metadata": {
+    "release": "v1.2.0",
+    "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+    "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+    "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+    "base_repo": "Qwen/Qwen3.5-4B-Base",
+    "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+    "base_weights_sha256": {
+      "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+      "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+    },
+    "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+    "model": "SecJev-4B",
+    "device": "mps",
+    "precision": "FP32",
+    "adapter_merged": false,
+    "attention": "sdpa",
+    "patch": "solver_block",
+    "temperature": 1.334968103387446,
+    "threads": 1,
+    "torch": "2.14.0",
+    "transformers": "5.17.0",
+    "python": "3.12.14",
+    "format_version": "secjev-reference-v1-4b-night",
+    "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+    "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+    "model_load_ms": 65042.96079199412,
+    "all_modules_eval": true,
+    "parameter_dtypes": [
+      "torch.float32"
+    ],
+    "parameter_devices": [
+      "mps:0"
+    ],
+    "model_parameters": 4239527424,
+    "environment": {
+      "PYTORCH_MPS_FAST_MATH": "0",
+      "PYTORCH_MPS_PREFER_METAL": null,
+      "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+    },
+    "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+    "question_microbatch_size": 1,
+    "cache_policy": "empty_cache_between_questions_and_after_request",
+    "numerical_reference_question_batch_size": 4
+  },
+  "input_sha256": "2a56f2c8dd56315ad702172be9b5f9e5fa32b3734b60b9a2d634aff6f2a897d9",
+  "cases": [
+    {
+      "prefix_id": "7f97799d3c6438c709949f0f",
+      "format": "plus_rationale",
+      "payload_hash": "7735df51ed76bf46565ad21c69b1e9cdc79f82655f84efd384fef7056c07db06",
+      "results": [
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 0.9999847412109375,
+              "true": 1.52708435052773e-05
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.052448321133852005,
+              "true": 0.9475517272949219
+            },
+            "unsupported_authority_used": {
+              "false": 0.9053704738616943,
+              "true": 0.09462954849004745
+            },
+            "untrusted_instruction": {
+              "false": 0.9999250173568726,
+              "true": 7.496114994864911e-05
+            }
+          },
+          "timing_ms": {
+            "tokenize": 116.00345800979994,
+            "compute": 11529.59041701979,
+            "total": 11675.91254101717,
+            "queue": 0.013417011359706521,
+            "cleanup": 29.127749003237113
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 509
+              },
+              "evidence_missing_for_permission": {
+                "branch": 63,
+                "state_plus_branch": 508
+              },
+              "unsupported_authority_used": {
+                "branch": 76,
+                "state_plus_branch": 521
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 516
+              }
+            },
+            "model_rows_total": 2054,
+            "state": 445
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 17761533952
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 0.9999847412109375,
+              "true": 1.52708435052773e-05
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.052448321133852005,
+              "true": 0.9475517272949219
+            },
+            "unsupported_authority_used": {
+              "false": 0.9053704738616943,
+              "true": 0.09462954849004745
+            },
+            "untrusted_instruction": {
+              "false": 0.9999250173568726,
+              "true": 7.496114994864911e-05
+            }
+          },
+          "timing_ms": {
+            "tokenize": 19.6796259842813,
+            "compute": 19686.436999967555,
+            "total": 19743.615125014912,
+            "queue": 0.14529001782648265,
+            "cleanup": 36.277208011597395
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 509
+              },
+              "evidence_missing_for_permission": {
+                "branch": 63,
+                "state_plus_branch": 508
+              },
+              "unsupported_authority_used": {
+                "branch": 76,
+                "state_plus_branch": 521
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 516
+              }
+            },
+            "model_rows_total": 2054,
+            "state": 445
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 17761550336
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 0.9999847412109375,
+              "true": 1.52708435052773e-05
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.052448321133852005,
+              "true": 0.9475517272949219
+            },
+            "unsupported_authority_used": {
+              "false": 0.9053704738616943,
+              "true": 0.09462954849004745
+            },
+            "untrusted_instruction": {
+              "false": 0.9999250173568726,
+              "true": 7.496114994864911e-05
+            }
+          },
+          "timing_ms": {
+            "tokenize": 4.871541023021564,
+            "compute": 5643.991124001332,
+            "total": 5668.451166013256,
+            "queue": 0.01025001984089613,
+            "cleanup": 19.193123996956274
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 509
+              },
+              "evidence_missing_for_permission": {
+                "branch": 63,
+                "state_plus_branch": 508
+              },
+              "unsupported_authority_used": {
+                "branch": 76,
+                "state_plus_branch": 521
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 516
+              }
+            },
+            "model_rows_total": 2054,
+            "state": 445
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 17761533952
+          },
+          "error": null
+        }
+      ],
+      "aa": {
+        "runs": 3,
+        "valid": 3,
+        "identical": true,
+        "stable_decisions": true,
+        "max_abs_delta": 0.0,
+        "comparisons": [
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          },
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          }
+        ],
+        "median_compute_ms": 11529.59041701979
+      },
+      "cpu_parity": [
+        {
+          "passed": true,
+          "max_abs_delta": 3.159046173095703e-06,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 3.159046173095703e-06,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 3.159046173095703e-06,
+          "categorical_flips": [],
+          "threshold_flips": []
+        }
+      ]
+    },
+    {
+      "prefix_id": "9f8b9e5c61a78eff24799c2e",
+      "format": "plus_rationale",
+      "payload_hash": "9946c078de79887946a5864760973d1a3ce5056086c562979a8a1bf48169997c",
+      "results": [
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 0.9917343854904175,
+              "true": 0.008265678770840168
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.04070622846484184,
+              "true": 0.959293782711029
+            },
+            "unsupported_authority_used": {
+              "false": 0.9845408201217651,
+              "true": 0.015459167771041393
+            },
+            "untrusted_instruction": {
+              "false": 0.9998340606689453,
+              "true": 0.000165961857419461
+            }
+          },
+          "timing_ms": {
+            "tokenize": 13.154332991689444,
+            "compute": 5851.330334029626,
+            "total": 5883.192249981221,
+            "queue": 0.008832983439788222,
+            "cleanup": 18.413623998640105
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 522
+              },
+              "evidence_missing_for_permission": {
+                "branch": 63,
+                "state_plus_branch": 521
+              },
+              "unsupported_authority_used": {
+                "branch": 76,
+                "state_plus_branch": 534
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 529
+              }
+            },
+            "model_rows_total": 2106,
+            "state": 458
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 17761533952
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 0.9917343854904175,
+              "true": 0.008265678770840168
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.04070622846484184,
+              "true": 0.959293782711029
+            },
+            "unsupported_authority_used": {
+              "false": 0.9845408201217651,
+              "true": 0.015459167771041393
+            },
+            "untrusted_instruction": {
+              "false": 0.9998340606689453,
+              "true": 0.000165961857419461
+            }
+          },
+          "timing_ms": {
+            "tokenize": 3.69841797510162,
+            "compute": 5800.238292984432,
+            "total": 5820.6521660031285,
+            "queue": 0.006707996362820268,
+            "cleanup": 16.49870802066289
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 522
+              },
+              "evidence_missing_for_permission": {
+                "branch": 63,
+                "state_plus_branch": 521
+              },
+              "unsupported_authority_used": {
+                "branch": 76,
+                "state_plus_branch": 534
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 529
+              }
+            },
+            "model_rows_total": 2106,
+            "state": 458
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 17761533952
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 0.9917343854904175,
+              "true": 0.008265678770840168
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.04070622846484184,
+              "true": 0.959293782711029
+            },
+            "unsupported_authority_used": {
+              "false": 0.9845408201217651,
+              "true": 0.015459167771041393
+            },
+            "untrusted_instruction": {
+              "false": 0.9998340606689453,
+              "true": 0.000165961857419461
+            }
+          },
+          "timing_ms": {
+            "tokenize": 3.634707973105833,
+            "compute": 5764.9731670098845,
+            "total": 5784.8779580090195,
+            "queue": 0.006584043148905039,
+            "cleanup": 16.043458017520607
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 522
+              },
+              "evidence_missing_for_permission": {
+                "branch": 63,
+                "state_plus_branch": 521
+              },
+              "unsupported_authority_used": {
+                "branch": 76,
+                "state_plus_branch": 534
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 529
+              }
+            },
+            "model_rows_total": 2106,
+            "state": 458
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 17761533952
+          },
+          "error": null
+        }
+      ],
+      "aa": {
+        "runs": 3,
+        "valid": 3,
+        "identical": true,
+        "stable_decisions": true,
+        "max_abs_delta": 0.0,
+        "comparisons": [
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          },
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          }
+        ],
+        "median_compute_ms": 5800.238292984432
+      },
+      "cpu_parity": [
+        {
+          "passed": true,
+          "max_abs_delta": 7.748603820800781e-07,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 7.748603820800781e-07,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 7.748603820800781e-07,
+          "categorical_flips": [],
+          "threshold_flips": []
+        }
+      ]
+    },
+    {
+      "prefix_id": "157a8957313c7b5b3eba0541",
+      "format": "plus_rationale",
+      "payload_hash": "7952943f2e47a4620146081e7af0382f05768f57a200481fe6ec24c7af436825",
+      "results": [
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 0.9995689988136292,
+              "true": 0.00043103922507725656
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.49000439047813416,
+              "true": 0.5099955797195435
+            },
+            "unsupported_authority_used": {
+              "false": 0.9675434827804565,
+              "true": 0.03245651721954346
+            },
+            "untrusted_instruction": {
+              "false": 0.9995784163475037,
+              "true": 0.00042156927520409226
+            }
+          },
+          "timing_ms": {
+            "tokenize": 6.519707967527211,
+            "compute": 5392.843792011263,
+            "total": 5414.5078340079635,
+            "queue": 0.005834037438035011,
+            "cleanup": 14.926291012670845
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 506
+              },
+              "evidence_missing_for_permission": {
+                "branch": 63,
+                "state_plus_branch": 505
+              },
+              "unsupported_authority_used": {
+                "branch": 76,
+                "state_plus_branch": 518
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 513
+              }
+            },
+            "model_rows_total": 2042,
+            "state": 442
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 17761533952
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 0.9995689988136292,
+              "true": 0.00043103922507725656
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.49000439047813416,
+              "true": 0.5099955797195435
+            },
+            "unsupported_authority_used": {
+              "false": 0.9675434827804565,
+              "true": 0.03245651721954346
+            },
+            "untrusted_instruction": {
+              "false": 0.9995784163475037,
+              "true": 0.00042156927520409226
+            }
+          },
+          "timing_ms": {
+            "tokenize": 3.2286650384776294,
+            "compute": 5329.494625009829,
+            "total": 5347.356084006606,
+            "queue": 0.005750014679506421,
+            "cleanup": 14.444207976339385
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 506
+              },
+              "evidence_missing_for_permission": {
+                "branch": 63,
+                "state_plus_branch": 505
+              },
+              "unsupported_authority_used": {
+                "branch": 76,
+                "state_plus_branch": 518
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 513
+              }
+            },
+            "model_rows_total": 2042,
+            "state": 442
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 17761533952
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 0.9995689988136292,
+              "true": 0.00043103922507725656
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.49000439047813416,
+              "true": 0.5099955797195435
+            },
+            "unsupported_authority_used": {
+              "false": 0.9675434827804565,
+              "true": 0.03245651721954346
+            },
+            "untrusted_instruction": {
+              "false": 0.9995784163475037,
+              "true": 0.00042156927520409226
+            }
+          },
+          "timing_ms": {
+            "tokenize": 3.3143750042654574,
+            "compute": 5425.572833017213,
+            "total": 5444.233375019394,
+            "queue": 0.006040994776412845,
+            "cleanup": 15.127291029784828
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 506
+              },
+              "evidence_missing_for_permission": {
+                "branch": 63,
+                "state_plus_branch": 505
+              },
+              "unsupported_authority_used": {
+                "branch": 76,
+                "state_plus_branch": 518
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 513
+              }
+            },
+            "model_rows_total": 2042,
+            "state": 442
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 17761533952
+          },
+          "error": null
+        }
+      ],
+      "aa": {
+        "runs": 3,
+        "valid": 3,
+        "identical": true,
+        "stable_decisions": true,
+        "max_abs_delta": 0.0,
+        "comparisons": [
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          },
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          }
+        ],
+        "median_compute_ms": 5392.843792011263
+      },
+      "cpu_parity": [
+        {
+          "passed": true,
+          "max_abs_delta": 1.6689300537109375e-06,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 1.6689300537109375e-06,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 1.6689300537109375e-06,
+          "categorical_flips": [],
+          "threshold_flips": []
+        }
+      ]
+    },
+    {
+      "prefix_id": "276a2fe118c8d7ea697acffe",
+      "format": "relevant_history_obligations",
+      "payload_hash": "d6d4d21354a98c578d35078a2e96c657031a6e5aebedca26af853cf2c0671b50",
+      "results": [
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 0.0006362924468703568,
+              "true": 0.9993637204170227
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.06400077790021896,
+              "true": 0.9359991550445557
+            },
+            "unsupported_authority_used": {
+              "false": 0.909622311592102,
+              "true": 0.09037765115499496
+            },
+            "untrusted_instruction": {
+              "false": 0.49116629362106323,
+              "true": 0.5088337063789368
+            }
+          },
+          "timing_ms": {
+            "tokenize": 48.56954101705924,
+            "compute": 30985.99191798712,
+            "total": 31106.131750013446,
+            "queue": 0.007750990334898233,
+            "cleanup": 71.08320799306966
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 2472
+              },
+              "evidence_missing_for_permission": {
+                "branch": 142,
+                "state_plus_branch": 2550
+              },
+              "unsupported_authority_used": {
+                "branch": 100,
+                "state_plus_branch": 2508
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 2479
+              }
+            },
+            "model_rows_total": 10009,
+            "state": 2408
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 18835275776
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 0.0006362924468703568,
+              "true": 0.9993637204170227
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.06400077790021896,
+              "true": 0.9359991550445557
+            },
+            "unsupported_authority_used": {
+              "false": 0.909622311592102,
+              "true": 0.09037765115499496
+            },
+            "untrusted_instruction": {
+              "false": 0.49116629362106323,
+              "true": 0.5088337063789368
+            }
+          },
+          "timing_ms": {
+            "tokenize": 15.82820896874182,
+            "compute": 31365.362000011373,
+            "total": 31448.710666998522,
+            "queue": 0.017209036741405725,
+            "cleanup": 66.91670801956207
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 2472
+              },
+              "evidence_missing_for_permission": {
+                "branch": 142,
+                "state_plus_branch": 2550
+              },
+              "unsupported_authority_used": {
+                "branch": 100,
+                "state_plus_branch": 2508
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 2479
+              }
+            },
+            "model_rows_total": 10009,
+            "state": 2408
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 18835275776
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 0.0006362924468703568,
+              "true": 0.9993637204170227
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.06400077790021896,
+              "true": 0.9359991550445557
+            },
+            "unsupported_authority_used": {
+              "false": 0.909622311592102,
+              "true": 0.09037765115499496
+            },
+            "untrusted_instruction": {
+              "false": 0.49116629362106323,
+              "true": 0.5088337063789368
+            }
+          },
+          "timing_ms": {
+            "tokenize": 12.210331042297184,
+            "compute": 31295.767708012136,
+            "total": 31422.134082997218,
+            "queue": 0.009542971383780241,
+            "cleanup": 113.79170801956207
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 2472
+              },
+              "evidence_missing_for_permission": {
+                "branch": 142,
+                "state_plus_branch": 2550
+              },
+              "unsupported_authority_used": {
+                "branch": 100,
+                "state_plus_branch": 2508
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 2479
+              }
+            },
+            "model_rows_total": 10009,
+            "state": 2408
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 19909017600
+          },
+          "error": null
+        }
+      ],
+      "aa": {
+        "runs": 3,
+        "valid": 3,
+        "identical": true,
+        "stable_decisions": true,
+        "max_abs_delta": 0.0,
+        "comparisons": [
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          },
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          }
+        ],
+        "median_compute_ms": 31295.767708012136
+      },
+      "cpu_parity": [
+        {
+          "passed": true,
+          "max_abs_delta": 5.841255187988281e-06,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 5.841255187988281e-06,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 5.841255187988281e-06,
+          "categorical_flips": [],
+          "threshold_flips": []
+        }
+      ]
+    },
+    {
+      "prefix_id": "6da9f712193b88b47d6692af",
+      "format": "relevant_history_obligations",
+      "payload_hash": "56cd496e753b61d526a73d31e73a9c9021b3159b1686c06d9ee5004ed6de6a84",
+      "results": [
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 8.111539500532672e-05,
+              "true": 0.9999188184738159
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.01987295038998127,
+              "true": 0.9801269769668579
+            },
+            "unsupported_authority_used": {
+              "false": 0.9977970123291016,
+              "true": 0.002203026320785284
+            },
+            "untrusted_instruction": {
+              "false": 0.9994334578514099,
+              "true": 0.0005665770149789751
+            }
+          },
+          "timing_ms": {
+            "tokenize": 19.368625071365386,
+            "compute": 34299.11574997823,
+            "total": 34442.58654100122,
+            "queue": 0.010917981853708625,
+            "cleanup": 123.19320696406066
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 2539
+              },
+              "evidence_missing_for_permission": {
+                "branch": 142,
+                "state_plus_branch": 2617
+              },
+              "unsupported_authority_used": {
+                "branch": 100,
+                "state_plus_branch": 2575
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 2546
+              }
+            },
+            "model_rows_total": 10277,
+            "state": 2475
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 19909017600
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 8.111539500532672e-05,
+              "true": 0.9999188184738159
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.01987295038998127,
+              "true": 0.9801269769668579
+            },
+            "unsupported_authority_used": {
+              "false": 0.9977970123291016,
+              "true": 0.002203026320785284
+            },
+            "untrusted_instruction": {
+              "false": 0.9994334578514099,
+              "true": 0.0005665770149789751
+            }
+          },
+          "timing_ms": {
+            "tokenize": 38.49112297757529,
+            "compute": 39077.07108397153,
+            "total": 39268.965541006764,
+            "queue": 0.008459988748654723,
+            "cleanup": 152.49766703345813
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 2539
+              },
+              "evidence_missing_for_permission": {
+                "branch": 142,
+                "state_plus_branch": 2617
+              },
+              "unsupported_authority_used": {
+                "branch": 100,
+                "state_plus_branch": 2575
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 2546
+              }
+            },
+            "model_rows_total": 10277,
+            "state": 2475
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 19909017600
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 8.111539500532672e-05,
+              "true": 0.9999188184738159
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.01987295038998127,
+              "true": 0.9801269769668579
+            },
+            "unsupported_authority_used": {
+              "false": 0.9977970123291016,
+              "true": 0.002203026320785284
+            },
+            "untrusted_instruction": {
+              "false": 0.9994334578514099,
+              "true": 0.0005665770149789751
+            }
+          },
+          "timing_ms": {
+            "tokenize": 16.403793008066714,
+            "compute": 35648.63783301553,
+            "total": 35862.819249974564,
+            "queue": 0.009374954970553517,
+            "cleanup": 197.0896250277292
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 2539
+              },
+              "evidence_missing_for_permission": {
+                "branch": 142,
+                "state_plus_branch": 2617
+              },
+              "unsupported_authority_used": {
+                "branch": 100,
+                "state_plus_branch": 2575
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 2546
+              }
+            },
+            "model_rows_total": 10277,
+            "state": 2475
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 19909017600
+          },
+          "error": null
+        }
+      ],
+      "aa": {
+        "runs": 3,
+        "valid": 3,
+        "identical": true,
+        "stable_decisions": true,
+        "max_abs_delta": 0.0,
+        "comparisons": [
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          },
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          }
+        ],
+        "median_compute_ms": 35648.63783301553
+      },
+      "cpu_parity": [
+        {
+          "passed": true,
+          "max_abs_delta": 5.960464477539062e-07,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 5.960464477539062e-07,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 5.960464477539062e-07,
+          "categorical_flips": [],
+          "threshold_flips": []
+        }
+      ]
+    },
+    {
+      "prefix_id": "ca8efcd70b98be70c2c305e9",
+      "format": "relevant_history_obligations",
+      "payload_hash": "8263e64978c51b76ee0a1c36fe37f53a902d754beb28df3b6c574481a31426bb",
+      "results": [
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 0.00041566594154573977,
+              "true": 0.9995843768119812
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.18306098878383636,
+              "true": 0.8169389963150024
+            },
+            "unsupported_authority_used": {
+              "false": 0.9809876680374146,
+              "true": 0.019012371078133583
+            },
+            "untrusted_instruction": {
+              "false": 0.6768354177474976,
+              "true": 0.32316461205482483
+            }
+          },
+          "timing_ms": {
+            "tokenize": 74.42912500118837,
+            "compute": 37875.92187500559,
+            "total": 38168.9010830014,
+            "queue": 0.009833980584517121,
+            "cleanup": 217.97495798091404
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 2499
+              },
+              "evidence_missing_for_permission": {
+                "branch": 142,
+                "state_plus_branch": 2577
+              },
+              "unsupported_authority_used": {
+                "branch": 100,
+                "state_plus_branch": 2535
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 2506
+              }
+            },
+            "model_rows_total": 10117,
+            "state": 2435
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 19909017600
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 0.00041566594154573977,
+              "true": 0.9995843768119812
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.18306098878383636,
+              "true": 0.8169389963150024
+            },
+            "unsupported_authority_used": {
+              "false": 0.9809876680374146,
+              "true": 0.019012371078133583
+            },
+            "untrusted_instruction": {
+              "false": 0.6768354177474976,
+              "true": 0.32316461205482483
+            }
+          },
+          "timing_ms": {
+            "tokenize": 14.876164961606264,
+            "compute": 38799.679624062264,
+            "total": 38961.698375002015,
+            "queue": 0.01400001929141581,
+            "cleanup": 146.43787397653796
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 2499
+              },
+              "evidence_missing_for_permission": {
+                "branch": 142,
+                "state_plus_branch": 2577
+              },
+              "unsupported_authority_used": {
+                "branch": 100,
+                "state_plus_branch": 2535
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 2506
+              }
+            },
+            "model_rows_total": 10117,
+            "state": 2435
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 19942572032
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 0.00041566594154573977,
+              "true": 0.9995843768119812
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.18306098878383636,
+              "true": 0.8169389963150024
+            },
+            "unsupported_authority_used": {
+              "false": 0.9809876680374146,
+              "true": 0.019012371078133583
+            },
+            "untrusted_instruction": {
+              "false": 0.6768354177474976,
+              "true": 0.32316461205482483
+            }
+          },
+          "timing_ms": {
+            "tokenize": 20.590500032994896,
+            "compute": 38733.742874028394,
+            "total": 38943.04345900309,
+            "queue": 0.016707985196262598,
+            "cleanup": 188.03737399866804
+          },
+          "model_metadata": {
+            "release": "v1.2.0",
+            "release_commit": "3ef7ecf0ec6af725c3bb295249dbb0ca8a2ef13c",
+            "model_archive_sha256": "e9df64d017c660836340391342bfc54a4bfd779bcb02537231fc26d9c0773c96",
+            "code_archive_sha256": "502d7823384289b27bd9b40089123dbbfe2aca866702778d08790ea6063ab604",
+            "base_repo": "Qwen/Qwen3.5-4B-Base",
+            "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+            "base_weights_sha256": {
+              "model.safetensors-00001-of-00002.safetensors": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712",
+              "model.safetensors-00002-of-00002.safetensors": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+            },
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "model": "SecJev-4B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "patch": "solver_block",
+            "temperature": 1.334968103387446,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-4b-night",
+            "scorer_sha256": "ac1077c944b5226654995a3ed0e693e6c855032743af38cdbb880bb4612061cd",
+            "diagnostic_patch_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 65042.96079199412,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "model_parameters": 4239527424,
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            },
+            "base_scorer_sha256": "828ff0adfafbb6c5ab93491437f1542bd824d85970a17f043342af2d572b9594",
+            "question_microbatch_size": 1,
+            "cache_policy": "empty_cache_between_questions_and_after_request",
+            "numerical_reference_question_batch_size": 4
+          },
+          "token_counts": {
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 2499
+              },
+              "evidence_missing_for_permission": {
+                "branch": 142,
+                "state_plus_branch": 2577
+              },
+              "unsupported_authority_used": {
+                "branch": 100,
+                "state_plus_branch": 2535
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 2506
+              }
+            },
+            "model_rows_total": 10117,
+            "state": 2435
+          },
+          "memory": {
+            "process_peak_rss_bytes": 16948461568,
+            "mps_allocated_bytes": 16965456640,
+            "mps_driver_bytes": 19909017600
+          },
+          "error": null
+        }
+      ],
+      "aa": {
+        "runs": 3,
+        "valid": 3,
+        "identical": true,
+        "stable_decisions": true,
+        "max_abs_delta": 0.0,
+        "comparisons": [
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          },
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          }
+        ],
+        "median_compute_ms": 38733.742874028394
+      },
+      "cpu_parity": [
+        {
+          "passed": true,
+          "max_abs_delta": 1.049041748046875e-05,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 1.049041748046875e-05,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 1.049041748046875e-05,
+          "categorical_flips": [],
+          "threshold_flips": []
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

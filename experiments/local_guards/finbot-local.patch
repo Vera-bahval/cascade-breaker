@@ -1,0 +1,174 @@
+diff --git a/finbot/agents/base.py b/finbot/agents/base.py
+index 16d18ec..2ede8f9 100644
+--- a/finbot/agents/base.py
++++ b/finbot/agents/base.py
+@@ -142,6 +142,7 @@ class BaseAgent(ABC):
+                     if response.tool_calls:
+                         stall_count = 0
+                         for tool_call in response.tool_calls:
++                            probe_guards.raise_if_stopped()
+                             tool_call_name = tool_call["name"]
+                             callable_fn = callables.get(tool_call_name, None)
+                             if callable_fn:
+@@ -188,6 +189,8 @@ class BaseAgent(ABC):
+                                         )
+                                         return function_output
+                                 except Exception as e:  # pylint: disable=broad-exception-caught
++                                    if isinstance(e, probe_guards.GuardStop):
++                                        raise
+                                     logger.error(
+                                         "Tool call %s failed: %s", tool_call["name"], e
+                                     )
+@@ -322,6 +325,8 @@ class BaseAgent(ABC):
+                         summary=f"Agent iteration {iteration + 1}/{max_iterations} complete ({len(response.tool_calls) if response.tool_calls else 0} tool calls)",
+                     )
+                 except Exception as e:  # pylint: disable=broad-exception-caught
++                    if isinstance(e, probe_guards.GuardStop):
++                        raise
+                     logger.error("Agent loop iteration %d failed: %s", iteration, e)
+ 
+                     task_result = await callables["complete_task"](
+diff --git a/finbot/agents/runner.py b/finbot/agents/runner.py
+index 681b445..c74513e 100644
+--- a/finbot/agents/runner.py
++++ b/finbot/agents/runner.py
+@@ -14,6 +14,7 @@ from finbot.agents.specialized.onboarding import VendorOnboardingAgent
+ from finbot.agents.specialized.payments import PaymentsAgent
+ from finbot.core.auth.session import SessionContext
+ from finbot.core.messaging import event_bus
++from finbot.probe.guards.runtime import GuardStop
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -53,6 +54,8 @@ async def run_agent_with_retry(
+ 
+             return result
+ 
++        except GuardStop:
++            raise
+         except Exception as e:  # pylint: disable=broad-exception-caught
+             logger.error(
+                 "Agent %s attempt %d/%d failed: %s",
+diff --git a/finbot/probe/guards/base.py b/finbot/probe/guards/base.py
+index 60ff619..c5d40f0 100644
+--- a/finbot/probe/guards/base.py
++++ b/finbot/probe/guards/base.py
+@@ -5,7 +5,7 @@ from __future__ import annotations
+ from dataclasses import dataclass, field
+ from typing import Any, Literal, Protocol
+ 
+-GuardDecision = Literal["allow", "block"]
++GuardDecision = Literal["allow", "block", "unknown"]
+ 
+ # Point families. P0-P4 sit on the critical path before the payment;
+ # P5 sees the final answer and can only detect.
+@@ -35,6 +35,9 @@ class GuardResult:
+     tokens_in: int = 0
+     tokens_out: int = 0
+     cost_usd: float = 0.0
++    scores: dict[str, float] = field(default_factory=dict)
++    diagnostics: dict[str, Any] = field(default_factory=dict)
++    timing_ms: dict[str, float] = field(default_factory=dict)
+ 
+ 
+ class Verifier(Protocol):
+diff --git a/finbot/probe/guards/runtime.py b/finbot/probe/guards/runtime.py
+index f19769a..93b6d53 100644
+--- a/finbot/probe/guards/runtime.py
++++ b/finbot/probe/guards/runtime.py
+@@ -60,8 +60,6 @@ class GuardRuntime:
+             raise GuardStop(f"workflow stopped at {self.stopped_by['point']}")
+         family = point.split(".", 1)[0]
+         verifiers = self._applicable(point, family)
+-        if not verifiers:
+-            return
+         recorder = probe_trace.active_recorder()
+         ctx = GuardContext(
+             run_id=self.run_id,
+@@ -71,15 +69,21 @@ class GuardRuntime:
+             db_snapshot=self.snapshot(),
+             trace_so_far=list(recorder.steps) if recorder else [],
+         )
+-        started = time.perf_counter()
+-        results = await asyncio.gather(*(self._timed(v, ctx) for v in verifiers))
+-        pause_ms = round((time.perf_counter() - started) * 1000, 1)
+         context_step = None
++        context_entry = None
+         if recorder is not None:
+-            context_step = recorder.add(
++            context_entry = recorder.add(
+                 "guard_context", point=point, family=family, agent=agent,
+-                payload=payload, db_snapshot=ctx.db_snapshot, pause_ms=pause_ms,
+-            )["seq"]
++                payload=payload, db_snapshot=ctx.db_snapshot, pause_ms=0.0,
++            )
++            context_step = context_entry["seq"]
++        if not verifiers:
++            return
++        started = time.perf_counter()
++        results = await asyncio.gather(*(self._timed(v, ctx) for v in verifiers))
++        pause_ms = round((time.perf_counter() - started) * 1000, 1)
++        if context_entry is not None:
++            context_entry["pause_ms"] = pause_ms
+         blocking = None
+         for verifier, result in zip(verifiers, results):
+             probe_trace.record(
+@@ -88,8 +92,9 @@ class GuardRuntime:
+                 decision=result.decision, reason=result.reason,
+                 latency_ms=result.latency_ms, tokens_in=result.tokens_in,
+                 tokens_out=result.tokens_out, cost_usd=result.cost_usd,
++                scores=result.scores, diagnostics=result.diagnostics, timing_ms=result.timing_ms,
+             )
+-            if result.decision == "block" and blocking is None:
++            if result.decision in ("block", "unknown") and blocking is None:
+                 blocking = verifier.name
+         if self.mode == "enforce" and blocking is not None:
+             self.stopped_by = {"point": point, "verifier": blocking}
+@@ -102,8 +107,10 @@ class GuardRuntime:
+         try:
+             result = await verifier.check(ctx)
+         except Exception as e:  # pylint: disable=broad-exception-caught
+-            # A verifier failure must not change the run; it fails open and is logged.
+-            result = GuardResult(decision="allow", reason=f"verifier_error: {e}"[:300])
++            result = GuardResult(decision="unknown", reason=f"verifier_error: {type(e).__name__}",
++                                 diagnostics={"error_type": type(e).__name__})
++        if result.decision not in {"allow", "block", "unknown"}:
++            result = GuardResult(decision="unknown", reason="invalid_verifier_decision")
+         result.latency_ms = round((time.perf_counter() - started) * 1000, 1)
+         return result
+ 
+diff --git a/finbot/probe/trace.py b/finbot/probe/trace.py
+index 0ade285..5d1cae5 100644
+--- a/finbot/probe/trace.py
++++ b/finbot/probe/trace.py
+@@ -89,7 +89,8 @@ def record_llm(
+     usage = None
+     served_model = None
+     if response is not None:
+-        output = {"content": response.content, "tool_calls": response.tool_calls}
++        output = {"content": response.content, "tool_calls": response.tool_calls,
++                  "messages": response.messages, "metadata": response.metadata}
+         metadata = response.metadata or {}
+         usage = metadata.get("usage")
+         served_model = metadata.get("model")
+diff --git a/scripts/probe/common.py b/scripts/probe/common.py
+index 83b1ab9..251da50 100644
+--- a/scripts/probe/common.py
++++ b/scripts/probe/common.py
+@@ -1,6 +1,7 @@
+ """Shared helpers for probe runner scripts (paths, budget, provenance)."""
+ 
+ import json
++import os
+ import subprocess
+ from datetime import UTC, datetime
+ from pathlib import Path
+@@ -11,7 +12,7 @@ import httpx
+ from finbot.config import settings
+ 
+ FINBOT_ROOT = Path(__file__).resolve().parents[2]
+-EXPERIMENT_DIR = FINBOT_ROOT.parent.parent / "experiments" / "finbot-probe"
++EXPERIMENT_DIR = Path(os.environ.get("CASCADE_EXPERIMENT_DIR", str(FINBOT_ROOT.parent.parent / "experiments" / "finbot-probe"))).resolve()
+ SPEND_LOG = EXPERIMENT_DIR / "spend.jsonl"
+ BUDGET_USD = 15.0
+ STOP_FRACTION = 0.8

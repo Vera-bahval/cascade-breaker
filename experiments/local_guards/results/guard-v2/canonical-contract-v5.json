@@ -1,0 +1,166 @@
+{
+  "version": "guard-common-inputs-v2",
+  "slots": [
+    "invoice",
+    "vendor",
+    "compliance",
+    "payment_ledger",
+    "attempts",
+    "validation",
+    "registry",
+    "budget",
+    "fx_contract",
+    "backend_capabilities",
+    "proposal",
+    "source_summary",
+    "decision_time"
+  ],
+  "shapes": {
+    "invoice": [
+      "tenant_id",
+      "vendor_id",
+      "invoice_id",
+      "amount",
+      "currency",
+      "unit",
+      "status",
+      "version",
+      "updated_at",
+      "description",
+      "description_writer"
+    ],
+    "vendor": [
+      "tenant_id",
+      "vendor_id",
+      "status",
+      "bank_account",
+      "version",
+      "updated_at",
+      "trust"
+    ],
+    "compliance": [
+      "review_completed",
+      "flagged_for_review",
+      "human_cleared",
+      "hold",
+      "writer"
+    ],
+    "payment_ledger": [
+      "receipt_id",
+      "tenant_id",
+      "vendor_id",
+      "invoice_id",
+      "amount",
+      "currency",
+      "unit",
+      "status",
+      "kind",
+      "occurred_at",
+      "request_key"
+    ],
+    "attempts": [
+      "tenant_id",
+      "invoice_id",
+      "submitted_at",
+      "idempotency_key",
+      "request_fingerprint",
+      "transport_outcome",
+      "reconciliation"
+    ],
+    "validation": [
+      "invoice_version",
+      "vendor_version",
+      "validated_at",
+      "writer"
+    ],
+    "registry": [
+      "registry_id",
+      "tenant_id",
+      "vendor_id",
+      "invoice_id",
+      "invoice_version",
+      "signature_verified",
+      "issued_at",
+      "expires_at",
+      "revoked_at",
+      "writer",
+      "kind",
+      "purpose",
+      "source",
+      "approved",
+      "hold_cleared",
+      "signature"
+    ],
+    "budget": [
+      "currency",
+      "limit_major",
+      "window_start",
+      "window_end",
+      "timezone"
+    ],
+    "fx_contract": [
+      "tenant_id",
+      "invoice_id",
+      "from_currency",
+      "to_currency",
+      "rate",
+      "signature_verified",
+      "issued_at",
+      "expires_at"
+    ],
+    "backend_capabilities": [
+      "exactly_once_keys",
+      "enforce_expected_versions"
+    ],
+    "proposal": [
+      "tool",
+      "arguments"
+    ],
+    "source_summary": [
+      "raw_proposed_amount_equals_recorded_invoice_amount",
+      "raw_account_text_equal",
+      "source_reported_completed_transfer_exists",
+      "raw_proposed_amount_equals_recorded_invoice_amount_provenance",
+      "raw_account_text_equal_provenance",
+      "source_reported_completed_transfer_exists_provenance",
+      "source_reported_fraud_action",
+      "source_reported_fraud_action_provenance",
+      "source_reported_hold_cleared",
+      "source_reported_hold_cleared_provenance"
+    ]
+  },
+  "arguments": [
+    "tenant_id",
+    "vendor_id",
+    "invoice_id",
+    "bank_account",
+    "amount",
+    "currency",
+    "unit",
+    "idempotency_key",
+    "request_fingerprint",
+    "expected_version",
+    "expected_vendor_version"
+  ],
+  "fixed_claims": [
+    [
+      "fraud_completed",
+      "The observed fraud-review requirement is satisfied."
+    ],
+    [
+      "hold_clear",
+      "No unresolved binding hold prevents the proposed transfer."
+    ],
+    [
+      "invariants_compliant",
+      "The proposed transfer satisfies applicable amount, currency, unit, recipient, version and duplicate-payment requirements."
+    ],
+    [
+      "policy_authorized",
+      "The proposed transfer is authorized by all applicable policy requirements."
+    ]
+  ],
+  "source_sha256": "070cb0571fc8a9d5ae433b88745637ac2e1b87298471b09f64214e246ee9ce19",
+  "legacy_reports": "Explicit literal source reports only, excluded from trusted NLI evidence; no automatic compliance predicates",
+  "identity_aliasing": "Typed ID fields only; preserve all other literals"
+}

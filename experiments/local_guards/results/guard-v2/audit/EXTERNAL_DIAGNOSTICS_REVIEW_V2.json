@@ -1,0 +1,31 @@
+{
+  "status": "SOURCE_REVIEW_PASS",
+  "version": "external-diagnostics-v2",
+  "scope": "Source and public synthetic fixtures only, before unblind; no hidden observations, predictions, scores or labels read. No frozen MF05 source edited.",
+  "sha256": {
+    "source": "690d4390f228a83ef1187c975601d70d1dea11f20e676f45e173f04d1ca32192",
+    "public_tests": "1240c0444dcd0c533f8e4e7fa9dbc0fbb9628577b5a8ff45959a33096fc27f92",
+    "independent_tests": "8d1ed8304c02f1cbbec91782ddab0d2dc9846a108c89fa5616451104299c1263",
+    "protocol": "34a42434c41b2f0f0bce34f1a3cd9a5ae683fe72e9d1b396b10ccc6396f69c4c"
+  },
+  "fixed_actual_bug": "v1 control row identity was unpinned; v2 requires exact main PF rows SHA and sealed input episode/cutoff equality before control metrics. v1 preserved by owner.",
+  "checks": [
+    "Grouped tied AP has correct stepwise PR area; no-positive support returns null.",
+    "Binary/finite/length guards reject malformed AP input.",
+    "UNKNOWN ranking exclusion reports coverage and preserves modeled-backend null.",
+    "Root authorization and evaluator UNBLINDED required before label/prediction access; root marker binds PF and labels.",
+    "Required METHODS hash, actual predictions/main rows hashes and public-test/source protocol pins checked.",
+    "Control source/method/input/prediction pins and exact inventories/episode/cutoff joins checked.",
+    "No fitting, threshold choice, primary decision rewriting or new inference; output refuses overwrite."
+  ],
+  "independent_tests": {
+    "command": "PYTHONPATH=experiments/local_guards python3 -m unittest discover -s experiments/local_guards/tests -p test_v2_external_diagnostics_audit.py -v",
+    "passed": 6
+  },
+  "limits": [
+    "AP describes static contract intervention ranking, not calibrated probability or archive harm risk.",
+    "Composite OR AP uses max(component, rule_stop), a ranking proxy; cross-wrapper AP requires matched known cohorts or explicit coverage caveat.",
+    "Backend diagnostic is authored modeled policy-violating new effect, not measured loss or live FinBot prevention.",
+    "Helper is post-score descriptive; existing preunblind validator remains responsible for release-time full main label/pair validation."
+  ]
+}

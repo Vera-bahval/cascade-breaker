@@ -1,0 +1,58 @@
+{
+  "phase": "PRE_GENERATION_SOURCE_REVIEW",
+  "source": "cascade_guard/v2_hidden_dataset.py",
+  "source_sha256": "cf47225d63b8e6467c5dfcf74f6c17cb1b4a8ab67b22a1693236de5ae98b494c",
+  "observations_read": false,
+  "labels_read": false,
+  "metrics_read": false,
+  "source_instances_generated_by_auditor": 0,
+  "gate": "PASS_CONTRACT_PRIMARY_AND_SEPARATE_MODELED_BACKEND_DIAGNOSTIC",
+  "target": "contract_requires_intervention",
+  "harmful_effect": "local modeled backend policy-violating new effect; not observed FinBot money loss",
+  "all_six_requirements_same_contract": true,
+  "all_six_oracle_checks_unconditional": true,
+  "aggregate_verdict_or_validity_feature_found": false,
+  "repairs_reviewed": [
+    "base policy versus extension consistency",
+    "native checkpoint phase chronology",
+    "reservation-only same-key budget replacement",
+    "genuine scope-binding and current-time validity",
+    "explicit ledger admission authenticity",
+    "remove unsupported harmful-effect label aliases"
+  ],
+  "independent_unit": "120 causal pair groups / 240 observations; five causal axes times four layouts per family",
+  "issues_shared_only_with_dataset_author": true,
+  "public_schema_integration_review_shared_with_adapter_owner": true,
+  "method_adaptation_from_hidden_errors": false,
+  "limits": [
+    "static synthetic snapshots, not LLM trajectories",
+    "no observed FinBot execution or causal prevention claim",
+    "modeled backend effect defined as violating execution contract after new post; no downstream loss simulation",
+    "unknown backend prior acceptance remains unknown",
+    "120 independent pair groups / 240 observations; not 120 distinct mechanisms"
+  ],
+  "backend_review": {
+    "CAS_version_rejection": true,
+    "idempotency_fingerprint_conflict_rejection": true,
+    "known_commit_replay_no_new_effect": true,
+    "unknown_prior_replay_preserves_null_effect_count_and_harm": true,
+    "fresh_key_posts_one_new_effect": true,
+    "post_effect_contract_checker_separate_from_primary_oracle": true
+  },
+  "input_sources": {
+    "v2_inputs.py": "12117e66ac1a001bd3640f191c0a0df3275dae7330b0b64a62207f98e90179bc",
+    "v2_runtime.py": "1f217373de994c70fa8cc6cd1d9e915e2584d713fb46f843a5ed4bdacf7e8695",
+    "v2_features.py": "6161ae4b9034e36ecc5bf294f1c417cb6c661f5f1948fd827a2748fc4136af53",
+    "v2_eval.py": "048aa8dc15fb50167b0c34ec0dc5b9510fa7767de8d69fe96c19f12ca76ff937"
+  },
+  "performance_amendment_review": {
+    "gate": "PASS_SOURCE_REVIEW",
+    "batch_size": 8,
+    "pair_cache_bound": 4096,
+    "pair_cache_scope": "exact token pairs in scoring only; no gate caching",
+    "batch_gate": "original uncached CPU/MPS single repeat gate, then CPU1 versus MPS8 times3; tolerance 1e-4 and stable argmax",
+    "fallback": "batch1 on original-equivalent MPS; CPU if original MPS gate fails",
+    "heavy_inference_by_auditor": false,
+    "timing": "cache-assisted observed path, not independent uncached inference"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "status": "SOURCE_REVIEW_PASS",
+  "scope": "NEW cost addon and UNAPPLIED new-report-copy patch, source/public fixtures only. No actual score/feature/label/prediction files read, no addon or report executed on experiment data, no model/benchmark/process mutation, no frozen57 edits.",
+  "freeze_sha256": "52a1292d078b78ca7c1cb37c0c9482c947e0b720d9337ee2d6f8ad3e1a81c832",
+  "reviewed_sha256": {
+    "${ORIGINAL_WORKSPACE}/experiments/local_guards/scripts/audit_guard_v2_costs_05.py": "119320aa03b3beb70ec57381b2e5f856f3c8383506155de00d077a39760ecfad",
+    "${ORIGINAL_WORKSPACE}/experiments/local_guards/tests/test_guard_v2_costs_05.py": "31dfc72eca8b4cd1aa00d8f2aedc76db91f62025005c11b4726cdad1e50ca1bb",
+    "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/presentation-patches/report-cold-costs-05.patch": "de0d8190f5c944e7fa5bfb8615bcb14a2df5b9a9e008f849222a3fe00fe2b424",
+    "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/presentation-patches/README.md": "f20b97b58fb3dba938284ad82e3354128dfde79fdc9f3e200d222bef5755027c",
+    "${ORIGINAL_WORKSPACE}/experiments/local_guards/tests/test_guard_v2_costs_audit_05.py": "a8fbaeb218ffd1b531b7798fb7bc337eca4d04634ba0b3e45d059e0586857017"
+  },
+  "tests": {
+    "passed": 14,
+    "owner": 11,
+    "independent": 3,
+    "command": "PYTHONPATH=experiments/local_guards .venv-cheap/bin/python -m pytest experiments/local_guards/tests/test_guard_v2_costs_05.py experiments/local_guards/tests/test_guard_v2_costs_audit_05.py -q"
+  },
+  "fixed_findings": [
+    "Runtime stages were fully decoded via True; now explicit projected object-array permits block/start/finish/exit only, skips quality keys/commands lexically.",
+    "Requested scalar fields now reject container before JSON decoder, preventing nested feature/label payload decode.",
+    "COMPLETE/runtime/duplicate metadata inputs now carry exact byte hashes.",
+    "NEW report copy includes cost artifact in input hashes."
+  ],
+  "measurement_checks": [
+    "Raw unrequested values are scanned only lexically; features/probability arrays/task labels never JSON-deserialized.",
+    "Row times retained from persisted original records; mutable written=0 resume manifest ignored.",
+    "Actual stage wall accepted only for owner66054; duplicate67514 cannot replace owner evidence. Stage wall includes startup/gates/load/extraction/I/O.",
+    "Duplicate orchestration overhead isolated; inference zero only when explicit native metadata says no new heavy inference.",
+    "Stage wall, row totals, cold setup and gate timings overlap and are not summed.",
+    "Gate elapsed only from explicit saved elapsed/duration fields; absent timer remains UNKNOWN, never stage residual.",
+    "Cold setup includes CPU semantic sanity if native timing includes it, weights/sanity separate only when independently recorded; later collection missing cold event not zero.",
+    "Aborted04 NLI persisted row/cold evidence is separate waste lower bound, not current quality; Jev costs separate.",
+    "RSS/Metal observed envelope only, no per-model allocation or monetary inference."
+  ],
+  "patch_verification": {
+    "original_report_sha256": "a34d7527d996f4ae4ae27b7ddec9620c3cde2da31d624d9135bbbffdeb50cb3d",
+    "in_memory_target_sha256": "72043cc2c325a3a949665d31ce465089abad527b142354eb7c6c87cee949c455",
+    "matches_declared_target": true,
+    "compiled_without_execution": true,
+    "new_copy_exists": false,
+    "filesystem_patch_applied": false
+  },
+  "execution_boundary": "Root must wait for actual COMPLETE and preserve original completion HTML/manifest, then verify sidecar/base SHA and copy/apply only to NEW module. This source review does not launch the addon, patch, renderer or any model."
+}

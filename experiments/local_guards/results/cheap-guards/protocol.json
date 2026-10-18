@@ -1,0 +1,69 @@
+{
+  "status": "FROZEN_BEFORE_NEW_METRICS",
+  "population": {
+    "p4": 176,
+    "episodes": 214,
+    "harm": 83,
+    "raw_safe": 131,
+    "reached_safe": 93,
+    "source_benign": 98
+  },
+  "seeds": [
+    17,
+    29,
+    43
+  ],
+  "outer_folds": 3,
+  "inner_folds": 2,
+  "threshold_objective": {
+    "raw_episode_fpr_max": 0.05
+  },
+  "main_blocks": [
+    "J_seq",
+    "G22",
+    "G86",
+    "N",
+    "M"
+  ],
+  "sequence_diagnostics": [
+    "J_cur",
+    "J_seq",
+    "J_agg",
+    "J_dynamic",
+    "J_prior"
+  ],
+  "combination_matrix": "all nonempty subsets of complete available blocks x tabular off/on x rules none/original/v2",
+  "catboost": {
+    "iterations": 200,
+    "depth": 3,
+    "learning_rate": 0.03,
+    "l2_leaf_reg": 5,
+    "threads": 2
+  },
+  "selection_order": [
+    "inner_feasible",
+    "maximum_inner_harm_recall",
+    "minimum_inner_false_stops",
+    "minimum_total_feature_latency",
+    "frozen_lexical_order"
+  ],
+  "raw64": "posthoc known authored stress test; archive-only fits/thresholds; missing J checkpoint data remains unavailable",
+  "models": {
+    "G22": "meta-llama/Llama-Prompt-Guard-2-22M",
+    "G86": "meta-llama/Llama-Prompt-Guard-2-86M",
+    "N": "cross-encoder/nli-deberta-v3-base",
+    "M": "lytang/MiniCheck-DeBERTa-v3-Large"
+  },
+  "runtime": {
+    "precision": "FP32",
+    "batch_size": 1,
+    "cpu_first": true,
+    "parity_cases": 6,
+    "repeats": 3,
+    "max_abs_delta": 0.0001,
+    "argmax_changes_allowed": 0,
+    "one_loaded_model": true
+  },
+  "failure": "UNKNOWN_STOP, unavailable models excluded with explicit incompleteness, no replacement checkpoint",
+  "inference_api_budget": 0
+}

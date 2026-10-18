@@ -1,0 +1,26 @@
+[
+  {
+    "url": "https://raw.githubusercontent.com/pytorch/pytorch/v2.6.0/aten/src/ATen/native/mps/operations/LinearAlgebra.mm",
+    "claim": "Old MPS triangular solve sets batchSize=A_.size(0), ignoring additional batch dimensions; line650."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/pytorch/pytorch/v2.14.0/aten/src/ATen/native/mps/operations/LinearAlgebra.mm",
+    "claim": "New version multiplies all batch dimensions; line1477."
+  },
+  {
+    "url": "https://github.com/pytorch/pytorch/issues/198304",
+    "claim": "Exact Qwen3.5 unit-triangular MPS solve is slow; GPU block-inverse alternative."
+  },
+  {
+    "url": "https://github.com/Mapika/decider/issues/6",
+    "claim": "Comparable Qwen3.5 decision model successfully runs on MPS; numeric changes from blockinverse must be checked independently."
+  },
+  {
+    "url": "https://github.com/huggingface/transformers/issues/47396",
+    "claim": "Known MPS autoregressive DynamicCache NaNs, but this workload uses no generation; not established exactcause."
+  },
+  {
+    "url": "https://github.com/pytorch/pytorch/issues/193487",
+    "claim": "Known allocator-state-dependent MPS matmul issue, different shapes/versions; not established exactcause here."
+  }
+]

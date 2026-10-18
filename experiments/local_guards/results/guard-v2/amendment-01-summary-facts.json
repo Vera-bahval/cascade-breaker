@@ -1,0 +1,29 @@
+{
+  "amendment": "01",
+  "status": "BEFORE_ANY_MODEL_INFERENCE_AND_BEFORE_HIDDEN_OBSERVATION_READ",
+  "reason": "Preserve raw64 explicitly observed comparison and completed-transfer summary facts instead of silently dropping them from the canonical schema.",
+  "fields": [
+    "summary_facts.transfer_amount_matches_invoice",
+    "summary_facts.recipient_matches_authorized_account",
+    "summary_facts.completed_transfer_exists"
+  ],
+  "semantics": "Boolean or unknown. Derive only from actual observed primitive arguments/ledger; retain explicit supplied code-computed comparisons without inventing missing proposed arguments.",
+  "previous_inputs_preserved": "inputs/",
+  "effective_inputs": "inputs-v2/",
+  "hidden_observations_read": false,
+  "heavy_inference_calls": 0,
+  "created_at": "2026-10-15T11:01:37.841539+00:00",
+  "files": {
+    "inputs-v2/archive-all-inputs.jsonl": "7333db49150d3d7d7cccedad0dd71f6929735324465540e3c5fbd80d513caa6a",
+    "inputs-v2/archive-all-rows.jsonl": "1f47c001ba531acba86ab2819ce7fcc94e5c0048e151680b211b19822a67351b",
+    "inputs-v2/archive-p4-inputs.jsonl": "b21b7fb5e26b2c04ff31cbdef208c020c27762c209f27994562a1a1580ab6beb",
+    "inputs-v2/archive-p4-rows.jsonl": "aa9ed7cf5a5a0b1db2d57512fc3019f6a202976eb02a9ebf42afec1f3f33cd6a",
+    "inputs-v2/archive-partial-inputs.jsonl": "bf4fe9284a2977f8799d7b52fcd1098e9d36238ad66f166a138c38bbf15028d2",
+    "inputs-v2/archive-partial-rows.jsonl": "3d215d66f8d0cd6d51eaf09358ca361f323f33ed11ff34028c0713e170450a4a",
+    "inputs-v2/raw64-inputs.jsonl": "51abd4a9799c3d1378ab43d48765c992fad88c5d35b5904aba35201be45e5606",
+    "inputs-v2/raw64-partial-inputs.jsonl": "8abf6bb055be31242561945eefab333a6a67a37e09e2d25b68636b0638f0ec17",
+    "inputs-v2/raw64-partial-rows.jsonl": "691a6d78c36d64fbeae7468c6c28f22c03c7745f55813be9544ea12573c3a745",
+    "inputs-v2/raw64-rows.jsonl": "cf3ebd50798a149a115d6067f0212071fa810d173e95e094abc4144bc38851d0"
+  },
+  "input_builder_sha256": "67c56e925b1b88762731b9ff1190fe9ebeb22a77b6e88b629193a541d9bfc269"
+}

@@ -1,0 +1,828 @@
+{
+  "process_id": 79554,
+  "device": "mps",
+  "attention": "sdpa",
+  "shape_bucket": 64,
+  "patch": "solver_audit",
+  "model_metadata": {
+    "release": "v1.0.0",
+    "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+    "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+    "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+    "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+    "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+    "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+    "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+    "model": "SecJev-0.8B",
+    "device": "mps",
+    "precision": "FP32",
+    "adapter_merged": false,
+    "attention": "sdpa",
+    "shape_bucket": 64,
+    "patch": "solver_audit",
+    "temperature": 1.3525612043415394,
+    "threads": 1,
+    "torch": "2.6.0",
+    "transformers": "5.17.0",
+    "python": "3.12.14",
+    "format_version": "secjev-reference-v1-diagnostic",
+    "scorer_sha256": "ef16ee3501b8e920adf753629a27c49c9a2cf78460b4896596caf535a5684a69",
+    "model_load_ms": 6677.770874986891,
+    "all_modules_eval": true,
+    "parameter_dtypes": [
+      "torch.float32"
+    ],
+    "parameter_devices": [
+      "mps:0"
+    ],
+    "environment": {
+      "PYTORCH_MPS_FAST_MATH": "0",
+      "PYTORCH_MPS_PREFER_METAL": null,
+      "PYTORCH_ENABLE_MPS_FALLBACK": null
+    }
+  },
+  "tolerance": 0.001,
+  "cases": [
+    {
+      "prefix_id": "2154a315fd8101505a96b214",
+      "payload_hash": "4e7b20a9834030053450c224a7c78efd2fb053c09c96c1c5bfeae7827da712d9",
+      "results": [
+        {
+          "status": "OK",
+          "probabilities": {
+            "action_conflicts_with_hold": {
+              "false": 0.0018681928049772978,
+              "true": 0.9981318116188049
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.9066336750984192,
+              "true": 0.09336638450622559
+            },
+            "unsupported_authority_used": {
+              "false": 0.006679692305624485,
+              "true": 0.9933203458786011
+            },
+            "untrusted_instruction": {
+              "false": 0.9989104270935059,
+              "true": 0.0010896003805100918
+            }
+          },
+          "timing_ms": {
+            "tokenize": 8.761542005231604,
+            "compute": 4385.649250005372,
+            "total": 4394.476917019347,
+            "queue": 0.009083014447242022
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "solver_audit",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.6.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "ef16ee3501b8e920adf753629a27c49c9a2cf78460b4896596caf535a5684a69",
+            "model_load_ms": 6677.770874986891,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": null
+            }
+          },
+          "token_counts": {
+            "state": 376,
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 440
+              },
+              "evidence_missing_for_permission": {
+                "branch": 63,
+                "state_plus_branch": 439
+              },
+              "unsupported_authority_used": {
+                "branch": 76,
+                "state_plus_branch": 452
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 447
+              }
+            },
+            "model_rows_total": 1778
+          },
+          "memory": {
+            "process_peak_rss_bytes": 2611953664,
+            "mps_allocated_bytes": 3054970368,
+            "mps_driver_bytes": 4661723136
+          },
+          "error": null
+        },
+        {
+          "status": "UNKNOWN",
+          "probabilities": {},
+          "timing_ms": {
+            "tokenize": 0.0,
+            "compute": 0.0,
+            "total": 2549.320624995744,
+            "queue": 0.004083995008841157
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "solver_audit",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.6.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "ef16ee3501b8e920adf753629a27c49c9a2cf78460b4896596caf535a5684a69",
+            "model_load_ms": 6677.770874986891,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": null
+            }
+          },
+          "token_counts": {
+            "state": 376,
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 440
+              },
+              "evidence_missing_for_permission": {
+                "branch": 63,
+                "state_plus_branch": 439
+              },
+              "unsupported_authority_used": {
+                "branch": 76,
+                "state_plus_branch": 452
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 447
+              }
+            },
+            "model_rows_total": 1778
+          },
+          "error": "ValueError: Invalid probability distribution"
+        },
+        {
+          "status": "UNKNOWN",
+          "probabilities": {},
+          "timing_ms": {
+            "tokenize": 0.0,
+            "compute": 0.0,
+            "total": 1818.6082920001354,
+            "queue": 0.001834006980061531
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "solver_audit",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.6.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "ef16ee3501b8e920adf753629a27c49c9a2cf78460b4896596caf535a5684a69",
+            "model_load_ms": 6677.770874986891,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": null
+            }
+          },
+          "token_counts": {
+            "state": 376,
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 440
+              },
+              "evidence_missing_for_permission": {
+                "branch": 63,
+                "state_plus_branch": 439
+              },
+              "unsupported_authority_used": {
+                "branch": 76,
+                "state_plus_branch": 452
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 447
+              }
+            },
+            "model_rows_total": 1778
+          },
+          "error": "ValueError: Invalid probability distribution"
+        }
+      ],
+      "aa": {
+        "runs": 3,
+        "valid": 1,
+        "identical": false,
+        "stable_decisions": false,
+        "max_abs_delta": null,
+        "comparisons": [
+          {
+            "passed": false,
+            "error": [
+              null,
+              "ValueError: Invalid probability distribution"
+            ],
+            "max_abs_delta": null,
+            "categorical_flips": [],
+            "threshold_flips": []
+          },
+          {
+            "passed": false,
+            "error": [
+              null,
+              "ValueError: Invalid probability distribution"
+            ],
+            "max_abs_delta": null,
+            "categorical_flips": [],
+            "threshold_flips": []
+          }
+        ],
+        "median_compute_ms": 4385.649250005372
+      },
+      "cpu_parity": [
+        {
+          "passed": false,
+          "max_abs_delta": 0.9904471489135176,
+          "categorical_flips": [
+            "action_conflicts_with_hold",
+            "evidence_missing_for_permission",
+            "unsupported_authority_used"
+          ],
+          "threshold_flips": [
+            {
+              "question": "action_conflicts_with_hold",
+              "threshold": 0.5
+            },
+            {
+              "question": "action_conflicts_with_hold",
+              "threshold": 0.75
+            },
+            {
+              "question": "action_conflicts_with_hold",
+              "threshold": 0.9
+            },
+            {
+              "question": "action_conflicts_with_hold",
+              "threshold": 0.95
+            },
+            {
+              "question": "action_conflicts_with_hold",
+              "threshold": 0.99
+            },
+            {
+              "question": "evidence_missing_for_permission",
+              "threshold": 0.5
+            },
+            {
+              "question": "unsupported_authority_used",
+              "threshold": 0.5
+            },
+            {
+              "question": "unsupported_authority_used",
+              "threshold": 0.75
+            },
+            {
+              "question": "unsupported_authority_used",
+              "threshold": 0.9
+            },
+            {
+              "question": "unsupported_authority_used",
+              "threshold": 0.95
+            },
+            {
+              "question": "unsupported_authority_used",
+              "threshold": 0.99
+            }
+          ]
+        },
+        {
+          "passed": false,
+          "error": [
+            null,
+            "ValueError: Invalid probability distribution"
+          ],
+          "max_abs_delta": null,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": false,
+          "error": [
+            null,
+            "ValueError: Invalid probability distribution"
+          ],
+          "max_abs_delta": null,
+          "categorical_flips": [],
+          "threshold_flips": []
+        }
+      ]
+    },
+    {
+      "prefix_id": "55f3842b959869ca1ab00e1e",
+      "payload_hash": "a3d34f38b8ccd13cc82a1a542878645d0a5dcb1d1a0f8dd5fa5546404ff95727",
+      "results": [
+        {
+          "status": "UNKNOWN",
+          "probabilities": {},
+          "timing_ms": {
+            "tokenize": 0.0,
+            "compute": 0.0,
+            "total": 2257.0397079980467,
+            "queue": 0.0012080126907676458
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "solver_audit",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.6.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "ef16ee3501b8e920adf753629a27c49c9a2cf78460b4896596caf535a5684a69",
+            "model_load_ms": 6677.770874986891,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": null
+            }
+          },
+          "token_counts": {
+            "state": 370,
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 434
+              },
+              "evidence_missing_for_permission": {
+                "branch": 63,
+                "state_plus_branch": 433
+              },
+              "unsupported_authority_used": {
+                "branch": 76,
+                "state_plus_branch": 446
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 441
+              }
+            },
+            "model_rows_total": 1754
+          },
+          "error": "ValueError: Invalid probability distribution"
+        },
+        {
+          "status": "UNKNOWN",
+          "probabilities": {},
+          "timing_ms": {
+            "tokenize": 0.0,
+            "compute": 0.0,
+            "total": 1922.8523329948075,
+            "queue": 0.001167005393654108
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "solver_audit",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.6.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "ef16ee3501b8e920adf753629a27c49c9a2cf78460b4896596caf535a5684a69",
+            "model_load_ms": 6677.770874986891,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": null
+            }
+          },
+          "token_counts": {
+            "state": 370,
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 434
+              },
+              "evidence_missing_for_permission": {
+                "branch": 63,
+                "state_plus_branch": 433
+              },
+              "unsupported_authority_used": {
+                "branch": 76,
+                "state_plus_branch": 446
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 441
+              }
+            },
+            "model_rows_total": 1754
+          },
+          "error": "ValueError: Invalid probability distribution"
+        },
+        {
+          "status": "UNKNOWN",
+          "probabilities": {},
+          "timing_ms": {
+            "tokenize": 0.0,
+            "compute": 0.0,
+            "total": 2201.270707999356,
+            "queue": 0.0045000051613897085
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "mps",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "solver_audit",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.6.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "ef16ee3501b8e920adf753629a27c49c9a2cf78460b4896596caf535a5684a69",
+            "model_load_ms": 6677.770874986891,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "mps:0"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": null
+            }
+          },
+          "token_counts": {
+            "state": 370,
+            "questions": {
+              "action_conflicts_with_hold": {
+                "branch": 64,
+                "state_plus_branch": 434
+              },
+              "evidence_missing_for_permission": {
+                "branch": 63,
+                "state_plus_branch": 433
+              },
+              "unsupported_authority_used": {
+                "branch": 76,
+                "state_plus_branch": 446
+              },
+              "untrusted_instruction": {
+                "branch": 71,
+                "state_plus_branch": 441
+              }
+            },
+            "model_rows_total": 1754
+          },
+          "error": "ValueError: Invalid probability distribution"
+        }
+      ],
+      "aa": {
+        "runs": 3,
+        "valid": 0,
+        "identical": false,
+        "stable_decisions": false,
+        "max_abs_delta": null,
+        "comparisons": [
+          {
+            "passed": false,
+            "error": [
+              "ValueError: Invalid probability distribution",
+              "ValueError: Invalid probability distribution"
+            ],
+            "max_abs_delta": null,
+            "categorical_flips": [],
+            "threshold_flips": []
+          },
+          {
+            "passed": false,
+            "error": [
+              "ValueError: Invalid probability distribution",
+              "ValueError: Invalid probability distribution"
+            ],
+            "max_abs_delta": null,
+            "categorical_flips": [],
+            "threshold_flips": []
+          }
+        ],
+        "median_compute_ms": null
+      },
+      "cpu_parity": [
+        {
+          "passed": false,
+          "error": [
+            null,
+            "ValueError: Invalid probability distribution"
+          ],
+          "max_abs_delta": null,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": false,
+          "error": [
+            null,
+            "ValueError: Invalid probability distribution"
+          ],
+          "max_abs_delta": null,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": false,
+          "error": [
+            null,
+            "ValueError: Invalid probability distribution"
+          ],
+          "max_abs_delta": null,
+          "categorical_flips": [],
+          "threshold_flips": []
+        }
+      ]
+    }
+  ],
+  "operator_log": [
+    {
+      "operator": "linalg.solve_triangular",
+      "a_shape": [
+        4,
+        16,
+        8,
+        64,
+        64
+      ],
+      "b_shape": [
+        4,
+        16,
+        8,
+        64,
+        128
+      ],
+      "a_stride": [
+        524288,
+        32768,
+        4096,
+        64,
+        1
+      ],
+      "b_stride": [
+        1048576,
+        65536,
+        8192,
+        128,
+        1
+      ],
+      "finite": true,
+      "cpu_reference_finite": true,
+      "max_abs_delta": 3.0487589836120605,
+      "reference_max_abs": 3.0487589836120605,
+      "kwargs": {
+        "upper": false,
+        "unitriangular": true
+      }
+    },
+    {
+      "operator": "linalg.solve_triangular",
+      "a_shape": [
+        4,
+        16,
+        8,
+        64,
+        64
+      ],
+      "b_shape": [
+        4,
+        16,
+        8,
+        64,
+        128
+      ],
+      "a_stride": [
+        524288,
+        32768,
+        4096,
+        64,
+        1
+      ],
+      "b_stride": [
+        1048576,
+        65536,
+        8192,
+        128,
+        1
+      ],
+      "finite": true,
+      "cpu_reference_finite": true,
+      "max_abs_delta": 0.5428172945976257,
+      "reference_max_abs": 0.5428172945976257,
+      "kwargs": {
+        "upper": false,
+        "unitriangular": true
+      }
+    },
+    {
+      "operator": "linalg.solve_triangular",
+      "a_shape": [
+        4,
+        16,
+        8,
+        64,
+        64
+      ],
+      "b_shape": [
+        4,
+        16,
+        8,
+        64,
+        128
+      ],
+      "a_stride": [
+        524288,
+        32768,
+        4096,
+        64,
+        1
+      ],
+      "b_stride": [
+        1048576,
+        65536,
+        8192,
+        128,
+        1
+      ],
+      "finite": true,
+      "cpu_reference_finite": true,
+      "max_abs_delta": 18.819053649902344,
+      "reference_max_abs": 1.4639067649841309,
+      "kwargs": {
+        "upper": false,
+        "unitriangular": true
+      }
+    },
+    {
+      "operator": "linalg.solve_triangular",
+      "a_shape": [
+        4,
+        16,
+        8,
+        64,
+        64
+      ],
+      "b_shape": [
+        4,
+        16,
+        8,
+        64,
+        128
+      ],
+      "a_stride": [
+        524288,
+        32768,
+        4096,
+        64,
+        1
+      ],
+      "b_stride": [
+        1048576,
+        65536,
+        8192,
+        128,
+        1
+      ],
+      "finite": true,
+      "cpu_reference_finite": true,
+      "max_abs_delta": 35.18320846557617,
+      "reference_max_abs": 0.7290115356445312,
+      "kwargs": {
+        "upper": false,
+        "unitriangular": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "schema": "posthoc-source-contract-sensitivity-05",
+  "created_utc": "2026-10-15T22:06:02.986060+00:00",
+  "criterion": "Any prior attempt with matching tenant/invoice, submitted_at <= decision_time, a different idempotency key from proposal, transport_outcome in {response_timeout,connection_lost_after_send}, and non-null reconciliation. No guard output, label or score participates.",
+  "scope": "Post-hoc source-contract audit sensitivity; full240 primary unchanged. No predictions/labels/errors used to select observable branch.",
+  "observations": "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/inputs-v5/independent-p4-rows.jsonl",
+  "labels": "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/hidden-test/labels.jsonl",
+  "sha256": {
+    "${ORIGINAL_WORKSPACE}/experiments/local_guards/scripts/audit_guard_v2_policy_underspec_sensitivity_05.py": "de6b18eda59d62ad64aa864332d4e6be5ee534e098cb1d8abfa8d061bdd16c93",
+    "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/inputs-v5/independent-p4-rows.jsonl": "109b079179a42df45725e9fb6487057c3e1b902c6c0104513c0accbf1f29cb47",
+    "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/hidden-test/labels.jsonl": "89135d1002f0589e8818bc5673a6b1ba9c239cc0c4de5d94d9ac8077b9519dfa",
+    "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/public-independent-contract.json": "a034b89591fd6f05dbf77a80da0041039f26efb88a29b6ef02b1780e04336c09",
+    "${ORIGINAL_WORKSPACE}/experiments/local_guards/cascade_guard/v2_contract_rules.py": "05bf3a102a7a4c0a5c0d70e585bbbd7c5f473901642ec8d458d81e9f64dfe6e8",
+    "${ORIGINAL_WORKSPACE}/experiments/local_guards/cascade_guard/v2_hidden_dataset.py": "cf47225d63b8e6467c5dfcf74f6c17cb1b4a8ab67b22a1693236de5ae98b494c",
+    "${ORIGINAL_WORKSPACE}/experiments/local_guards/cascade_guard/v2_inputs.py": "070cb0571fc8a9d5ae433b88745637ac2e1b87298471b09f64214e246ee9ce19"
+  },
+  "prepare_command": "python3 ${ORIGINAL_WORKSPACE}/experiments/local_guards/scripts/audit_guard_v2_policy_underspec_sensitivity_05.py prepare",
+  "run_command": "python3 ${ORIGINAL_WORKSPACE}/experiments/local_guards/scripts/audit_guard_v2_policy_underspec_sensitivity_05.py run",
+  "massive_prediction_scan_status": "NOT_EXECUTED_AWAITING_ROOT_AFTER_PARTIAL_PROFILING"
+}

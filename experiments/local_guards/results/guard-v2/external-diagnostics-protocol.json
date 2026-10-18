@@ -1,0 +1,11 @@
+{
+  "version": "external-diagnostics-v1",
+  "source_sha256": "38e9a5c78478c6f2813b367f8aa10d15d10a8fb739c2ec773cbb1df61be4554e",
+  "public_tests_sha256": "2e9b1546ba2155a9cd3dafaf1400d779043eb7c1dc9f04616a00ac36462c3413",
+  "description": "Frozen, post-unblind descriptive ranking/backend/control diagnostics.\n\nNo fitting, threshold selection or new model inference. All available arms are\nreported; continuous scores are not reinterpreted as calibrated probabilities\nof a new target. CLI refuses label/prediction access before both release gates.\n",
+  "target": "static contract intervention; no Brier/log loss and no calibrated harm interpretation",
+  "metric": "average_precision (stepwise PR area, tie groups intact); all available arms; no winner selection",
+  "unknown": "exclude from ranking but report coverage and retain STOP in intervention metrics",
+  "backend": "known modeled policy-violating new effects only, preserve null; not live FinBot",
+  "control": "fixed six-clause ExtensionRules control, exact input hash/prefix/episode joins; no training or threshold search"
+}

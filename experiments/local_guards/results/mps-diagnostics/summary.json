@@ -1,0 +1,549 @@
+{
+  "selected_candidate": {
+    "torch": "2.14.0",
+    "device": "mps",
+    "precision": "FP32",
+    "merge": false,
+    "attention": "sdpa",
+    "shape_bucket": 64,
+    "solver": "GPU-only block inverse",
+    "cpu_fallback": false
+  },
+  "tolerance": 0.001,
+  "thresholds": [
+    0.5,
+    0.75,
+    0.9,
+    0.95,
+    0.99
+  ],
+  "methods": [
+    {
+      "artifact": "cpu-aa-reload1.json",
+      "device": "cpu",
+      "torch": "2.6.0",
+      "attention": "sdpa",
+      "bucket": 64,
+      "patch": "none",
+      "cases": 2,
+      "calls": 6,
+      "valid": 6,
+      "all_within_loaded_aa_identical": true,
+      "cpu_parity_all_passed": true,
+      "max_abs_delta_cpu": 0.0,
+      "median_compute_ms": 6888.077416500892,
+      "median_warm_compute_ms": 6859.063374999096
+    },
+    {
+      "artifact": "cpu-aa-reload2.json",
+      "device": "cpu",
+      "torch": "2.6.0",
+      "attention": "sdpa",
+      "bucket": 64,
+      "patch": "none",
+      "cases": 2,
+      "calls": 6,
+      "valid": 6,
+      "all_within_loaded_aa_identical": true,
+      "cpu_parity_all_passed": true,
+      "max_abs_delta_cpu": 0.0,
+      "median_compute_ms": 6988.5425835091155,
+      "median_warm_compute_ms": 7784.482687507989
+    },
+    {
+      "artifact": "cpu-aa-reload3.json",
+      "device": "cpu",
+      "torch": "2.6.0",
+      "attention": "sdpa",
+      "bucket": 64,
+      "patch": "none",
+      "cases": 2,
+      "calls": 6,
+      "valid": 6,
+      "all_within_loaded_aa_identical": true,
+      "cpu_parity_all_passed": true,
+      "max_abs_delta_cpu": 0.0,
+      "median_compute_ms": 7244.868875000975,
+      "median_warm_compute_ms": 7636.471562480438
+    },
+    {
+      "artifact": "cpu-service-aa.json",
+      "device": "http",
+      "torch": "2.6.0",
+      "attention": "sdpa",
+      "bucket": 64,
+      "patch": "none",
+      "cases": 2,
+      "calls": 6,
+      "valid": 6,
+      "all_within_loaded_aa_identical": true,
+      "cpu_parity_all_passed": true,
+      "max_abs_delta_cpu": 0.0,
+      "median_compute_ms": 6010.646166992956,
+      "median_warm_compute_ms": 5142.87110400619
+    },
+    {
+      "artifact": "mps-eager-bucket1.json",
+      "device": "mps",
+      "torch": "2.6.0",
+      "attention": "eager",
+      "bucket": 1,
+      "patch": "none",
+      "cases": 2,
+      "calls": 6,
+      "valid": 6,
+      "all_within_loaded_aa_identical": false,
+      "cpu_parity_all_passed": false,
+      "max_abs_delta_cpu": 0.9964874240104109,
+      "median_compute_ms": 1937.5114580034278,
+      "median_warm_compute_ms": 1621.1233750073006
+    },
+    {
+      "artifact": "mps-sdpa-aa-reload1.json",
+      "device": "mps",
+      "torch": "2.6.0",
+      "attention": "sdpa",
+      "bucket": 64,
+      "patch": "solver_audit",
+      "cases": 2,
+      "calls": 6,
+      "valid": 1,
+      "all_within_loaded_aa_identical": false,
+      "cpu_parity_all_passed": false,
+      "max_abs_delta_cpu": 0.9904471489135176,
+      "median_compute_ms": 4385.649250005372,
+      "median_warm_compute_ms": null
+    },
+    {
+      "artifact": "mps-sdpa-aa-reload2.json",
+      "device": "mps",
+      "torch": "2.6.0",
+      "attention": "sdpa",
+      "bucket": 64,
+      "patch": "none",
+      "cases": 2,
+      "calls": 6,
+      "valid": 1,
+      "all_within_loaded_aa_identical": false,
+      "cpu_parity_all_passed": false,
+      "max_abs_delta_cpu": 0.9904471489135176,
+      "median_compute_ms": 2732.0484579831827,
+      "median_warm_compute_ms": null
+    },
+    {
+      "artifact": "mps-sdpa-aa-reload3.json",
+      "device": "mps",
+      "torch": "2.6.0",
+      "attention": "sdpa",
+      "bucket": 64,
+      "patch": "none",
+      "cases": 2,
+      "calls": 6,
+      "valid": 1,
+      "all_within_loaded_aa_identical": false,
+      "cpu_parity_all_passed": false,
+      "max_abs_delta_cpu": 0.9904471489135176,
+      "median_compute_ms": 2242.681666975841,
+      "median_warm_compute_ms": null
+    },
+    {
+      "artifact": "torch214-mps-block-aa-reload1.json",
+      "device": "mps",
+      "torch": "2.14.0",
+      "attention": "sdpa",
+      "bucket": 64,
+      "patch": "solver_block",
+      "cases": 9,
+      "calls": 27,
+      "valid": 27,
+      "all_within_loaded_aa_identical": true,
+      "cpu_parity_all_passed": true,
+      "max_abs_delta_cpu": 7.68899917602539e-06,
+      "median_compute_ms": 2653.9609999745153,
+      "median_warm_compute_ms": 2600.044937498751
+    },
+    {
+      "artifact": "torch214-mps-block-aa-reload2.json",
+      "device": "mps",
+      "torch": "2.14.0",
+      "attention": "sdpa",
+      "bucket": 64,
+      "patch": "solver_block",
+      "cases": 2,
+      "calls": 6,
+      "valid": 6,
+      "all_within_loaded_aa_identical": true,
+      "cpu_parity_all_passed": true,
+      "max_abs_delta_cpu": 5.245208740234375e-06,
+      "median_compute_ms": 2189.409437502036,
+      "median_warm_compute_ms": 2189.409437502036
+    },
+    {
+      "artifact": "torch214-mps-block-aa-reload3.json",
+      "device": "mps",
+      "torch": "2.14.0",
+      "attention": "sdpa",
+      "bucket": 64,
+      "patch": "solver_block",
+      "cases": 2,
+      "calls": 6,
+      "valid": 6,
+      "all_within_loaded_aa_identical": true,
+      "cpu_parity_all_passed": true,
+      "max_abs_delta_cpu": 5.245208740234375e-06,
+      "median_compute_ms": 2200.3095414984273,
+      "median_warm_compute_ms": 2210.15820800676
+    },
+    {
+      "artifact": "torch214-mps-sdpa-aa-reload1.json",
+      "device": "mps",
+      "torch": "2.14.0",
+      "attention": "sdpa",
+      "bucket": 64,
+      "patch": "solver_audit",
+      "cases": 2,
+      "calls": 6,
+      "valid": 6,
+      "all_within_loaded_aa_identical": true,
+      "cpu_parity_all_passed": true,
+      "max_abs_delta_cpu": 2.562999725341797e-06,
+      "median_compute_ms": 5580.50804148661,
+      "median_warm_compute_ms": 5580.50804148661
+    }
+  ],
+  "across_reloads": {
+    "cpu-aa-reload": {
+      "process_ids": [
+        84432,
+        86567,
+        89584
+      ],
+      "comparisons": [
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        }
+      ],
+      "passed": true,
+      "max_abs_delta": 0.0,
+      "all_finite": true
+    },
+    "torch214-mps-block-aa-reload": {
+      "process_ids": [
+        82187,
+        91473,
+        91679
+      ],
+      "comparisons": [
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        }
+      ],
+      "passed": true,
+      "max_abs_delta": 0.0,
+      "all_finite": true
+    },
+    "mps-sdpa-aa-reload": {
+      "process_ids": [
+        79554,
+        90648,
+        91188
+      ],
+      "comparisons": [
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": false,
+          "error": [
+            null,
+            "ValueError: Invalid probability distribution"
+          ],
+          "max_abs_delta": null,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": false,
+          "error": [
+            null,
+            "ValueError: Invalid probability distribution"
+          ],
+          "max_abs_delta": null,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": false,
+          "error": [
+            "ValueError: Invalid probability distribution",
+            "ValueError: Invalid probability distribution"
+          ],
+          "max_abs_delta": null,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": false,
+          "error": [
+            "ValueError: Invalid probability distribution",
+            "ValueError: Invalid probability distribution"
+          ],
+          "max_abs_delta": null,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": false,
+          "error": [
+            "ValueError: Invalid probability distribution",
+            "ValueError: Invalid probability distribution"
+          ],
+          "max_abs_delta": null,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": true,
+          "max_abs_delta": 0.0,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": false,
+          "error": [
+            null,
+            "ValueError: Invalid probability distribution"
+          ],
+          "max_abs_delta": null,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": false,
+          "error": [
+            null,
+            "ValueError: Invalid probability distribution"
+          ],
+          "max_abs_delta": null,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": false,
+          "error": [
+            "ValueError: Invalid probability distribution",
+            "ValueError: Invalid probability distribution"
+          ],
+          "max_abs_delta": null,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": false,
+          "error": [
+            "ValueError: Invalid probability distribution",
+            "ValueError: Invalid probability distribution"
+          ],
+          "max_abs_delta": null,
+          "categorical_flips": [],
+          "threshold_flips": []
+        },
+        {
+          "passed": false,
+          "error": [
+            "ValueError: Invalid probability distribution",
+            "ValueError: Invalid probability distribution"
+          ],
+          "max_abs_delta": null,
+          "categorical_flips": [],
+          "threshold_flips": []
+        }
+      ],
+      "passed": false,
+      "max_abs_delta": 0.0,
+      "all_finite": false
+    }
+  },
+  "timing_caveat": "The original CPU scoring batch was active during diagnostics. CPU extra model probes contend with it. These are observed host timings, not isolated benchmarks.",
+  "artifacts_sha256": {
+    "cpu-aa-reload2.json": "2b27b0dd2000305913bc250ebb653ff92070b2bbab9aa25f5afc4c1bc4a356d3",
+    "mps-sdpa-aa-reload1.json": "a8e17845dfb54c86202ff7e3a5e2bd4219b194d1a1295793f24d1384fe366c59",
+    "torch214-mps-block-aa-reload1.json": "a415c01efa40cf59967135450b5b11265ec2cdaf6df5dc60a234ce62217b7fd4",
+    "cpu-aa-reload3.json": "ac64f78c7c3c8d24a3ebf7f791237352c21475e108d0fbc90e7e850347902132",
+    "torch214-mps-sdpa-aa-reload1.json": "b93b1f0cd5a7edd1ad3b323bb8f110df2720b8e11cc0b259f2eb529e08071826",
+    "mps-eager-bucket1.json": "154d8e34b64fdabe84605f476153c794b634554f475b6148be4f2ecc6e642fa3",
+    "torch214-mps-block-aa-reload2.json": "9c6f9748111752c08503248c5c72761689b5612c90b05450d10280be82e10d11",
+    "mps-sdpa-aa-reload3.json": "54afc97b263beb7f0be799e8f47b5b916e982260b483c94083df2db05683cb0a",
+    "torch26-solver-repro.json": "85e8bb90b585a2810f778ae1a9f6209ce5908b3cb9b837245af0c91edaaa5114",
+    "cpu-aa-reload1.json": "177f4d237a7e02e596f3caab710a23e2b733f82770b6dced6e5d0949a94722e4",
+    "mps-sdpa-aa-reload2.json": "d1100bcd98b9dcc39a41d82bac3bbd83c6933a9df5786802ab00b902b1da665d",
+    "torch214-mps-block-aa-reload3.json": "30da80e25b6fbdc4ee0c205b6ea552a82521a5084bef3268656c32c36957aa47",
+    "cpu-service-aa.json": "a6f0c8765b2ad307463a279362d6816dd017fcdb3f51d5b3f03742bf8c8b0434"
+  },
+  "secjev2b_summary_artifact": "secjev2b/summary.json",
+  "next_measurement": "Full MPS0.8 archive batch continues with its own frozen fingerprint; CPU P4 reference is complete and paused. FinBot quality of 2B requires additional grouped evaluation.",
+  "paired_speed_idle": {
+    "cpu08": {
+      "median_compute_ms": 5063.041290995898,
+      "all_valid": true,
+      "requests": 9
+    },
+    "mps08": {
+      "median_compute_ms": 1535.211167007219,
+      "all_valid": true,
+      "requests": 9,
+      "speedup_vs_cpu08_global_medians": 3.2979445432682226
+    },
+    "mps2b": {
+      "median_compute_ms": 2894.7925830143504,
+      "all_valid": true,
+      "requests": 9,
+      "speedup_vs_cpu08_global_medians": 1.7490169488149467
+    },
+    "artifact": "paired-speed-idle.json",
+    "cases": 3,
+    "all_08_cpu_mps_parity_passed": true,
+    "all_2b_cpu_mps_parity_passed": true
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "recorded_utc": "2026-10-15T20:54:58.527369+00:00",
+  "cause": "User turn interrupted; owner processes absent; child34475 orphaned underPID1",
+  "old_pids": {
+    "jev": 26439,
+    "ml": 81254,
+    "completion": 10165
+  },
+  "orphan_to_stop": 34475,
+  "freeze_and_deadlines_unchanged": true,
+  "labels_read": false,
+  "states": {
+    "jev-v5/runtime-run.json": {
+      "status": "RUNNING",
+      "pid": 26439,
+      "started_at": "2026-10-15T14:49:28.846408+00:00",
+      "deadline": "2026-10-15T22:59:58.072112+00:00",
+      "model_cutoff": "2026-10-15T21:39:58.072112+00:00",
+      "verified_frozen_files": 54,
+      "method_freeze_sha256": "905199e01d99950fe905cb741d27bee56df5be745819d62d64820fb119747d44",
+      "jev_input_freeze_sha256": "65bcbef788527cce7399bd009d289b5f529b3c928770fcfb2dd607d5a9091cf8",
+      "script_sha256": "ff5c4a25633a679baf37fc2b9e54b82a0b974755f9f2a2cb6b2e73a34b4d0ebd",
+      "stages": [
+        {
+          "name": "metal-preflight",
+          "command": [
+            "${ORIGINAL_WORKSPACE}/.runtime/mps-diagnostics/.venv/bin/python",
+            "-c",
+            "import json,torch; assert torch.backends.mps.is_available(), \"MPS unavailable in this process\"; print(json.dumps({\"mps_available\":True,\"torch\":torch.__version__}))"
+          ],
+          "started_at": "2026-10-15T16:26:08.078136+00:00",
+          "pid": 15299,
+          "exit_code": 0,
+          "finished_at": "2026-10-15T16:26:09.809416+00:00"
+        },
+        {
+          "name": "08-cpu-probe",
+          "command": [
+            "${ORIGINAL_WORKSPACE}/.runtime/mps-diagnostics/.venv/bin/python",
+            "-m",
+            "cascade_guard.v2_jev",
+            "--workspace",
+            "${ORIGINAL_WORKSPACE}",
+            "--model",
+            "0.8B",
+            "--input",
+            "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/jev-v5/08/inputs.jsonl",
+            "--mode",
+            "probe",
+            "--device",
+            "cpu",
+            "--output",
+            "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/jev-v5/08/cpu-gate.json"
+          ],
+          "started_at": "2026-10-15T16:26:10.502999+00:00",
+          "pid": 15319,
+          "exit_code": 0,
+          "finished_at": "2026-10-15T16:39:57.492581+00:00"
+        },
+        {
+          "name": "08-mps-probe",
+          "command": [
+            "${ORIGINAL_WORKSPACE}/.runtime/mps-diagnostics/.venv/bin/python",
+            "-m",
+            "cascade_guard.v2_jev",
+            "--workspace",
+            "${ORIGINAL_WORKSPACE}",
+            "--model",
+            "0.8B",
+            "--input",
+            "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/jev-v5/08/inputs.jsonl",
+            "--mode",
+            "probe",
+            "--device",
+            "mps",
+            "--output",
+            "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/jev-v5/08/mps-gate.json",
+            "--reference",
+            "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/jev-v5/08/cpu-gate.json"
+          ],
+          "started_at": "2026-10-15T16:39:57.852694+00:00",
+          "pid": 29477,
+          "exit_code": 0,
+          "finished_at": "2026-10-15T16:43:34.332901+00:00"
+        }
+      ],
+      "paid_inference": false,
+      "labels_read": false,
+      "model_order": [
+        "08",
+        "4b"
+      ],
+      "models_unloaded": false,
+      "expected_p4_inputs": 720,
+      "previous_pid": 76460,
+      "wait_reason": {
+        "reason": "prior runtime not COMPLETE",
+        "prior_status": "RUNNING"
+      },
+      "last_checked_at": "2026-10-15T16:25:37.203942+00:00",
+      "prior_barrier": {
+        "prior_runtime_sha256": "3f4aca97320924c89f9ba63e1bbfc1509e02255a0c9106ffaaf36c4f25d87486",
+        "score_rows_per_block": 720,
+        "heavy_children": []
+      },
+      "heavy_start_at": "2026-10-15T16:26:07.714211+00:00",
+      "current_stage": "08-mps-batch",
+      "current_child": {
+        "name": "08-mps-batch",
+        "command": [
+          "${ORIGINAL_WORKSPACE}/.runtime/mps-diagnostics/.venv/bin/python",
+          "-m",
+          "cascade_guard.v2_jev",
+          "--workspace",
+          "${ORIGINAL_WORKSPACE}",
+          "--model",
+          "0.8B",
+          "--input",
+          "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/jev-v5/08/inputs.jsonl",
+          "--mode",
+          "batch",
+          "--device",
+          "mps",
+          "--output",
+          "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/jev-v5/08/scores.jsonl",
+          "--gate",
+          "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/jev-v5/08/mps-gate.json"
+        ],
+        "started_at": "2026-10-15T16:43:34.785333+00:00",
+        "pid": 34475
+      }
+    },
+    "evaluation-runner-v5/runtime-run.json": {
+      "status": "WAITING_INFERENCE_BARRIER",
+      "pid": 81254,
+      "started_utc": "2026-10-15T12:14:54.390877+00:00",
+      "deadline": "2026-10-15T22:59:58.072112+00:00",
+      "freeze_sha256": {
+        "method": "905199e01d99950fe905cb741d27bee56df5be745819d62d64820fb119747d44",
+        "jev": "65bcbef788527cce7399bd009d289b5f529b3c928770fcfb2dd607d5a9091cf8",
+        "split": "a751f449d1790103e8cd027ad29c036ad9ea1458e44a441233115b37ce2a0e60",
+        "addon": "86b806f13019d4b5692063fec8cecd6f670f1e9c249a220ad753f7eb5abdddba"
+      },
+      "script_sha256": "762803827c1281c92783beda6adb18f921d3a2ebe9e48afeee228bf16c84d9b7",
+      "labels_read": false,
+      "scoring_enabled": false,
+      "stages": [],
+      "barrier": {
+        "reason": "await all six models before prospective cutoff",
+        "prior_status": "COMPLETE",
+        "jev_status": "RUNNING"
+      }
+    }
+  }
+}

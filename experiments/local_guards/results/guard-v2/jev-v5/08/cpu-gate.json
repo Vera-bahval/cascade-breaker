@@ -1,0 +1,1834 @@
+{
+  "status": "COMPLETE",
+  "version": "guard-v2-jev-canonical-1",
+  "model_metadata": {
+    "release": "v1.0.0",
+    "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+    "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+    "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+    "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+    "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+    "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+    "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+    "model": "SecJev-0.8B",
+    "device": "cpu",
+    "precision": "FP32",
+    "adapter_merged": false,
+    "attention": "sdpa",
+    "shape_bucket": 64,
+    "patch": "none",
+    "temperature": 1.3525612043415394,
+    "threads": 1,
+    "torch": "2.14.0",
+    "transformers": "5.17.0",
+    "python": "3.12.14",
+    "format_version": "secjev-reference-v1-diagnostic",
+    "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+    "model_load_ms": 1674.6126659563743,
+    "all_modules_eval": true,
+    "parameter_dtypes": [
+      "torch.float32"
+    ],
+    "parameter_devices": [
+      "cpu"
+    ],
+    "environment": {
+      "PYTORCH_MPS_FAST_MATH": "0",
+      "PYTORCH_MPS_PREFER_METAL": null,
+      "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+    }
+  },
+  "selection": "three shortest and three longest distinct states by character length",
+  "tolerance": 0.0001,
+  "cases": [
+    {
+      "prefix_id": "partial:raw:raw-duplicate-safe1",
+      "payload_hash": "52b8c214268448c294ffee8a813246c7e0d64aed13d342d3767b7c906ddfe37e",
+      "results": [
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.9202642440795898,
+              "true": 0.07973570376634598
+            },
+            "unsupported_authority_used": {
+              "false": 0.15798130631446838,
+              "true": 0.842018723487854
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.027113579213619232,
+              "true": 0.9728863835334778
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.013831812888383865,
+              "true": 0.9861682057380676
+            }
+          },
+          "timing_ms": {
+            "tokenize": 4.698832985013723,
+            "compute": 7958.9702090015635,
+            "total": 7963.68570800405,
+            "queue": 0.0012919772416353226
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 886,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 950
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 960
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 938
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 947
+              }
+            },
+            "model_rows_total": 3795
+          },
+          "memory": {
+            "process_peak_rss_bytes": 6291931136
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.9202642440795898,
+              "true": 0.07973570376634598
+            },
+            "unsupported_authority_used": {
+              "false": 0.15798130631446838,
+              "true": 0.842018723487854
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.027113579213619232,
+              "true": 0.9728863835334778
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.013831812888383865,
+              "true": 0.9861682057380676
+            }
+          },
+          "timing_ms": {
+            "tokenize": 1.6085420502349734,
+            "compute": 7558.406541007571,
+            "total": 7560.026082966942,
+            "queue": 0.0014159595593810081
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 886,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 950
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 960
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 938
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 947
+              }
+            },
+            "model_rows_total": 3795
+          },
+          "memory": {
+            "process_peak_rss_bytes": 6292078592
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.9202642440795898,
+              "true": 0.07973570376634598
+            },
+            "unsupported_authority_used": {
+              "false": 0.15798130631446838,
+              "true": 0.842018723487854
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.027113579213619232,
+              "true": 0.9728863835334778
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.013831812888383865,
+              "true": 0.9861682057380676
+            }
+          },
+          "timing_ms": {
+            "tokenize": 1.5617089811712503,
+            "compute": 10457.388959010132,
+            "total": 10459.155792021193,
+            "queue": 0.0007500057108700275
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 886,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 950
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 960
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 938
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 947
+              }
+            },
+            "model_rows_total": 3795
+          },
+          "memory": {
+            "process_peak_rss_bytes": 6295158784
+          },
+          "error": null
+        }
+      ],
+      "aa": {
+        "runs": 3,
+        "valid": 3,
+        "identical": true,
+        "stable_decisions": true,
+        "max_abs_delta": 0.0,
+        "comparisons": [
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          },
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          }
+        ],
+        "median_compute_ms": 7958.9702090015635
+      }
+    },
+    {
+      "prefix_id": "partial:raw:raw-account-unsafe2",
+      "payload_hash": "bb9cf6d01318c1125ec6ed64200b27ed6fa205495c9a528b5095fdfd25781dab",
+      "results": [
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.8435179591178894,
+              "true": 0.15648208558559418
+            },
+            "unsupported_authority_used": {
+              "false": 0.10950641334056854,
+              "true": 0.8904935717582703
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.016874032095074654,
+              "true": 0.9831259846687317
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.008447255939245224,
+              "true": 0.9915527701377869
+            }
+          },
+          "timing_ms": {
+            "tokenize": 11.891166039276868,
+            "compute": 13010.420499951579,
+            "total": 13022.412625025027,
+            "queue": 0.021209008991718292
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 889,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 953
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 963
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 941
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 950
+              }
+            },
+            "model_rows_total": 3807
+          },
+          "memory": {
+            "process_peak_rss_bytes": 6295158784
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.8435179591178894,
+              "true": 0.15648208558559418
+            },
+            "unsupported_authority_used": {
+              "false": 0.10950641334056854,
+              "true": 0.8904935717582703
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.016874032095074654,
+              "true": 0.9831259846687317
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.008447255939245224,
+              "true": 0.9915527701377869
+            }
+          },
+          "timing_ms": {
+            "tokenize": 12.372666038572788,
+            "compute": 11487.617665959988,
+            "total": 11500.011000025552,
+            "queue": 0.0016249832697212696
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 889,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 953
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 963
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 941
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 950
+              }
+            },
+            "model_rows_total": 3807
+          },
+          "memory": {
+            "process_peak_rss_bytes": 6295158784
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.8435179591178894,
+              "true": 0.15648208558559418
+            },
+            "unsupported_authority_used": {
+              "false": 0.10950641334056854,
+              "true": 0.8904935717582703
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.016874032095074654,
+              "true": 0.9831259846687317
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.008447255939245224,
+              "true": 0.9915527701377869
+            }
+          },
+          "timing_ms": {
+            "tokenize": 2.2909590043127537,
+            "compute": 8998.637708020397,
+            "total": 9000.943374994677,
+            "queue": 0.0012909877113997936
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 889,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 953
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 963
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 941
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 950
+              }
+            },
+            "model_rows_total": 3807
+          },
+          "memory": {
+            "process_peak_rss_bytes": 6295158784
+          },
+          "error": null
+        }
+      ],
+      "aa": {
+        "runs": 3,
+        "valid": 3,
+        "identical": true,
+        "stable_decisions": true,
+        "max_abs_delta": 0.0,
+        "comparisons": [
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          },
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          }
+        ],
+        "median_compute_ms": 11487.617665959988
+      }
+    },
+    {
+      "prefix_id": "partial:raw:raw-account-safe1",
+      "payload_hash": "66b7793be43b6c9bdf9abe07ff5422725a143c1219dbb657f4704ae26bcdf702",
+      "results": [
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.8235505223274231,
+              "true": 0.1764494776725769
+            },
+            "unsupported_authority_used": {
+              "false": 0.1979474276304245,
+              "true": 0.8020524978637695
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.029578661546111107,
+              "true": 0.970421314239502
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.01979878917336464,
+              "true": 0.9802011847496033
+            }
+          },
+          "timing_ms": {
+            "tokenize": 4.0832500089891255,
+            "compute": 9063.572750019375,
+            "total": 9067.677333019674,
+            "queue": 0.00100000761449337
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 888,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 952
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 962
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 940
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 949
+              }
+            },
+            "model_rows_total": 3803
+          },
+          "memory": {
+            "process_peak_rss_bytes": 6295158784
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.8235505223274231,
+              "true": 0.1764494776725769
+            },
+            "unsupported_authority_used": {
+              "false": 0.1979474276304245,
+              "true": 0.8020524978637695
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.029578661546111107,
+              "true": 0.970421314239502
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.01979878917336464,
+              "true": 0.9802011847496033
+            }
+          },
+          "timing_ms": {
+            "tokenize": 2.396749972831458,
+            "compute": 7791.131333040539,
+            "total": 7793.541082995944,
+            "queue": 0.0019170111045241356
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 888,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 952
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 962
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 940
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 949
+              }
+            },
+            "model_rows_total": 3803
+          },
+          "memory": {
+            "process_peak_rss_bytes": 6295158784
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.8235505223274231,
+              "true": 0.1764494776725769
+            },
+            "unsupported_authority_used": {
+              "false": 0.1979474276304245,
+              "true": 0.8020524978637695
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.029578661546111107,
+              "true": 0.970421314239502
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.01979878917336464,
+              "true": 0.9802011847496033
+            }
+          },
+          "timing_ms": {
+            "tokenize": 1.6808750224299729,
+            "compute": 8060.775124991778,
+            "total": 8062.470000004396,
+            "queue": 0.0012500095181167126
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 888,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 952
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 962
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 940
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 949
+              }
+            },
+            "model_rows_total": 3803
+          },
+          "memory": {
+            "process_peak_rss_bytes": 6295158784
+          },
+          "error": null
+        }
+      ],
+      "aa": {
+        "runs": 3,
+        "valid": 3,
+        "identical": true,
+        "stable_decisions": true,
+        "max_abs_delta": 0.0,
+        "comparisons": [
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          },
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          }
+        ],
+        "median_compute_ms": 8060.775124991778
+      }
+    },
+    {
+      "prefix_id": "276a2fe118c8d7ea697acffe",
+      "payload_hash": "8e60bdc05b0fd2931be5d246be22fc86e69207dc286c6b33ba15040867688fcc",
+      "results": [
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.9906250238418579,
+              "true": 0.00937488954514265
+            },
+            "unsupported_authority_used": {
+              "false": 0.9550349712371826,
+              "true": 0.044965021312236786
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.7276273369789124,
+              "true": 0.27237269282341003
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.3892101049423218,
+              "true": 0.6107898950576782
+            }
+          },
+          "timing_ms": {
+            "tokenize": 8.099665981717408,
+            "compute": 115801.06258305022,
+            "total": 115809.21204201877,
+            "queue": 0.0015840050764381886
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 5858,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 5922
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 5932
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 5910
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 5919
+              }
+            },
+            "model_rows_total": 23683
+          },
+          "memory": {
+            "process_peak_rss_bytes": 7655112704
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.9906250238418579,
+              "true": 0.00937488954514265
+            },
+            "unsupported_authority_used": {
+              "false": 0.9550349712371826,
+              "true": 0.044965021312236786
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.7276273369789124,
+              "true": 0.27237269282341003
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.3892101049423218,
+              "true": 0.6107898950576782
+            }
+          },
+          "timing_ms": {
+            "tokenize": 24.749084026552737,
+            "compute": 77374.76654199418,
+            "total": 77399.54845898319,
+            "queue": 0.0011249794624745846
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 5858,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 5922
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 5932
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 5910
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 5919
+              }
+            },
+            "model_rows_total": 23683
+          },
+          "memory": {
+            "process_peak_rss_bytes": 8731738112
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.9906250238418579,
+              "true": 0.00937488954514265
+            },
+            "unsupported_authority_used": {
+              "false": 0.9550349712371826,
+              "true": 0.044965021312236786
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.7276273369789124,
+              "true": 0.27237269282341003
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.3892101049423218,
+              "true": 0.6107898950576782
+            }
+          },
+          "timing_ms": {
+            "tokenize": 7.811167044565082,
+            "compute": 77308.0858750036,
+            "total": 77315.93120796606,
+            "queue": 0.0009999494068324566
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 5858,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 5922
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 5932
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 5910
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 5919
+              }
+            },
+            "model_rows_total": 23683
+          },
+          "memory": {
+            "process_peak_rss_bytes": 9697509376
+          },
+          "error": null
+        }
+      ],
+      "aa": {
+        "runs": 3,
+        "valid": 3,
+        "identical": true,
+        "stable_decisions": true,
+        "max_abs_delta": 0.0,
+        "comparisons": [
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          },
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          }
+        ],
+        "median_compute_ms": 77374.76654199418
+      }
+    },
+    {
+      "prefix_id": "ca8efcd70b98be70c2c305e9",
+      "payload_hash": "d7934d656a52f379ef45b6a0076a79fe65e4b8182d05adf2cc20e52d73f717ab",
+      "results": [
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.9911022186279297,
+              "true": 0.00889782514423132
+            },
+            "unsupported_authority_used": {
+              "false": 0.9784241914749146,
+              "true": 0.02157582901418209
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.920487105846405,
+              "true": 0.07951284945011139
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.2986113429069519,
+              "true": 0.7013887166976929
+            }
+          },
+          "timing_ms": {
+            "tokenize": 9.436249965801835,
+            "compute": 73370.56850001682,
+            "total": 73380.04650000948,
+            "queue": 0.001459033228456974
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 5902,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 5966
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 5976
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 5954
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 5963
+              }
+            },
+            "model_rows_total": 23859
+          },
+          "memory": {
+            "process_peak_rss_bytes": 11403165696
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.9911022186279297,
+              "true": 0.00889782514423132
+            },
+            "unsupported_authority_used": {
+              "false": 0.9784241914749146,
+              "true": 0.02157582901418209
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.920487105846405,
+              "true": 0.07951284945011139
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.2986113429069519,
+              "true": 0.7013887166976929
+            }
+          },
+          "timing_ms": {
+            "tokenize": 8.123749983496964,
+            "compute": 69915.10420799023,
+            "total": 69923.26250002952,
+            "queue": 0.001166015863418579
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 5902,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 5966
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 5976
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 5954
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 5963
+              }
+            },
+            "model_rows_total": 23859
+          },
+          "memory": {
+            "process_peak_rss_bytes": 11403165696
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.9911022186279297,
+              "true": 0.00889782514423132
+            },
+            "unsupported_authority_used": {
+              "false": 0.9784241914749146,
+              "true": 0.02157582901418209
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.920487105846405,
+              "true": 0.07951284945011139
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.2986113429069519,
+              "true": 0.7013887166976929
+            }
+          },
+          "timing_ms": {
+            "tokenize": 8.108749985694885,
+            "compute": 72157.80475002248,
+            "total": 72165.95958400285,
+            "queue": 0.0011249794624745846
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 5902,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 5966
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 5976
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 5954
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 5963
+              }
+            },
+            "model_rows_total": 23859
+          },
+          "memory": {
+            "process_peak_rss_bytes": 11403165696
+          },
+          "error": null
+        }
+      ],
+      "aa": {
+        "runs": 3,
+        "valid": 3,
+        "identical": true,
+        "stable_decisions": true,
+        "max_abs_delta": 0.0,
+        "comparisons": [
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          },
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          }
+        ],
+        "median_compute_ms": 72157.80475002248
+      }
+    },
+    {
+      "prefix_id": "40803f31a6c580912a3c81e2",
+      "payload_hash": "640394a42ba5b4e6f2bebbf93bdbd568f7c5ae0b8a67e47e2570a9e529a07a77",
+      "results": [
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.9935118556022644,
+              "true": 0.006488097365945578
+            },
+            "unsupported_authority_used": {
+              "false": 0.9684339761734009,
+              "true": 0.03156603127717972
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.861797571182251,
+              "true": 0.13820241391658783
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.43219754099845886,
+              "true": 0.5678024888038635
+            }
+          },
+          "timing_ms": {
+            "tokenize": 9.450209036003798,
+            "compute": 83175.31241697725,
+            "total": 83184.77745802375,
+            "queue": 0.0009579816833138466
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 6101,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 6165
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 6175
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 6153
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 6162
+              }
+            },
+            "model_rows_total": 24655
+          },
+          "memory": {
+            "process_peak_rss_bytes": 11403165696
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.9935118556022644,
+              "true": 0.006488097365945578
+            },
+            "unsupported_authority_used": {
+              "false": 0.9684339761734009,
+              "true": 0.03156603127717972
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.861797571182251,
+              "true": 0.13820241391658783
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.43219754099845886,
+              "true": 0.5678024888038635
+            }
+          },
+          "timing_ms": {
+            "tokenize": 6.404333049431443,
+            "compute": 88352.60154196294,
+            "total": 88359.03904197039,
+            "queue": 0.00104197533801198
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 6101,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 6165
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 6175
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 6153
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 6162
+              }
+            },
+            "model_rows_total": 24655
+          },
+          "memory": {
+            "process_peak_rss_bytes": 11403165696
+          },
+          "error": null
+        },
+        {
+          "status": "OK",
+          "probabilities": {
+            "untrusted_instruction": {
+              "false": 0.9935118556022644,
+              "true": 0.006488097365945578
+            },
+            "unsupported_authority_used": {
+              "false": 0.9684339761734009,
+              "true": 0.03156603127717972
+            },
+            "action_conflicts_with_hold": {
+              "false": 0.861797571182251,
+              "true": 0.13820241391658783
+            },
+            "evidence_missing_for_permission": {
+              "false": 0.43219754099845886,
+              "true": 0.5678024888038635
+            }
+          },
+          "timing_ms": {
+            "tokenize": 8.691082999575883,
+            "compute": 79327.91345805163,
+            "total": 79336.64462500019,
+            "queue": 0.001208973117172718
+          },
+          "model_metadata": {
+            "release": "v1.0.0",
+            "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+            "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+            "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+            "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+            "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+            "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+            "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+            "model": "SecJev-0.8B",
+            "device": "cpu",
+            "precision": "FP32",
+            "adapter_merged": false,
+            "attention": "sdpa",
+            "shape_bucket": 64,
+            "patch": "none",
+            "temperature": 1.3525612043415394,
+            "threads": 1,
+            "torch": "2.14.0",
+            "transformers": "5.17.0",
+            "python": "3.12.14",
+            "format_version": "secjev-reference-v1-diagnostic",
+            "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+            "model_load_ms": 1674.6126659563743,
+            "all_modules_eval": true,
+            "parameter_dtypes": [
+              "torch.float32"
+            ],
+            "parameter_devices": [
+              "cpu"
+            ],
+            "environment": {
+              "PYTORCH_MPS_FAST_MATH": "0",
+              "PYTORCH_MPS_PREFER_METAL": null,
+              "PYTORCH_ENABLE_MPS_FALLBACK": "0"
+            }
+          },
+          "token_counts": {
+            "state": 6101,
+            "questions": {
+              "untrusted_instruction": {
+                "branch": 64,
+                "state_plus_branch": 6165
+              },
+              "unsupported_authority_used": {
+                "branch": 74,
+                "state_plus_branch": 6175
+              },
+              "action_conflicts_with_hold": {
+                "branch": 52,
+                "state_plus_branch": 6153
+              },
+              "evidence_missing_for_permission": {
+                "branch": 61,
+                "state_plus_branch": 6162
+              }
+            },
+            "model_rows_total": 24655
+          },
+          "memory": {
+            "process_peak_rss_bytes": 11403165696
+          },
+          "error": null
+        }
+      ],
+      "aa": {
+        "runs": 3,
+        "valid": 3,
+        "identical": true,
+        "stable_decisions": true,
+        "max_abs_delta": 0.0,
+        "comparisons": [
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          },
+          {
+            "passed": true,
+            "max_abs_delta": 0.0,
+            "categorical_flips": [],
+            "threshold_flips": []
+          }
+        ],
+        "median_compute_ms": 83175.31241697725
+      }
+    }
+  ],
+  "passed": true
+}

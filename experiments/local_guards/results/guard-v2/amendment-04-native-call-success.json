@@ -1,0 +1,23 @@
+{
+  "created_at": "2026-10-15T11:09:12.460018+00:00",
+  "status": "BEFORE_ANY_MODEL_INFERENCE_AND_BEFORE_LABEL_ACCESS",
+  "reason": "Normalize native operation success using step.error OR native result.error, matching original ledger semantics.",
+  "affected_history_entries_before": 709,
+  "distinct_episode_seq_events_before": 237,
+  "changes": [
+    "native call_success respects nested native error",
+    "runner uses caffeinate -i -w only",
+    "runner verifies every pinned source/input before each stage and after all stages; fails closed on drift"
+  ],
+  "input_source_sha256": "19b9c476a9346d51dc93379bc0899eb05e149f0f32fc6e03e9973a223e51fbbb",
+  "runner_sha256": "4e225a93f562edf517e5600dd09d42970e82fb75c8d93289838d482a454e4f69",
+  "independent_admission": "PASS:120pairedgroupsdistinct,960chronologicalsnapshots,240invoicebindings",
+  "coverage_audit": "input-coverage-v4.json",
+  "old_generations_preserved": [
+    "inputs",
+    "inputs-v2",
+    "inputs-v3"
+  ],
+  "effective_inputs": "inputs-v4",
+  "tests": "11 canonical/preflight input tests +2 real Torch batch/cache tests passed"
+}

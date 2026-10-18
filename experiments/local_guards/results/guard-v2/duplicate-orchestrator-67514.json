@@ -1,0 +1,33 @@
+{
+  "created_at": "2026-10-15T12:13:50.834130+00:00",
+  "type": "Duplicate orchestrator entry rejected by existing global heavy-model lease",
+  "real_owner": {
+    "pid": 66054,
+    "session": 34964
+  },
+  "duplicate_owner": {
+    "pid": 67514,
+    "session": 81346,
+    "started_at": "2026-10-15T12:09:30.961259+00:00",
+    "finished_at": "2026-10-15T12:09:34.099061+00:00",
+    "status": "FAILED"
+  },
+  "duplicate_stages": [
+    {
+      "block": "G22",
+      "behavior": "Existing complete cache detected; no model loaded or new scored rows written",
+      "exit_code": 0
+    },
+    {
+      "block": "G86",
+      "behavior": "Global heavy-model lease rejected attempt before loading a model or scoring",
+      "exit_code": 1
+    }
+  ],
+  "temporary_side_effect": "Duplicate orchestrator briefly overwrote shared runtime-run.json with FAILED/models_unloaded=true. Actual owner rewrote healthy state at its next stage transition. No active state was manually overwritten during repair.",
+  "source_or_input_changes": false,
+  "hidden_labels_read": false,
+  "new_heavy_inference_from_duplicate": false,
+  "remaining_evidence": "G86.log contains the duplicate lock-rejection traceback; real completed artifacts and owner stage exit codes establish actual model completion.",
+  "prevention": "New external guarded entrypoint uses a per-output flock and rejects live RUNNING owner or live model child before invoking frozen runner. Existing frozen source untouched. Wrapper not launched against active owner."
+}

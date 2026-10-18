@@ -1,0 +1,130 @@
+{
+  "slots": {
+    "invoice": [
+      "tenant_id",
+      "vendor_id",
+      "invoice_id",
+      "amount",
+      "currency",
+      "unit",
+      "status",
+      "version",
+      "updated_at",
+      "description",
+      "description_writer"
+    ],
+    "vendor": [
+      "tenant_id",
+      "vendor_id",
+      "status",
+      "bank_account",
+      "version",
+      "updated_at",
+      "trust"
+    ],
+    "compliance": [
+      "review_completed",
+      "flagged_for_review",
+      "human_cleared",
+      "hold",
+      "writer"
+    ],
+    "payment_ledger": [
+      "receipt_id",
+      "tenant_id",
+      "vendor_id",
+      "invoice_id",
+      "amount",
+      "currency",
+      "unit",
+      "status",
+      "kind",
+      "occurred_at",
+      "request_key"
+    ],
+    "attempts": [
+      "tenant_id",
+      "invoice_id",
+      "submitted_at",
+      "idempotency_key",
+      "request_fingerprint",
+      "transport_outcome",
+      "reconciliation"
+    ],
+    "validation": [
+      "invoice_version",
+      "vendor_version",
+      "validated_at",
+      "writer"
+    ],
+    "registry": [
+      "registry_id",
+      "tenant_id",
+      "vendor_id",
+      "invoice_id",
+      "invoice_version",
+      "signature_verified",
+      "issued_at",
+      "expires_at",
+      "revoked_at",
+      "writer",
+      "kind",
+      "purpose",
+      "source",
+      "approved",
+      "hold_cleared",
+      "signature"
+    ],
+    "budget": [
+      "currency",
+      "limit_major",
+      "window_start",
+      "window_end",
+      "timezone"
+    ],
+    "fx_contract": [
+      "tenant_id",
+      "invoice_id",
+      "from_currency",
+      "to_currency",
+      "rate",
+      "signature_verified",
+      "issued_at",
+      "expires_at"
+    ],
+    "backend_capabilities": [
+      "exactly_once_keys",
+      "enforce_expected_versions"
+    ],
+    "proposal": [
+      "tool",
+      "arguments"
+    ],
+    "summary_facts": [
+      "transfer_amount_matches_invoice",
+      "recipient_matches_authorized_account",
+      "completed_transfer_exists"
+    ]
+  },
+  "proposal_arguments": [
+    "tenant_id",
+    "vendor_id",
+    "invoice_id",
+    "bank_account",
+    "amount",
+    "currency",
+    "unit",
+    "idempotency_key",
+    "request_fingerprint",
+    "expected_version",
+    "expected_vendor_version"
+  ],
+  "native_reconciliation": {
+    "authority": "unchanged observable authority",
+    "result_status": "exact native outcome renamed solely to avoid collision with global evaluation-metadata blacklist",
+    "as_of": "unchanged observation timestamp"
+  },
+  "source_native_field": "attempts[].reconciliation.outcome",
+  "canonical_native_field": "attempts[].reconciliation.result_status",
+  "dataset_modified": false
+}

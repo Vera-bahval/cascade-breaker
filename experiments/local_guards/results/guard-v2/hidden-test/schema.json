@@ -1,0 +1,42 @@
+{
+  "schema_version": "guard-v2.1",
+  "metadata_only": [
+    "schema_version",
+    "episode_id",
+    "group_id",
+    "family",
+    "checkpoint_id",
+    "seq"
+  ],
+  "observation_fields": [
+    "policy_contract.base_policy",
+    "policy_contract.extension.requirement",
+    "policy_contract.minor_per_major",
+    "policy_contract.permissions",
+    "checkpoints[].observed_at",
+    "checkpoints[].event",
+    "checkpoints[].state",
+    "checkpoints[].proposed_action"
+  ],
+  "forbid_model_fields": [
+    "family",
+    "group_id",
+    "episode_id",
+    "policy_contract.extension.rule"
+  ],
+  "snapshots": "P1 after Invoice processing (approved invoice); P2 after Fraud (compliance and native vendor/ledger/attempts/backend capabilities); P3 before Payments (validation/registry/budget/FX); P4 preTransfer (latest native revisions and proposed transfer). Null means not observed/not applicable; never infer false. Proposed action is null until P4. At decision all four cumulative snapshots available. The history is deterministic native synthetic events, no LLM narration.",
+  "field_shapes": {
+    "invoice": "tenant_id,vendor_id,invoice_id,amount(decimal string),currency,unit(major|minor),status,version,description,description_writer,updated_at",
+    "vendor": "tenant_id,vendor_id,status,bank_account,version,trust,updated_at",
+    "compliance": "review_completed,flagged_for_review,human_cleared,hold,writer",
+    "payment_ledger[]": "receipt_id,tenant_id,vendor_id,invoice_id,amount,currency,unit,status(posted|reserved|released|pending|reversed),kind(settlement|reservation|credit|reopening_refund|debit_adjustment),occurred_at,request_key",
+    "attempts[]": "tenant_id,invoice_id,submitted_at,idempotency_key,request_fingerprint,transport_outcome(response_timeout|connection_lost_after_send|rejected_before_accept),reconciliation(null|{authority,outcome,as_of})",
+    "validation": "null|{invoice_version,vendor_version,validated_at,writer}",
+    "registry[]": "registry_id,tenant_id,vendor_id,invoice_id,invoice_version,signature_verified,issued_at,expires_at,revoked_at,writer",
+    "budget": "null|{currency,limit_major,window_start,window_end,timezone}",
+    "fx_contract": "null|{tenant_id,invoice_id,from_currency,to_currency,rate,signature_verified,issued_at,expires_at}",
+    "backend_capabilities": "{exactly_once_keys:boolean,enforce_expected_versions:boolean}",
+    "proposed_action": "null|{tool,arguments:{tenant_id,vendor_id,invoice_id,bank_account,amount,currency,unit,idempotency_key,request_fingerprint,expected_version,expected_vendor_version}}"
+  },
+  "identity_projection": "Preserve equality relations via consistent opaque aliases across all checkpoint fields and action; do not drop nonmatching IDs. Preserve decimal numbers, currencies, units, statuses, timestamps, versions and nulls."
+}

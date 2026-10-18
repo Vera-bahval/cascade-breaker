@@ -1,0 +1,88 @@
+{
+  "status": "LIVE_PATH_REVIEW_PASS_AFTER_ROOT_CLI_FIX",
+  "observed_utc": "2026-10-15T14:51:24.336416+00:00",
+  "scope": "Read-only process command/cwd, runtime metadata, root authorization path/hash and source contract audit. No hidden observations/labels/predictions/scores accessed, no models or watchers launched/stopped, no frozen57 files changed.",
+  "actual_bug_fixed_by_root": {
+    "old_pid": 76460,
+    "incorrect_prior": "scores-v5/runtime-run.json",
+    "required_prior": "scores-v5 directory",
+    "cause": "ready(prior) appends runtime-run.json and accesses sibling block JSONL files, so file argument cannot satisfy barrier.",
+    "new_pid": 26439,
+    "new_cli_prior": "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/scores-v5"
+  },
+  "process_contracts": [
+    {
+      "pid": 66054,
+      "role": "N/M/PG serial parent",
+      "output_directory": "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/scores-v5",
+      "input": "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/inputs-v5/combined-p4-inputs.jsonl",
+      "active_child_pid": 45290,
+      "active_block": "M"
+    },
+    {
+      "pid": 26439,
+      "role": "Jev serial guarded watcher",
+      "prior_directory": "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/scores-v5",
+      "destination_directory": "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/jev-v5"
+    },
+    {
+      "pid": 81254,
+      "role": "evaluation watcher",
+      "generation": 5,
+      "workspace": "${ORIGINAL_WORKSPACE}",
+      "destination_directory": "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/evaluation-runner-v5"
+    },
+    {
+      "pid": 10165,
+      "role": "conditional completion watcher",
+      "plan": "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/ROOT_AUTHORIZATION_PLAN_05.json",
+      "plan_sha256": "bd8effa043ed587285be284deae9316ce87401af5e8618be0da1c773492238bc",
+      "runner_sha256": "49c37238f3a8e91844849dd0a2074c3331b19ae160ed9f911f29de28f9278d98"
+    }
+  ],
+  "all_checked_cwds": "${ORIGINAL_WORKSPACE}",
+  "runtime_metadata_snapshot": {
+    "scores-v5/runtime-run.json": {
+      "pid": 66054,
+      "status": "RUNNING",
+      "models_unloaded": false
+    },
+    "jev-v5/runtime-run.json": {
+      "pid": 26439,
+      "status": "WAITING_PRIOR",
+      "models_unloaded": true,
+      "wait_reason": {
+        "reason": "prior runtime not COMPLETE",
+        "prior_status": "RUNNING"
+      }
+    },
+    "evaluation-runner-v5/runtime-run.json": {
+      "pid": 81254,
+      "status": "WAITING_INFERENCE_BARRIER",
+      "barrier": {
+        "reason": "await all six models before prospective cutoff",
+        "prior_status": "RUNNING",
+        "jev_status": "WAITING_PRIOR"
+      }
+    }
+  },
+  "checks": [
+    "Existing executable paths resolve for cheap runtime, Jev MPS runtime and finbot evaluation/completion interpreter.",
+    "Jev expected prior is directory; evaluation derives correct state file paths from workspace+generation; completion derives correct evaluation directory/model seals from root plan.",
+    "Root authorization absolute base/root/diagnostic/control paths align with same v5 layout; completion runner pinned SHA unchanged. STARTED absent at audit.",
+    "Lock path is identical workspace/.runtime/cheap-guards/heavy-model.lock. Jev parent checks/releases idle probe before children acquire lease; evaluation waits before acquiring ML lease and rechecks barrier after acquisition. No parent-child recursive lock cycle.",
+    "Child scans match actual v2_runtime/v2_jev modules, not waiting watcher script names.",
+    "All actual CLI cutoffs equal21:39:58.072112UTC and absolute deadlines22:59:58.072112UTC. Completion plan has same original bound."
+  ],
+  "blockers_remaining": [],
+  "bounded_failure_cases": [
+    "If prior becomes FAILED/PARTIAL/MODEL_CUTOFF instead of COMPLETE, frozen Jev ready() cannot run Jev and waits only until model cutoff; evaluation then uses completed available-model fallback once both watchers are terminal/unloaded. This is bounded scheduling behavior, not an infinite deadlock.",
+    "If heavy lock unexpectedly busy at evaluation acquisition/recheck, runner fails closed; root manual action required, no autonomous retry.",
+    "Malformed or mismatched frozen exports fail integrity rather than being silently accepted.",
+    "No automatic Jev restart/resume after model cutoff; existing root sole-launcher policy remains."
+  ],
+  "correct_command_contracts": {
+    "jev": "python3 experiments/local_guards/scripts/run_guard_v2_jev_serial_v5_guarded.py --workspace ${ORIGINAL_WORKSPACE} --method-freeze ${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/METHOD_FREEZE_05.json --jev-freeze ${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/JEV_INPUT_FREEZE_05.json --prior ${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/scores-v5 --destination ${ORIGINAL_WORKSPACE}/experiments/local_guards/results/guard-v2/jev-v5 --deadline 2026-10-15T22:59:58.072112+00:00 --model-cutoff 2026-10-15T21:39:58.072112+00:00 --future-resource-lease",
+    "note": "Corrected Jev process is already live; this command is documentation, not instruction to duplicate it. Existing evaluation/completion CLIs are correct; no restart needed from this review."
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "status": "COMPLETE",
+  "main_prefixes": 176,
+  "outcomes": 214,
+  "formats_completed": [
+    "plus_rationale",
+    "compact_policy_facts",
+    "relevant_history_obligations"
+  ],
+  "seeds": [
+    17,
+    29,
+    43
+  ],
+  "outer_folds": 3,
+  "inner_folds": 2,
+  "format_selection": "feasible<=5% raw all-safe episode FPR, maximum inner harm recall, minimum inner false stops, measured median inference latency, frozen format order",
+  "raw_fpr": "all non-harm archived continuations; rule-correct stops are NOT subtracted",
+  "unknown": "explicit STOP; no probability fabricated; omit from probability metrics",
+  "catboost": {
+    "iterations": 200,
+    "depth": 3,
+    "learning_rate": 0.03,
+    "l2_leaf_reg": 5,
+    "thread_count": 2
+  },
+  "score_sources": [
+    {
+      "path": "${ORIGINAL_WORKSPACE}/experiments/local_guards/results/night-4b/scores.jsonl",
+      "sha256": "338e61d3a5b17d00a10f88f9608ab19b74e15dc4996dc700c1c3753645638060"
+    }
+  ],
+  "failures": 0,
+  "source_sha256": "fe14fb0a3c5b0e1b6b64888712d43c936c2156069664c8570126d9f3fdf7dc5d",
+  "format_input_manifest_sha256": "bda4d8e7859abfc4f48c06e19d9ff157231abfb40108da35158ea9a28e8c1c00",
+  "inference_latency_ms": {
+    "plus_rationale": {
+      "p50": 7356.37247953855,
+      "p95": 11077.668698017078,
+      "mean": 7674.112290174558,
+      "known_records": 176
+    },
+    "compact_policy_facts": {
+      "p50": 8003.091124497587,
+      "p95": 10953.126801767212,
+      "mean": 8257.08255367069,
+      "known_records": 176
+    },
+    "relevant_history_obligations": {
+      "p50": 29120.616687010624,
+      "p95": 35507.62817852228,
+      "mean": 29477.866860155864,
+      "known_records": 176
+    },
+    "old08": {
+      "p50": 1826.0329794866266,
+      "p95": 2868.40442725952,
+      "mean": 1929.0382440692404,
+      "known_records": 176
+    }
+  },
+  "resources_by_format": {
+    "plus_rationale": {
+      "actual_noncache_known_calls": 176,
+      "total_ms": {
+        "p50": 7417.611353492248,
+        "p95": 11248.488979246758,
+        "n": 176
+      },
+      "queue_ms": {
+        "p50": 0.008750008419156075,
+        "p95": 0.015521269233431667,
+        "n": 176
+      },
+      "peak_observed_memory_bytes": {
+        "process_peak_rss_bytes": 19420905472,
+        "mps_allocated_bytes": 16965456640,
+        "mps_driver_bytes": 17761533952
+      },
+      "cold_load_ms_observed_max": 34341.06429098756,
+      "note": "observed server resources; memory includes allocator cache; load duplicated metadata counted once by max; no claim of process isolation beyond runtime manifest"
+    },
+    "compact_policy_facts": {
+      "actual_noncache_known_calls": 176,
+      "total_ms": {
+        "p50": 8064.0861044958,
+        "p95": 11072.385312232655,
+        "n": 176
+      },
+      "queue_ms": {
+        "p50": 0.008875009370967746,
+        "p95": 0.014895034837536514,
+        "n": 176
+      },
+      "peak_observed_memory_bytes": {
+        "process_peak_rss_bytes": 19420905472,
+        "mps_allocated_bytes": 16965456640,
+        "mps_driver_bytes": 17761533952
+      },
+      "cold_load_ms_observed_max": 34341.06429098756,
+      "note": "observed server resources; memory includes allocator cache; load duplicated metadata counted once by max; no claim of process isolation beyond runtime manifest"
+    },
+    "relevant_history_obligations": {
+      "actual_noncache_known_calls": 176,
+      "total_ms": {
+        "p50": 29226.16789600579,
+        "p95": 35631.38890652044,
+        "n": 176
+      },
+      "queue_ms": {
+        "p50": 0.008999995770864189,
+        "p95": 0.020886269339825958,
+        "n": 176
+      },
+      "peak_observed_memory_bytes": {
+        "process_peak_rss_bytes": 19420905472,
+        "mps_allocated_bytes": 16965456640,
+        "mps_driver_bytes": 19909017600
+      },
+      "cold_load_ms_observed_max": 34341.06429098756,
+      "note": "observed server resources; memory includes allocator cache; load duplicated metadata counted once by max; no claim of process isolation beyond runtime manifest"
+    },
+    "old08": {
+      "actual_noncache_known_calls": 176,
+      "total_ms": {
+        "p50": 1831.8938334996346,
+        "p95": 2872.0710097404663,
+        "n": 176
+      },
+      "queue_ms": {
+        "p50": 0.0007080088835209608,
+        "p95": 0.0018855062080547214,
+        "n": 176
+      },
+      "peak_observed_memory_bytes": {
+        "process_peak_rss_bytes": 3811835904,
+        "mps_allocated_bytes": 3061261824,
+        "mps_driver_bytes": 5472321536
+      },
+      "cold_load_ms_observed_max": 5362.216417008312,
+      "note": "observed server resources; memory includes allocator cache; load duplicated metadata counted once by max; no claim of process isolation beyond runtime manifest"
+    }
+  }
+}

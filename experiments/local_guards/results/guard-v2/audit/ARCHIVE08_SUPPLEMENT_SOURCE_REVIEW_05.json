@@ -1,0 +1,40 @@
+{
+  "status": "SOURCE_REVIEW_PASS",
+  "protocol_status": "AMEND02 publication pending; initial protocol and AMEND01 are superseded/stale and are not approved for execution. Final protocol must pin these exact source/tests/docs/parser hashes before root launch.",
+  "scope": "Source and synthetic public fixtures only, prepare-only. No actual archive/combined scores, hidden labels/probabilities, models, main forecasts or metrics read; no supplemental run or frozen57 edit.",
+  "sha256": {
+    "${ORIGINAL_WORKSPACE}/experiments/local_guards/scripts/run_guard_v2_archive08_supplement.py": "1d688066eba06aa4c98866808b341f8e596d5fde06c2d20d06599da12a88bff5",
+    "${ORIGINAL_WORKSPACE}/experiments/local_guards/tests/test_v2_archive08_supplement.py": "a5dc8fa68fd1a07222a9240b4066f203389b37bb9f5f4a83a5627a66beb68eb3",
+    "${ORIGINAL_WORKSPACE}/experiments/local_guards/tests/test_v2_archive08_supplement_audit.py": "063c45a9d7786e88e8b5e362b6afa2c24f82852b393225fcf95d13dce163386b",
+    "${ORIGINAL_WORKSPACE}/experiments/local_guards/GUARD-V2-ARCHIVE08-SUPPLEMENT.md": "a97e37cc487f1d542fa9fd3393bfc628a11094a7aaf1d9f7a08cdf8cfc9c86ef",
+    "${ORIGINAL_WORKSPACE}/experiments/local_guards/scripts/audit_guard_v2_costs_05.py": "119320aa03b3beb70ec57381b2e5f856f3c8383506155de00d077a39760ecfad"
+  },
+  "tests": {
+    "passed": 18,
+    "owner": 15,
+    "independent": 3,
+    "command": "python3 -m unittest discover -s experiments/local_guards/tests -p 'test_v2_archive08_supplement*.py' -q"
+  },
+  "fixed_bugs": [
+    "Combined score row was fully JSON-deserialized before archive filter; now independently reviewed lexical prefix-only projection selects first and only known archive rows reach full decode.",
+    "Export deadline now checked after snapshot, after feature construction and before EXPORT_COMPLETE; expired partial export remains incomplete.",
+    "CV reserve rechecked after final integrity; no child starts after deadline; late child/postprocessing cannot receive COMPLETE.",
+    "No-inference wording now explicitly no_new_feature_model_inference; archive fitted-head CV fit/predict is deliberate."
+  ],
+  "checked_contract": [
+    "Main COMPLETE bound to root authorization, inference unloaded, model seals/prediction file hashes match release. Hidden main prediction bytes hashed only for integrity in future execution, never parsed for quality.",
+    "Exclusive nonblocking shared heavy lease protects export+optional CV; NEW output directory refuses resume and leaves main outputs unchanged.",
+    "Exactly704 unique archive checkpoints and176 episode timelines required; missing, duplicate or UNKNOWN archive checkpoint rejects, no outcome/score-based complete-case subset.",
+    "Frozen feature_records enforces hashes/model identity/chronology; full880 records and exact five fixed blocks normalized over176 P4 prefixes.",
+    "Export commits before optional CV and survives reserve shortage, launch failure, nonzero exit or timeout.",
+    "Optional fixed19-config archive CV uses original archive rows/outcomes/splits and frozen training API only, no external predict/score.",
+    "Minimum1200 seconds is admission reserve, not runtime promise. Owned child group killed/waited at original global deadline, no extension.",
+    "Supplemental scope explicitly posthoc archive-only; generic BEFORE_EXTERNAL model seal is not independent prospective evidence; primary available pool/thresholds/decisions unchanged."
+  ],
+  "public_counterexamples": [
+    "Unselected external probabilities/labels carry invalid UNREAD payload and are never JSON decoded.",
+    "Malformed selected archive payload fails rather than silently filtering a row.",
+    "Container prefix rejected before decoder.",
+    "Deadline consumed by final integrity prevents child launch and preserves export."
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "created_utc": "2026-10-15T15:01:10.024633+00:00",
+  "token_metadata_sha256": "ef55535367623a47d375e4b150de21f245a26a9b7688f98aa3c98e847d99b9e3",
+  "estimation": "Observed historical seconds per model-row token transferred to sum of new unique payload tokens. This is extrapolation, not a confidence interval or runtime guarantee. Longer contexts and thermal/kernel/memory effects can exceed range.",
+  "estimates": {
+    "08": {
+      "source_sha256": "b42c818be53267e0318b8313609eec2255f9d89a63f10fb280123027d6b0eded",
+      "historical_actual_calls": 1135,
+      "historical_state_tokens_max": 734,
+      "new_unique_calls": 1684,
+      "new_state_tokens_p50": 1848.0,
+      "new_state_tokens_p95": 5277,
+      "new_state_tokens_max": 6101,
+      "main_batch_hours_extrapolated": {
+        "old_rate_p10": 2.7656401854765194,
+        "old_rate_p50": 3.081508074134286,
+        "old_rate_p90": 4.8660388286728775
+      },
+      "weighted_rate_main_hours": 3.405038425025793
+    },
+    "4b": {
+      "source_sha256": "338e61d3a5b17d00a10f88f9608ab19b74e15dc4996dc700c1c3753645638060",
+      "historical_actual_calls": 528,
+      "historical_state_tokens_max": 2475,
+      "new_unique_calls": 691,
+      "new_state_tokens_p50": 1688,
+      "new_state_tokens_p95": 5540,
+      "new_state_tokens_max": 6101,
+      "main_batch_hours_extrapolated": {
+        "old_rate_p10": 5.188411400256215,
+        "old_rate_p50": 5.494293034549726,
+        "old_rate_p90": 6.791742681332539
+      },
+      "weighted_rate_main_hours": 5.950397425597216
+    }
+  },
+  "gates": "Rough extra 1\u20131.8 hours total for both models, mainly CPU fullbatch4B; not measured on current new inputs.",
+  "feasibility": "Both full models are not realistically finishable before21:39UTC even with immediate15:00UTC start; N/M/PGprecedence leaves less time. 0.8B may fit if its heavy phase starts early enough;4B likely partial/not reached.",
+  "no_heavy_inference": true,
+  "labels_read": false,
+  "frozen_sources_changed": false
+}
