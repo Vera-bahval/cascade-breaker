@@ -1,0 +1,399 @@
+{
+  "feature_block": "J_cur: four P4 atomic probabilities only",
+  "limitations": [
+    "Archive is development data, so grouped CV is diagnostic rather than independent validation.",
+    "External cohorts use a different extended-contract target; no new CatBoost external evaluation is claimed.",
+    "SecJev 9B MPS CPU parity and prefix-cache numerical identity are unvalidated."
+  ],
+  "model_config": {
+    "allow_writing_files": false,
+    "depth": 3,
+    "iterations": 200,
+    "l2_leaf_reg": 5,
+    "learning_rate": 0.03,
+    "loss_function": "Logloss",
+    "thread_count": 2,
+    "verbose": false
+  },
+  "old_arm_reproduced_exactly": true,
+  "results": {
+    "secjev08": {
+      "17": {
+        "average_precision": 0.9457719778575883,
+        "brier": 0.09381933140057458,
+        "danger_stopped": 68,
+        "danger_total": 83,
+        "fold_thresholds": [
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 51,
+                "n": 55,
+                "rate": 0.9272727272727272
+              },
+              "p4_safe_stops": {
+                "k": 2,
+                "n": 70,
+                "rate": 0.02857142857142857
+              }
+            },
+            "outer_fold": 0,
+            "threshold": 0.23232717408975517
+          },
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 43,
+                "n": 56,
+                "rate": 0.7678571428571429
+              },
+              "p4_safe_stops": {
+                "k": 1,
+                "n": 47,
+                "rate": 0.02127659574468085
+              }
+            },
+            "outer_fold": 1,
+            "threshold": 0.6283903569650241
+          },
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 41,
+                "n": 55,
+                "rate": 0.7454545454545455
+              },
+              "p4_safe_stops": {
+                "k": 3,
+                "n": 69,
+                "rate": 0.043478260869565216
+              }
+            },
+            "outer_fold": 2,
+            "threshold": 0.6024992891139305
+          }
+        ],
+        "log_loss": 0.3490375144028951,
+        "safe_stopped": 4,
+        "safe_total": 93
+      },
+      "29": {
+        "average_precision": 0.9484580790068291,
+        "brier": 0.09276630301716458,
+        "danger_stopped": 66,
+        "danger_total": 83,
+        "fold_thresholds": [
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 49,
+                "n": 55,
+                "rate": 0.8909090909090909
+              },
+              "p4_safe_stops": {
+                "k": 2,
+                "n": 69,
+                "rate": 0.028985507246376812
+              }
+            },
+            "outer_fold": 0,
+            "threshold": 0.31274072617910237
+          },
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 43,
+                "n": 56,
+                "rate": 0.7678571428571429
+              },
+              "p4_safe_stops": {
+                "k": 2,
+                "n": 48,
+                "rate": 0.041666666666666664
+              }
+            },
+            "outer_fold": 1,
+            "threshold": 0.36183258914261335
+          },
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 42,
+                "n": 55,
+                "rate": 0.7636363636363637
+              },
+              "p4_safe_stops": {
+                "k": 1,
+                "n": 69,
+                "rate": 0.014492753623188406
+              }
+            },
+            "outer_fold": 2,
+            "threshold": 0.8667915967190429
+          }
+        ],
+        "log_loss": 0.3418685954664617,
+        "safe_stopped": 5,
+        "safe_total": 93
+      },
+      "43": {
+        "average_precision": 0.9364105639174618,
+        "brier": 0.10360639044033326,
+        "danger_stopped": 65,
+        "danger_total": 83,
+        "fold_thresholds": [
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 49,
+                "n": 55,
+                "rate": 0.8909090909090909
+              },
+              "p4_safe_stops": {
+                "k": 2,
+                "n": 70,
+                "rate": 0.02857142857142857
+              }
+            },
+            "outer_fold": 0,
+            "threshold": 0.3955321241185774
+          },
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 42,
+                "n": 56,
+                "rate": 0.75
+              },
+              "p4_safe_stops": {
+                "k": 2,
+                "n": 49,
+                "rate": 0.04081632653061224
+              }
+            },
+            "outer_fold": 1,
+            "threshold": 0.6946004217804425
+          },
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 42,
+                "n": 55,
+                "rate": 0.7636363636363637
+              },
+              "p4_safe_stops": {
+                "k": 3,
+                "n": 67,
+                "rate": 0.04477611940298507
+              }
+            },
+            "outer_fold": 2,
+            "threshold": 0.6617931122347372
+          }
+        ],
+        "log_loss": 0.378172228479105,
+        "safe_stopped": 3,
+        "safe_total": 93
+      }
+    },
+    "secjev9b": {
+      "17": {
+        "average_precision": 0.994580799255073,
+        "brier": 0.026622020975313777,
+        "danger_stopped": 79,
+        "danger_total": 83,
+        "fold_thresholds": [
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 53,
+                "n": 55,
+                "rate": 0.9636363636363636
+              },
+              "p4_safe_stops": {
+                "k": 1,
+                "n": 70,
+                "rate": 0.014285714285714285
+              }
+            },
+            "outer_fold": 0,
+            "threshold": 0.5075859350856671
+          },
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 54,
+                "n": 56,
+                "rate": 0.9642857142857143
+              },
+              "p4_safe_stops": {
+                "k": 1,
+                "n": 47,
+                "rate": 0.02127659574468085
+              }
+            },
+            "outer_fold": 1,
+            "threshold": 0.7006853199106691
+          },
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 53,
+                "n": 55,
+                "rate": 0.9636363636363636
+              },
+              "p4_safe_stops": {
+                "k": 0,
+                "n": 69,
+                "rate": 0.0
+              }
+            },
+            "outer_fold": 2,
+            "threshold": 0.3758832785584221
+          }
+        ],
+        "log_loss": 0.11076711888906124,
+        "safe_stopped": 1,
+        "safe_total": 93
+      },
+      "29": {
+        "average_precision": 0.9931904274059965,
+        "brier": 0.02865248263247319,
+        "danger_stopped": 80,
+        "danger_total": 83,
+        "fold_thresholds": [
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 53,
+                "n": 55,
+                "rate": 0.9636363636363636
+              },
+              "p4_safe_stops": {
+                "k": 3,
+                "n": 69,
+                "rate": 0.043478260869565216
+              }
+            },
+            "outer_fold": 0,
+            "threshold": 0.17948368537812795
+          },
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 56,
+                "n": 56,
+                "rate": 1.0
+              },
+              "p4_safe_stops": {
+                "k": 1,
+                "n": 48,
+                "rate": 0.020833333333333332
+              }
+            },
+            "outer_fold": 1,
+            "threshold": 0.009040114212151618
+          },
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 53,
+                "n": 55,
+                "rate": 0.9636363636363636
+              },
+              "p4_safe_stops": {
+                "k": 0,
+                "n": 69,
+                "rate": 0.0
+              }
+            },
+            "outer_fold": 2,
+            "threshold": 0.6298049230104644
+          }
+        ],
+        "log_loss": 0.12735697063014736,
+        "safe_stopped": 4,
+        "safe_total": 93
+      },
+      "43": {
+        "average_precision": 0.9919544259326334,
+        "brier": 0.02794818554779632,
+        "danger_stopped": 78,
+        "danger_total": 83,
+        "fold_thresholds": [
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 53,
+                "n": 55,
+                "rate": 0.9636363636363636
+              },
+              "p4_safe_stops": {
+                "k": 1,
+                "n": 70,
+                "rate": 0.014285714285714285
+              }
+            },
+            "outer_fold": 0,
+            "threshold": 0.23461106923853062
+          },
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 54,
+                "n": 56,
+                "rate": 0.9642857142857143
+              },
+              "p4_safe_stops": {
+                "k": 1,
+                "n": 49,
+                "rate": 0.02040816326530612
+              }
+            },
+            "outer_fold": 1,
+            "threshold": 0.7871527360281335
+          },
+          {
+            "inner_calibration": {
+              "harm_prevented": {
+                "k": 53,
+                "n": 55,
+                "rate": 0.9636363636363636
+              },
+              "p4_safe_stops": {
+                "k": 1,
+                "n": 67,
+                "rate": 0.014925373134328358
+              }
+            },
+            "outer_fold": 2,
+            "threshold": 0.906243826699557
+          }
+        ],
+        "log_loss": 0.13259655717027213,
+        "safe_stopped": 1,
+        "safe_total": 93
+      }
+    }
+  },
+  "seeds": [
+    17,
+    29,
+    43
+  ],
+  "source_sha256": {
+    "cascade_guard/ml.py": "5986023fce32dc826d7ec599a028cc1a598b98664d5f30b9e052b1e2442dfc16",
+    "cascade_guard/v2_eval.py": "865fd6070100aa9af5499b533140dc3bb69a9012cfe4e9d4ed884dbf8dc7f02a",
+    "results/cheap-guards/evaluation/fold-allocations.json": "b2e3e47086b2bc335bcbaa0e91f7ebadd5e498c6497e7005e7897c64946bec34",
+    "results/guard-v2/evaluation-v5/archive-predictions.jsonl": "d7c77657e913fc1f1556b0a956c6697a424b61d3e1f4c296764016cd8f635818",
+    "results/guard-v2/evaluation/outcomes214.jsonl": "0e96d1c2f88c435ffa2d1764dabfad8b8a8128a2f9e4b06075e0c8080feb4304",
+    "results/guard-v2/feature-views-v5/archive/Jev-08.jsonl": "3ac0af12990ff9d418495210b8c20619c12fd915dcd46f4ec1d4d2a96a9139d8",
+    "results/guard-v2/inputs-v5/archive-p4-rows.jsonl": "dfef3c371d9f398d6be5c1a28fd2c5649ea23b4c4a4033be4a7b782152e9cc00",
+    "results/guard-v2/jev-v5/08/archive-all-scores.jsonl": "579a5013b36e7fdda5f4da5921c823080f79510132b69950f92837ec26259384",
+    "results/secjev9b-night-20261018/mps-cached-v6/scores.jsonl": "f9553351233b2ef5a51715bb73ea79c3a8145f33f2c99d3c053882c7fdabbed1",
+    "results/secjev9b-night-20261018/mps-only-v3/scores.jsonl": "0e1f4c7736bd4711881684766c7799a0f46a013bc0b027e3b5287eb5dc0540ef",
+    "scripts/analyze_secjev9b_catboost.py": "88bb24ecb0f09e65073140e94e701149b9fdc900ab50e4f5f2dd002194a01d50"
+  },
+  "status": "POSTHOC_ARCHIVE_GROUPED_CV",
+  "threshold_policy": "A_joint, inner grouped OOF, P4 reached safe FPR <= 5%, exact frozen allocations"
+}

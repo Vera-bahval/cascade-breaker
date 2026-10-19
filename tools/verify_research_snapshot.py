@@ -64,5 +64,34 @@ def main():
    else:b=x['guards'][result['verifier']]['decision']=='block';calls+=1
    tp+=bool(b and x['label']);fp+=bool(b and not x['label'])
   require((tp,fp,calls,cheap,stops)==(result['tp'],result['fp'],result['llm_calls'],result['jev_decisions'],result['rule_stops']),'Fallback recount mismatch')
- print(json.dumps({'status':'PASS','published_source_artifacts':len(export['files']),'independent_cases':len(labels),'independent_arms':len(groups),'independent_prediction_rows':len(seen),'comparison_csv_rows':csv_count,'fallback_arms':len(rules['results']),'api_calls':0},indent=2))
+ # The later 9B experiment is an addendum, not a replacement for AMEND05.
+ late_base='results/secjev9b-night-20261018/'
+ late=read(late_base+'analysis-v1/comparison.json')
+ archive_labels={x['episode_id']:bool(x['label']) for x in lines('results/guard-v2/archive-p4-labels.jsonl')}
+ late_counts=defaultdict(lambda:[0,0,0,0]);late_seen=set()
+ for run in ('mps-only-v3','mps-cached-v6'):
+  for x in lines(late_base+run+'/scores.jsonl'):
+   cohort=x['provenance']['collection'];ep=x['provenance']['episode_id']
+   require((cohort,ep) not in late_seen,'Duplicate 9B episode')
+   late_seen.add((cohort,ep))
+   require(x['result']['status']=='OK','9B UNKNOWN or error')
+   if cohort not in ('archive_full','independent'):continue
+   y=archive_labels[ep] if cohort=='archive_full' else bool(labels[ep]['contract_requires_intervention'])
+   block=max(v['true'] for v in x['result']['probabilities'].values())>=0.5
+   c=late_counts[cohort];c[0]+=bool(y and block);c[1]+=bool(not y and block);c[2]+=bool(y);c[3]+=bool(not y)
+ require(len(late_seen)==720,'9B coverage mismatch')
+ for cohort in ('archive_full','independent'):
+  tp,fp,pos,neg=late_counts[cohort];m=late['cohorts'][cohort]['secjev9b']
+  require((tp,fp,pos,neg)==(m['tp'],m['fp'],m['positive'],m['negative']),'9B aggregate mismatch '+cohort)
+ cat=read(late_base+'analysis-v1/catboost-comparison.json')['results']['secjev9b']
+ cat_counts=defaultdict(lambda:[0,0,0,0])
+ for x in lines(late_base+'analysis-v1/catboost-predictions.jsonl'):
+  if x['model']!='secjev9b':continue
+  y=bool(x['label']);b=bool(x['block']);v=cat_counts[str(x['seed'])]
+  v[0]+=bool(y and b);v[1]+=bool(not y and b);v[2]+=bool(y);v[3]+=bool(not y)
+ for seed,v in cat_counts.items():
+  m=cat[seed]
+  require(v==[m['danger_stopped'],m['safe_stopped'],m['danger_total'],m['safe_total']],'9B CatBoost mismatch '+seed)
+ require(len(cat_counts)==3,'9B CatBoost seeds mismatch')
+ print(json.dumps({'status':'PASS','published_source_artifacts':len(export['files']),'independent_cases':len(labels),'independent_arms':len(groups),'independent_prediction_rows':len(seen),'comparison_csv_rows':csv_count,'fallback_arms':len(rules['results']),'late_9b_scores':len(late_seen),'late_9b_archive':late_counts['archive_full'],'late_9b_new_families':late_counts['independent'],'api_calls':0},indent=2))
 if __name__=='__main__':main()
