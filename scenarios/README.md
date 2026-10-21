@@ -83,10 +83,24 @@ trigger:
 - `before` / `after`: vendor, invoices, payments (and vendor messages for `api`) before and after the trigger;
 - `events`: activity feed events during the run (`api`);
 - `steps`: trace of LLM calls, tool calls and delegations (`direct`);
+- `traces`: the same trace for every workflow the run started, keyed by workflow id (`api`, see below);
 - `response`: the API response or the chat stream; `error` if something broke.
+
+### Traces in `api` mode
+
+Start the FinBot server with `PROBE_TRACE_DIR` set and it writes one trace file per orchestrator workflow. Give the
+runner the same directory (the same variable, or `--trace-dir`) and it attaches them to the result:
+
+```bash
+export PROBE_TRACE_DIR=../scenarios/traces
+uv run python run.py                                   # FinBot server, in one terminal
+uv run python ../scenarios/run.py run invoice_basic    # in another
+```
+
+If FinBot runs in Docker, mount that directory into the container.
 
 ### Limitations
 
-- FinBot's chat assistant calls OpenAI directly and ignores `LLM_PROVIDER=mock`, so `chat` scenarios need a real key.
-- With the mock LLM the orchestrator stops at the first iteration, so it only exercises the runner itself.
-- In `api` mode no `probe` trace is written; only the activity feed events are available.
+- With the mock LLM the orchestrator stops at the first iteration and the chat assistant answers with a fixed
+  sentence, so mock runs only exercise the runner itself.
+- The chat assistant's own LLM calls are not traced; workflows it starts are.
