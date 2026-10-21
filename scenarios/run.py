@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -57,7 +58,7 @@ def cmd_run(args: argparse.Namespace) -> None:
     if sc.via == "api":
         from runner import api_mode
 
-        result = api_mode.run(sc, args.timeout, args.base_url)
+        result = api_mode.run(sc, args.timeout, args.base_url, args.trace_dir)
     else:
         from runner import direct_mode
 
@@ -76,6 +77,8 @@ def main() -> None:
                        help=f"FinBot address for via=api (default {DEFAULT_BASE_URL})")
         p.add_argument("--timeout", type=float, default=600.0,
                        help="seconds to wait for workflows to finish")
+        p.add_argument("--trace-dir", default=os.environ.get("PROBE_TRACE_DIR"),
+                       help="where the FinBot server writes workflow traces (default $PROBE_TRACE_DIR)")
         p.set_defaults(func=func)
     args = parser.parse_args()
     args.func(args)

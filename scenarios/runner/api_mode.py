@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import json
 import secrets
 import time
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 
 from runner.client import FinBotClient
@@ -42,6 +44,21 @@ def wait_for_workflows(client: FinBotClient, after_id: int, *, expect_workflow: 
             return {"timed_out": True, "workflows": sorted(started),
                     "unfinished": sorted(started - finished), "events": events[::-1]}
         time.sleep(poll)
+
+
+def read_traces(trace_dir: str | None, workflows: list[str], wait_s: float = 10.0) -> dict[str, Any]:
+    """Collect the trace files FinBot wrote for these workflows (PROBE_TRACE_DIR on the server).
+
+    A file appears when its workflow ends, which can be a moment after the last event.
+    """
+    if not trace_dir:
+        return {}
+    deadline = time.monotonic() + wait_s
+    paths = {wf: Path(trace_dir) / f"{wf}.json" for wf in workflows}
+    while not all(p.exists() for p in paths.values()) and time.monotonic() < deadline:
+        time.sleep(0.5)
+    return {wf: json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+            for wf, p in paths.items()}
 
 
 def _tag() -> str:
@@ -101,7 +118,8 @@ def _trigger(client: FinBotClient, scenario: Scenario, tag: str) -> tuple[dict[s
     return client.chat(trigger["message"]), bool(trigger.get("expect_workflow", False))
 
 
-def run(scenario: Scenario, timeout: float, base_url: str | None = None) -> dict[str, Any]:
+def run(scenario: Scenario, timeout: float, base_url: str | None = None,
+        trace_dir: str | None = None) -> dict[str, Any]:
     state = load_state(scenario.id)
     if state.get("via") != "api":
         raise RuntimeError(f"State for {scenario.id} was prepared for via={state.get('via')}")
@@ -127,6 +145,7 @@ def run(scenario: Scenario, timeout: float, base_url: str | None = None) -> dict
             "before": before,
             "after": client.snapshot(),
             "events": wait["events"],
+            "traces": read_traces(trace_dir, wait["workflows"]),
         }
         result["path"] = str(save_result(scenario.id, result))
         return result
