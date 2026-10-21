@@ -116,6 +116,8 @@ class Settings(BaseSettings):
     CASCADE_PROBE_ROLES: str | None = None
     # Probe: control points off | shadow (record only) | enforce (stop on block)
     CASCADE_GUARD_MODE: Literal["off", "shadow", "enforce"] = "off"
+    # Probe: write one trace file per orchestrator workflow into this directory; unset = off
+    PROBE_TRACE_DIR: str | None = None
 
     # Ollama
     OLLAMA_BASE_URL: str = "http://localhost:11434"

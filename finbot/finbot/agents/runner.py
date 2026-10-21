@@ -13,7 +13,9 @@ from finbot.agents.specialized.invoice import InvoiceAgent
 from finbot.agents.specialized.onboarding import VendorOnboardingAgent
 from finbot.agents.specialized.payments import PaymentsAgent
 from finbot.core.auth.session import SessionContext
+from finbot.config import settings
 from finbot.core.messaging import event_bus
+from finbot.probe import trace as probe_trace
 
 logger = logging.getLogger(__name__)
 
@@ -207,12 +209,14 @@ async def run_orchestrator_agent(
     Returns:
         Synthesized result from all delegated agents
     """
-    return await run_agent_with_retry(
-        agent_class=OrchestratorAgent,
-        session_context=session_context,
-        task_data=task_data,
-        workflow_id=workflow_id,
-    )
+    workflow_id = workflow_id or f"wf_{secrets.token_urlsafe(12)}"
+    with probe_trace.record_to_dir(settings.PROBE_TRACE_DIR, workflow_id, task_data=task_data):
+        return await run_agent_with_retry(
+            agent_class=OrchestratorAgent,
+            session_context=session_context,
+            task_data=task_data,
+            workflow_id=workflow_id,
+        )
 
 
 async def run_communication_agent(

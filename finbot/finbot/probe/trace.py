@@ -1,7 +1,8 @@
 """Full per-run trace for the cascade-control probe.
 
 A runner opens a recorder with `open_recorder()`; while none is open every
-hook here is a no-op. Steps are appended in execution order, each with a
+hook here is a no-op. A server can instead write one trace file per workflow
+with `record_to_dir()` (set PROBE_TRACE_DIR). Steps are appended in execution order, each with a
 sequence number and a timestamp in milliseconds from the start of the run:
 
     llm             one LLM call: full input messages, tool names, output
@@ -19,9 +20,11 @@ import contextlib
 import contextvars
 import hashlib
 import json
+import os
 import time
 from collections.abc import Iterator
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 _recorder: contextvars.ContextVar[RunRecorder | None] = contextvars.ContextVar(
@@ -70,6 +73,30 @@ def open_recorder() -> Iterator[RunRecorder]:
         yield recorder
     finally:
         _recorder.reset(token)
+
+
+@contextlib.contextmanager
+def record_to_dir(directory: str | None, workflow_id: str, **meta: Any) -> Iterator[None]:
+    """Record a workflow and write it to <directory>/<workflow_id>.json when it ends.
+
+    No-op when directory is unset or a runner already holds a recorder, so an
+    in-process run keeps its own trace.
+    """
+    if not directory or _recorder.get() is not None:
+        yield
+        return
+    with open_recorder() as recorder:
+        try:
+            yield
+        finally:
+            target = Path(directory)
+            target.mkdir(parents=True, exist_ok=True)
+            data = {"workflow_id": workflow_id, **_jsonable(meta),
+                    "steps": recorder.steps, "tool_defs": recorder.tool_defs}
+            # Write then rename, so a reader never sees a half-written file.
+            tmp = target / f".{workflow_id}.json.tmp"
+            tmp.write_text(json.dumps(data, ensure_ascii=False, default=str), encoding="utf-8")
+            os.replace(tmp, target / f"{workflow_id}.json")
 
 
 def record_llm(
