@@ -23,6 +23,7 @@ from finbot.core.auth.session import SessionContext
 from finbot.core.data.database import db_session
 from finbot.core.data.models import CTFEvent
 from finbot.core.data.repositories import ChatMessageRepository, VendorRepository
+from finbot.core.llm.mock_responses import MockResponsesClient
 from finbot.core.messaging import event_bus
 from finbot.guardrails.schemas import HookKind
 from finbot.guardrails.service import GuardrailHookService
@@ -66,11 +67,14 @@ class ChatAssistantBase:
         self.max_history = max_history
         self.agent_name = agent_name
         self._workflow_id = self._resolve_workflow_id()
-        self._client = AsyncOpenAI(
-            api_key=settings.OPENAI_API_KEY,
-            base_url=settings.OPENAI_BASE_URL,
-            timeout=settings.CHAT_STREAM_TIMEOUT,
-        )
+        if settings.LLM_PROVIDER == "mock":
+            self._client = MockResponsesClient()
+        else:
+            self._client = AsyncOpenAI(
+                api_key=settings.OPENAI_API_KEY,
+                base_url=settings.OPENAI_BASE_URL,
+                timeout=settings.CHAT_STREAM_TIMEOUT,
+            )
         self._model = settings.LLM_DEFAULT_MODEL
         self._mcp_provider: MCPToolProvider | None = None
         self._mcp_connected = False
