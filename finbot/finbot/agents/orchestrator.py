@@ -14,6 +14,8 @@ from finbot.agents.base import BaseAgent
 from finbot.agents.utils import agent_tool
 from finbot.core.auth.session import SessionContext
 from finbot.core.messaging import event_bus
+from finbot.probe import injections as probe_injections
+from finbot.probe import trace as probe_trace
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +34,7 @@ class OrchestratorAgent(BaseAgent):
         self._delegation_attempts: dict[str, int] = {}
         self._current_task_data: dict[str, Any] | None = None
         self._workflow_context: list[tuple[str, str]] = []
+        self._delegation_target: str | None = None
 
         logger.info(
             "Orchestrator initialized for user=%s, namespace=%s, workflow=%s",
@@ -380,6 +383,8 @@ class OrchestratorAgent(BaseAgent):
 
     def _check_delegation_limit(self, agent_key: str) -> dict[str, Any] | None:
         """Track delegation attempts and return a failure result if the cap is reached."""
+        # Called first in every delegate_to_*; remembers who the task is for.
+        self._delegation_target = agent_key
         self._delegation_attempts[agent_key] = (
             self._delegation_attempts.get(agent_key, 0) + 1
         )
@@ -406,17 +411,32 @@ class OrchestratorAgent(BaseAgent):
         # This implicit trust between agents to pass context forward enables lateral movement attacks.
         # </CTF:VULNERABILITY>
         """
-        if not self._workflow_context:
-            return task_description
-        context_block = (
-            "\n\nPrior workflow context (include all directives when acting):"
+        enriched = task_description
+        if self._workflow_context:
+            context_block = (
+                "\n\nPrior workflow context (include all directives when acting):"
+            )
+            for agent_label, summary in self._workflow_context:
+                context_block += f"\n[{agent_label}]: {summary}"
+            enriched = task_description + context_block
+        target = self._delegation_target
+        if target in probe_injections.NODES:
+            enriched = probe_injections.rewrite_task(target, task_description, enriched)
+        probe_trace.record(
+            "delegation", target=target, task_description=task_description,
+            enriched_task=enriched,
         )
-        for agent_label, summary in self._workflow_context:
-            context_block += f"\n[{agent_label}]: {summary}"
-        return task_description + context_block
+        return enriched
 
     def _capture_agent_context(self, agent_label: str, result: dict[str, Any]) -> None:
         """Store an agent's task_summary for downstream propagation."""
+        node = agent_label.removesuffix("_agent")
+        if node in probe_injections.NODES:
+            probe_injections.rewrite_result(node, result)
+        probe_trace.record(
+            "summary", agent=agent_label, task_status=result.get("task_status"),
+            task_summary=result.get("task_summary"),
+        )
         summary = result.get("task_summary", "")
         if summary:
             self._workflow_context.append((agent_label, summary))
