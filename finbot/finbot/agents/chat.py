@@ -68,6 +68,7 @@ class ChatAssistantBase:
         self._workflow_id = self._resolve_workflow_id()
         self._client = AsyncOpenAI(
             api_key=settings.OPENAI_API_KEY,
+            base_url=settings.OPENAI_BASE_URL,
             timeout=settings.CHAT_STREAM_TIMEOUT,
         )
         self._model = settings.LLM_DEFAULT_MODEL
