@@ -1,5 +1,3 @@
-"""Scenarios that enter FinBot through its public vendor API, chat and onboarding."""
-
 from __future__ import annotations
 
 import json
@@ -24,11 +22,8 @@ def _last_event_id(client: FinBotClient) -> int:
 
 def wait_for_workflows(client: FinBotClient, after_id: int, *, expect_workflow: bool,
                        timeout: float, settle: float = 10.0, poll: float = 2.0) -> dict[str, Any]:
-    """Wait until every orchestrator workflow started after `after_id` has finished.
-
-    Events reach the activity feed asynchronously, so the run also has to stay
-    quiet for `settle` seconds before it counts as done.
-    """
+    # Events reach the activity feed asynchronously, so a run is only done once
+    # it has also stayed quiet for `settle` seconds.
     deadline = time.monotonic() + timeout
     last_count, quiet_since = -1, time.monotonic()
     while True:
@@ -47,10 +42,7 @@ def wait_for_workflows(client: FinBotClient, after_id: int, *, expect_workflow: 
 
 
 def read_traces(trace_dir: str | None, workflows: list[str], wait_s: float = 10.0) -> dict[str, Any]:
-    """Collect the trace files FinBot wrote for these workflows (PROBE_TRACE_DIR on the server).
-
-    A file appears when its workflow ends, which can be a moment after the last event.
-    """
+    # A trace file appears when its workflow ends, which can be a moment after the last event.
     if not trace_dir:
         return {}
     deadline = time.monotonic() + wait_s

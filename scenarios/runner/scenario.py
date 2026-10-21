@@ -1,5 +1,3 @@
-"""Scenario files: what to put into FinBot and how to start the run."""
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -50,7 +48,6 @@ class Scenario:
 
 
 def invoice_fields(spec: dict[str, Any], number: str) -> dict[str, Any]:
-    """Turn a scenario invoice spec into the fields FinBot expects."""
     today = date.today()
     due = today + timedelta(days=int(spec.get("due_in_days", 30)))
     return {
@@ -63,7 +60,6 @@ def invoice_fields(spec: dict[str, Any], number: str) -> dict[str, Any]:
 
 
 def resolve_path(name: str) -> Path:
-    """Accept a file path or a bare scenario id from cases/."""
     path = Path(name)
     if path.exists():
         return path

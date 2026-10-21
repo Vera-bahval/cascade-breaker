@@ -1,5 +1,3 @@
-"""Files that connect the prepare step with the run step."""
-
 from __future__ import annotations
 
 import json

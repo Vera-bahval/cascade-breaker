@@ -1,5 +1,3 @@
-"""Talk to a running FinBot the way the vendor portal does."""
-
 from __future__ import annotations
 
 import json
@@ -30,7 +28,7 @@ class FinBotClient:
         self.http.close()
 
     def open_session(self) -> None:
-        """Load the onboarding page: it creates the session and carries the CSRF token."""
+        # The onboarding page creates the session and carries the CSRF token.
         self.refresh_csrf("/vendor/onboarding")
 
     def refresh_csrf(self, page: str = "/vendor/dashboard") -> None:
@@ -66,7 +64,6 @@ class FinBotClient:
         return self._post(f"{API}/invoices", fields)
 
     def chat(self, message: str) -> dict[str, Any]:
-        """Send one chat message and read the whole event stream."""
         events: list[dict[str, Any]] = []
         error = None
         try:
@@ -90,7 +87,6 @@ class FinBotClient:
         return {"reply": reply, "events": events, "error": error}
 
     def activity(self, page_size: int = 500) -> list[dict[str, Any]]:
-        """Newest events of this session's namespace, as the CTF activity page shows them."""
         return self._get("/ctf/api/v1/activity", page_size=page_size)["items"]
 
     def snapshot(self) -> dict[str, Any]:

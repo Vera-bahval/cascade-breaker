@@ -1,10 +1,4 @@
-"""Scenarios that hand a task straight to the orchestrator, inside this process.
-
-No HTTP, no session cookies, no chat assistant: the orchestrator gets exactly
-the task_data written in the scenario. Use it when the orchestrator input must
-be the same in every run, or to inject a fault into one node.
-FinBot is imported from the environment, so run this from the finbot/ directory.
-"""
+"""FinBot is imported from the current environment, so run this from the finbot/ directory."""
 
 from __future__ import annotations
 
@@ -44,7 +38,7 @@ def _session(namespace: str, vendor_id: int | None = None):
 
 
 async def _ensure_event_bus() -> bool:
-    """Agents emit events to Redis on every step; without Redis turn emission off."""
+    # Agents emit events to Redis on every step; without Redis turn emission off.
     from finbot.core.messaging import event_bus
 
     try:

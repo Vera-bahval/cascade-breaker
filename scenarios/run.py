@@ -27,7 +27,6 @@ DEFAULT_BASE_URL = "http://localhost:8000"
 
 
 def _summary(data: dict) -> dict:
-    """The few fields worth printing; everything else is in the saved file."""
     keys = ("scenario", "via", "kind", "vendor_id", "namespace", "workflows", "workflow_id",
             "timed_out", "error", "orchestrator_status", "injection_applied", "wall_s", "path")
     return {k: data[k] for k in keys if k in data}
