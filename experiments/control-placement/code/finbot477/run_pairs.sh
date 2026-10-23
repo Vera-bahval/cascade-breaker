@@ -3,6 +3,7 @@
 # Внутри вызывает run_set_rec2.sh (полная запись, температура параметром). Бюджет — общий на весь набор.
 # usage: run_pairs.sh <scenarios.json> <pristine.db> <port> <outdir> <dbfile> <budget_usd> <model> <temperature>
 HERE=${0:A:h}; setopt nullglob
+export LC_NUMERIC=C   # числа через точку: иначе awk/bc ломаются на локали с десятичной запятой
 SCN=${1:A}; PRIS=${2:A}; PORT=$3; OUTDIR=${4:A}; DBF=$5; BUDGET=$6; MODEL=$7; TEMP=$8
 mkdir -p $OUTDIR
 N=$(python3 -c "import json;print(len(json.load(open('$SCN'))))")

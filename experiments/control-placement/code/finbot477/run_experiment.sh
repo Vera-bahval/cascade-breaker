@@ -10,6 +10,7 @@
 #   -x текст счёта: ключ описания из пар (15000 — один текст для всех сумм) или own (у каждой суммы свой, как в парах)
 #   -t температура (0)      -m модель (openai/gpt-4o-mini)   -y без вопроса   --dry только показать план
 HERE=${0:A:h}; ROOT=${HERE:h:h}
+export LC_NUMERIC=C   # числа через точку: иначе awk/bc ломаются на локали с десятичной запятой
 P=""; AMTS=""; VARS=base; REP=3; BUDGET=""; NAME=custom; TEXT=15000; TEMP=0; MODEL=openai/gpt-4o-mini; YES=0; DRY=0
 while (( $# )); do
   case $1 in
