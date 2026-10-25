@@ -12,12 +12,20 @@ from runner.scenario import Scenario, invoice_fields
 from runner.state import load_state, save_result, save_state
 
 ORCHESTRATOR_START = "agent.orchestrator_agent.task_start"
-ORCHESTRATOR_DONE = ("agent.orchestrator_agent.task_completion", "agent.orchestrator_agent.agent.failed")
+ORCHESTRATOR_DONE = "agent.orchestrator_agent.task_completion"
+# runner.py reports any agent that failed every retry this way, sub-agents included.
+AGENT_FAILED = "business.agent.failed"
 
 
 def _last_event_id(client: FinBotClient) -> int:
     items = client.activity(page_size=1)
     return items[0]["id"] if items else 0
+
+
+def _orchestrator_done(event: dict[str, Any]) -> bool:
+    if event["event_type"] == AGENT_FAILED:
+        return event.get("agent_name") == "orchestrator_agent"
+    return event["event_type"] == ORCHESTRATOR_DONE
 
 
 def wait_for_workflows(client: FinBotClient, after_id: int, *, expect_workflow: bool,
@@ -29,7 +37,7 @@ def wait_for_workflows(client: FinBotClient, after_id: int, *, expect_workflow: 
     while True:
         events = [e for e in client.activity() if e["id"] > after_id]
         started = {e["workflow_id"] for e in events if e["event_type"] == ORCHESTRATOR_START}
-        finished = {e["workflow_id"] for e in events if e["event_type"] in ORCHESTRATOR_DONE}
+        finished = {e["workflow_id"] for e in events if _orchestrator_done(e)}
         if len(events) != last_count:
             last_count, quiet_since = len(events), time.monotonic()
         all_done = started <= finished and (started or not expect_workflow)
