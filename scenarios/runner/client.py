@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from typing import Any
 
 import httpx
 
 API = "/vendor/api/v1"
+GET_ATTEMPTS = 3
 CSRF_META = re.compile(r'<meta name="csrf-token" content="([^"]+)">')
 # FinBot ties a session to these headers, so prepare and run must send the same ones.
 HEADERS = {
@@ -49,7 +51,15 @@ class FinBotClient:
         return resp.json()
 
     def _get(self, path: str, **params: Any) -> dict[str, Any]:
-        resp = self.http.get(path, params=params)
+        # While agents run, the server sometimes drops a pooled connection; a GET is safe to repeat.
+        for attempt in range(1, GET_ATTEMPTS + 1):
+            try:
+                resp = self.http.get(path, params=params)
+                break
+            except httpx.TransportError:
+                if attempt == GET_ATTEMPTS:
+                    raise
+                time.sleep(attempt)
         if resp.status_code >= 400:
             raise RuntimeError(f"GET {path} -> {resp.status_code}: {resp.text[:500]}")
         return resp.json()
