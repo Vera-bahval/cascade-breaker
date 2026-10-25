@@ -133,6 +133,7 @@ async def _orchestrate(namespace: str, vendor_id: int, task_data: dict[str, Any]
         "injection": injection.label() if injection else None,
         "injection_applied": bool(injection and injection.applied),
         "steps": recorder.steps,
+        "tool_defs": recorder.tool_defs,
     }
 
 
