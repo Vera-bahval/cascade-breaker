@@ -79,6 +79,13 @@ def _register(client: FinBotClient, vendor: dict[str, Any]) -> dict[str, Any]:
     return response
 
 
+def _setup_done(wait: dict[str, Any], step: str) -> dict[str, Any]:
+    # Saving state now would let `run` start while the setup workflow still goes on.
+    if wait["timed_out"]:
+        raise TimeoutError(f"{step} did not finish; unfinished workflows: {wait['unfinished']}")
+    return wait
+
+
 def prepare(scenario: Scenario, base_url: str, timeout: float) -> dict[str, Any]:
     client = FinBotClient(base_url)
     try:
@@ -90,13 +97,14 @@ def prepare(scenario: Scenario, base_url: str, timeout: float) -> dict[str, Any]
         if scenario.kind != "onboarding":
             mark = _mark(client)
             vendor_id = _register(client, scenario.vendor)["vendor_id"]
-            prepared["onboarding"] = wait_for_workflows(
-                client, mark, expect_workflow=True, timeout=timeout)
+            prepared["onboarding"] = _setup_done(wait_for_workflows(
+                client, mark, expect_workflow=True, timeout=timeout), "onboarding")
             client.refresh_csrf()
             for n, spec in enumerate(scenario.setup_invoices, start=1):
                 mark = _mark(client)
                 created = client.create_invoice(invoice_fields(spec, f"INV-{tag}-S{n}"))
-                done = wait_for_workflows(client, mark, expect_workflow=True, timeout=timeout)
+                done = _setup_done(wait_for_workflows(
+                    client, mark, expect_workflow=True, timeout=timeout), f"setup invoice {n}")
                 prepared["invoices"].append({"invoice": created["invoice"], "wait": done})
         state = {
             "scenario": scenario.id,
