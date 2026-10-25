@@ -96,8 +96,19 @@ class FinBotClient:
         reply = "".join(e.get("content", "") for e in events if e.get("type") == "token")
         return {"reply": reply, "events": events, "error": error}
 
-    def activity(self, page_size: int = 500) -> list[dict[str, Any]]:
-        return self._get("/ctf/api/v1/activity", page_size=page_size)["items"]
+    def activity(self, page_size: int = 500, page: int = 1) -> dict[str, Any]:
+        return self._get("/ctf/api/v1/activity", page=page, page_size=page_size)
+
+    def events_after(self, after_id: int) -> list[dict[str, Any]]:
+        # The feed is newest first, so page back until the pages reach after_id.
+        found, page = [], 1
+        while True:
+            data = self.activity(page=page)
+            fresh = [e for e in data["items"] if e["id"] > after_id]
+            found.extend(fresh)
+            if len(fresh) < len(data["items"]) or not data.get("has_more"):
+                return found
+            page += 1
 
     def snapshot(self) -> dict[str, Any]:
         me = self._get(f"{API}/vendors/me")

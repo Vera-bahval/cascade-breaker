@@ -17,35 +17,42 @@ ORCHESTRATOR_DONE = "agent.orchestrator_agent.task_completion"
 AGENT_FAILED = "business.agent.failed"
 
 
-def _last_event_id(client: FinBotClient) -> int:
-    items = client.activity(page_size=1)
-    return items[0]["id"] if items else 0
-
-
 def _orchestrator_done(event: dict[str, Any]) -> bool:
     if event["event_type"] == AGENT_FAILED:
         return event.get("agent_name") == "orchestrator_agent"
     return event["event_type"] == ORCHESTRATOR_DONE
 
 
-def wait_for_workflows(client: FinBotClient, after_id: int, *, expect_workflow: bool,
+def _mark(client: FinBotClient) -> tuple[int, set[str]]:
+    """The newest event id and the workflows that already exist before a trigger."""
+    items = client.activity()["items"]
+    return (items[0]["id"] if items else 0), {e["workflow_id"] for e in items if e["workflow_id"]}
+
+
+def wait_for_workflows(client: FinBotClient, mark: tuple[int, set[str]], *, expect_workflow: bool,
                        timeout: float, settle: float = 10.0, poll: float = 2.0) -> dict[str, Any]:
     # Events reach the activity feed asynchronously, so a run is only done once
-    # it has also stayed quiet for `settle` seconds.
+    # it has also stayed quiet for `settle` seconds. Events of workflows that
+    # were already running at the mark are left out.
+    after_id, earlier = mark
     deadline = time.monotonic() + timeout
+    seen: dict[int, dict[str, Any]] = {}
     last_count, quiet_since = -1, time.monotonic()
     while True:
-        events = [e for e in client.activity() if e["id"] > after_id]
+        for e in client.events_after(max(seen, default=after_id)):
+            if e["workflow_id"] not in earlier:
+                seen[e["id"]] = e
+        events = [seen[i] for i in sorted(seen)]
         started = {e["workflow_id"] for e in events if e["event_type"] == ORCHESTRATOR_START}
         finished = {e["workflow_id"] for e in events if _orchestrator_done(e)}
         if len(events) != last_count:
             last_count, quiet_since = len(events), time.monotonic()
         all_done = started <= finished and (started or not expect_workflow)
         if all_done and time.monotonic() - quiet_since >= settle:
-            return {"timed_out": False, "workflows": sorted(started), "events": events[::-1]}
+            return {"timed_out": False, "workflows": sorted(started), "events": events}
         if time.monotonic() > deadline:
             return {"timed_out": True, "workflows": sorted(started),
-                    "unfinished": sorted(started - finished), "events": events[::-1]}
+                    "unfinished": sorted(started - finished), "events": events}
         time.sleep(poll)
 
 
@@ -81,15 +88,15 @@ def prepare(scenario: Scenario, base_url: str, timeout: float) -> dict[str, Any]
         prepared: dict[str, Any] = {"onboarding": None, "invoices": []}
         # For an onboarding scenario the registration itself is the trigger.
         if scenario.kind != "onboarding":
-            after = _last_event_id(client)
+            mark = _mark(client)
             vendor_id = _register(client, scenario.vendor)["vendor_id"]
             prepared["onboarding"] = wait_for_workflows(
-                client, after, expect_workflow=True, timeout=timeout)
+                client, mark, expect_workflow=True, timeout=timeout)
             client.refresh_csrf()
             for n, spec in enumerate(scenario.setup_invoices, start=1):
-                after = _last_event_id(client)
+                mark = _mark(client)
                 created = client.create_invoice(invoice_fields(spec, f"INV-{tag}-S{n}"))
-                done = wait_for_workflows(client, after, expect_workflow=True, timeout=timeout)
+                done = wait_for_workflows(client, mark, expect_workflow=True, timeout=timeout)
                 prepared["invoices"].append({"invoice": created["invoice"], "wait": done})
         state = {
             "scenario": scenario.id,
@@ -127,10 +134,10 @@ def run(scenario: Scenario, timeout: float, base_url: str | None = None,
                           csrf_token=state["csrf_token"])
     try:
         before = client.snapshot()
-        after = _last_event_id(client)
+        mark = _mark(client)
         started = time.perf_counter()
         response, expect_workflow = _trigger(client, scenario, state["tag"])
-        wait = wait_for_workflows(client, after, expect_workflow=expect_workflow, timeout=timeout)
+        wait = wait_for_workflows(client, mark, expect_workflow=expect_workflow, timeout=timeout)
         result = {
             "scenario": scenario.id,
             "via": "api",
