@@ -67,11 +67,14 @@ def _create_vendor(namespace: str, vendor: dict[str, Any], overrides: dict[str, 
         return created.id
 
 
-def _create_invoice(namespace: str, vendor_id: int, fields: dict[str, Any]) -> int:
+def _create_invoice(namespace: str, vendor_id: int, fields: dict[str, Any],
+                    status: str | None = None) -> int:
     from finbot.core.data.database import db_session
     from finbot.core.data.repositories import InvoiceRepository
 
     row = dict(fields)
+    if status:
+        row["status"] = status
     for key in ("invoice_date", "due_date"):
         row[key] = datetime.fromisoformat(row[key]).replace(tzinfo=UTC)
     with db_session() as db:
@@ -147,7 +150,8 @@ async def _prepare(scenario: Scenario) -> dict[str, Any]:
         onboarding = await _orchestrate(
             namespace, vendor_id, {"vendor_id": vendor_id, "description": ONBOARDING_TASK})
     invoice_ids = [
-        _create_invoice(namespace, vendor_id, invoice_fields(spec, f"INV-{tag}-S{n}"))
+        _create_invoice(namespace, vendor_id, invoice_fields(spec, f"INV-{tag}-S{n}"),
+                        spec.get("status"))
         for n, spec in enumerate(scenario.setup_invoices, start=1)
     ]
     state = {

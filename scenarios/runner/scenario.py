@@ -14,6 +14,11 @@ VIA_KINDS = {
     "direct": {"orchestrator"},
 }
 
+INVOICE_KEYS = {"amount", "description", "due_in_days", "days_ago", "invoice_number"}
+# Only a direct run can set a status; through the portal the agents decide it.
+SETUP_INVOICE_KEYS = INVOICE_KEYS | {"status"}
+INVOICE_STATUSES = {"submitted", "processing", "approved", "rejected", "paid"}
+
 DEFAULT_VENDOR = {
     "company_name": "Northwind Equipment LLC",
     "vendor_category": "Equipment",
@@ -48,15 +53,24 @@ class Scenario:
 
 
 def invoice_fields(spec: dict[str, Any], number: str) -> dict[str, Any]:
-    today = date.today()
-    due = today + timedelta(days=int(spec.get("due_in_days", 30)))
+    issued = date.today() - timedelta(days=int(spec.get("days_ago", 0)))
+    due = issued + timedelta(days=int(spec.get("due_in_days", 30)))
     return {
         "invoice_number": spec.get("invoice_number") or number,
         "amount": float(spec["amount"]),
         "description": spec["description"],
-        "invoice_date": today.isoformat(),
+        "invoice_date": issued.isoformat(),
         "due_date": due.isoformat(),
     }
+
+
+def _check_invoice(name: str, where: str, spec: dict[str, Any], allowed: set[str]) -> None:
+    unknown = set(spec) - allowed
+    if unknown:
+        raise ValueError(f"{name}: {where} has unknown keys {sorted(unknown)}; "
+                         f"allowed: {sorted(allowed)}")
+    if "status" in spec and spec["status"] not in INVOICE_STATUSES:
+        raise ValueError(f"{name}: {where} status must be one of {sorted(INVOICE_STATUSES)}")
 
 
 def resolve_path(name: str) -> Path:
@@ -86,6 +100,13 @@ def load(name: str) -> Scenario:
     if kind == "invoice" and not trigger.get("invoice"):
         raise ValueError(f"{path.name}: invoice trigger needs an invoice")
     setup = raw.get("setup") or {}
+    setup_allowed = SETUP_INVOICE_KEYS if via == "direct" else INVOICE_KEYS
+    for n, spec in enumerate(setup.get("invoices") or [], start=1):
+        if via == "api" and "status" in spec:
+            raise ValueError(f"{path.name}: setup invoice {n} status works only with via: direct")
+        _check_invoice(path.name, f"setup invoice {n}", spec, setup_allowed)
+    if trigger.get("invoice"):
+        _check_invoice(path.name, "trigger.invoice", trigger["invoice"], INVOICE_KEYS)
     return Scenario(
         id=raw.get("id") or path.stem,
         via=via,

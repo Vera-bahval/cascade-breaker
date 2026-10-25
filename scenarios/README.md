@@ -65,18 +65,22 @@ via: api                 # api | direct
 setup:
   vendor: {...}          # registration fields; missing ones come from DEFAULT_VENDOR in runner/scenario.py
   invoices:              # invoices submitted during prepare
-    - {amount: 850, description: "...", due_in_days: 30}
+    - {amount: 850, description: "...", due_in_days: 30, days_ago: 0}
+    # direct only: status (submitted | processing | approved | rejected | paid), set as is, without a workflow
   vendor_overrides: {}   # direct only: status, trust_level, risk_level, etc. right after creation
   onboard: false         # direct only: run onboarding through the orchestrator during prepare
 trigger:
   kind: invoice          # api: invoice | chat | onboarding; direct: orchestrator
-  invoice: {amount: 1200, description: "..."}
+  invoice: {amount: 1200, description: "..."}   # same keys as a setup invoice, without status
   message: "..."         # for chat
   vendor: {...}          # for onboarding: what to change in the registration data
   description: "..."     # for direct: task text for the orchestrator (defaults to what the API sends)
   use_setup_invoice: 1   # for direct: use an invoice from setup instead of a new one
   injection: {node: payments, fault: instruction}   # for direct
 ```
+
+`days_ago` moves the invoice date into the past, and the due date follows it. Unknown keys in an invoice are an
+error, so a typo does not silently change the scenario.
 
 ### What a result contains
 
