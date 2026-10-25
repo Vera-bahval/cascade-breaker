@@ -190,13 +190,14 @@ async def _run(scenario: Scenario) -> dict[str, Any]:
         spec = trigger["injection"]
         injection = probe_injections.InjectionSpec(spec["node"], spec["fault"], invoice_id or 0)
     before = snapshot(namespace, vendor_id)
+    started_at = datetime.now(UTC).isoformat()
     run = await _orchestrate(namespace, vendor_id, task_data, injection)
     result = {
         "scenario": scenario.id,
         "via": "direct",
         "kind": scenario.kind,
         "trigger": trigger,
-        "started_at": datetime.now(UTC).isoformat(),
+        "started_at": started_at,
         "namespace": namespace,
         **run,
         "before": before,

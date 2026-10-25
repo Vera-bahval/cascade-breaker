@@ -143,7 +143,7 @@ def run(scenario: Scenario, timeout: float, base_url: str | None = None,
     try:
         before = client.snapshot()
         mark = _mark(client)
-        started = time.perf_counter()
+        started_at, started = datetime.now(UTC).isoformat(), time.perf_counter()
         response, expect_workflow = _trigger(client, scenario, state["tag"])
         wait = wait_for_workflows(client, mark, expect_workflow=expect_workflow, timeout=timeout)
         result = {
@@ -151,7 +151,7 @@ def run(scenario: Scenario, timeout: float, base_url: str | None = None,
             "via": "api",
             "kind": scenario.kind,
             "trigger": scenario.trigger,
-            "started_at": datetime.now(UTC).isoformat(),
+            "started_at": started_at,
             "wall_s": round(time.perf_counter() - started, 2),
             "response": response,
             "error": response.get("error"),
