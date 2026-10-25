@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import secrets
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -33,7 +34,8 @@ def load_state(scenario_id: str) -> dict[str, Any]:
 def save_result(scenario_id: str, data: dict[str, Any]) -> Path:
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-    path = RESULTS_DIR / f"{scenario_id}-{stamp}.json"
+    # Repeats within one second would otherwise share a file name.
+    path = RESULTS_DIR / f"{scenario_id}-{stamp}-{secrets.token_hex(3)}.json"
     path.write_text(
         json.dumps(data, indent=2, ensure_ascii=False, default=str), encoding="utf-8"
     )

@@ -30,7 +30,7 @@ from `cases/`, change the text and amount, and run it by its file name without `
 1. `prepare` puts the data into the system: opens a session, registers the vendor, submits setup invoices if any.
    State is written to `state/<id>.json`.
 2. `run` starts the scenario and waits until every workflow has finished. The result is written to
-   `results/<id>-<time>.json`.
+   `results/<id>-<time>-<run>.json`.
 
 ### Two ways in
 
