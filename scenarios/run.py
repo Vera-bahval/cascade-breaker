@@ -33,7 +33,7 @@ def _summary(data: dict) -> dict:
 
 
 def cmd_list(_args: argparse.Namespace) -> None:
-    for path in sorted(scenarios.CASES_DIR.glob("*.yaml")):
+    for path in scenarios.case_paths():
         sc = scenarios.load(str(path))
         prepared = "prepared" if state_path(sc.id).exists() else ""
         print(f"{sc.id:32} {sc.via:7} {sc.kind:13} {prepared}")
@@ -71,7 +71,7 @@ def main() -> None:
     sub.add_parser("list", help="show available scenarios").set_defaults(func=cmd_list)
     for name, func in (("prepare", cmd_prepare), ("run", cmd_run)):
         p = sub.add_parser(name)
-        p.add_argument("scenario", help="scenario id from cases/ or a path to a yaml file")
+        p.add_argument("scenario", help="scenario id from cases/ or a path to a yaml or json file")
         p.add_argument("--base-url", default=None if name == "run" else DEFAULT_BASE_URL,
                        help=f"FinBot address for via=api (default {DEFAULT_BASE_URL})")
         p.add_argument("--timeout", type=float, default=600.0,

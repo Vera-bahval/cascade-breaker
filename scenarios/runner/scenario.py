@@ -8,6 +8,8 @@ from typing import Any
 import yaml
 
 CASES_DIR = Path(__file__).resolve().parent.parent / "cases"
+# JSON is valid YAML, so generated scenarios load the same way as written ones.
+CASE_SUFFIXES = (".yaml", ".json")
 
 VIA_KINDS = {
     "api": {"invoice", "chat", "onboarding"},
@@ -77,9 +79,10 @@ def resolve_path(name: str) -> Path:
     path = Path(name)
     if path.exists():
         return path
-    candidate = CASES_DIR / f"{name}.yaml"
-    if candidate.exists():
-        return candidate
+    for suffix in CASE_SUFFIXES:
+        candidate = CASES_DIR / f"{name}{suffix}"
+        if candidate.exists():
+            return candidate
     raise FileNotFoundError(f"Scenario not found: {name}")
 
 
@@ -118,3 +121,7 @@ def load(name: str) -> Scenario:
         description=raw.get("description", ""),
         path=path,
     )
+
+
+def case_paths() -> list[Path]:
+    return sorted(p for suffix in CASE_SUFFIXES for p in CASES_DIR.glob(f"*{suffix}"))
