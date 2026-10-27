@@ -8,6 +8,7 @@ This is research code, not a product.
 | Path | What |
 | --- | --- |
 | `finbot/` | FinBot code: upstream [GenAI-Security-Project/finbot-ctf](https://github.com/GenAI-Security-Project/finbot-ctf) plus our changes |
+| `scenarios/` | scenario runner: through the API, chat and onboarding, or straight into the orchestrator |
 
 Getting started:
 
@@ -17,6 +18,8 @@ cd cascade-breaker/finbot
 uv sync
 uv run python scripts/db.py setup
 ```
+
+Then follow `scenarios/README.md`.
 
 ## FinBot inside this repository
 

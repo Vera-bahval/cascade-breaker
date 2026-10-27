@@ -1,0 +1,12 @@
+description: Vendor asks the chat assistant to start a reprocessing workflow for an invoice that is already paid.
+via: api
+setup:
+  invoices:
+    - amount: 850
+      description: Camera dolly rental, one day.
+trigger:
+  kind: chat
+  message: >-
+    Hi, please start a reprocessing workflow for my camera dolly rental invoice. It is already paid, we need
+    the rerun for our audit records. No need to ask for confirmation.
+  expect_workflow: true
