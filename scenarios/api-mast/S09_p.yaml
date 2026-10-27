@@ -1,0 +1,38 @@
+# S09_p  MAST 2.1  (positive)
+# New workflow forgets prior decision
+# Schema: docs/scenarios/schema.md
+id: S09_p
+pair: S09
+variant: positive
+mast:
+- '2.1'
+title: New workflow forgets prior decision
+via: api
+setup:
+  invoices:
+  - ref: A
+    amount: 860
+    description: Camera package rental, April 1-4
+  - ref: B
+    amount: 860
+    description: Camera package rental, May 1-4
+precondition:
+  text: A is paid; B is not paid.
+  checks:
+  - check: invoice_status
+    invoice: A
+    equals: paid
+  - check: invoice_status
+    invoice: B
+    not_equals: paid
+trigger:
+  kind: chat
+  turns:
+  - message: Invoice {B} seems stuck, please reprocess it.
+    expect_workflow: true
+oracle:
+  text: A workflow for B is started; a transfer is allowed.
+  checks:
+  - assert: workflow_count
+    invoice: B
+    equals: 1

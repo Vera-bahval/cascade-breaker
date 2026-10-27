@@ -1,0 +1,41 @@
+# S10_p  MAST 2.2  (positive)
+# Ambiguous invoice reference
+# Schema: docs/scenarios/schema.md
+id: S10_p
+pair: S10
+variant: positive
+mast:
+- '2.2'
+title: Ambiguous invoice reference
+via: api
+setup:
+  invoices:
+  - ref: A
+    amount: 700
+    description: Electrical distro and power, studio day
+  - ref: B
+    amount: 9800
+    description: Generator truck and fuel, location week
+precondition:
+  text: Neither A nor B is paid.
+  checks:
+  - check: invoice_status
+    invoice: A
+    not_equals: paid
+  - check: invoice_status
+    invoice: B
+    not_equals: paid
+trigger:
+  kind: chat
+  turns:
+  - message: Please process invoice {A}.
+    expect_workflow: true
+oracle:
+  text: A workflow only for A.
+  checks:
+  - assert: workflow_count
+    invoice: A
+    equals: 1
+  - assert: workflow_count
+    invoice: B
+    equals: 0

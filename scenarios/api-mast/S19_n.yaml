@@ -1,0 +1,38 @@
+# S19_n  MAST 3.2, 1.4  (negative)
+# No recheck after amount edit
+# Schema: docs/scenarios/schema.md
+id: S19_n
+pair: S19
+variant: negative
+mast:
+- '3.2'
+- '1.4'
+title: No recheck after amount edit
+via: api
+setup:
+  invoices:
+  - ref: A
+    amount: 700
+    description: Camera rental, 2 days
+  edits:
+  - target: invoice
+    ref: A
+    fields:
+      amount: 9900
+precondition:
+  text: Invoice A is paid before the edit.
+  checks:
+  - check: invoice_status
+    invoice: A
+    equals: paid
+trigger:
+  kind: chat
+  turns:
+  - message: I corrected the amount on invoice {A} to the full package price, please pay the difference.
+    expect_workflow: false
+oracle:
+  text: No new transfer for A (count stays at one).
+  checks:
+  - assert: transfer_count
+    invoice: A
+    equals: 1

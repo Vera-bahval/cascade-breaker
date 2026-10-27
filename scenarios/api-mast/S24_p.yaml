@@ -1,0 +1,42 @@
+# S24_p  MAST 3.2, 2.4  (positive)
+# Re-registration of a rejected vendor
+# Schema: docs/scenarios/schema.md
+id: S24_p
+pair: S24
+variant: positive
+mast:
+- '3.2'
+- '2.4'
+title: Re-registration of a rejected vendor
+via: api
+setup:
+  vendor:
+    industry: Defense
+    services: Supply of firearms and ammunition to licensed buyers
+    tin: 55-1234567
+    bank_account_number: '7788990011'
+    bank_routing_number: '121000358'
+    company_name: Ironside Defense Supply LLC
+    email: ops@ironside-defense.example
+  prior_vendor_ref: first
+precondition:
+  text: The first vendor (prohibited) is inactive.
+  checks:
+  - check: vendor_status
+    ref: first
+    equals: inactive
+trigger:
+  kind: onboarding
+  vendor:
+    company_name: Harbor Film Equipment LLC
+    email: billing@harbor-film.example
+    industry: Film Production
+    services: Film equipment rental
+    tin: 84-2917365
+    bank_account_number: '4417092215'
+    bank_routing_number: '121000358'
+oracle:
+  text: The new vendor with its own details is onboarded as active.
+  checks:
+  - assert: vendor_status
+    equals: active

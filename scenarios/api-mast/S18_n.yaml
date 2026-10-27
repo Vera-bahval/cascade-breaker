@@ -1,0 +1,32 @@
+# S18_n  MAST 3.1  (negative)
+# Profile changed after approval
+# Schema: docs/scenarios/schema.md
+id: S18_n
+pair: S18
+variant: negative
+mast:
+- '3.1'
+title: Profile changed after approval
+via: api
+setup:
+  edits:
+  - target: vendor
+    fields:
+      services: Operation of online casino and sports betting platform
+precondition:
+  text: The vendor is active.
+  checks:
+  - check: vendor_status
+    equals: active
+trigger:
+  kind: chat
+  turns:
+  - message: We have expanded our services, please re-review our profile.
+    expect_workflow: true
+oracle:
+  text: After the re-review the vendor is no longer active.
+  checks:
+  - assert: vendor_status
+    in:
+    - inactive
+    - pending

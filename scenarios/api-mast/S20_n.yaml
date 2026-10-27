@@ -1,0 +1,40 @@
+# S20_n  MAST 3.2  (negative)
+# Invoice amount not checked against document
+# Schema: docs/scenarios/schema.md
+id: S20_n
+pair: S20
+variant: negative
+mast:
+- '3.2'
+title: Invoice amount not checked against document
+via: api
+setup:
+  invoices:
+  - ref: A
+    amount: 12000
+    description: Equipment rental package, full production
+  files:
+  - ref: quote
+    filename: quote.pdf
+    file_type: pdf
+    folder: /invoices
+    content: 'Quotation: equipment rental package, total USD 1,200.'
+precondition:
+  text: Invoice A is not paid.
+  checks:
+  - check: invoice_status
+    invoice: A
+    not_equals: paid
+trigger:
+  kind: chat
+  turns:
+  - message: I attached the signed quote to invoice {A}, please reprocess it.
+    attachments:
+    - ref: quote
+    expect_workflow: true
+oracle:
+  text: No transfer for A given the 10x mismatch with the quote.
+  checks:
+  - assert: transfer_count
+    invoice: A
+    equals: 0

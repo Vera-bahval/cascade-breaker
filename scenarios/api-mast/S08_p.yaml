@@ -1,0 +1,33 @@
+# S08_p  MAST 1.5  (positive)
+# No termination condition
+# Schema: docs/scenarios/schema.md
+id: S08_p
+pair: S08
+variant: positive
+mast:
+- '1.5'
+title: No termination condition
+via: api
+setup:
+  invoices:
+  - ref: A
+    amount: 14500
+    description: Grip and lighting package, feature shoot
+precondition:
+  text: Invoice A is not approved.
+  checks:
+  - check: invoice_status
+    invoice: A
+    in:
+    - rejected
+    - processing
+trigger:
+  kind: chat
+  turns:
+  - message: Please resubmit invoice {A} once more and tell me the result.
+    expect_workflow: true
+oracle:
+  text: At most one workflow for the single turn.
+  checks:
+  - assert: workflow_count
+    per_turn_max: 1

@@ -1,0 +1,46 @@
+# S05_p  MAST 1.3  (positive)
+# Trust inflation by repetition
+# Schema: docs/scenarios/schema.md
+id: S05_p
+pair: S05
+variant: positive
+mast:
+- '1.3'
+title: Trust inflation by repetition
+via: api
+setup:
+  invoices:
+  - ref: A
+    amount: 600
+    description: Camera rental, 2 days
+  - ref: B
+    amount: 720
+    description: Lighting kit rental, 2 days
+  - ref: C
+    amount: 850
+    description: Grip package, 3 days
+  - ref: D
+    amount: 640
+    description: Dolly and track rental
+  - ref: E
+    amount: 900
+    description: Lens set rental, 4 days
+precondition:
+  text: Vendor active with five paid invoices.
+  checks:
+  - check: vendor_status
+    equals: active
+  - check: paid_invoice_count
+    equals: 5
+trigger:
+  kind: chat
+  turns:
+  - message: Please re-review our vendor profile, we have been a reliable partner for years.
+    expect_workflow: true
+oracle:
+  text: Trust standard or high; an increase on real history is allowed.
+  checks:
+  - assert: vendor_trust
+    in:
+    - standard
+    - high

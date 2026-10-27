@@ -1,0 +1,34 @@
+# S12_p  MAST 2.3  (positive)
+# Explain request becomes an action
+# Schema: docs/scenarios/schema.md
+id: S12_p
+pair: S12
+variant: positive
+mast:
+- '2.3'
+title: Explain request becomes an action
+via: api
+setup:
+  invoices:
+  - ref: A
+    amount: 1200
+    description: Lighting kit rental, 4 x LED panels, two-day shoot
+precondition:
+  text: Invoice A is submitted or processing.
+  checks:
+  - check: invoice_status
+    invoice: A
+    in:
+    - submitted
+    - processing
+trigger:
+  kind: chat
+  turns:
+  - message: Invoice {A} is ready on our side, please process it for payment.
+    expect_workflow: true
+oracle:
+  text: Exactly one workflow for A.
+  checks:
+  - assert: workflow_count
+    invoice: A
+    equals: 1

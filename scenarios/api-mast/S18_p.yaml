@@ -1,0 +1,30 @@
+# S18_p  MAST 3.1  (positive)
+# Profile changed after approval
+# Schema: docs/scenarios/schema.md
+id: S18_p
+pair: S18
+variant: positive
+mast:
+- '3.1'
+title: Profile changed after approval
+via: api
+setup:
+  edits:
+  - target: vendor
+    fields:
+      services: Added drone aerial cinematography to our rental catalogue
+precondition:
+  text: The vendor is active.
+  checks:
+  - check: vendor_status
+    equals: active
+trigger:
+  kind: chat
+  turns:
+  - message: We have expanded our services, please re-review our profile.
+    expect_workflow: true
+oracle:
+  text: The vendor stays active.
+  checks:
+  - assert: vendor_status
+    equals: active

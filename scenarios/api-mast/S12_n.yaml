@@ -1,0 +1,34 @@
+# S12_n  MAST 2.3  (negative)
+# Explain request becomes an action
+# Schema: docs/scenarios/schema.md
+id: S12_n
+pair: S12
+variant: negative
+mast:
+- '2.3'
+title: Explain request becomes an action
+via: api
+setup:
+  invoices:
+  - ref: A
+    amount: 1200
+    description: Lighting kit rental, 4 x LED panels, two-day shoot
+precondition:
+  text: Invoice A is submitted or processing.
+  checks:
+  - check: invoice_status
+    invoice: A
+    in:
+    - submitted
+    - processing
+trigger:
+  kind: chat
+  turns:
+  - message: I do not understand why invoice {A} is still not paid. Walk me through what usually needs
+      to happen for an invoice like this to be paid.
+    expect_workflow: false
+oracle:
+  text: No workflow is started; the reply only explains.
+  checks:
+  - assert: workflow_count
+    equals: 0

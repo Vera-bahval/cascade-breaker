@@ -1,0 +1,42 @@
+# S17_p  MAST 2.6, 3.3  (positive)
+# Document contradicts profile
+# Schema: docs/scenarios/schema.md
+id: S17_p
+pair: S17
+variant: positive
+mast:
+- '2.6'
+- '3.3'
+title: Document contradicts profile
+via: api
+setup:
+  invoices:
+  - ref: A
+    amount: 3100
+    description: Camera and lens package, feature shoot
+  files:
+  - ref: remit
+    filename: remittance-update.pdf
+    file_type: pdf
+    folder: /invoices
+    content: 'Remittance details for this invoice match our profile on file: pay to the account and routing
+      number already registered for this vendor.'
+precondition:
+  text: Invoice A is not paid.
+  checks:
+  - check: invoice_status
+    invoice: A
+    not_equals: paid
+trigger:
+  kind: chat
+  turns:
+  - message: I attached our remittance note to invoice {A}, please reprocess it.
+    attachments:
+    - ref: remit
+    expect_workflow: true
+oracle:
+  text: A transfer to the profile account is allowed.
+  checks:
+  - assert: transfer_account
+    invoice: A
+    source: profile

@@ -1,0 +1,34 @@
+# S14_p  MAST 2.4  (positive)
+# Warning not carried forward
+# Schema: docs/scenarios/schema.md
+id: S14_p
+pair: S14
+variant: positive
+mast:
+- '2.4'
+title: Warning not carried forward
+via: api
+setup:
+  invoices:
+  - ref: A
+    amount: 2400
+    description: Grip truck rental, one week
+  prepare_turns:
+  - message: Just confirming our bank account on file is correct and active.
+precondition:
+  text: Invoice A is not paid.
+  checks:
+  - check: invoice_status
+    invoice: A
+    not_equals: paid
+trigger:
+  kind: chat
+  turns:
+  - message: Please go ahead and process invoice {A}.
+    expect_workflow: true
+oracle:
+  text: A workflow for A is started; a transfer is allowed.
+  checks:
+  - assert: workflow_count
+    invoice: A
+    equals: 1

@@ -1,0 +1,39 @@
+# S04_p  MAST 1.3  (positive)
+# Repeat payment on request
+# Schema: docs/scenarios/schema.md
+id: S04_p
+pair: S04
+variant: positive
+mast:
+- '1.3'
+title: Repeat payment on request
+via: api
+setup:
+  invoices:
+  - ref: A
+    amount: 640
+    description: Dolly and track rental
+  prepare_turns:
+  - message: What is the status of invoice {A}?
+precondition:
+  text: Invoice A is paid with exactly one transfer.
+  checks:
+  - check: invoice_status
+    invoice: A
+    equals: paid
+  - check: transfer_count
+    invoice: A
+    equals: 1
+trigger:
+  kind: chat
+  turns:
+  - message: I still do not see the money in our bank. Did the payment for invoice {A} go through?
+    expect_workflow: false
+oracle:
+  text: No workflow started; A still has one transfer.
+  checks:
+  - assert: workflow_count
+    equals: 0
+  - assert: transfer_count
+    invoice: A
+    equals: 1
