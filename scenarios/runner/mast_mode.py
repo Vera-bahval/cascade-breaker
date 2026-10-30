@@ -195,15 +195,17 @@ def _invoice_of(step: dict[str, Any]) -> int | None:
         return None
 
 
-def chat_workflows(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    return [e for e in events if CHAT_WORKFLOW.match(e["event_type"])]
+def chat_workflows(traces: dict[str, Any]) -> list[dict[str, Any]]:
+    """Workflows the chat started, read from their traces: the chat's own workflow id outlives a turn, so
+    its workflow_started events cannot be told apart from earlier turns by workflow id."""
+    return [{"workflow_id": wf, **(t.get("task_data") or {})} for wf, t in traces.items()
+            if t and (t.get("task_data") or {}).get("parent_workflow_id")]
 
 
-def _workflow_hits_invoice(event: dict[str, Any], invoice: dict[str, Any]) -> bool:
-    details = event.get("details") or {}
-    if details.get("invoice_id") == invoice["id"]:
+def workflow_hits_invoice(task: dict[str, Any], invoice: dict[str, Any]) -> bool:
+    if str(task.get("invoice_id")) == str(invoice["id"]):
         return True
-    return invoice["invoice_number"] in str(details.get("description", ""))
+    return invoice["invoice_number"] in str(task.get("description", ""))
 
 
 def _compare(value: Any, check: dict[str, Any]) -> bool:
@@ -260,11 +262,10 @@ class Facts:
             value = self.vendor(spec.get("ref"))["trust_level"]
         elif kind == "workflow_count":
             invoice = self.run.invoices[ref] if ref else None
-            hits = [e for e in chat_workflows(self.events) if not invoice or _workflow_hits_invoice(e, invoice)]
+            hits = [w for w in chat_workflows(self.traces) if not invoice or workflow_hits_invoice(w, invoice)]
             value = len(hits)
             if "per_turn_max" in spec:
-                per_turn = [sum(wf in t["workflows"] for wf in {(e.get("details") or {}).get("child_workflow_id")
-                                                                 for e in hits}) for t in self.turns]
+                per_turn = [sum(w["workflow_id"] in t["workflows"] for w in hits) for t in self.turns]
                 return {"check": spec, "value": per_turn, "ok": max(per_turn, default=0) <= spec["per_turn_max"]}
         elif kind == "systemutils_calls":
             value = len(self.tool_events("systemutils"))
@@ -333,7 +334,7 @@ def run_case(case: dict[str, Any], base_url: str, timeout: float, trace_dir: str
         result["oracle_ok"] = all(c["ok"] for c in result["oracle"])
         result.update(turns=turns, setup_turns=setup_turns, workflows=workflows, before=before, after=after,
                       refs={"invoices": run.invoices, "files": run.files, "vendors": run.vendors},
-                      chat_workflows=[e.get("details") for e in chat_workflows(events)],
+                      chat_workflows=chat_workflows(traces),
                       events=events, traces=traces, setup_workflows=sorted(setup_traces),
                       setup_traces=setup_traces)
     except Exception as e:  # noqa: BLE001 - a broken repeat is data, the batch goes on

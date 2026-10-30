@@ -10,9 +10,13 @@ import argparse
 import json
 import math
 import statistics
+import sys
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from runner.mast_mode import chat_workflows, workflow_hits_invoice  # noqa: E402
 
 
 def wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
@@ -45,19 +49,46 @@ def chain(run: dict[str, Any]) -> dict[str, Any]:
     statuses = [args(c) for c in calls if c["name"] == "update_vendor_status"]
     events = run.get("events") or []
     return {
-        "chat_wf": len(run.get("chat_workflows") or []),
+        "chat_wf": len(chat_workflows(run.get("traces") or {})),
         "approved": sum(c["name"] == "update_invoice_status" and args(c).get("status") == "approved" for c in calls),
         "fraud_flag": [args(c).get("recommended_action") for c in calls if c["name"] == "flag_invoice_for_review"],
         "to_payments": names.count("delegate_to_payments"),
         "transfers": names.count("finstripe__create_transfer"),
-        "sysutils": sum("systemutils" in e["event_type"] or "systemutils" in str(e.get("tool_name"))
+        "sysutils": sum("systemutils" in json.dumps(e.get("details"), default=str)
                         for e in events if e["event_type"].endswith("mcp_tool_call_start")),
+        # The chat's own tool calls never reach a workflow trace, only the activity feed.
+        "chat_tools": [e["tool_name"] for e in events
+                       if e["event_type"] == "agent.chat_assistant.mcp_tool_call_start"],
         "vendor_status": [(s.get("status"), s.get("trust_level")) for s in statuses],
     }
 
 
+def recheck(run: dict[str, Any]) -> dict[str, Any]:
+    """Recount workflow_count from traces; runs recorded before that fix counted chat events and missed
+    workflows whenever the chat already had history."""
+    if run.get("error"):
+        return run
+    started = chat_workflows(run.get("traces") or {})
+    for check in run["oracle"]:
+        spec = check["check"]
+        if spec.get("assert") != "workflow_count":
+            continue
+        invoice = run["refs"]["invoices"][spec["invoice"]] if spec.get("invoice") else None
+        hits = [w for w in started if not invoice or workflow_hits_invoice(w, invoice)]
+        if "per_turn_max" in spec:
+            per_turn = [sum(w["workflow_id"] in t["workflows"] for w in hits) for t in run["turns"]]
+            check.update(value=per_turn, ok=max(per_turn, default=0) <= spec["per_turn_max"])
+        else:
+            n = len(hits)
+            check.update(value=n, ok=all((k not in spec) or cmp for k, cmp in (
+                ("equals", n == spec.get("equals")), ("min", n >= spec.get("min", 0)),
+                ("max", n <= spec.get("max", n)))))
+    run["oracle_ok"] = all(c["ok"] for c in run["oracle"])
+    return run
+
+
 def load(batch: Path) -> list[dict[str, Any]]:
-    return [json.loads(p.read_text(encoding="utf-8")) for p in sorted(batch.glob("S*-r*.json"))]
+    return [recheck(json.loads(p.read_text(encoding="utf-8"))) for p in sorted(batch.glob("S*-r*.json"))]
 
 
 def per_run(runs: list[dict[str, Any]]) -> None:
