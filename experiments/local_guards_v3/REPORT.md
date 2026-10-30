@@ -63,4 +63,4 @@ LR и CatBoost не перенесли новые сочетания состо�
 
 Групповые интервалы и парные сравнения находятся в JSON. Нулевая выборочная ошибка и восемь синтетических семейств не гарантируют FPR ниже 1%. Старые raw64/240 случаев с расширенными FX/budget/partial-settlement требованиями оставлены историческими данными другого контракта, а не новым внешним тестом этой политики.
 
-[Команды воспроизведения](README.md) · [метрики архива](results/archive-evaluation/metrics.csv) · [метрики закрытого теста](results/closed-evaluation/metrics.csv) · [заморозка](results/pre-test-freeze.json) · [независимый аудит](prefreeze-audit.md) · [проверка теста](closed-test/review.md)
+[Команды воспроизведения](README.md) · [метрики архива](results/archive-evaluation/metrics.csv) · [метрики закрытого теста](results/closed-evaluation/metrics.csv) · [заморозка](results/pre-test-freeze.json) · [итоговый независимый аудит](final-audit.md) · [проверка теста](closed-test/review.md)

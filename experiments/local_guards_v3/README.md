@@ -27,7 +27,14 @@ python3.12 -m venv .venv-v3
 
 For fresh frozen-model predictions, run `evaluate_v3.py predict --freeze experiments/local_guards_v3/results/frozen --observations PATH --metadata PATH --output NEW.jsonl.gz`. It never opens gold, refuses to overwrite, and verifies source/model integrity. Both observations and metadata must be complete. Repeated timing fields can differ; numeric scores/decisions should agree. Fit is a separate command `train_freeze --data experiments/local_guards_v3/data --output NEW_EMPTY_DIR`; it uses known TRAIN action labels and CAL only, never refits afterward. The published run uses seed17 as primary and 29/43 for sensitivity.
 
-`generate_closed_test.py --help` and `closed-test-review.py --help` describe exact regeneration/checking of the synthetic test; these artifacts already exist and are no longer a fresh test for later work. The independent author saw policy/schema only. `results/pre-test-freeze.json` predates their creation; receipts and `closed-gold-release.json` record prediction-before-reveal. Shared filesystem access was controlled procedurally by fresh contexts, file allowlists and read audits, not an OS security boundary.
+The test scripts run **without arguments**:
+
+```sh
+.venv-v3/bin/python experiments/local_guards_v3/generate_closed_test.py
+.venv-v3/bin/python experiments/local_guards_v3/closed-test-review.py
+```
+
+The generator verifies existing sealed bytes and refuses to replace them with different content. The independent reviewer writes `closed-test/review.json` and `review.md`; use a copy of the experiment if those published reports must stay untouched. Neither script implements a `--help` option. These artifacts already exist and are no longer a fresh test for later work. The independent author saw policy/schema only. `results/pre-test-freeze.json` predates their creation; receipts and `closed-gold-release.json` record prediction-before-reveal. Shared filesystem access was controlled procedurally by fresh contexts, file allowlists and read audits, not an OS security boundary.
 
 ## Source extraction and runtime
 
@@ -43,4 +50,5 @@ The native integration runner expects the supplied cascades workspace's `experim
 - `results/frozen/`: verified local fitted pickles and policy. Deserialization is restricted to local artifacts matching the manifest hash.
 - `results/{archive,closed,contract}-evaluation/`: aggregate metrics, grouped intervals, paired comparisons and compressed episode decisions.
 - `results/latency.json`, `results/native-replay/summary.json`, `results/invariance.json`: actual measured or checked diagnostics.
+- `final-audit.md` and `results/final-integrity.json`: independent final recount, prediction-before-gold validation, unchanged method/model hashes and documented limitations.
 - Original scenario harm, strict-contract harm, action gold and source intent are distinct. UNKNOWN stops, and unavailable evidence is not false or zero cost. Conditional saved-LLM views are outcome-dependent and cannot establish population FPR or complete cascade cost.

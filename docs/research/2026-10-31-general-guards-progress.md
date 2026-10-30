@@ -34,3 +34,6 @@
 - Archive descriptive result: rules would prevent57/112 source-oracle harms, strict-contract168/168; formal safe-stop0/593 but source-legit interruption90/846. Staged checks same57 harms with325/846 interruptions.
 - Task5 diagnostics: nativeFinBot+SQLite+FinStripeMCP fivefreshworkers verifiedzeroexternalconnections, no callsafterSTOP and duplicateblocked. Single-prefix rulep95 .01646ms. Text/identity invariance320rows PASS. SavedLLMcontext227P2 matches; all227finalviews rejectedforfutureprocess_paymentnotes;214reachablefallbackrequests,73matched/141unavailable.
 - Final integrity PASS: source/policy/data/modelhashes unchanged; independent recount57/112 and320/320. Full157 v3 +42 source tests passed beforefreeze; newhelpers selfchecked without refits. Mainreport and staticplot written. Await consolidated final audit.
+
+- Final consolidated independent audit PASS: all80arms, bothpredictionreceipts and exactcoverage, ninefittedhashes, CAL-onlyselection and independent57/112 /168/168 /320tri-state recount verified. Only README CLI wording corrected; no frozenmethod or threshold changes.
+- Task5 complete: report, figure, reproducible code, immutable artifacts and independent audits committed. New inference API requests0. Research branch retained for user review.
