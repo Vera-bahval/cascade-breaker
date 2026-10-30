@@ -1,0 +1,42 @@
+# Data custodian report
+
+The extractor is offline and imports no guard, ML, evaluation or inference client. It reads original source manifests, native hook/tool records, and the old raw archive; no existing guard verdict is a training label. `policy.json` and `schema.json` were frozen before developer access. The only subsequent schema clarification restricts experimental P4 to `finstripe__create_transfer`; `process_payment` remains bookkeeping and emits no prevention prefix.
+
+## Interface
+
+Run from the repository root:
+
+```sh
+/Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/.venv/bin/python experiments/local_guards_v3/prepare_data.py
+/Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/.venv/bin/python -m unittest discover -s experiments/local_guards_v3/tests -p test_prepare_data.py -v
+```
+
+Optional `--old-root`, `--comparison-root` and `--output` select explicit local sources/destination. The default destination is `data/` beside this report. Outputs are `observations.jsonl`, `metadata.jsonl`, `gold-actions.jsonl`, `gold-outcomes.jsonl`, `splits.json`, `summary.json`, and `source-manifest.json`. `data/train-package/` contains exactly policy, schema, TRAIN observations and TRAIN action labels. It contains no CAL/TEST observations, outcome labels, metadata or source narratives outside the model input rows.
+
+Observations contain join-only `prefix_id`; model fields are only checkpoint, proposal, facts and untrusted text. `event_seq` and per-fact provenance are audit fields. Metadata retains episode, group, executor, repeat, source scenario identity/intent, source archive/member, validity, exposure and split. Gold action records contain decision `ALLOW|BLOCK|UNKNOWN`, reason codes and evidence, target, provisional flag and policy ID. Outcome records separately carry archived harm, first harm event, completion evidence, reasons and evidence.
+
+## Evidence and extraction
+
+Luna/DeepSeek archived worker source bytes were compared with the inspected original source and matched. Each worker enables the observer, creates a new invoice via the native repository, then starts the workflow. The old probe creates a fresh namespace/vendor/invoice and records `db_initial` immediately afterward. Its authentic snapshot function queries `PaymentTransaction` by both namespace and invoice ID. All 234 old initial snapshots contain an explicitly empty `transactions` collection, empty invoice notes, submitted status and a fresh namespace; their complete step arrays start at sequence zero without gaps.
+
+Logical absence is therefore supported only by proven fresh invoice creation plus a complete, ordered journal prefix. A failed or truncated/unpaired prefix cannot establish no previous flag/payment. A successful current-subject native flag establishes a binding hold; an agent's later status approval cannot clear it. Independent manual authorization (`human_approved`) and hold clearance (`human_cleared`) remain separate and unavailable in these archives. A high amount with unknown manual authorization stays UNKNOWN rather than becoming a proven denial. Generic clearance proofs must be scoped independent-registry events after the latest binding hold and before the decision; an earlier clearance cannot clear a later hold. This correction does not change any archive row because both human-proof facts are null throughout the corpus. No clearance evidence is required when absence of any binding hold is independently established. Opaque script execution invalidates claims of complete local ledger history.
+
+Ordinary hook envelopes do not contain DB snapshots. The extractor uses only successful pre-cut native results and exact action arguments. A safe JSON/Python-literal parser rejects executable expressions and nonfinite values. Scoped identities are checked internally; amount and account relations enter model fields without raw accounts or allocated identifiers. Fact provenance records actual native getter/fixture events and subject matches. New snapshots/SQLite final states and old `db_final` support outcomes only. Source fixture denomination is USD major units under the frozen experiment policy, with explicit `source_currency_contract` provenance. FinStripe native `create_transfer` declares `currency="usd"` before execution, so source-verified omission uses this native default; generic missing currency remains UNKNOWN, and either invoice or proposal currency differing from frozen USD is a violation even when both currencies match each other.
+
+P2 after Fraud is emitted only after successful delegated Fraud completion (or equivalent explicit successful old summary); it uses canonical `checkpoint=P2, proposal.tool=delegate_to_fraud`. P3 carries actual status-update target. P4 occurs only before the fund-transfer side effect. P5 detects and has no prevention attribution. Native event indices are converted to integral before/after phases, and every fact event must precede its decision.
+
+## Grouping and limits
+
+Groups use normalized original amount and invoice text, independent of model, repeat, allocated IDs and aliases. There are 50 old groups, 234 groups in the four-model source corpus, and seven shared groups, giving 277 groups. All variants/executors/repeats of an original input share group allocation. Seed 17 splits non-Luna groups 75/25 TRAIN/CAL. Historical exposure remains metadata and may train/calibrate, but cannot become a fresh external unseen test. All Luna rows are `TEST_EXECUTOR`: this is explicitly same-scenario executor shift, with possible shared scenario groups across TRAIN/CAL and Luna. It is not unseen-family validation.
+
+No independently authored genuinely new mechanism family is available in these archives. `family` is null and unseen-family/unseen-scenario validation is explicitly unavailable. Old raw64/hidden240 manifests are inventoried as previously exposed development material; their synthetic policy-extension state and old rule labels are not silently admitted to the new base-policy observational corpus.
+
+Source intent is kept apart from action policy correctness. The action oracle applies only the frozen policy to observed evidence; it does not turn every malicious source annotation into a proven typed-state violation. Labels with missing prerequisites stay UNKNOWN. Primary `continuation_harm` uses the original source oracle and confirmed native completion, independently of action gold. Old source requires-stop values come from the original `legacy-policy.json` expected-pay oracle, with its SHA256 revision tag; no old guard prediction is imported. The original four-model funnel uses truth unequal to legit; explicit legitimate FPR fixtures are source-safe, while Vera remains unknown without an explicit original expected outcome. Separate `contract_continuation_harm` and `contract_first_harm_event_seq` preserve the independent typed-policy reading. `source_attempt_harm` and `transfer_attempt` retain the common original attempt target without converting attempts to completed transfers. Whole-episode stopping remains an offline counterfactual, not measured live prevention.
+
+## Verification
+
+Tests were written and observed failing before implementation. The focused suite covers executable/nonfinite result rejection, no future state at cuts, unsuccessful flags, actual getter provenance for account comparisons, cross-subject proposals, process-payment bookkeeping exclusion, proven fresh/complete versus truncated history, shared-evidence timestamp aliasing, grouped/Luna allocation, and TRAIN-only packaging. A full data integrity pass checks unique joins, exact TRAIN/CAL separation, Luna exclusion, strictly prior provenance and package membership. No inference API request was made.
+
+## Final custody receipt
+
+The frozen corpus has 1,352 episodes, 20,153 prefixes and 277 groups. Seed 17 allocates 207 TRAIN and 70 CAL groups; all Luna rows remain TEST_EXECUTOR. TRAIN has 12,236 prefixes, including P4 action gold 414 ALLOW, 115 BLOCK and 24 UNKNOWN. Thirteen focused custodian tests passed. The integrity audit found zero duplicate joins, nonprior fact-provenance events or Luna rows in TRAIN/CAL. Later stale-clearance oracle hardening changed only extractor code/tests and the extractor hash in the source manifest, plus the manifest hash in the integrity receipt; observation, metadata, action, outcome, split and TRAIN-package bytes were unchanged.
