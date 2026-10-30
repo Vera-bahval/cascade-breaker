@@ -1,0 +1,72 @@
+{
+  "measurements": [
+    {
+      "method": "rules",
+      "seed": null,
+      "prefixes": 200,
+      "p50_ms": 0.01604200224392116,
+      "p95_ms": 0.016457983292639256,
+      "mean_ms": 0.015996676229406148,
+      "verified_artifact_load_ms": 0.00020800507627427578
+    },
+    {
+      "method": "legacy_v1",
+      "seed": null,
+      "prefixes": 200,
+      "p50_ms": 0.049250011215917766,
+      "p95_ms": 0.05092115607112646,
+      "mean_ms": 0.049111859989352524,
+      "verified_artifact_load_ms": 0.0001659791450947523
+    },
+    {
+      "method": "legacy_v2",
+      "seed": null,
+      "prefixes": 200,
+      "p50_ms": 0.06858300184831023,
+      "p95_ms": 0.07284135499503464,
+      "mean_ms": 0.0679572498484049,
+      "verified_artifact_load_ms": 0.00016600824892520905
+    },
+    {
+      "method": "structured_logistic",
+      "seed": 17,
+      "prefixes": 200,
+      "p50_ms": 0.20316700101830065,
+      "p95_ms": 0.2087645887513645,
+      "mean_ms": 0.20394563980516978,
+      "verified_artifact_load_ms": 0.6192089931573719
+    },
+    {
+      "method": "structured_catboost",
+      "seed": 17,
+      "prefixes": 200,
+      "p50_ms": 0.15066649939399213,
+      "p95_ms": 0.15813751087989658,
+      "mean_ms": 0.15175768014159985,
+      "verified_artifact_load_ms": 3.3207910018973053
+    },
+    {
+      "method": "text_diagnostic",
+      "seed": 17,
+      "prefixes": 200,
+      "p50_ms": 0.3860205033561215,
+      "p95_ms": 0.4505184464505872,
+      "mean_ms": 0.39013515968690626,
+      "verified_artifact_load_ms": 4.5874170027673244
+    }
+  ],
+  "imports_ms": 1202.9964580142405,
+  "process_peak_rss_mib": 265.171875,
+  "python": "3.12.14",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "mode": "serial JSON decode + full single-prefix features/scorer/proof gate, no cache",
+  "sample_source": "first P4 rows of frozen TRAIN package; no gold",
+  "external_inference_api_calls": 0,
+  "local_compute_cost_usd": null,
+  "limitations": [
+    "hardware and load specific; no online end-to-end latency measured",
+    "one fresh process; library imports separate from serialized artifact loading",
+    "peak RSS includes all loaded models, not a per-model isolated maximum"
+  ],
+  "fresh_process_total_s": 1.8238443339942023
+}
