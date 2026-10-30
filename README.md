@@ -9,6 +9,8 @@ This is research code, not a product.
 | --- | --- |
 | `finbot/` | FinBot code: upstream [GenAI-Security-Project/finbot-ctf](https://github.com/GenAI-Security-Project/finbot-ctf) plus our changes |
 | `scenarios/` | scenario runner: through the API, chat and onboarding, or straight into the orchestrator |
+| [Four-model FinBot comparison](experiments/control-placement/four-model-comparison/REPORT.md) | GPT-4o mini, GPT-5 nano, DeepSeek Flash and GPT-6 Luna High: matched outcomes, guard checks, latency, costs and reproducible evidence |
+| [Original control-placement research](experiments/control-placement/experiments.md) | Anastasia's method, analysis, code and archived runs from `research/control-placement` |
 
 Getting started:
 
