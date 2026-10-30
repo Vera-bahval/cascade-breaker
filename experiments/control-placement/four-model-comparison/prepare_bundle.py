@@ -44,6 +44,12 @@ def public_value(value):
 
 def publication_bytes(path):
     original = path.read_bytes()
+    if path.name.endswith('.json.gz'):
+        value = json.loads(gzip.decompress(original))
+        cleaned = public_value(value)
+        if cleaned != value:
+            return gzip.compress(json.dumps(cleaned, ensure_ascii=False, separators=(',', ':')).encode(), mtime=0)
+        return original
     compressed = path.name.endswith('.jsonl.gz')
     if compressed or path.suffix == '.jsonl':
         data = gzip.decompress(original) if compressed else original
@@ -91,6 +97,10 @@ def useful(path):
     return path.is_file() and not path.name.endswith(('.db', '.db-wal', '.db-shm', '.lock', '.pyc')) and '__pycache__' not in path.parts
 
 
+def source_revision(source, ref):
+    return subprocess.check_output(['git', '-C', str(source), 'rev-parse', ref], text=True).strip()
+
+
 def prepare(source):
     source = source.resolve()
     (HERE/'artifacts').mkdir(exist_ok=True)
@@ -131,18 +141,15 @@ def prepare(source):
             keep['source_sha256'] = sha((root/'final-quota-reconciliation.json').read_bytes())
             (HERE/'inputs/deepseek-billing-proof.json').write_text(json.dumps(keep, indent=2)+'\n')
         bundle(source, files, f'{model}-source-and-acceptance.tar.gz', inventory)
-    for path in (HERE/'inputs').glob('*.json'):
-        path.write_bytes(publication_bytes(path))
-    path = HERE/'inputs/deepseek-requests.json.gz'
-    rows = json.loads(gzip.decompress(path.read_bytes()))
-    path.write_bytes(gzip.compress(json.dumps(public_value(rows), ensure_ascii=False, separators=(',', ':')).encode(), mtime=0))
+    for path in (HERE/'inputs').iterdir():
+        if path.is_file() and path.name.endswith(('.json', '.json.gz')):
+            path.write_bytes(publication_bytes(path))
     for path in sorted((HERE/'inputs').iterdir()):
         if path.is_file():
             inputs[path.name] = {'published_sha256': sha(path.read_bytes()), 'bytes': path.stat().st_size}
-    receipt = {'source_commit': subprocess.check_output(['git', '-C', str(source), 'rev-parse', 'HEAD'], text=True).strip(),
-               'anastasia_branch': 'research/control-placement', 'anastasia_commit': subprocess.check_output(
-                   ['git', 'rev-parse', 'origin/research/control-placement'], text=True).strip(),
-               'base_main_commit': subprocess.check_output(['git', 'rev-parse', 'origin/main'], text=True).strip(),
+    receipt = {'source_commit': source_revision(source, 'HEAD'),
+               'anastasia_branch': 'research/control-placement', 'anastasia_commit': source_revision(source, 'origin/research/control-placement'),
+               'base_main_commit': source_revision(source, 'origin/main'),
                'projection': 'Only Eliza envelope key, stats.user/stats.quota/stats.usage, and corresponding eliza_stats are removed from public copies; cost/native usage/model context kept. Original, published and decompressed-content hashes recorded separately. Raw HTTP JSON strings receive the same projection. Concatenated per-record gzip streams are recompressed into one gzip stream without changing logical JSONL bytes unless metadata was filtered.',
                'new_model_requests': 0, 'archives': inventory, 'inputs': inputs}
     (HERE/'artifacts/manifest.json').write_text(json.dumps(receipt, ensure_ascii=False, indent=2)+'\n')

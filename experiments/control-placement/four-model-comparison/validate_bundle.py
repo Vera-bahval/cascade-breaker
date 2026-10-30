@@ -9,8 +9,24 @@ import sqlite3
 import tarfile
 import tempfile
 
-from build_report import HERE, load, save
+from build_report import HERE, load, save, require_cohort, key as episode_key
 from prepare_bundle import public_value
+
+
+PATTERNS = {'api_key': re.compile(rb'\bsk-(?:proj-)?[A-Za-z0-9_-]{24,}'),
+            'github_token': re.compile(rb'\b(?:ghp_|github_pat_)[A-Za-z0-9_]{30,}'),
+            'bearer_literal': re.compile(rb'Bearer [A-Za-z0-9_.~-]{24,}')}
+
+
+def validate_public_json(data, name):
+    content = gzip.decompress(data) if name.endswith('.gz') else data
+    rows = ([json.loads(line) for line in content.decode().splitlines() if line.strip()]
+            if name.endswith(('.jsonl', '.jsonl.gz')) else json.loads(content))
+    if public_value(rows) != rows:
+        raise ValueError('Account metadata survived publication projection: '+name)
+    for label, pattern in PATTERNS.items():
+        if pattern.search(content):
+            raise ValueError('Potential credential pattern '+label+' in '+name)
 
 
 def validate():
@@ -21,9 +37,7 @@ def validate():
     ledgers = {}; business_dbs = 0
     suspicious = []
     # Печатаются только имена файлов и классы совпадений, без значений секретов.
-    patterns = {'api_key': re.compile(rb'\bsk-(?:proj-)?[A-Za-z0-9_-]{24,}'),
-                'github_token': re.compile(rb'\b(?:ghp_|github_pat_)[A-Za-z0-9_]{30,}'),
-                'bearer_literal': re.compile(rb'Bearer [A-Za-z0-9_.~-]{24,}')}
+    patterns = PATTERNS
     for archive, info in manifest['archives'].items():
         path = HERE/'artifacts'/archive
         if hashlib.sha256(path.read_bytes()).hexdigest() != info['sha256']:
@@ -107,6 +121,7 @@ def validate():
             if actual_cost != stored_cost:
                 raise ValueError('Ledger/index cost mismatch')
         episodes = [r for r in load(model+'-episodes.json') if r['phase']=='main']
+        require_cohort(episodes, [episode_key(r) for r in outcomes[model].values()], 'published native '+model)
         if len(outcomes[model]) != 297 or {r['episode'] for r in episodes} != set(outcomes[model]):
             raise ValueError('Native canonical episode coverage')
         for row in episodes:
@@ -124,15 +139,21 @@ def validate():
         raise ValueError('Original four unknowns not preserved')
     if {r['episode'] for r in unknown} != set(failures):
         raise ValueError('Original failure identity mismatch')
+    actual_inputs = {p.name for p in (HERE/'inputs').iterdir() if p.is_file()}
+    if actual_inputs != set(manifest['inputs']):
+        raise ValueError('Input inventory mismatch')
     for name, info in manifest['inputs'].items():
-        if hashlib.sha256((HERE/'inputs'/name).read_bytes()).hexdigest() != info['published_sha256']:
+        data = (HERE/'inputs'/name).read_bytes()
+        if hashlib.sha256(data).hexdigest() != info['published_sha256']:
             raise ValueError('Committed input hash mismatch: '+name)
+        validate_public_json(data, name)
     result = {'archive_files':len(manifest['archives']),'members_checked':members_checked,
         'members_with_public_account_metadata_removed':filtered,'members_with_unchanged_logical_content':contents_preserved,
         'deepseek_raw_intents':len(intents['deepseek']),'luna_raw_intents':len(intents['luna']),
         'native_canonical_outcomes':{k:len(v) for k,v in outcomes.items()},'original_luna_unknowns':4,
         'native_business_sqlite_snapshots_checked':business_dbs,'ledger_indexes_reconciled':True,
         'unique_input_votes_per_native_model':702,'potential_credential_patterns':0,'new_model_requests':0,
+        'public_input_files_checked':len(actual_inputs),
         'scope':'New public evidence and input indexes; historical archives separately checked by build_report.py',
         'validator_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
     save(HERE/'PUBLICATION-CHECK.json',result)
