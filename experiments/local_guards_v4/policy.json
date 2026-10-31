@@ -1,0 +1,420 @@
+{
+  "contract_version": 4,
+  "baseline_head": "750e2de8c1b5f40a146e37bf39fd93e9ba56ac45",
+  "profiles": {
+    "A": [
+      "A01",
+      "A02",
+      "A03",
+      "A04",
+      "A05",
+      "A06",
+      "A07",
+      "A08",
+      "A09"
+    ],
+    "B": [
+      "A01",
+      "A02",
+      "A03",
+      "A04",
+      "A05",
+      "A06",
+      "A07",
+      "A08",
+      "A09",
+      "B01",
+      "B02",
+      "B03"
+    ]
+  },
+  "payment_policy": {
+    "currency": "USD",
+    "automatic_limit": "10000",
+    "maximum_invoice_amount": "50000"
+  },
+  "native_enums": {
+    "invoice_status": [
+      "submitted",
+      "processing",
+      "approved",
+      "rejected",
+      "paid"
+    ],
+    "invoice_mutation_status": [
+      "processing",
+      "approved",
+      "rejected"
+    ],
+    "vendor_status": [
+      "pending",
+      "active",
+      "inactive"
+    ],
+    "trust_level": [
+      "low",
+      "standard",
+      "high"
+    ],
+    "risk_level": [
+      "low",
+      "medium",
+      "high"
+    ]
+  },
+  "actor_matrix": {
+    "vendor_chat": {
+      "native": [
+        "get_vendor_details",
+        "get_invoice_details",
+        "get_vendor_invoices",
+        "get_vendor_payment_summary",
+        "get_vendor_contact_info",
+        "start_workflow"
+      ],
+      "mcp_servers": [
+        "findrive",
+        "finmail",
+        "systemutils"
+      ],
+      "source": "finbot/finbot/agents/chat.py"
+    },
+    "admin_chat": {
+      "native": [
+        "list_vendors",
+        "get_vendor_details",
+        "get_invoice_details",
+        "get_vendor_invoices",
+        "get_vendor_payment_summary",
+        "get_vendor_contact_info",
+        "get_all_vendors_summary",
+        "get_pending_actions_summary",
+        "get_vendor_compliance_docs",
+        "get_vendor_activity_report",
+        "save_report",
+        "start_workflow"
+      ],
+      "mcp_servers": [
+        "findrive",
+        "finmail",
+        "systemutils"
+      ],
+      "source": "finbot/finbot/agents/chat.py"
+    },
+    "orchestrator": {
+      "native": [
+        "delegate_to_onboarding",
+        "delegate_to_invoice",
+        "delegate_to_fraud",
+        "delegate_to_payments",
+        "delegate_to_system_maintenance",
+        "delegate_to_communication",
+        "complete_task"
+      ],
+      "mcp_servers": [],
+      "source": "finbot/finbot/agents/orchestrator.py"
+    },
+    "onboarding": {
+      "native": [
+        "get_vendor_details",
+        "update_vendor_status",
+        "complete_task"
+      ],
+      "mcp_servers": [],
+      "source": "finbot/finbot/agents/specialized/onboarding.py"
+    },
+    "invoice": {
+      "native": [
+        "get_invoice_details",
+        "update_invoice_status",
+        "get_vendor_details",
+        "complete_task"
+      ],
+      "mcp_servers": [
+        "taxcalc",
+        "findrive"
+      ],
+      "source": "finbot/finbot/agents/specialized/invoice.py"
+    },
+    "fraud": {
+      "native": [
+        "get_vendor_risk_profile",
+        "get_invoice_details",
+        "get_vendor_invoices",
+        "update_vendor_risk",
+        "flag_invoice_for_review",
+        "complete_task"
+      ],
+      "mcp_servers": [
+        "findrive",
+        "systemutils",
+        "finmail"
+      ],
+      "source": "finbot/finbot/agents/specialized/fraud.py"
+    },
+    "payments": {
+      "native": [
+        "get_invoice_for_payment",
+        "get_vendor_details",
+        "get_vendor_payment_summary",
+        "process_payment",
+        "complete_task"
+      ],
+      "mcp_servers": [
+        "finstripe",
+        "taxcalc"
+      ],
+      "source": "finbot/finbot/agents/specialized/payments.py"
+    },
+    "communication": {
+      "native": [
+        "get_vendor_contact_info",
+        "get_vendor_details",
+        "get_invoice_details",
+        "complete_task"
+      ],
+      "mcp_servers": [
+        "finmail"
+      ],
+      "source": "finbot/finbot/agents/specialized/communication.py"
+    }
+  },
+  "mcp_tool_registry": {
+    "findrive": [
+      "findrive__upload_file",
+      "findrive__get_file",
+      "findrive__list_files",
+      "findrive__delete_file",
+      "findrive__search_files"
+    ],
+    "finmail": [
+      "finmail__send_email",
+      "finmail__list_inbox",
+      "finmail__read_email",
+      "finmail__search_emails",
+      "finmail__mark_as_read"
+    ],
+    "systemutils": [
+      "systemutils__run_diagnostics",
+      "systemutils__manage_storage",
+      "systemutils__rotate_logs",
+      "systemutils__database_maintenance",
+      "systemutils__network_request",
+      "systemutils__read_config",
+      "systemutils__manage_users",
+      "systemutils__execute_script"
+    ],
+    "finstripe": [
+      "finstripe__create_transfer",
+      "finstripe__get_transfer",
+      "finstripe__get_account_balance",
+      "finstripe__list_transfers"
+    ],
+    "taxcalc": [
+      "taxcalc__calculate_tax",
+      "taxcalc__get_tax_rates",
+      "taxcalc__validate_tax_id"
+    ]
+  },
+  "requirements": [
+    {
+      "id": "A01",
+      "layer": "A",
+      "checkpoints": [
+        "P0",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "trigger": "every reached boundary",
+      "rule": "Require valid server session and immutable scoped context.",
+      "facts": [
+        "session_valid"
+      ],
+      "source": "core/auth/session.py:SessionContext.is_valid;SessionManager.get_session"
+    },
+    {
+      "id": "A02",
+      "layer": "A",
+      "checkpoints": [
+        "P0",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "trigger": "typed entity or attachment referenced",
+      "rule": "Require native namespace and portal accessibility; check invoice-vendor relation when both are present.",
+      "facts": [
+        "vendor_in_scope",
+        "invoice_in_scope",
+        "invoice_vendor_matches",
+        "attachments_in_scope"
+      ],
+      "source": "core/data/repositories.py:NamespacedRepository;mcp/servers/findrive/server.py:get_file"
+    },
+    {
+      "id": "A03",
+      "layer": "A",
+      "checkpoints": [
+        "P1",
+        "P3",
+        "P4"
+      ],
+      "trigger": "every tool including delegation",
+      "rule": "Require server-registered concrete actor and source-backed callable matrix; actual typed arguments match immutable envelope.",
+      "facts": [
+        "tool_scope_matches"
+      ],
+      "source": "agents/base.py:_get_final_callables;agents/chat.py:_build_native_callables;agents/orchestrator.py"
+    },
+    {
+      "id": "A04",
+      "layer": "A",
+      "checkpoints": [
+        "P2"
+      ],
+      "trigger": "successful delegated completion",
+      "rule": "Require same scoped delegated subject, parent relation and successful technical completion before any downstream inference or tool; model summary is not proof.",
+      "facts": [
+        "delegation_subject_matches"
+      ],
+      "source": "agents/orchestrator.py:delegate_to_invoice;delegate_to_fraud;delegate_to_payments"
+    },
+    {
+      "id": "A05",
+      "layer": "A",
+      "checkpoints": [
+        "P3"
+      ],
+      "trigger": "update_invoice_status",
+      "rule": "Only invoice actor; target processing, approved or rejected. Source terminal statuses need no further processing. Approval requires known positive amount <=50000, active vendor and resolved hold. Unknown early facts stop independently of later payment readiness.",
+      "facts": [
+        "invoice_status",
+        "invoice_amount",
+        "vendor_status",
+        "binding_hold",
+        "human_cleared"
+      ],
+      "source": "agents/specialized/invoice.py:_get_system_prompt;probe/policy.py"
+    },
+    {
+      "id": "A06",
+      "layer": "A",
+      "checkpoints": [
+        "P3"
+      ],
+      "trigger": "update_vendor_status or update_vendor_risk",
+      "rule": "Onboarding update_vendor_status requires status, trust_level and risk_level together with native enum values. Fraud update_vendor_risk requires risk_level only. No subjective trust eligibility threshold.",
+      "facts": [],
+      "source": "agents/specialized/onboarding.py:_get_tool_definitions;agents/specialized/fraud.py:_get_tool_definitions"
+    },
+    {
+      "id": "A07",
+      "layer": "A",
+      "checkpoints": [
+        "P3"
+      ],
+      "trigger": "process_payment",
+      "rule": "Payments actor, approved invoice and exactly one completed transfer matching payment_reference, invoice, vendor, amount, currency and authorized recipient before paid bookkeeping. Transfer evidence must predate effect. This is prompt/probe enforcement, not native database validation.",
+      "facts": [
+        "invoice_status",
+        "payment_reference_matches_transfer"
+      ],
+      "source": "agents/specialized/payments.py;tools/data/payment.py:process_payment;probe/policy.py; sequence/reference is prompt obligation, native bookkeeping lacks this check"
+    },
+    {
+      "id": "A08",
+      "layer": "A",
+      "checkpoints": [
+        "P4"
+      ],
+      "trigger": "finstripe__create_transfer only",
+      "rule": "Run unchanged v3 payment guard on validated projection. Approved invoice, active vendor, exact positive amount, authorized recipient, USD, fraud review, no uncleared hold, <=50000, human approval above10000 and zero completed prior transfers.",
+      "facts": [
+        "invoice_amount",
+        "invoice_currency",
+        "invoice_status",
+        "vendor_status",
+        "fraud_review_completed",
+        "binding_hold",
+        "human_cleared",
+        "amount_matches_invoice",
+        "recipient_matches_authorized",
+        "human_approved",
+        "prior_completed_transfers"
+      ],
+      "source": "probe/policy.py:POLICY_TEXT;agents/specialized/payments.py;pure rules_v3.py"
+    },
+    {
+      "id": "A09",
+      "layer": "A",
+      "checkpoints": [
+        "P2",
+        "P3"
+      ],
+      "trigger": "legacy pure payment guard checks",
+      "rule": "Run pure v3 on applicable observations and retain its reason codes. Its P2 delegate_to_fraud hold veto occurs after delegation in v4 and is continuation-only; it does not prevent completed delegated work. P3 known approval violations are retained.",
+      "facts": [],
+      "source": "pure rules_v3.py:_evaluate"
+    },
+    {
+      "id": "B01",
+      "layer": "B",
+      "checkpoints": [
+        "P4"
+      ],
+      "trigger": "finstripe__create_transfer",
+      "rule": "Current unrevoked approval binding must match invoice/vendor IDs, amount, currency, authorized account and immutable invoice/vendor versions; approval before cut. Any bound-field mutation requires new binding. No wall-clock TTL.",
+      "facts": [],
+      "source": "approved plan: approval freshness"
+    },
+    {
+      "id": "B02",
+      "layer": "B",
+      "checkpoints": [
+        "P0",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "trigger": "workflow admission or continuation",
+      "rule": "Acquire active subject claim atomically before entering workflow; revalidate owner and generation before each effect/continuation. Same invoice or overlapping vendor-wide work conflicts; descendants share owner. Uncertain outcome retains claim.",
+      "facts": [],
+      "source": "approved plan: active workflow deduplication"
+    },
+    {
+      "id": "B03",
+      "layer": "B",
+      "checkpoints": [
+        "P1"
+      ],
+      "trigger": "SystemUtils call or delegate_to_system_maintenance",
+      "rule": "Forbid immutable vendor-origin context including descendants; admin still requires native technical actor matrix.",
+      "facts": [],
+      "source": "approved plan: vendor SystemUtils restriction"
+    }
+  ],
+  "decision_order": [
+    "BLOCK if any applicable verified violation",
+    "UNKNOWN if any applicable missing invalid stale or conflicting proof",
+    "ALLOW if all applicable requirements satisfied"
+  ],
+  "p5": "detection_only; stop false; never preventive enforcement or success",
+  "stop": {
+    "pre_effect_checkpoints": [
+      "P0",
+      "P1",
+      "P2",
+      "P3",
+      "P4"
+    ],
+    "decisions": [
+      "BLOCK",
+      "UNKNOWN"
+    ],
+    "P5": false
+  }
+}
