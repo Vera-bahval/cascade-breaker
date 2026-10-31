@@ -158,8 +158,14 @@ class Run:
 
     def snapshot(self) -> dict[str, Any]:
         vendors = {}
+        current = self.current_vendor_id() if self.vendors else None
+        # The portal only shows the current vendor, so step over to each one and come back.
         for ref, vendor_id in self.vendors.items():
+            if vendor_id != current:
+                self.client.switch_vendor(vendor_id)
             vendors[ref] = self.client.get(f"{API}/vendors/{vendor_id}")
+            if vendor_id != current:
+                self.client.switch_vendor(current)
         # Before an onboarding trigger the session may have no vendor, and vendor routes need one.
         if not self.vendors:
             return {"vendors": {}, "invoices": [], "transactions": []}
