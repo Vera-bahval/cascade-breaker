@@ -4,6 +4,18 @@
 Основной русский отчёт: [REPORT.md](REPORT.md). Контракт: [POLICY.md](POLICY.md),
 реестр: [policy.json](policy.json), вход: [schema.json](schema.json).
 
+[Итоговый независимый аудит](final-audit-report.md) ([JSON](final-audit.json)):
+исследование валидно с уточнением F1; реализация остаётся исследовательской,
+не принята как полностью соответствующая контракту или готовый самостоятельный
+разрешающий механизм. Все 12 сохранённых native P2 имеют null parent ID
+(11 ALLOW, один HOLD-related BLOCK). Успех 32 сценарных тестов подтверждает
+runner-attestation соглашение, а не gold-требование явного parent ID;
+неявная native-связь сохраняется, пропуск чужого родителя не продемонстрирован.
+Подробности и неизменённые спорные решения: [REPORT.md](REPORT.md),
+[APPENDIX.md](APPENDIX.md). [Provenance](provenance/README.md) сохраняет исходные
+процедурные brief-файлы; [final-fix-report.md](final-fix-report.md) описывает эту
+коррекцию отчётности и проверку целостности.
+
 ## Что сохранено
 
 - `guard.py`, `store.py`, `runtime.py`: детерминированные проверки, отдельная SQLite-БД доказательств/активных задач, адаптер настоящих путей FinBot.
