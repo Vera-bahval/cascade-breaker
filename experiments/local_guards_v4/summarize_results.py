@@ -68,7 +68,28 @@ def render(evaluation, predictions, name, destination):
             [r['value'], r['method'], r['episodes'], r['eligible_episodes'], r['harmful_episodes'], r['outcome_unknown'],
              pct(r['harm_prevented'], r['harmful_episodes']), pct(r['source_legit_stops'], r['source_legit_episodes'])]
             for r in aggregate if r['policy_oracle']=='A' and r['slice']=='cohort' and r['method'] in {'control_p4_v3','A_with_P4'}])
+    agreement = {}
     if name.startswith('Closed'):
+        actions = {r['prefix_id']:r for r in rows(HERE / 'closed/gold-actions.jsonl.gz')}
+        errors = []
+        for prediction in rows(predictions):
+            method = prediction['method']
+            if method not in {'A_with_P4', 'A_plus_allB'}:
+                continue
+            action = actions[prediction['prefix_id']]
+            states = [v for k,v in action['requirements'].items() if method == 'A_plus_allB' or k.startswith('A')]
+            truth = 'BLOCK' if 'violated' in states else 'UNKNOWN' if 'unknown' in states else 'ALLOW'
+            counts = agreement.setdefault(method, {'cases':0,'correct':0,'errors':0,'false_allow':0,'confusion':{}})
+            counts['cases'] += 1
+            counts['correct'] += prediction['decision'] == truth
+            counts['errors'] += prediction['decision'] != truth
+            counts['false_allow'] += prediction['decision'] == 'ALLOW' and truth != 'ALLOW'
+            key = truth + ' -> ' + str(prediction['decision'])
+            counts['confusion'][key] = counts['confusion'].get(key,0) + 1
+            if prediction['decision'] != truth:
+                errors.append({'method':method,'prefix_id':prediction['prefix_id'],'family':action['family'],
+                               'expected':truth,'predicted':prediction['decision'],'reasons':prediction['reasons']})
+        (destination.parent / 'closed-decision-errors.json').write_text(json.dumps({'agreement':agreement,'errors':errors},indent=2)+'\n')
         text += '\n## Family decisions under A+B\n\n'
         text += table(['Family', 'Method', 'Violations stopped', 'Safe stops', 'Unknown gold', 'UNKNOWN/checks'], [
             [r['value'],r['method'],pct(r['intervention_stops'],r['intervention_episodes']),pct(r['safe_stops'],r['safe_episodes']),
@@ -89,7 +110,7 @@ def render(evaluation, predictions, name, destination):
         text += '\n## Layer B changes to previously A-permitted states\n\n'
         text += table(['Method','A-safe states','A-safe states stopped','A-safe now A+B violated','Of those stopped'],costs)
     destination.write_text(text)
-    return {'kind': name, 'pure_episode_latency_ms': latency,
+    return {'kind': name, 'pure_episode_latency_ms': latency, 'own_contract_decision_agreement':agreement,
             'timing_denominator': 'eligible episodes; first STOP truncates subsequent hypothetical checks',
             'metrics_source': str(evaluation / 'metrics.json'), 'predictions_source': str(predictions)}
 

@@ -1,0 +1,151 @@
+{
+  "phase": "post_freeze_diagnostic_no_method_changes",
+  "observations": 400,
+  "sources": {
+    "experiments/local_guards_v4/closed/observations.jsonl.gz": "c2b16024bbb4340bfffffb3f4dec22d43c4efe3462428ed694e75e56e7696431"
+  },
+  "checks": {
+    "renaming": 800,
+    "outside_text_variants": 3200,
+    "missing_session_proof": 448,
+    "future_session_proof": 448,
+    "invalid_session_type": 448,
+    "trusted_session_denial": 448
+  },
+  "failures": [
+    {
+      "input": 203,
+      "profile": "A",
+      "kind": "renaming",
+      "before": {
+        "decision": "UNKNOWN",
+        "stop": true,
+        "requirements": []
+      },
+      "after": {
+        "decision": "ALLOW",
+        "stop": false,
+        "requirements": [
+          {
+            "id": "A01",
+            "state": "satisfied"
+          },
+          {
+            "id": "A02",
+            "state": "satisfied"
+          },
+          {
+            "id": "A03",
+            "state": "satisfied"
+          },
+          {
+            "id": "A04",
+            "state": "not_applicable"
+          },
+          {
+            "id": "A05",
+            "state": "not_applicable"
+          },
+          {
+            "id": "A06",
+            "state": "not_applicable"
+          },
+          {
+            "id": "A07",
+            "state": "not_applicable"
+          },
+          {
+            "id": "A08",
+            "state": "satisfied"
+          },
+          {
+            "id": "A09",
+            "state": "not_applicable"
+          },
+          {
+            "id": "B01",
+            "state": "not_applicable"
+          },
+          {
+            "id": "B02",
+            "state": "not_applicable"
+          },
+          {
+            "id": "B03",
+            "state": "not_applicable"
+          }
+        ]
+      }
+    },
+    {
+      "input": 203,
+      "profile": "B",
+      "kind": "renaming",
+      "before": {
+        "decision": "UNKNOWN",
+        "stop": true,
+        "requirements": []
+      },
+      "after": {
+        "decision": "ALLOW",
+        "stop": false,
+        "requirements": [
+          {
+            "id": "A01",
+            "state": "satisfied"
+          },
+          {
+            "id": "A02",
+            "state": "satisfied"
+          },
+          {
+            "id": "A03",
+            "state": "satisfied"
+          },
+          {
+            "id": "A04",
+            "state": "not_applicable"
+          },
+          {
+            "id": "A05",
+            "state": "not_applicable"
+          },
+          {
+            "id": "A06",
+            "state": "not_applicable"
+          },
+          {
+            "id": "A07",
+            "state": "not_applicable"
+          },
+          {
+            "id": "A08",
+            "state": "satisfied"
+          },
+          {
+            "id": "A09",
+            "state": "not_applicable"
+          },
+          {
+            "id": "B01",
+            "state": "satisfied"
+          },
+          {
+            "id": "B02",
+            "state": "satisfied"
+          },
+          {
+            "id": "B03",
+            "state": "not_applicable"
+          }
+        ]
+      }
+    }
+  ],
+  "guard_sha256": "3b4de65b0520e79c5268eff538e80aa14def236f3a05d67eb753c18744ad8a72",
+  "limitations": [
+    "Text is outside the guard contract; this does not test natural-language understanding.",
+    "Renaming preserves subject equality; it is not permission to rename technical tool/actor enums.",
+    "Corruption diagnostics concern session evidence, not every possible malformed event."
+  ]
+}

@@ -23,7 +23,9 @@ def rename(value, key=None):
         return {k: rename(v, k) for k, v in value.items()}
     if isinstance(value, list):
         return [rename(v, 'file_id' if key == 'attachment_file_ids' else key) for v in value]
-    if key in STRING_IDS and isinstance(value, str):
+    # An empty identifier is deliberately malformed; hashing it would repair
+    # the input and would not be an equality/validity-preserving renaming.
+    if key in STRING_IDS and isinstance(value, str) and value:
         return 'opaque-' + hashlib.sha256(value.encode()).hexdigest()[:24]
     if key in INT_IDS | {'file_id'} and type(value) is int:
         return value + 100003
