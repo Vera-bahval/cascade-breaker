@@ -1,0 +1,395 @@
+{
+  "version": 4,
+  "fixed_before_gold": true,
+  "target_safe_stop_fpr": 0.05,
+  "minimum_known_safe_cal_episodes": 20,
+  "bootstrap_seed": 17,
+  "bootstrap_repeats": 1000,
+  "methods": [
+    {
+      "name": "control_p4_v3",
+      "kind": "v3",
+      "points": [
+        "P4"
+      ],
+      "requirements": [],
+      "oracle": "A"
+    },
+    {
+      "name": "early_A",
+      "kind": "v4",
+      "points": [
+        "P0",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "requirements": [
+        "A01",
+        "A02",
+        "A03",
+        "A04",
+        "A05",
+        "A06",
+        "A07",
+        "A09"
+      ],
+      "oracle": "A"
+    },
+    {
+      "name": "A_with_P4",
+      "kind": "v4",
+      "points": [
+        "P0",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "requirements": [
+        "A01",
+        "A02",
+        "A03",
+        "A04",
+        "A05",
+        "A06",
+        "A07",
+        "A08",
+        "A09"
+      ],
+      "oracle": "A"
+    },
+    {
+      "name": "A_plus_B01",
+      "kind": "v4",
+      "points": [
+        "P0",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "requirements": [
+        "A01",
+        "A02",
+        "A03",
+        "A04",
+        "A05",
+        "A06",
+        "A07",
+        "A08",
+        "A09",
+        "B01"
+      ],
+      "oracle": "A+B"
+    },
+    {
+      "name": "A_plus_B02",
+      "kind": "v4",
+      "points": [
+        "P0",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "requirements": [
+        "A01",
+        "A02",
+        "A03",
+        "A04",
+        "A05",
+        "A06",
+        "A07",
+        "A08",
+        "A09",
+        "B02"
+      ],
+      "oracle": "A+B"
+    },
+    {
+      "name": "A_plus_B03",
+      "kind": "v4",
+      "points": [
+        "P0",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "requirements": [
+        "A01",
+        "A02",
+        "A03",
+        "A04",
+        "A05",
+        "A06",
+        "A07",
+        "A08",
+        "A09",
+        "B03"
+      ],
+      "oracle": "A+B"
+    },
+    {
+      "name": "A_plus_allB",
+      "kind": "v4",
+      "points": [
+        "P0",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "requirements": [
+        "A01",
+        "A02",
+        "A03",
+        "A04",
+        "A05",
+        "A06",
+        "A07",
+        "A08",
+        "A09",
+        "B01",
+        "B02",
+        "B03"
+      ],
+      "oracle": "A+B"
+    },
+    {
+      "name": "A_P01_with_P4",
+      "kind": "v4",
+      "points": [
+        "P0",
+        "P1",
+        "P4"
+      ],
+      "requirements": [
+        "A01",
+        "A02",
+        "A03",
+        "A08"
+      ],
+      "oracle": "A"
+    },
+    {
+      "name": "A_P2_with_P4",
+      "kind": "v4",
+      "points": [
+        "P2",
+        "P4"
+      ],
+      "requirements": [
+        "A01",
+        "A02",
+        "A03",
+        "A08",
+        "A04",
+        "A09"
+      ],
+      "oracle": "A"
+    },
+    {
+      "name": "A_P3_with_P4",
+      "kind": "v4",
+      "points": [
+        "P3",
+        "P4"
+      ],
+      "requirements": [
+        "A01",
+        "A02",
+        "A03",
+        "A08",
+        "A05",
+        "A06",
+        "A07",
+        "A09"
+      ],
+      "oracle": "A"
+    },
+    {
+      "name": "legacy_v1",
+      "kind": "legacy",
+      "points": [
+        "P4"
+      ],
+      "requirements": [],
+      "oracle": "A"
+    },
+    {
+      "name": "legacy_v2",
+      "kind": "legacy",
+      "points": [
+        "P4"
+      ],
+      "requirements": [],
+      "oracle": "A"
+    },
+    {
+      "name": "constant_ALLOW",
+      "kind": "allow",
+      "points": [
+        "P0",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "requirements": [],
+      "oracle": "A"
+    },
+    {
+      "name": "constant_STOP",
+      "kind": "stop",
+      "points": [
+        "P0",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "requirements": [],
+      "oracle": "A"
+    },
+    {
+      "name": "saved_P4_structured_logistic_17",
+      "kind": "saved_ml",
+      "points": [
+        "P4"
+      ],
+      "requirements": [],
+      "oracle": "A",
+      "model": "structured_logistic",
+      "seed": 17,
+      "threshold": 0.005186457284289595,
+      "model_file": "structured_logistic-17.pickle",
+      "model_hash": "c6a603fa40ab98cb909a86002df6525400c921cd58208051a4455c49adb38103",
+      "diagnostic": "Saved v3 P4 model/threshold; not a full-A candidate."
+    },
+    {
+      "name": "saved_P4_structured_logistic_29",
+      "kind": "saved_ml",
+      "points": [
+        "P4"
+      ],
+      "requirements": [],
+      "oracle": "A",
+      "model": "structured_logistic",
+      "seed": 29,
+      "threshold": 0.005186457284289595,
+      "model_file": "structured_logistic-29.pickle",
+      "model_hash": "bcfb05396b2d11c479c61049ebf800deb0da49bc9ebd0387d0342bc65c0a9c35",
+      "diagnostic": "Saved v3 P4 model/threshold; not a full-A candidate."
+    },
+    {
+      "name": "saved_P4_structured_logistic_43",
+      "kind": "saved_ml",
+      "points": [
+        "P4"
+      ],
+      "requirements": [],
+      "oracle": "A",
+      "model": "structured_logistic",
+      "seed": 43,
+      "threshold": 0.005186457284289595,
+      "model_file": "structured_logistic-43.pickle",
+      "model_hash": "865d5aa7d91d23339bf5c6b27df4b919f6a80f76eacfbfc3c82913b8fda2dd82",
+      "diagnostic": "Saved v3 P4 model/threshold; not a full-A candidate."
+    },
+    {
+      "name": "saved_P4_structured_catboost_17",
+      "kind": "saved_ml",
+      "points": [
+        "P4"
+      ],
+      "requirements": [],
+      "oracle": "A",
+      "model": "structured_catboost",
+      "seed": 17,
+      "threshold": 0.0035872061396429876,
+      "model_file": "structured_catboost-17.pickle",
+      "model_hash": "688d9c540e6ca6bc5f1def1778e5b4f4c3fad9ca792231a3097ce65b332da3f4",
+      "diagnostic": "Saved v3 P4 model/threshold; not a full-A candidate."
+    },
+    {
+      "name": "saved_P4_structured_catboost_29",
+      "kind": "saved_ml",
+      "points": [
+        "P4"
+      ],
+      "requirements": [],
+      "oracle": "A",
+      "model": "structured_catboost",
+      "seed": 29,
+      "threshold": 0.0035231232195820352,
+      "model_file": "structured_catboost-29.pickle",
+      "model_hash": "e28cbf7594fd0137e1fcf66fa3a8435516bbec6495edb9c6626cbf76f5c44ef5",
+      "diagnostic": "Saved v3 P4 model/threshold; not a full-A candidate."
+    },
+    {
+      "name": "saved_P4_structured_catboost_43",
+      "kind": "saved_ml",
+      "points": [
+        "P4"
+      ],
+      "requirements": [],
+      "oracle": "A",
+      "model": "structured_catboost",
+      "seed": 43,
+      "threshold": 0.003422640147648786,
+      "model_file": "structured_catboost-43.pickle",
+      "model_hash": "d594dfa7df8e9c5e72cc2e3c9313ac1fd30e8df4c5791e7abf806e69a5a46a6e",
+      "diagnostic": "Saved v3 P4 model/threshold; not a full-A candidate."
+    },
+    {
+      "name": "saved_P4_text_diagnostic_17",
+      "kind": "saved_ml",
+      "points": [
+        "P4"
+      ],
+      "requirements": [],
+      "oracle": "A",
+      "model": "text_diagnostic",
+      "seed": 17,
+      "threshold": 0.25368828347426375,
+      "model_file": "text_diagnostic-17.pickle",
+      "model_hash": "dce4559897974bb5005ace0a518319926585377da133040ce95af6662f5d67b0",
+      "diagnostic": "Saved v3 P4 model/threshold; not a full-A candidate."
+    },
+    {
+      "name": "saved_P4_text_diagnostic_29",
+      "kind": "saved_ml",
+      "points": [
+        "P4"
+      ],
+      "requirements": [],
+      "oracle": "A",
+      "model": "text_diagnostic",
+      "seed": 29,
+      "threshold": 0.25368828347426375,
+      "model_file": "text_diagnostic-29.pickle",
+      "model_hash": "4bd550a67fee2ce677bc87f371973313cefe77a6752ee0b0ad9c6ba25c484866",
+      "diagnostic": "Saved v3 P4 model/threshold; not a full-A candidate."
+    },
+    {
+      "name": "saved_P4_text_diagnostic_43",
+      "kind": "saved_ml",
+      "points": [
+        "P4"
+      ],
+      "requirements": [],
+      "oracle": "A",
+      "model": "text_diagnostic",
+      "seed": 43,
+      "threshold": 0.25368828347426375,
+      "model_file": "text_diagnostic-43.pickle",
+      "model_hash": "26d1234ee502dbd7b33a1ca20d79130a35f51176dee4dc2ec97e47ed19f02bb8",
+      "diagnostic": "Saved v3 P4 model/threshold; not a full-A candidate."
+    }
+  ],
+  "selection": "A configurations only; known-safe CAL denominator >=20; UNKNOWN counts STOP; recall, simplicity, runtime ties",
+  "timing": "offline pure-call timings; not native online latency",
+  "no_check": "permits continuation but is not an autonomous guard decision"
+}
