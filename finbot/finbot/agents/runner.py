@@ -15,6 +15,7 @@ from finbot.agents.specialized.payments import PaymentsAgent
 from finbot.core.auth.session import SessionContext
 from finbot.config import settings
 from finbot.core.messaging import event_bus
+from finbot.probe import v4
 from finbot.probe import trace as probe_trace
 
 logger = logging.getLogger(__name__)
@@ -44,7 +45,10 @@ async def run_agent_with_retry(
                 session_context=session_context,
                 workflow_id=workflow_id,
             )
-            result = await agent.process(task_data=task_data)
+            with v4.agent_entry(agent, task_data) as v4_runtime:
+                result = await agent.process(task_data=task_data)
+                if v4_runtime:
+                    v4_runtime.child_complete(agent, result)
 
             logger.info(
                 "Agent %s completed (workflow=%s): %s",
@@ -55,7 +59,11 @@ async def run_agent_with_retry(
 
             return result
 
+        except v4.V4Stop:
+            raise
         except Exception as e:  # pylint: disable=broad-exception-caught
+            if runtime := v4.active():
+                runtime.fail("native_runner_error")
             logger.error(
                 "Agent %s attempt %d/%d failed: %s",
                 agent.agent_name,

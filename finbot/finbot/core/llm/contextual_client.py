@@ -15,6 +15,7 @@ from finbot.core.llm.client import LLMClient, get_llm_client
 from finbot.core.messaging import event_bus
 from finbot.guardrails.schemas import HookKind
 from finbot.guardrails.service import GuardrailHookService
+from finbot.probe import v4
 from finbot.probe import ledger as probe_ledger
 from finbot.probe import trace as probe_trace
 from finbot.probe.guards import runtime as probe_guards
@@ -119,6 +120,7 @@ class ContextualLLMClient:
             LLM response string
         """
 
+        v4.raise_if_stopped()
         probe_ledger.raise_if_halted()
         probe_guards.raise_if_stopped()
         if settings.CASCADE_PROBE_ROLES and request.model is None:
@@ -176,7 +178,9 @@ class ContextualLLMClient:
         try:
             # Pass original request unchanged — underlying client resolves its own defaults
             with probe_ledger.agent_scope(self.agent_name):
+                v4.raise_if_stopped()
                 response = await self.llm_client.chat(request=request)
+            v4.raise_if_stopped()
 
             duration_ms = int((datetime.now(UTC) - start_time).total_seconds() * 1000)
 

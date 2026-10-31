@@ -12,6 +12,7 @@ from typing import Any, Callable
 
 from fastmcp import Client, FastMCP
 
+from finbot.probe import v4
 from finbot.core.auth.session import SessionContext
 from finbot.core.data.database import db_session
 from finbot.core.data.repositories import MCPActivityLogRepository
@@ -51,7 +52,7 @@ class MCPToolProvider:
         workflow_id: str | None = None,
         agent_name: str | None = None,
     ):
-        self._server_sources = servers
+        self._server_sources = v4.filter_servers(servers)
         self._session_context = session_context
         self._workflow_id = workflow_id
         self._agent_name = agent_name or "unknown_agent"
@@ -172,7 +173,7 @@ class MCPToolProvider:
     ) -> Callable[..., Any]:
         """Create an async callable that invokes a tool via MCP client."""
 
-        async def call_mcp_tool(**kwargs: Any) -> Any:
+        async def execute_mcp_tool(**kwargs: Any) -> Any:
             client = self._clients.get(server_name)
             if not client:
                 return {"error": f"MCP server '{server_name}' not connected"}
@@ -205,6 +206,7 @@ class MCPToolProvider:
             )
 
             try:
+                v4.raise_if_stopped()
                 result = await client.call_tool(original_name, kwargs)
                 duration_ms = (time.time() - start) * 1000
 
@@ -244,6 +246,8 @@ class MCPToolProvider:
                 )
                 return output
 
+            except v4.V4Stop:
+                raise
             except Exception as e:  # pylint: disable=broad-exception-caught
                 duration_ms = (time.time() - start) * 1000
                 self._log_activity(
@@ -275,6 +279,11 @@ class MCPToolProvider:
 
                 logger.exception("MCP tool '%s' failed", namespaced_name)
                 return {"error": f"MCP tool call failed: {str(e)}"}
+
+        async def call_mcp_tool(**kwargs: Any) -> Any:
+            return await v4.invoke_mcp(
+                self, namespaced_name, kwargs, lambda: execute_mcp_tool(**kwargs)
+            )
 
         return call_mcp_tool
 
