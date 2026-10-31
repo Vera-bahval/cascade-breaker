@@ -111,3 +111,131 @@ make native source-DB changes, HTTP writes, or check/effect pairs atomic. Extern
 writers/races, incomplete writer coverage and distributed exactly-once are not
 solved. Guard/store do not claim whole-runtime enforcement until adapter STOP,
 claim admission and effect integration are independently verified.
+
+
+## Revision 4.1 amendment (pre-global freeze)
+
+The original 4.0 read/hash log above is retained as historical evidence. Root
+authorized rereading only the original four v4 contract inputs; neither the
+preserved 4.0 freeze nor contract-report/native source was opened. Updated
+contract hashes for this amendment:
+
+| Input | SHA-256 |
+| --- | --- |
+| `POLICY.md` | `8e0ba70727761edff5485bd4d0fb20af0bc48922cb9d1e12b23c3e8757c9306a` |
+| `policy.json` | `5456778530e32b508cbf5d4f9eab78d383d83a91c927fefdf5e8f2e6b04492ca` |
+| `schema.json` | `9e75dd6e2ae4cfac702b706d1a2b5408f71d6525b40c4a4dee3fc8fbbc04a07b` |
+| `contract-freeze.json` | `c91b74316ebae3a86a2d57fc71d2d90af92346a8550d392985e49d3357445f4e` |
+
+A05 now requires a known canonical current invoice status, with existing typed
+actor/target and approval obligations. Approved/rejected/paid current status
+alone no longer forbids re-review. Tests cover approved to approved, rejected
+to processing, paid to processing, invalid current status UNKNOWN and missing
+hold proof UNKNOWN during reapproval.
+
+MATERIALVERSION excludes only binding_hold and human_cleared. Both remain bound
+to exact invoice/vendor subject, namespace/session/workflow, accepted attester,
+prior sequence and newest-event rules. Material edits do not clear known holds
+or invalidate known no-HOLD history from the declared complete synthetic
+producer. Independent clearance must follow the newest hold, while fraud review
+and independent human approval remain material-version-bound. No new hold,
+clearance or human approval facts are fabricated. Store was not changed.
+
+TDD: focused guard suite first failed seven assertions/subtests against 4.0
+behavior (three terminal cases, historical hold/no-hold/clearance and old terminal
+expectation), then passed all 34 guard tests after the two precise code changes.
+Receipt:
+
+```sh
+python3 -m unittest discover -s experiments/local_guards_v4/tests -p test_guard.py -v
+# Ran 34 tests; OK
+```
+
+Procedural isolation incident: after the focused green receipt, the developer
+incorrectly reused the historical wildcard test command. The shared directory
+now contained other participants' test modules. unittest auto-imported
+test_data/test_evaluate/test_runtime and their dependencies outside this
+developer's source allowlist. The output showed test names and dependency
+stack traces; no aggregate result/outcome data appeared. The run executed 66
+tests with four errors: three missing-numpy dependency errors in evaluator
+tests and missing-fastmcp during runtime-test import. This run is NOT an
+isolated rules validation receipt. The controller was immediately notified;
+no further broad discovery or source reads were made. This procedural breach
+must be considered in any final experimental independence claim. Subsequent
+verification must name only owned test_guard.py and test_store.py explicitly.
+
+Amendment output hashes before any further controller request:
+
+- `guard.py`: `366a4afdd76481e81205191dbce293d1312600da2ce3bf6baf90c231246b5d78`
+- `tests/test_guard.py`: `32a1e3156a2f69e917c442cb91b6f335c4dad0bdfc341c24a1224eec48d2c0df`
+- `store.py`: `57505966787b1a7ae40ed618ec2f0d5db9b8a7e4e1b1f9b76994c5e324f11f77`
+
+
+## Final authorized 4.1 currency-attester clarification
+
+The controller explicitly authorized the contract's third clarification. For
+invoice_currency only, server_context is eligible only when operation is exactly
+`currency_contract_attest`. Generic server_context currency observations and
+near-match operation names remain rejected. Scope, value, subject, prior sequence
+and current material-version requirements remain unchanged. Only a trusted
+declared isolated fixture producer may emit this contract attestation; this is
+not evidence that a native Invoice has a currency column, nor authentication of
+caller-supplied JSON. Accepted evidence now retains operation alongside original
+source and record_id, preserving the declared synthetic contract evidence identity
+through the unchanged v3 projection. No other attester permission was broadened.
+
+TDD receipt: the added positive contract test first failed UNKNOWN rather than
+ALLOW; negative and stale/mismatched scope/value/time/version regressions passed.
+After implementation, the only verification commands were the two exact owned
+file patterns below; no wildcard/full-suite command was repeated:
+
+```sh
+python3 -m unittest discover -s experiments/local_guards_v4/tests -p test_guard.py -v
+# Ran 37 tests; OK
+python3 -m unittest discover -s experiments/local_guards_v4/tests -p test_store.py -v
+# Ran 9 tests; OK
+```
+
+Latest owned validation: 46 tests pass in two explicitly scoped receipts.
+Store remains unchanged. Final output hashes:
+
+| File | SHA-256 |
+| --- | --- |
+| `guard.py` | `3b4de65b0520e79c5268eff538e80aa14def236f3a05d67eb753c18744ad8a72` |
+| `store.py` | `57505966787b1a7ae40ed618ec2f0d5db9b8a7e4e1b1f9b76994c5e324f11f77` |
+| `tests/test_guard.py` | `8e5cbd4a79f265f1231843e761a15c6a28e8cd0ebc80f7708394d6391f843410` |
+| `tests/test_store.py` | `194b33d2de4d6dea56a1050230c35d10a5195fef7d466267bc8a9ce9334f283b` |
+
+### Procedural incident expansion and disposition
+
+The disallowed wildcard run auto-imported at least these non-owned test paths:
+
+- experiments/local_guards_v4/tests/test_data.py
+- experiments/local_guards_v4/tests/test_evaluate.py
+- experiments/local_guards_v4/tests/test_runtime.py
+
+Visible exception traces also establish execution/import of at least:
+
+- experiments/local_guards_v4/evaluate.py (calibrate/score/intervals)
+- experiments/local_guards_v3/ml_v3.py (top-level import)
+- finbot/finbot/agents/base.py (top-level import)
+
+The visible output listed four CustodianTests, eighteen EvaluationTests, the
+then-34 owned GuardTests, nine owned StoreTests and a failed runtime-module
+import, for 66 test entries total. Four entries errored: evaluator calibration,
+frozen ML loading and score roundtrip because numpy was unavailable; runtime
+import because fastmcp was unavailable. The output printed names, pass/error
+statuses, dependency tracebacks and a temporary-directory ResourceWarning. It
+did not print aggregate metrics, archived rows or gold labels. The complete
+transitive import/file-read set was not captured; this developer cannot
+independently verify every dependency side effect or every file opened by that
+run. No additional outside-allowlist file was opened to reconstruct it.
+
+The controller ruled to retain implementation with this disclosure, reporting
+that no closed 400-case set existed and the imported data code exposed no
+archived rows/gold. That controller assessment is distinct from this developer's
+directly observed console evidence. Procedural independence was breached; no
+technical isolation or fully unexposed author context is claimed. A fresh sealed
+author remains a separate post-freeze role. The original read log is preserved
+for the earlier pre-incident phase and is not a complete read log for the
+disallowed wildcard run. No reimplementation was requested.

@@ -103,7 +103,82 @@ class GuardTests(unittest.TestCase):
         obj['facts']['binding_hold']=None
         self.assertEqual('UNKNOWN',guard(obj)['decision'])
         put(obj,'invoice_status','paid',seq=3)
+        self.assertEqual('UNKNOWN',guard(obj)['decision'])
+
+    def test_terminal_status_reprocessing_preserves_approval_obligations(self):
+        for current,target in [('approved','approved'),('rejected','processing'),('paid','processing')]:
+            with self.subTest(current=current,target=target):
+                obj=observation('P3','update_invoice_status')
+                obj['proposal']['target_status']=target
+                for key,val in dict(invoice_status=current,invoice_amount='15000',
+                                    vendor_status='active',binding_hold=False).items(): put(obj,key,val)
+                self.assertEqual('ALLOW',guard(obj)['decision'])
+                self.assertEqual('satisfied',self.state(guard(obj),'A05'))
+        put(obj,'invoice_status','invented-status',seq=4)
+        self.assertEqual('UNKNOWN',guard(obj)['decision'])
+        self.assertEqual('unknown',self.state(guard(obj),'A05'))
+
+    def test_hold_history_survives_material_version_change(self):
+        obj=payment(); put(obj,'binding_hold',True,seq=3,
+                           invoice_version='i-old',vendor_version='v-old')
+        result=guard(obj)
+        self.assertEqual('BLOCK',result['decision'])
+        self.assertIn('unresolved_binding_hold',result['reasons'])
+
+    def test_no_hold_history_survives_material_version_change(self):
+        obj=payment()
+        obj['provenance']['binding_hold'][0].update(invoice_version='i-old',vendor_version='v-old')
+        self.assertEqual('ALLOW',guard(obj)['decision'])
+
+    def test_independent_clearance_history_survives_material_version_change(self):
+        obj=payment(); put(obj,'binding_hold',True,seq=3,
+                           invoice_version='i-old',vendor_version='v-old')
+        put(obj,'human_cleared',True,seq=4,invoice_version='i-old',vendor_version='v-old')
+        self.assertEqual('ALLOW',guard(obj)['decision'])
+        # A newer hold wins even if it was recorded against older material versions.
+        put(obj,'binding_hold',True,seq=5,invoice_version='i-older',vendor_version='v-older')
         self.assertEqual('BLOCK',guard(obj)['decision'])
+        self.assertIn('unresolved_binding_hold',guard(obj)['reasons'])
+
+    def test_history_still_requires_subject_scope_and_independent_clearance(self):
+        for field,value in [('vendor_id',99),('invoice_id',99),('namespace','elsewhere'),
+                            ('event_seq',10)]:
+            obj=payment(); obj['provenance']['binding_hold'][0][field]=value
+            self.assertEqual('UNKNOWN',guard(obj)['decision'])
+        obj=payment(); put(obj,'binding_hold',True,seq=3)
+        put(obj,'human_cleared',True,seq=4,source='initial_fixture')
+        self.assertEqual('BLOCK',guard(obj)['decision'])
+
+    def test_material_review_and_human_approval_stay_version_bound(self):
+        for key in ['fraud_review_completed','human_approved']:
+            obj=payment(); obj['provenance'][key][0]['invoice_version']='i-old'
+            self.assertEqual('UNKNOWN',guard(obj)['decision'])
+
+    def test_declared_currency_contract_server_attestation(self):
+        obj=payment()
+        obj['provenance']['invoice_currency'][0].update(
+            source='server_context',operation='currency_contract_attest',record_id='declared-ledger-contract')
+        result=guard(obj)
+        self.assertEqual('ALLOW',result['decision'])
+        proof=next(x for x in result['evidence'] if x.get('fact')=='invoice_currency' and 'value' in x)
+        self.assertEqual('server_context',proof['source'])
+        self.assertEqual('declared-ledger-contract',proof['record_id'])
+        self.assertEqual('currency_contract_attest',proof['operation'])
+
+    def test_generic_server_currency_attestation_is_not_allowed(self):
+        for operation in ['synthetic_structured_read','currency_contract_attest_extra','CURRENCY_CONTRACT_ATTEST']:
+            obj=payment()
+            obj['provenance']['invoice_currency'][0].update(source='server_context',operation=operation)
+            self.assertEqual('UNKNOWN',guard(obj)['decision'])
+
+    def test_declared_currency_contract_still_requires_current_scope_and_versions(self):
+        for field,value in [('invoice_version','i-old'),('vendor_version','v-old'),
+                            ('namespace','other'),('event_seq',10),('value','EUR')]:
+            obj=payment()
+            proof=obj['provenance']['invoice_currency'][0]
+            proof.update(source='server_context',operation='currency_contract_attest')
+            proof[field]=value
+            self.assertEqual('UNKNOWN',guard(obj)['decision'])
 
     def test_bookkeeping_independent_of_zero_transfer_prevention(self):
         obj=observation('P3','process_payment','payments')

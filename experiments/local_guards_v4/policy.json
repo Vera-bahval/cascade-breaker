@@ -289,7 +289,7 @@
         "P3"
       ],
       "trigger": "update_invoice_status",
-      "rule": "Only invoice actor; target processing, approved or rejected. Source terminal statuses need no further processing. Approval requires known positive amount <=50000, active vendor and resolved hold. Unknown early facts stop independently of later payment readiness.",
+      "rule": "Only invoice actor; current invoice status must be canonical; target processing, approved or rejected. Existing approved, rejected or paid status alone does not prohibit reprocessing. Approval requires known positive amount <=50000, active vendor and resolved hold. Unknown early facts stop independently of later payment readiness.",
       "facts": [
         "invoice_status",
         "invoice_amount",
@@ -416,5 +416,6 @@
       "UNKNOWN"
     ],
     "P5": false
-  }
+  },
+  "contract_revision": "4.1"
 }

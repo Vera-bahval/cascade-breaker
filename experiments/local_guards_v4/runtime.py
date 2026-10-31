@@ -226,7 +226,7 @@ class Runtime:
             if invoice:
                 self._put(obj, 'invoice_status', invoice.status)
                 self._put(obj, 'invoice_amount', str(invoice.amount))
-                self._put(obj, 'invoice_currency', self.currency, 'initial_fixture', 'declared_currency_contract')
+                self._put(obj, 'invoice_currency', self.currency, 'server_context', 'currency_contract_attest')
                 if 'amount' in args:
                     self._put(obj, 'amount_matches_invoice', Decimal(str(args['amount'])) == Decimal(str(invoice.amount)), 'server_context')
                 if tool == 'finstripe__create_transfer' and vendor:

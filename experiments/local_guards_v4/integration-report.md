@@ -1,7 +1,7 @@
 # Native v4 integration receipt
 
-The opt-in native adapter is implemented and its final scripted replay passes
-31 tests. The existing FinBot probe suite passes 42 tests. No new inference API
+The opt-in native adapter is implemented against contract revision 4.1 and its
+final scripted replay passes 32 tests. The existing FinBot probe suite passes 42 tests. No new inference API
 requests, new dependency, subagent, commit, or public HTTP/UX change was made by
 this implementation task. The profile is off unless explicitly enabled.
 
@@ -11,8 +11,11 @@ For a native local experiment set `FINBOT_V4_PROFILE=A` or `B` and a durable
 `FINBOT_V4_STORE=/absolute/private/path.sqlite`. Invalid enabled configuration
 fails closed. Tests instead use a private `Runtime(...).open()` or
 `agent_scope(...)`, which permits an explicit synthetic fixture contract.
-Native Invoice has no currency: no currency is inferred from USD policy. The
-safe synthetic fixture explicitly declares USD and an initial no-HOLD state;
+Native Invoice has no currency: no currency is inferred from USD policy. Each
+cut freshly attests the declared immutable fixture unit contract using trusted
+`server_context` operation `currency_contract_attest`, with current material
+versions and a fresh record ID. The safe synthetic fixture explicitly declares
+USD and an initial no-HOLD state;
 missing currency leaves payment UNKNOWN. Initial human facts, if declared by a
 fixture, use the synthetic independent registry and are never inferred from a
 message or ordinary invoice approval.
@@ -50,11 +53,15 @@ successful completion by that same concrete Fraud execution. Vendor aggregates
 or successful task completion alone cannot establish it. This is a procedural
 structured-review check, not a semantic assessment of fraud analysis quality.
 Summaries cannot clear a typed HOLD. Stored facts keep their original versions
-and event sequence; restarting with an initial fixture state cannot overwrite a
-newer native HOLD.
+and event sequence. Under contract 4.1, HOLD/independent-clearance are invoice
+event history: material edits do not erase known HOLD/no-HOLD, and latest-event,
+subject and clearance-after-HOLD checks still apply. Other payment readiness
+facts remain material-version bound. Restarting with an initial fixture state
+cannot overwrite a newer native HOLD.
 
 Successful native invoice approval creates the ordinary material-bound approval
-record. It does not create human approval. Every observed pre-effect material
+record. Contract 4.1 permits valid native reapproval when the source row remains
+approved after a material edit; it does not invent a terminal-row prohibition. It does not create human approval. Every observed pre-effect material
 snapshot reconciles invoice/vendor revisions and invalidates stale bindings.
 Completed transfer records retain the actual successful arguments and reference.
 A07 bookkeeping checks exactly one native completed transfer matching reference,
@@ -82,10 +89,10 @@ From repository root:
 /Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/.venv-finbot/bin/python -m experiments.local_guards_v4.integration_replay --output /tmp/v4-integration-replay.json
 ```
 
-Result: **31 tests, 0 failures, 0 errors**. Coverage includes safe actual native
+Result: **32 tests, 0 failures, 0 errors**. Coverage includes safe actual native
 Fraud/invoice/payment delegation, in-memory FastMCP transfer and native paid
 bookkeeping; foreign objects/attachments; forged no-HOLD summary; amount/account
-edits; same-namespace permitted getters; concurrent duplicate chat admission;
+edits and positive amount-edit/reapproval/new-binding renewal; same-namespace permitted getters; concurrent duplicate chat admission;
 restart with uncertain claim and durable HOLD; corruption/verifier exceptions;
 child STOP and no later same-batch tool/parent model/retry; background execution
 after parent context reset; direct native and MCP paths; immutable vendor origin;
@@ -95,9 +102,15 @@ Final correction wave was observed RED first: the safe actual invoice review
 had insufficient native review evidence, duplicate admission returned UNKNOWN,
 and suspended before-model/native/MCP instrumentation allowed downstream calls
 or effects. The corrected focused six-test set passed, including the
-aggregate-only review negative test. Final full replay then passed all 31.
+aggregate-only review negative test. Final full replay then passed all 32. The added 4.1 positive renewal regression
+starts with a bound approval at 100, observes an amount edit to 101 while the
+row remains approved, completes fresh actual invoice/vendor Fraud review, calls
+the real Invoice reapproval tool, verifies a new binding ID/version, and then
+performs exactly one native transfer and paid bookkeeping. The paired existing
+no-reapproval amount/account-edit tests still STOP before transfer.
 
-From `finbot/`, on final native sources:
+From `finbot/`, on the unchanged final native FinBot source files (the later
+4.1 update changed the pure guard, adapter currency attestation and one test):
 
 ```sh
 LLM_PROVIDER=mock DATABASE_URL=sqlite:////tmp/finbot-v4-existing-probe-final.sqlite /Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/.venv-finbot/bin/python -m pytest tests/unit/probe -q -p no:tests.plugins.google_sheets_reporter.pytest_google_sheets
@@ -106,12 +119,13 @@ LLM_PROVIDER=mock DATABASE_URL=sqlite:////tmp/finbot-v4-existing-probe-final.sql
 Result: **42 passed**, one pre-existing Authlib deprecation warning, 0.44 s.
 `git diff --check` and compilation of changed modules also passed.
 
-The instrumented integration replay measured 120 complete `Runtime.check`
+The latest receipt is saved in `results/native-replay.json`. Its instrumented
+integration replay measured 148 complete `Runtime.check`
 invocations, including native repository reads, sidecar operations, pure guard
-and STOP persistence: median **4.847 ms**, p95 **10.000 ms**. Tracemalloc was
+and STOP persistence: median **8.593 ms**, p95 **30.879 ms**. Tracemalloc was
 active, so these are instrumented local checks rather than production traffic
-latency. Whole test execution was 2.869 s; imports plus execution 8.419 s.
-Peak traced Python allocation was **103,030,148 bytes** including imports and
+latency. Whole test execution was 5.514 s; imports plus execution 10.627 s.
+Peak traced Python allocation was **107,296,546 bytes** including imports and
 native dependencies. This is not process RSS or a baseline-relative overhead
 claim. Pure guard-only `timing_ms` is not substituted for full-check timing.
 

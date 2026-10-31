@@ -22,7 +22,7 @@ Task 1 draft is complete for review. Only POLICY.md, policy.json, schema.json, c
 | --- | --- |
 | Invoice prompt permits discretionary exceptions above 10000 and considers notes/preapprovals; probe policy makes independent review mandatory and rejects claims | A payment behavior explicitly follows probe reference policy. Report source-policy vs contract-policy disagreements; do not claim all native prompts agree |
 | Native invoice thresholds include 5000 auto-approve and discretionary 5000–10000; probe explicit payment ceiling is 10000 without human approval | Preserve v3 10000 payment boundary; no added high-trust threshold in general guard |
-| Invoice prompt says terminal approved/rejected/paid needs no reprocessing; repository update accepts arbitrary writes | A05 enforces prompt obligation and records the implementation discrepancy |
+| Invoice prompt says approved/rejected/paid needs no further processing and the agent can complete | Revision 4.1 treats this as permission to skip, not a universal prohibition. A05 validates canonical current status, typed target/actor and applicable approval obligations; existing status alone cannot block reprocessing |
 | Native process_payment checks approved only, then stores arbitrary reference; payments prompt requires transfer first and transfer_id reference | A07 is prompt/probe sequence/reference enforcement. It is not described as an existing hard database check or a fourth B extension |
 | Native transaction row omits recipient account, list_transfers may be paginated | Account proof needs retained actual successful transfer arguments; zero count needs complete invoice ledger query. Missing proof UNKNOWN |
 | Native Invoice has amount/status but no currency | Never silently assert USD invoice currency from getter; use explicit authoritative ledger currency evidence or UNKNOWN |
@@ -92,3 +92,19 @@ Final clarifications: the 10000 human-approval boundary is mandatory at P4 payme
 Validation: JSON syntax, registry profile separation, 8 concrete actor entries, 19 typed facts and P5 consistency checks passed. The jsonschema package is unavailable, so Draft202012 self-validation and sample validation were not run. No guard execution or evaluation was claimed.
 
 Evidence supersession clarification: select newest eligible scoped/prior/attested records before checking supplied-value/current-version equality. A newest mismatch, stale version or equal-sequence conflict yields UNKNOWN; never revive an older safe fact.
+
+## Pre-global-freeze revision 4.1
+
+Source was reverified directly at `finbot/finbot/agents/specialized/invoice.py:105` before this change. The exact ruling clause is: `there is no further processing required by you and you can take actions to mark this task as completed.` This gives permission to finish without more processing; it does not establish a universal prohibition on reprocessing an approved/rejected/paid invoice.
+
+The v4.0 interpretation imposed a disputed extra restriction in A05 and could reject legitimate B01 reapproval after a covered amount/account change while invoice status remained approved. Revision 4.1 removes only that universal status-based ban. A05 continues to validate canonical current status, source-backed actor/typed target and applicable approval obligations. P4 duplicate-payment checks, holds, payment policy, B freshness and other controls are unchanged. The schema remains byte-identical because field names/types did not change. No archive, test-output, new400 or evaluation evidence was read to make this source ruling.
+
+The original freeze manifest is preserved byte-for-byte as `contract-freeze-v4.0.json`. The new `contract-freeze.json` records revision history and hashes of this revised package. This source revision precedes global method/evaluation freeze; it does not claim implementation or test acceptance.
+
+### Revision 4.1 fact-specific material-version clarification
+
+`binding_hold` and `human_cleared` are invoice event/history facts, explicitly excluded from MATERIALVERSION matching against invoice/vendor amount/currency/account versions. Their exact subject, scope, attester, prior-sequence and newest-event rules remain mandatory. A known hold survives material edits until a later independent clearance; a later hold supersedes earlier clearance. In an isolated declared producer with complete observed history, a material edit alone also does not invalidate an existing typed no-HOLD history. Unknown external writers or history gaps cannot be relabelled as known no HOLD. This removes the accidental requirement for a fresh human no-HOLD registry action after each edit, without adding an attestation tool or a B requirement.
+
+Other version-sensitive payment-state, review, amount, currency, recipient and human-approval evidence remains material-version-bound. A trusted fixture adapter may freshly attest a declared immutable fixture currency contract per cut using `server_context` operation `currency_contract_attest`, bound to current material versions. This does not add a currency field to native Invoice, infer currency from the probe constraint, or authorize archive evidence fabrication. Native/fixture source boundaries stay distinct.
+
+Only POLICY.md, this report and the current hash manifest changed for this clarification; policy.json, schema.json, the archived v4.0 freeze and all implementation files remain untouched. Revision stays 4.1; independent review and guard refresh are controller-owned follow-up work.

@@ -29,6 +29,8 @@ _BOOL = {k for k in _SCHEMA['properties']['facts']['properties'] if k not in
 _PAYMENT = set(_v3['_PAYMENT_FACTS']) | {'human_approved','human_cleared'}
 _SCOPE = ('namespace','session_id','workflow_id')
 _STATE = _PAYMENT | {'payment_reference_matches_transfer'}
+# HOLD and independent clearance are invoice event history, not material state.
+_MATERIAL = _STATE - {'binding_hold','human_cleared'}
 _DECIMAL = re.compile(r'^[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?$')
 
 
@@ -116,6 +118,7 @@ def _shape(obj):
 def _sources(key):
     if key in {'human_approved','human_cleared'}: return {'independent_registry'}
     if key=='session_valid': return {'server_context','initial_fixture'}
+    if key=='invoice_currency': return {'server_context','native_tool','initial_fixture','independent_registry'}
     if key in {'tool_scope_matches','delegation_subject_matches'}: return {'server_context'}
     if key in {'vendor_in_scope','invoice_in_scope','invoice_vendor_matches','attachments_in_scope',
                'amount_matches_invoice','recipient_matches_authorized'}:
@@ -137,6 +140,9 @@ def _proofs(obj):
                   and 'value' in proof and all(k in proof and proof[k]==ctx.get(k) for k in _SCOPE)
                   and _nonempty(ctx.get('namespace')) and _nonempty(ctx.get('session_id')))
             if key=='session_valid': good=good and proof.get('operation')=='session_validate'
+            if key=='invoice_currency' and proof.get('source')=='server_context':
+                # Only trusted declared isolated producers may attest this contract.
+                good=good and proof.get('operation')=='currency_contract_attest'
             subjects=()
             if key not in {'session_valid'}:
                 subjects=tuple(k for k in ('vendor_id','invoice_id') if ctx.get(k) is not None)
@@ -154,7 +160,7 @@ def _proofs(obj):
         normalized=[_typed(key,p['value']) for p in newest]
         value=_typed(key,obj['facts'].get(key))
         versions=tuple(k for k in ('invoice_version','vendor_version')
-                       if ctx.get('invoice_id' if k=='invoice_version' else 'vendor_id') is not None) if key in _STATE else ()
+                       if ctx.get('invoice_id' if k=='invoice_version' else 'vendor_id') is not None) if key in _MATERIAL else ()
         valid=(value is not None and all(v is not None and type(v) is type(value) and v==value for v in normalized)
                and all(_nonempty(ctx.get(k)) and all(p.get(k)==ctx[k] for p in newest) for k in versions))
         if not valid:
@@ -167,7 +173,8 @@ def _proofs(obj):
         values.pop('human_cleared',None); accepted.pop('human_cleared',None)
     evidence=[{'fact':k,'value':str(v) if isinstance(v,Decimal) else v,
                'record_id':accepted[k]['record_id'],'event_seq':accepted[k]['event_seq'],
-               'source':accepted[k]['source'],'checkpoint':obj['checkpoint']}
+               'source':accepted[k]['source'],'operation':accepted[k]['operation'],
+               'checkpoint':obj['checkpoint']}
               for k,v in values.items()]
     return values,accepted,evidence+diagnostics
 
@@ -264,7 +271,7 @@ def guard(observation,policy=None):
             states=[actor('invoice')]
             target=prop.get('target_status')
             states.append('unknown' if target is None else 'satisfied' if target in _REGISTRY['native_enums']['invoice_mutation_status'] else 'violated')
-            states.append('unknown' if 'invoice_status' not in facts else 'violated' if facts['invoice_status'] in {'approved','rejected','paid'} else 'satisfied')
+            states.append('unknown' if 'invoice_status' not in facts else 'satisfied')
             if target=='approved':
                 amount=facts.get('invoice_amount')
                 states.extend(['unknown' if amount is None else 'satisfied' if 0<amount<=Decimal(_REGISTRY['payment_policy']['maximum_invoice_amount']) else 'violated',known_equal('vendor_status','active')])

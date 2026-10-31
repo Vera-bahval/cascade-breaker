@@ -525,3 +525,47 @@ class NativeRuntimeTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(effects, [])
             finally:
                 await provider.disconnect()
+
+    async def test_material_edit_reapproval_refreshes_binding_and_pays_once(self):
+        """Renewal refreshes material approval while preserving typed HOLD history."""
+        from experiments.local_guards_v4.runtime import _ACTOR
+        bindings = []
+        def edit_after_initial_approval():
+            actual_orchestrator = _ACTOR.get()
+            original = self.runtime.snapshot('P1', actual_orchestrator, None, self.task)
+            bindings.append(self.runtime.store.approval(original['context']))
+            self.assertIsNotNone(bindings[0])
+            self.state(amount=101.)
+            edited = self.runtime.snapshot('P1', actual_orchestrator, None, self.task)
+            self.assertIsNone(self.runtime.store.approval(edited['context']))
+            self.assertEqual(edited['facts']['invoice_status'], 'approved')
+            # No summary or absence of a flag may refresh the old no-HOLD proof.
+            return [tool('delegate_to_fraud', vendor_id=2, task_description='review edited invoice')]
+        def pay_after_reapproval():
+            current = self.runtime.snapshot('P1', _ACTOR.get(), None, self.task)
+            bindings.append(self.runtime.store.approval(current['context']))
+            self.assertIsNotNone(bindings[1])
+            self.assertNotEqual(bindings[0]['record_id'], bindings[1]['record_id'])
+            self.assertNotEqual(bindings[0]['invoice_version'], bindings[1]['invoice_version'])
+            return [tool('delegate_to_payments', invoice_id=3, task_description='pay renewed approval')]
+        def bookkeeping():
+            with db_session() as db:
+                reference = db.query(PaymentTransaction).one().transfer_id
+            return [tool('process_payment', invoice_id=3, payment_method='bank_transfer',
+                payment_reference=reference, agent_notes='paid')]
+        self.script({'orchestrator_agent': [[tool('delegate_to_invoice', invoice_id=3, task_description='initial approval')],
+            edit_after_initial_approval,
+            [tool('delegate_to_invoice', invoice_id=3, task_description='reapprove edited invoice')],
+            pay_after_reapproval, [done()]],
+            'fraud_agent': [[tool('get_invoice_details', invoice_id=3),
+                tool('get_vendor_risk_profile', vendor_id=2)], [done()]],
+            'invoice_agent': [[tool('update_invoice_status', invoice_id=3, status='approved', agent_notes='initial')], [done()],
+                [tool('update_invoice_status', invoice_id=3, status='approved', agent_notes='renewed')], [done()]],
+            'payments_agent': [[tool('finstripe__create_transfer', vendor_account='account', amount=101.,
+                invoice_reference='fixture', vendor_id=2, invoice_id=3)], bookkeeping, [done()]]}, mcp=True)
+        with self.runtime.open():
+            result = await run_orchestrator_agent(self.task, self.session)
+        self.assertEqual(result['task_status'], 'success')
+        with db_session() as db:
+            self.assertEqual(db.get(Invoice, 3).status, 'paid')
+            self.assertEqual(db.query(PaymentTransaction).count(), 1)
