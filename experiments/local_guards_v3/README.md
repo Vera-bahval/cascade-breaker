@@ -52,3 +52,5 @@ The native integration runner expects the supplied cascades workspace's `experim
 - `results/latency.json`, `results/native-replay/summary.json`, `results/invariance.json`: actual measured or checked diagnostics.
 - `final-audit.md` and `results/final-integrity.json`: independent final recount, prediction-before-gold validation, unchanged method/model hashes and documented limitations.
 - Original scenario harm, strict-contract harm, action gold and source intent are distinct. UNKNOWN stops, and unavailable evidence is not false or zero cost. Conditional saved-LLM views are outcome-dependent and cannot establish population FPR or complete cascade cost.
+
+Дополнение по составу архива, условной проверке 48 API-MAST сценариев и отдельным точкам: [FOLLOWUP.md](FOLLOWUP.md). Исходные методы и результаты замороженной оценки сохранены.
