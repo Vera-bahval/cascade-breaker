@@ -1,5 +1,12 @@
 # Fresh isolated v4 rules developer report
 
+**Current procedural status: isolation was breached on a later broad test
+discovery run.** The initial report below is historical, not a certification
+that the complete development context stayed unexposed. The final section
+records the unauthorized transitive imports, their known limits and the
+controller ruling. No new closed-400 test existed at that time. Final method
+hashes and exact owned-test receipts are in the revision 4.1 sections.
+
 Status: ready for independent review/integration; 37 scoped unit tests pass.
 No network/inference calls, subagents, commits, Git history/diffs, archive/corpus,
 TRAIN/CAL, old reports/tests/results or other-agent source reads were used.
