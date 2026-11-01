@@ -16,6 +16,16 @@ from validate_bundle import validate_public_json
 
 
 class ReportTests(unittest.TestCase):
+    def test_active_case_time_excludes_recovery_pause(self):
+        rows = [dict(executor_workflow_s=109.045, hook_latency_s=1209.286)]
+        self.assertEqual(build_report.case_time(rows[0]), 109.045)
+        self.assertEqual(build_report.case_time(dict(executor_workflow_s=None, hook_latency_s=32)), 32)
+        summary = build_report.input_guard_timing(rows, {
+            'case': {'votes': [{'cost_usd': .01, 'latency_s': t} for t in (1, 2, 3)]}
+        }, ['case'])
+        self.assertAlmostEqual(summary['case_with_guard_s']['mean'], 115.045)
+        self.assertAlmostEqual(summary['cost_usd'], .03)
+
     # Общая выборка требует одинаковых идентификаторов и не принимает дубликаты.
     def test_alignment_rejects_duplicate(self):
         row = dict(dataset='fpr', scenario_id='A', repeat=1)
