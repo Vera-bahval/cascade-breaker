@@ -36,14 +36,14 @@ The optional payment_baseline is a separate v3 envelope for P4 transfers only. I
       "UNKNOWN": 8
     },
     "A": {
-      "ALLOW": 422,
+      "ALLOW": 426,
       "BLOCK": 411,
-      "UNKNOWN": 367
+      "UNKNOWN": 363
     },
     "B": {
-      "ALLOW": 191,
+      "ALLOW": 195,
       "BLOCK": 591,
-      "UNKNOWN": 418
+      "UNKNOWN": 414
     }
   },
   "families": {
@@ -108,14 +108,14 @@ The optional payment_baseline is a separate v3 envelope for P4 transfers only. I
         "UNKNOWN": 4
       },
       "A": {
-        "ALLOW": 40,
+        "ALLOW": 44,
         "BLOCK": 64,
-        "UNKNOWN": 16
+        "UNKNOWN": 12
       },
       "B": {
-        "ALLOW": 40,
+        "ALLOW": 44,
         "BLOCK": 64,
-        "UNKNOWN": 16
+        "UNKNOWN": 12
       }
     },
     "payment_obligations": {
@@ -196,15 +196,21 @@ The optional payment_baseline is a separate v3 envelope for P4 transfers only. I
   },
   "schema_invalid_count": 48,
   "unique_structures_after_metadata_and_id_normalization": 1200,
-  "safe_joint_structures": 191,
+  "safe_joint_structures": 195,
   "duplicate_joint_safe_rows": 0,
   "fully_allow_episodes_per_contract": {
     "payment_v3": 309,
-    "A": 422,
-    "B": 191
+    "A": 426,
+    "B": 195
   }
 }
 
 ## Pre-prediction author correction
 
 The original draft is preserved byte-for-byte under closed/pre-review-original. Corrections address a disallowed-actor substitution that itself retained permission for common native getters, repeated safe structural states, opaque-reference-only variation, duplicate invalid-callable state, and missing upper-bound/zero/above-limit-absence/SystemUtils-origin coverage. Newest stale material-proof precedence also receives an explicit paired case. Metadata interpretation flags now reside in the required metadata.jsonl.gz rather than a sidecar. No target outputs were accessed. Original and revised file hashes are recorded in closed/author-correction.json.
+
+## Independent review correction, round 1
+
+Before prediction commitment, the authorized independent closed review identified eight incorrect A/B label slots across four P2 HOLD-conflict states. The supplied proof value conflict invalidates HOLD evidence; the unchanged v3/A09 P2 rule vetoes only positively established active HOLD, so missing HOLD evidence creates no new full-readiness prerequisite at that cut. General session/scope/delegation/claim obligations remain independently required. The correction changes the checkpoint-specific author declaration and rationale only. P3/P4 conflict cases retain UNKNOWN readiness.
+
+The review also identified two risk-only metadata annotations that incorrectly described missing actor as missing native enum. Only those two ambiguity fields are removed; all other metadata, identifiers, splits, groups, checkpoints and episodes remain unchanged. Observations are byte-for-byte unchanged. Original sealed gold, metadata, manifest, report, source and read log are preserved in closed/pre-round1. The parent-provided original test seal reference is ad77387 (abbreviated; not separately opened). Review input SHA256 values: closed-review.md ac5097d62609489fb0e8ed953d9797103c98aa63949e3f7d651fe29979ddcdf4; closed-review.json 6434c8c42f484dc60d537b65786a345fda6629d78a2dae96505f35902c8c1520. See closed/round1-correction.json for exact changes, original/final hashes and focused regeneration checks. No target prediction, model, feature, threshold, training oracle or evaluation implementation was read or edited.
