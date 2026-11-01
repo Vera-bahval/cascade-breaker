@@ -188,3 +188,61 @@ rule comparisons, all72 benchmark evidence,2–3 representative mechanisms from
 actual saved verdicts, a common-gate-only example where present, fixed feature
 collision limits, and a concise Russian REPORT plus technical matrix. No final
 result, winner or real-world safety improvement is claimed at this checkpoint.
+
+## Phase1 review fix round1/5 — base `ccc1e4f`
+
+Fixed review P2: `score --split CAL` now passes only CAL metadata to
+`registry_outcomes`. It retains CAL episodes with no applicable check while
+excluding TRAIN/TEST episodes from the all-registry population. Prediction
+receipt verification still covers the complete unsliced prediction input.
+No frozen method, threshold, benchmark code or native fixture changed.
+
+Added the failed-first own-fixture regression
+`test_score_split_registry_preserves_only_selected_split_including_no_check`.
+Its registry has a CAL payment episode, a CAL episode without a payment cut and
+a TRAIN payment episode; all three have known hypothetical harm and legitimate
+source intent. The CAL result must contain one eligible episode and two registry
+episodes: legitimate all2/reached1, interruption all0.5/reached1.0, actual harm2,
+prevented1, harm-prevention rate0.5. This checks both exclusion of another split
+and preservation of the selected split's no-check episode.
+
+Exact covering command, with the declared uniform environment:
+
+```sh
+OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2 \
+/Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/.venv-finbot/bin/python \
+-m unittest discover -s experiments/local_guards_ml_retrain/tests -p test_evaluation.py
+```
+
+RED, before the two-line production fix:
+
+```text
+FAIL: test_score_split_registry_preserves_only_selected_split_including_no_check
+  self.assertEqual(c['episodes'],2)
+AssertionError: 3 != 2
+Ran 12 tests in 1.245s
+FAILED (failures=1)
+```
+
+GREEN, after the fix:
+
+```text
+..scored rule_A 1
+.......scored rule_payment_v3 1
+...
+Ran 12 tests in 0.771s
+OK
+```
+
+Source SHA256 after GREEN:
+
+```text
+85d220bcebf4b8b5f201234ac90e96cc806a030b795c8f89793facc64fa63213  evaluation.py
+f874aa452c643864da114768f22c2b30cae40e3556d1cc4b83cace210dc747bd  tests/test_evaluation.py
+3e0ed7d7a67920d2395e36143b16807d06be8f5c81ce4e9d6176cdae2f51a8ef  benchmark.py (unchanged)
+```
+
+`git diff --check` passed for the two edited code/test files. The benchmark suite
+and native smoke were not rerun because their inputs and relevant code are
+unchanged. No full run, new-test gold read or secondary postprocessing was done
+in this fix round. Status: **DONE, stable for review**.

@@ -412,6 +412,7 @@ def score(predictions,observations,metadata,labels,output,outcomes=None,bootstra
     receipts=[verify_predictions(p,observations,metadata) for p in predictions]
     obs=keyed(observations);meta=keyed(metadata);gold=keyed(labels)
     if set(obs)!=set(meta) or set(gold)!=set(obs):raise ValueError('score observation/metadata/label coverage mismatch')
+    registry_meta={pid:m for pid,m in meta.items() if not split or m.get('split')==split}
     truth={} if outcomes is None else {r['episode_id']:r for r in read_lines(outcomes)}
     output=Path(output);output.mkdir(parents=True,exist_ok=False);all_metrics=[]
     for path,receipt in zip(predictions,receipts,strict=True):
@@ -439,7 +440,7 @@ def score(predictions,observations,metadata,labels,output,outcomes=None,bootstra
                     for dimension,value in [('all','all'),('source',r['source']),('checkpoint',r['checkpoint']),('family',r['data_family']),('split',r['split'])]:slices[(dimension,str(value))].append(r)
                 for (dimension,value),rs in slices.items():
                     summary=summarize(rs,truth,bootstrap=bootstrap)
-                    if dimension=='all':summary['outcomes_all_registry']=registry_outcomes(variant_rows,meta,truth)
+                    if dimension=='all':summary['outcomes_all_registry']=registry_outcomes(variant_rows,registry_meta,truth)
                     all_metrics.append(dict(method=variant_name,contract=contract,**variant_descriptor,slice_dimension=dimension,slice_value=value,**summary))
             print('scored',method,len(rows),flush=True)
     inputs=dict(input_identity(observations,metadata),labels_sha256=digest(labels),outcomes_sha256=digest(outcomes) if outcomes else None,
