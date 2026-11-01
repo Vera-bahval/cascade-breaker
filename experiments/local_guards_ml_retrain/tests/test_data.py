@@ -145,6 +145,43 @@ class IndependentPolicyTests(unittest.TestCase):
             for origin,expected in [('vendor','BLOCK'),('admin','ALLOW'),(None,'UNKNOWN')]:
                 o['context']['origin_portal']=origin;self.assert_profiles(o,'ALLOW',expected)
         o=setup('sys',1,'P1','systemutils__invented','admin_chat');self.assert_profiles(o,'BLOCK')
+    def test_v3_nullable_subject_evidence_is_local_unknown(self):
+        o=self.base();set_fact(o,'vendor_status','inactive');b=project_v3(o)
+        b['provenance']['fraud_review_completed'][0]['subject_matches']=None
+        self.assertEqual(adjudicate(o,'payment_v3',b),'BLOCK')
+        o=self.base();b=project_v3(o)
+        b['provenance']['fraud_review_completed'][0]['subject_matches']=None
+        self.assertEqual(adjudicate(o,'payment_v3',b),'UNKNOWN')
+        # v4's copied schema separately requires a boolean; retain that boundary.
+        o=self.base();set_fact(o,'vendor_status','inactive')
+        o['provenance']['fraud_review_completed'][0]['subject_matches']=None
+        self.assert_profiles(o,'UNKNOWN')
+    def test_v3_optional_nullable_subject_does_not_stop_payment(self):
+        o=self.base();set_fact(o,'human_cleared',True);b=project_v3(o)
+        b['provenance']['human_cleared'][0]['subject_matches']=None
+        self.assertEqual(adjudicate(o,'payment_v3',b),'ALLOW')
+        # A number remains a genuinely malformed boolean/null field.
+        b['provenance']['human_cleared'][0]['subject_matches']=0
+        self.assertEqual(adjudicate(o,'payment_v3',b),'UNKNOWN')
+    def test_v3_auxiliary_field_types_are_envelope_checks(self):
+        o=self.base()
+        for value in (17,None,[],True,'not an object',
+                      {'invoice':17,'agent':''},{'invoice':'','agent':None}):
+            with self.subTest(text=value):
+                b=project_v3(o);b['untrusted_text']=value
+                self.assertEqual(adjudicate(o,'payment_v3',b),'UNKNOWN')
+        for value in (17,True,[],{}):
+            with self.subTest(writer=value):
+                b=project_v3(o);b['provenance']['invoice_amount'][0]['writer']=value
+                self.assertEqual(adjudicate(o,'payment_v3',b),'UNKNOWN')
+        b=project_v3(o);b['untrusted_text']={'invoice':'untrusted invoice','agent':'untrusted agent'}
+        self.assertEqual(adjudicate(o,'payment_v3',b),'ALLOW')
+        for value in (None,'','native writer label'):
+            b=project_v3(o);b['provenance']['invoice_amount'][0]['writer']=value
+            self.assertEqual(adjudicate(o,'payment_v3',b),'ALLOW')
+        set_fact(o,'vendor_status','inactive');b=project_v3(o)
+        b['provenance']['invoice_amount'][0]['writer']=17
+        self.assertEqual(adjudicate(o,'payment_v3',b),'UNKNOWN')
     def test_strict_envelope_and_cut_eligibility(self):
         for change in ('extra','bool_id','bad_decimal'):
             o=self.base()

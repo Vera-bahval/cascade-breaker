@@ -236,6 +236,10 @@ def valid_v3(obs):
         return False
     if set(obs) - {'prefix_id','checkpoint','event_seq','proposal','facts','provenance','untrusted_text'}:
         return False
+    if 'untrusted_text' in obs:
+        text = obs['untrusted_text']
+        if type(text) is not dict or any(k in text and type(text[k]) is not str for k in ('invoice','agent')):
+            return False
     if set(obs['proposal']) - {'tool','amount','currency','target_status'} or set(obs['facts']) - set(PAYMENT_FACTS):
         return False
     for k, v in obs['proposal'].items():
@@ -260,7 +264,9 @@ def valid_v3(obs):
         for p in rows:
             if type(p) is not dict or not all(k in p for k in ('source','event_seq','subject_matches','operation')):
                 return False
-            if type(p['event_seq']) is not int or p['event_seq'] < 0 or type(p['subject_matches']) is not bool:
+            if type(p['event_seq']) is not int or p['event_seq'] < 0 or (p['subject_matches'] is not None and type(p['subject_matches']) is not bool):
+                return False
+            if p.get('writer') is not None and type(p['writer']) is not str:
                 return False
             if p['source'] not in ('native_tool','initial_fixture','independent_registry') or not isinstance(p['operation'],str) or not p['operation']:
                 return False

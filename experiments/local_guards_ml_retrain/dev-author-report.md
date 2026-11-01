@@ -91,3 +91,45 @@ The first read was the exact author brief. Only the six copied policy/schema fil
 | oracle.py | `5eedd7c4ad266d1e47a8c00a131c7756e0f78703cda39db1995098425312b914` |
 | generate_dev.py | `63f1fce31c2c2f2101f1c78398518aad4effb050275569251eb7471f652b1cb6` |
 | tests/test_data.py | `a1accbf40b04213b6bfbfa0e1b062b0d402ef68a6336dcddb27d5b7cf470f189` |
+
+
+## Task 1 review fix round 1/5
+
+Applied only the two confirmed v3 shape findings in `dev-review.md`. The only implementation changes are inside `valid_v3`: a declared `subject_matches` may be boolean or null; optional `untrusted_text`, when present, must be an object and its supplied invoice/agent channels must be strings; optional proof writer, when present and nonnull, must be a string. Missing optional fields and unspecified proof extensions retain the previous treatment. No new required text channels, extra-property policy, text parsing, writer authority, decimal grammar, v4 rule, generator design or corpus scenario was introduced.
+
+Evidence eligibility already required `subject_matches is True`, so null now makes that proof locally unavailable. A known inactive vendor plus unavailable review remains BLOCK; an otherwise safe no-HOLD payment with irrelevant optional clearance linkage null remains ALLOW. Required missing review remains UNKNOWN. The v4 boolean-only subject schema remains unchanged. Malformed auxiliary types return UNKNOWN before applicable violation aggregation.
+
+Three regression methods were added to the author's own test module before changing `oracle.py`. The explicit red command was:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 experiments/local_guards_ml_retrain/tests/test_data.py IndependentPolicyTests.test_v3_nullable_subject_evidence_is_local_unknown IndependentPolicyTests.test_v3_optional_nullable_subject_does_not_stop_payment IndependentPolicyTests.test_v3_auxiliary_field_types_are_envelope_checks -v
+```
+
+Observed before fix: exit 1, `Ran 3 tests in 0.003s`, `FAILED (failures=14)`. The first regressions showed actual UNKNOWN versus expected BLOCK/ALLOW; malformed text/writer subcases showed actual ALLOW (or BLOCK with an inactive vendor) versus expected UNKNOWN.
+
+The explicit amended own-suite command was:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 experiments/local_guards_ml_retrain/tests/test_data.py -v
+```
+
+Observed after fix: exit 0, `Ran 28 tests in 6.865s`, `OK`. No broad discovery, target guard, model, network call or commit was used.
+
+A bounded in-memory readback then recomputed all 8000 complete gold records (all three contract labels, requirement traces and rationale), compared each record to published gold, serialized the records using the unchanged author's deterministic JSON/gzip procedure, and obtained byte-for-byte identical `gold-actions.jsonl.gz`. All three published stream hashes still match their existing manifest entries. Observations, metadata, gold, split, class counts and generator source were preserved byte-for-byte; no generator publication write or data rewrite occurred.
+
+The manifest's only field change is `author_code_hashes.oracle.py`, explicitly authorized in this fix request. Its former value was `5eedd7c4ad266d1e47a8c00a131c7756e0f78703cda39db1995098425312b914`; its new value is listed below. The initial read-log file remains the original authoring attestation. This appendix supplements the exact task-read log with `dev-review.md` SHA256 `d77f45882b89d2e0d04b94e625395608b3789a2f40bc5b08b8b4544c59c087ef`; the copied v3 schema was reread at its unchanged original recorded hash. All other reads in this pass were own oracle/tests/report/manifest and own data streams.
+
+| Reviewed artifact | SHA256 after fix |
+| --- | --- |
+| oracle.py | `f250e24300ac9bc778ec1ba938eedff70db4dcc9d84df4b30df0ab98b8aab0e4` |
+| tests/test_data.py | `7daf05ccdb8fa22d6380c5380256aa55eefc8c08e13c041cc041e2fbf3f1335d` |
+| generate_dev.py | `63f1fce31c2c2f2101f1c78398518aad4effb050275569251eb7471f652b1cb6` |
+| data/manifest.json | `b9aa95ddeccba2c31bcd252f77de458cd0e7d194c2ce6c38869a73cbadd4e8ed` |
+
+Manifest before this authorized metadata update: `01692204a17a6214b2cc65b865dd3f5c447e6439bfdda7ea0c9e896e700d9af3`.
+
+Published data hashes remain:
+
+- `gold-actions.jsonl.gz`: `997cf15e4302fbec65eeacaef81bea7f86499dc1c138e0515dd95669d52eca75`
+- `metadata.jsonl.gz`: `43e7b02d06f593294d64c76ac48acaccc47987699c9fe5bda8a44651ea85175a`
+- `observations.jsonl.gz`: `1562a6c8a75721e663418749b154318bd4ca098a2dba3d9e346209a7ac4148ea`
