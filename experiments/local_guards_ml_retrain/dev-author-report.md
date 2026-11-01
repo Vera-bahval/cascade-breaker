@@ -133,3 +133,48 @@ Published data hashes remain:
 - `gold-actions.jsonl.gz`: `997cf15e4302fbec65eeacaef81bea7f86499dc1c138e0515dd95669d52eca75`
 - `metadata.jsonl.gz`: `43e7b02d06f593294d64c76ac48acaccc47987699c9fe5bda8a44651ea85175a`
 - `observations.jsonl.gz`: `1562a6c8a75721e663418749b154318bd4ca098a2dba3d9e346209a7ac4148ea`
+
+
+## Pre-test experimental-unit correction: independent synthetic episodes
+
+The parent identified an experimental-unit error before any closed held-out test existed: the original metadata reused a base group's episode ID across four independent counterfactual states. Those variants are alternative inputs/outcomes at the same scenario position, not successive actions in a replay. A mixed-label group was therefore incorrectly treated as one unsafe episode, even when it contained a safe action. This correction restores the declared experimental unit; it does not change policy labels or tune model performance.
+
+The canonical generator now derives `episode_id` from the state's existing `prefix_id`, giving each independent synthetic state a distinct one-state episode. `group_id` still links the original four counterfactual variants for fitting weights. `split_group_id` still links collision-connected groups for split/bootstrap clusters. Both group fields and the exact TRAIN/CAL assignments are unchanged. No irrelevant observation field or ID-only feature was added to model inputs.
+
+The canonical metadata now has 8000 episodes: 6000 TRAIN and 2000 CAL. CAL's independently safe episode denominator is 787 for A and 501 for B, exactly matching the respective existing safe action counts. The previous shared-episode metadata had zero all-ALLOW episodes. These counts come only from existing authorized metadata/gold; no target implementation, trained model, fitting output, predictions or closed test was read. A nonzero denominator enables evaluation of the 5 percent safe-stop constraint; this metadata correction alone does not establish that a fitted model meets it.
+
+Two meaningful regressions were added and run before changing the generator/metadata:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 experiments/local_guards_ml_retrain/tests/test_data.py PublishedDevelopmentTests.test_counterfactual_variants_are_independent_episodes PublishedDevelopmentTests.test_safe_cal_episode_denominators_match_independent_actions -v
+```
+
+Observed red result: exit 1, `Ran 2 tests in 0.492s`, `FAILED (failures=2)`. The failures showed 2000 episodes instead of 8000, and a zero safe CAL episode denominator for A. The finalized independence regression also checks four distinct episode IDs inside each base group and a single prefix per episode. Deliberately malformed event-sequence fixtures remain independent cases.
+
+Authorized canonical regeneration invoked the actual canonical `build()` path with its publication function captured in memory. Before writing, it verified byte-for-byte equality of regenerated observations and gold against the existing files, exact equality of every old/new metadata field except episode_id, unchanged row order and prefix IDs, and unchanged split/component/base-group provenance. Each new ID was checked against its deterministic prefix-derived expression. Only parent-authorized metadata, manifest and read-log corrections were then written; the normal publication function still refuses to overwrite different existing published bytes. The parent retains the prior metadata version in git; this author did not read git history.
+
+The manifest adds episode count/unit/split declarations, updates the metadata hash and generator source hash, and preserves every other field. The read log adds the explicit independent-state episode-unit description; its original source read set/hashes are unchanged. Oracle source, generator scenario design, all source policy/schema hashes, observations, complete gold records, class counts, semantic signatures, 908 collision components and zero TRAIN/CAL signature overlap are unchanged.
+
+A third new regression runs canonical generation with in-memory publication capture and compares the exact metadata gzip, manifest and read-log bytes to their published files. It uses the real full generator, not a hand-written metadata facsimile. The full amended author suite was invoked explicitly:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 experiments/local_guards_ml_retrain/tests/test_data.py -v
+```
+
+Observed green result: exit 0, `Ran 31 tests in 17.319s`, `OK`. No broad discovery, APIs, subagents, target reads, model fitting, closed test or commits were used. All new task reads were of this author's own generator/tests/read log/manifest/metadata/gold; the author message was the sole new correction instruction.
+
+| Artifact after experimental-unit correction | SHA256 |
+| --- | --- |
+| generate_dev.py | `f97028fb32aab7556b96c128ddd060fea485614cfec3060eb81491338741aeb6` |
+| tests/test_data.py | `37e04cacd8ae9da522c20b36799c68a718e5cb2cb0c0b0bcb5672d097d0e084f` |
+| oracle.py | `f250e24300ac9bc778ec1ba938eedff70db4dcc9d84df4b30df0ab98b8aab0e4` |
+| data/metadata.jsonl.gz | `fe0b0996fd13078b599cf7a8183f0899e37286fd0ebcfaa788e034161904d1c6` |
+| data/manifest.json | `a48417cc7734e3f490032c895afd0041c37eba32f14a058575c9f7622d2b0f10` |
+| dev-read-log.json | `62b2ad297b43e8411558aee693e1de8a2e11b5065635fbe7888e3bdc979f090d` |
+
+Prior metadata SHA256: `43e7b02d06f593294d64c76ac48acaccc47987699c9fe5bda8a44651ea85175a`.
+Prior manifest SHA256: `b9aa95ddeccba2c31bcd252f77de458cd0e7d194c2ce6c38869a73cbadd4e8ed`.
+Prior read-log SHA256: `dde364d9478b6b2ca7b4c8af8cb70427b00a303865ab43e057fcbd916d749a33`.
+
+Observation SHA256 remains `1562a6c8a75721e663418749b154318bd4ca098a2dba3d9e346209a7ac4148ea`.
+Gold SHA256 remains `997cf15e4302fbec65eeacaef81bea7f86499dc1c138e0515dd95669d52eca75`.

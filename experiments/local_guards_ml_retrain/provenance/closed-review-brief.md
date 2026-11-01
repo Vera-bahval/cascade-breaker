@@ -25,3 +25,8 @@ needed, parent routes author before predictions and preserves original hashes.
 Parent has NOT read test gold or gold-annotated source. Do not disclose them in
 chat: return only PASS/FAIL, counts/hashes and high-level defect mechanisms.
 Detailed case findings go in the embargoed report for author/re-review.
+
+Experimental unit: independent counterfactual states have distinct episode_id.
+Use common group_id for related variants, never replay alternatives as one
+chronological execution. Only genuine sequential steps may share episode_id.
+Audit presence of fully ALLOW synthetic episodes per applicable contract.

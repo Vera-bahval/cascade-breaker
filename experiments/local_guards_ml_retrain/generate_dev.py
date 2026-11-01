@@ -444,7 +444,7 @@ def build():
                 prefix='p-'+opaque(group,str(v));o=state(group,family,i,v);baseline=project_v3(o)
                 observations.append({'prefix_id':prefix,'observation':o,'payment_baseline':baseline})
                 split='PENDING'
-                metadata.append({'prefix_id':prefix,'group_id':group,'episode_id':'e-'+opaque(group,'episode'),
+                metadata.append({'prefix_id':prefix,'group_id':group,'episode_id':'e-'+opaque(prefix,'episode'),
                   'checkpoint':o['checkpoint'],'source':'synthetic','family':family,'split':split})
                 labels={};requirements={}
                 for contract in ('payment_v3','A','B'):
@@ -476,9 +476,12 @@ def build():
     read_log={'protocol':'new-context policy-only author; common filesystem is not isolation',
        'explicit_task_reads':[{'path':name,'sha256':hashlib.sha256((ROOT/name).read_bytes()).hexdigest()} for name in READ_FILES],
        'excluded':'No old guard, model, archive, tests, results, reports or repository history read. Directory entry names inspected only to locate copied policy/schema names.',
-       'own_outputs_read':'oracle.py, generate_dev.py, tests/test_data.py, generated data, manifest and own report; self-tests read these only'}
+       'own_outputs_read':'oracle.py, generate_dev.py, tests/test_data.py, generated data, manifest and own report; self-tests read these only',
+       'episode_unit':'one independent synthetic state; group_id links counterfactual variants, split_group_id links collision components'}
     safe_write(ROOT/'dev-read-log.json',(json.dumps(read_log,indent=2)+'\n').encode())
     manifest={'seed':17,'states':8000,'base_groups':2000,'variants_per_group':4,
+       'episodes':len({m['episode_id'] for m in metadata}),'episode_unit':'independent_synthetic_state',
+       'episode_split':{split:len({m['episode_id'] for m in metadata if m['split']==split}) for split in ('TRAIN','CAL')},
        'group_split':split_audit['base_group_split'],'split_components':split_audit,'state_split':dict(Counter(m['split'] for m in metadata)),
        'family_groups':{f:200 for f in FAMILIES},'family_states':dict(Counter(m['family'] for m in metadata)),
        'classes':classes,'counts_by_contract_class_family_split':[{'contract':c,'class':y,'family':f,'split':s,'count':n} for (c,y,f,s),n in sorted(counts.items())],

@@ -42,3 +42,8 @@ interpretation/details in report, not chat. Independent reviewer will see gold
 before prediction to catch labeling errors but must not disclose case labels or
 results to parent. Any pre-prediction fixes documented with original hashes;
 no model/feature/threshold changes after freeze. No method repair after disclosure.
+
+Experimental unit: independent counterfactual states have distinct episode_id.
+Use common group_id for related variants, never replay alternatives as one
+chronological execution. Only genuine sequential steps may share episode_id.
+Audit presence of fully ALLOW synthetic episodes per applicable contract.

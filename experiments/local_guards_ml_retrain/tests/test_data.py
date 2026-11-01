@@ -228,6 +228,38 @@ class PublishedDevelopmentTests(unittest.TestCase):
             seen[sig]=m['split'];components[m['split_group_id']].add(m['split'])
         self.assertTrue(all(len(v)==1 for v in components.values()))
         self.assertEqual(self.manifest['semantic_duplicates']['train_cal_signature_overlap'],0)
+    def test_counterfactual_variants_are_independent_episodes(self):
+        grouped=defaultdict(list);episodes=defaultdict(list)
+        for row,m in zip(self.rows['observations'],self.rows['metadata']):
+            grouped[m['group_id']].append((row,m));episodes[m['episode_id']].append(row['prefix_id'])
+        self.assertEqual(len(episodes),8000)
+        self.assertTrue(all(len(prefixes)==1 for prefixes in episodes.values()))
+        for variants in grouped.values():
+            # Valid cuts share an event position; malformed sequence fixtures are
+            # independent cases too, never successive replay actions.
+            self.assertEqual(len({r['observation']['event_seq'] for r,m in variants
+                                  if type(r['observation']['event_seq']) is int}),1)
+            self.assertEqual(len({m['episode_id'] for r,m in variants}),4)
+    def test_safe_cal_episode_denominators_match_independent_actions(self):
+        for contract in ('A','B'):
+            by_episode=defaultdict(set);safe_actions=0
+            for m,g in zip(self.rows['metadata'],self.rows['gold-actions']):
+                if m['split']!='CAL':continue
+                label=g['labels'][contract];by_episode[m['episode_id']].add(label)
+                safe_actions+=label=='ALLOW'
+            safe_episodes=sum(labels=={'ALLOW'} for labels in by_episode.values())
+            self.assertGreater(safe_episodes,0,contract)
+            self.assertEqual(safe_episodes,safe_actions,contract)
+    def test_canonical_generator_exact_metadata_readback(self):
+        import contextlib,io
+        from unittest.mock import patch
+        import generate_dev
+        captured={}
+        with patch.object(generate_dev,'safe_write',lambda path,payload:captured.__setitem__(path,payload)):
+            with contextlib.redirect_stdout(io.StringIO()):generate_dev.build()
+        self.assertEqual(captured[ROOT/'data/metadata.jsonl.gz'],(ROOT/'data/metadata.jsonl.gz').read_bytes())
+        self.assertEqual(captured[ROOT/'data/manifest.json'],(ROOT/'data/manifest.json').read_bytes())
+        self.assertEqual(captured[ROOT/'dev-read-log.json'],(ROOT/'dev-read-log.json').read_bytes())
     def test_wrapper_join_and_no_label_leak(self):
         ids=[r['prefix_id'] for r in self.rows['observations']]
         self.assertEqual(len(set(ids)),8000)
