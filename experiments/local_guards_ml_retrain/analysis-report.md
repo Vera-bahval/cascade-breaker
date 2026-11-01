@@ -187,3 +187,29 @@ or analysis input changed in that trim.
 
 Parent owns the commit and final independent audit. This worker stops writes
 after handing off these verified artifacts.
+
+## Final audit reporting corrections, one authorized wave
+
+Read final-audit.md and final-audit.json first. R1 corrects prose only: the
+development pool is8000 states, split6000TRAIN/2000CAL;302 new-test payment rows
+overlap that pool,296 overlapTRAIN and6 onlyCAL. All212 safe payment rows overlap
+TRAIN. The Appendix records the audit's269 both/27TRAIN-only/6CAL-only/158neither
+partition and cites the audit. No overlap calculation was repeated or changed.
+
+R2 documents the original absolute checkout, saved absolute receipt/freeze paths,
+recorded macOS/native dependency environment and matching FinBot fixtures.
+Reproduction must use the complete pure-ML release commit pinned by the parent
+in the PR, before later integration changes the protected root main report.
+A changed integration context is expected to fail the baseline guard; neither
+the guard nor frozen receipts were modified to suggest relocation portability.
+Relocated fresh-clone or different-platform reproduction remains unproved.
+
+Also clarified first-use P4 as pre-transfer, the duplicate-task restriction and
+the meaning of unavailable observations. Existing numerical Markdown tables are
+unchanged. Historical numerical/source checks above remain historical evidence;
+this wave performs only prose/factual/style/table-identity checks, no inference,
+fits, timings, bootstrap, corpus parsing, analysis rerun or broad test suite.
+Only the authorized prose hashes, current word count and appended verification
+sequence in analysis/verification.json are refreshed; numeric counts and all
+source/analysis-output digest fields remain exactly unchanged. Exact checks,
+before/after file hashes and the stable handoff are in final-fix-report.md.

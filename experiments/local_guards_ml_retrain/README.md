@@ -8,11 +8,35 @@ and limits are in [APPENDIX.md](APPENDIX.md). Neither changes the main
 
 ## Reproduce postprocessing
 
-From `research/finbot-general-guards`, after all measurement/scoring jobs have
+Use the complete pure-ML release commit pinned in the PR description, including
+all manifest-bound data, before the later integration of the other chat's work.
+The recorded checkout is
+`/Users/proskurin-dmi/Documents/hw-itmo/cascades/research/finbot-general-guards`.
+The commands below were validated in that macOS checkout and currently require
+its absolute path layout and dependencies. Prediction receipts, score inputs and
+freeze manifests retain absolute prediction, model and source paths; cloning
+the files elsewhere is not sufficient. Reproduction from a relocated fresh clone
+or another platform has not been demonstrated. Frozen receipts and manifests
+have not been rewritten to suggest portability.
+
+The recorded native/interval runtime is macOS 26.6.2 arm64, Python 3.13.15,
+NumPy 2.5.4, scikit-learn 1.9.1, CatBoost 1.2.10, SQLAlchemy 2.0.46 and FastMCP
+3.0.2; its exact executable and numerical thread settings are in
+`results/revision2/native-quiet/summary.json`. Model/native reproduction also
+requires the matching FinBot runtime and fixtures, including
+`experiments/local_guards_v4/tests/test_runtime.py`, from that release context.
+The standard-library analysis command was run with `/usr/bin/python3`.
+
+After the later authorized integration changes the root `experiments/NO_LLM_REPORT.md`,
+the analysis baseline guard is expected to reject that changed context. Use the
+complete pure-ML release context identified by the PR, rather than disabling the
+guard or changing frozen identities.
+
+Run from the recorded absolute checkout, after measurement/scoring jobs have
 finished and the controller has released the CPU hold:
 
 ```sh
-python3 experiments/local_guards_ml_retrain/analysis.py \
+/usr/bin/python3 experiments/local_guards_ml_retrain/analysis.py \
   --bootstrap 1000 \
   --output experiments/local_guards_ml_retrain/analysis
 ```
