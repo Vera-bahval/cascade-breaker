@@ -5,7 +5,7 @@ import hashlib
 import json
 from jsonschema import ValidationError
 from pathlib import Path
-from experiments.local_guards_archive_comparison.eliza import Ledger, parse_answer, query_identity, remaining, sanitize_metadata, validate_inputs
+from experiments.local_guards_archive_comparison.eliza import Ledger, parse_answer, query_identity, remaining, sanitize_metadata, validate_inputs, cumulative_cap, run_batch
 
 
 class ElizaBoundaryTests(unittest.TestCase):
@@ -62,6 +62,22 @@ class ElizaBoundaryTests(unittest.TestCase):
         self.assertNotIn('private',str(safe));self.assertNotIn('secret_key',str(safe))
         meta['model']['data'][0]['prices']['input_tokens']='nan'
         with self.assertRaises(ValueError):sanitize_metadata(meta)
+
+    def test_resume_cap_does_not_charge_completed_requests_twice(self):
+        self.assertEqual(cumulative_cap(14.5, {'cost_usd': 2}, {'daily_usd': 13, 'monthly_usd': 48}), 14.5)
+        self.assertEqual(cumulative_cap(14.5, {'cost_usd': 2}, {'daily_usd': 1, 'monthly_usd': 48}), 2.5)
+
+    def test_concurrent_batch_drains_requests_before_reporting_failure(self):
+        import asyncio
+        completed=[]
+        async def item(i):
+            await asyncio.sleep(0)
+            completed.append(i)
+            if i==1:raise RuntimeError('technical stop')
+            return i
+        with self.assertRaises(RuntimeError):
+            asyncio.run(run_batch([item(i) for i in range(3)]))
+        self.assertEqual(sorted(completed),[0,1,2])
 
     def test_freeze_binds_inputs_prompt_config_and_output_directory(self):
         with tempfile.TemporaryDirectory() as d:

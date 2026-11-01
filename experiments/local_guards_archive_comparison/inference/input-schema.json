@@ -1,0 +1,47 @@
+{
+  "type": "object",
+  "required": [
+    "format",
+    "payload",
+    "strings",
+    "references"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "lossless-path-references-v1"
+    },
+    "payload": {
+      "type": "object"
+    },
+    "strings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 2,
+        "prefixItems": [
+          {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "integer"
+              ]
+            }
+          },
+          {
+            "type": "integer",
+            "minimum": 0
+          }
+        ]
+      }
+    }
+  }
+}

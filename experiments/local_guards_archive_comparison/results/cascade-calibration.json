@@ -1,0 +1,1164 @@
+{
+  "protocol_fixed_at_utc_before_cal_search": "2026-11-01T20:02:11.981865+00:00",
+  "completed_at_utc": "2026-11-01T20:02:17.334543+00:00",
+  "configuration": {
+    "protocol": "pre-LLM CAL-only cascade extension, before selected scoring",
+    "target": "scenario_decision",
+    "eligible_models": "six frozen scenario_decision heads; seed17 primary, seeds29/43 sensitivity",
+    "placements": [
+      "p4",
+      "joint"
+    ],
+    "threshold_grid": [
+      0,
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9,
+      0.95,
+      0.99,
+      1
+    ],
+    "confidence": "raw argmax ALLOW/BLOCK must meet its class threshold; raw UNKNOWN/invalid or low confidence -> DEFER_LLM",
+    "hard_gate": "native_core BLOCK -> BLOCK; native_core UNKNOWN -> STOP_UNKNOWN; core ALLOW permits confidence choice or DEFER_LLM",
+    "objective": "maximize correct wholly autonomous episode mass with equal total weight per base group and equal episode weight within group",
+    "autonomy": "any prior DEFER disqualifies whole-episode autonomy; all episode labels must be source-scored and every reached automatic decision correct",
+    "constraints": "zero observed unsafe automatic ALLOW at any reached scored cut, including mixed episodes; <=5% fully gold-ALLOW episode stops, including false BLOCK and mandatory STOP_UNKNOWN",
+    "defer": "DEFER_LLM is not a stop or FPR; potential downstream opportunities assume continuation and are not whole-cascade quality",
+    "ties": "lower error episodes, then lower threshold sum, then lexicographic thresholds",
+    "all_defer_control": "soft stage always DEFER_LLM; mandatory core decisions remain and must satisfy the same constraints",
+    "no_refit_or_llm_answers": true
+  },
+  "configuration_sha256": "ffbcbf3ff848ab8bf3c42701e78d0fc120740c92af4ad2fd24eec0824a3d646d",
+  "scope": "CAL-only threshold extension; no TRAIN fits, selected inference, cloud answers or standalone controls changed",
+  "cal_population": {
+    "rows": 556,
+    "episodes": 303,
+    "base_groups": 51,
+    "native_core_decisions": {
+      "ALLOW": 532,
+      "BLOCK": 16,
+      "UNKNOWN": 8
+    }
+  },
+  "models": {
+    "scenario_decision-lr-17": {
+      "target": "scenario_decision",
+      "target_role": "primary_security",
+      "family": "lr",
+      "seed": 17,
+      "seed_role": "primary",
+      "operating_points": {
+        "p4": {
+          "placement": "p4",
+          "status": "FEASIBLE",
+          "mode": "confidence",
+          "thresholds": {
+            "P4": {
+              "ALLOW": 0.99,
+              "BLOCK": 0
+            }
+          },
+          "metrics": {
+            "source_scored_rows": 251,
+            "source_unscored_rows": 2,
+            "fully_scored_episodes": 251,
+            "mixed_episodes": 0,
+            "unscored_episodes": 2,
+            "gold_allow_episodes": 195,
+            "potential_reached_cuts": 253,
+            "deferred_call_opportunities": 160,
+            "automatic_decisive_cuts": 86,
+            "correct_automatic_decisive_cuts": 79,
+            "downstream_autonomous_opportunities_after_defer": 0,
+            "downstream_correct_opportunities_after_defer": 0,
+            "mandatory_unknown_stops": 7,
+            "unsafe_allow_episodes": 0,
+            "false_stop_episodes": 8,
+            "error_episodes": 8,
+            "episodes_with_defer": 160,
+            "correct_wholly_autonomous_episodes": 79,
+            "episodes": 253,
+            "base_groups": 51,
+            "weighted_correct_episode_mass": 10.76814954051798,
+            "weighted_autonomous_coverage": 0.21114018706898,
+            "false_stop_rate": 0.041025641025641026,
+            "all_row_decisions_before_reachability": {
+              "DEFER_LLM": 160,
+              "BLOCK": 21,
+              "ALLOW": 65,
+              "STOP_UNKNOWN": 7
+            },
+            "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+          },
+          "control": {
+            "name": "fixed_block_only",
+            "status": "FEASIBLE",
+            "metrics": {
+              "source_scored_rows": 251,
+              "source_unscored_rows": 2,
+              "fully_scored_episodes": 251,
+              "mixed_episodes": 0,
+              "unscored_episodes": 2,
+              "gold_allow_episodes": 195,
+              "potential_reached_cuts": 253,
+              "deferred_call_opportunities": 233,
+              "automatic_decisive_cuts": 13,
+              "correct_automatic_decisive_cuts": 8,
+              "downstream_autonomous_opportunities_after_defer": 0,
+              "downstream_correct_opportunities_after_defer": 0,
+              "mandatory_unknown_stops": 7,
+              "unsafe_allow_episodes": 0,
+              "false_stop_episodes": 6,
+              "error_episodes": 6,
+              "episodes_with_defer": 233,
+              "correct_wholly_autonomous_episodes": 8,
+              "episodes": 253,
+              "base_groups": 51,
+              "weighted_correct_episode_mass": 1.0956349206349205,
+              "weighted_autonomous_coverage": 0.021483037659508247,
+              "false_stop_rate": 0.03076923076923077,
+              "all_row_decisions_before_reachability": {
+                "DEFER_LLM": 233,
+                "BLOCK": 13,
+                "STOP_UNKNOWN": 7
+              },
+              "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+            }
+          },
+          "unique_candidate_vectors_per_checkpoint": {
+            "P4": 40
+          }
+        },
+        "joint": {
+          "placement": "joint",
+          "status": "FEASIBLE",
+          "mode": "confidence",
+          "thresholds": {
+            "P2_afterFraud": {
+              "ALLOW": 0.95,
+              "BLOCK": 0
+            },
+            "P4": {
+              "ALLOW": 0.99,
+              "BLOCK": 0
+            }
+          },
+          "metrics": {
+            "source_scored_rows": 552,
+            "source_unscored_rows": 4,
+            "fully_scored_episodes": 301,
+            "mixed_episodes": 0,
+            "unscored_episodes": 2,
+            "gold_allow_episodes": 223,
+            "potential_reached_cuts": 539,
+            "deferred_call_opportunities": 368,
+            "automatic_decisive_cuts": 163,
+            "correct_automatic_decisive_cuts": 156,
+            "downstream_autonomous_opportunities_after_defer": 3,
+            "downstream_correct_opportunities_after_defer": 2,
+            "mandatory_unknown_stops": 8,
+            "unsafe_allow_episodes": 0,
+            "false_stop_episodes": 9,
+            "error_episodes": 9,
+            "episodes_with_defer": 212,
+            "correct_wholly_autonomous_episodes": 84,
+            "episodes": 303,
+            "base_groups": 51,
+            "weighted_correct_episode_mass": 10.020351543880974,
+            "weighted_autonomous_coverage": 0.19647748125256811,
+            "false_stop_rate": 0.04035874439461883,
+            "all_row_decisions_before_reachability": {
+              "DEFER_LLM": 368,
+              "ALLOW": 139,
+              "BLOCK": 41,
+              "STOP_UNKNOWN": 8
+            },
+            "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+          },
+          "control": {
+            "name": "fixed_block_only",
+            "status": "FEASIBLE",
+            "metrics": {
+              "source_scored_rows": 552,
+              "source_unscored_rows": 4,
+              "fully_scored_episodes": 301,
+              "mixed_episodes": 0,
+              "unscored_episodes": 2,
+              "gold_allow_episodes": 223,
+              "potential_reached_cuts": 553,
+              "deferred_call_opportunities": 532,
+              "automatic_decisive_cuts": 13,
+              "correct_automatic_decisive_cuts": 8,
+              "downstream_autonomous_opportunities_after_defer": 10,
+              "downstream_correct_opportunities_after_defer": 6,
+              "mandatory_unknown_stops": 8,
+              "unsafe_allow_episodes": 0,
+              "false_stop_episodes": 7,
+              "error_episodes": 7,
+              "episodes_with_defer": 299,
+              "correct_wholly_autonomous_episodes": 2,
+              "episodes": 303,
+              "base_groups": 51,
+              "weighted_correct_episode_mass": 0.4,
+              "weighted_autonomous_coverage": 0.00784313725490196,
+              "false_stop_rate": 0.03139013452914798,
+              "all_row_decisions_before_reachability": {
+                "DEFER_LLM": 532,
+                "BLOCK": 16,
+                "STOP_UNKNOWN": 8
+              },
+              "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+            }
+          },
+          "unique_candidate_vectors_per_checkpoint": {
+            "P2_afterFraud": 40,
+            "P4": 40
+          }
+        }
+      }
+    },
+    "scenario_decision-lr-29": {
+      "target": "scenario_decision",
+      "target_role": "primary_security",
+      "family": "lr",
+      "seed": 29,
+      "seed_role": "sensitivity",
+      "operating_points": {
+        "p4": {
+          "placement": "p4",
+          "status": "FEASIBLE",
+          "mode": "confidence",
+          "thresholds": {
+            "P4": {
+              "ALLOW": 0.99,
+              "BLOCK": 0
+            }
+          },
+          "metrics": {
+            "source_scored_rows": 251,
+            "source_unscored_rows": 2,
+            "fully_scored_episodes": 251,
+            "mixed_episodes": 0,
+            "unscored_episodes": 2,
+            "gold_allow_episodes": 195,
+            "potential_reached_cuts": 253,
+            "deferred_call_opportunities": 160,
+            "automatic_decisive_cuts": 86,
+            "correct_automatic_decisive_cuts": 79,
+            "downstream_autonomous_opportunities_after_defer": 0,
+            "downstream_correct_opportunities_after_defer": 0,
+            "mandatory_unknown_stops": 7,
+            "unsafe_allow_episodes": 0,
+            "false_stop_episodes": 8,
+            "error_episodes": 8,
+            "episodes_with_defer": 160,
+            "correct_wholly_autonomous_episodes": 79,
+            "episodes": 253,
+            "base_groups": 51,
+            "weighted_correct_episode_mass": 10.76814954051798,
+            "weighted_autonomous_coverage": 0.21114018706898,
+            "false_stop_rate": 0.041025641025641026,
+            "all_row_decisions_before_reachability": {
+              "DEFER_LLM": 160,
+              "BLOCK": 21,
+              "ALLOW": 65,
+              "STOP_UNKNOWN": 7
+            },
+            "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+          },
+          "control": {
+            "name": "fixed_block_only",
+            "status": "FEASIBLE",
+            "metrics": {
+              "source_scored_rows": 251,
+              "source_unscored_rows": 2,
+              "fully_scored_episodes": 251,
+              "mixed_episodes": 0,
+              "unscored_episodes": 2,
+              "gold_allow_episodes": 195,
+              "potential_reached_cuts": 253,
+              "deferred_call_opportunities": 233,
+              "automatic_decisive_cuts": 13,
+              "correct_automatic_decisive_cuts": 8,
+              "downstream_autonomous_opportunities_after_defer": 0,
+              "downstream_correct_opportunities_after_defer": 0,
+              "mandatory_unknown_stops": 7,
+              "unsafe_allow_episodes": 0,
+              "false_stop_episodes": 6,
+              "error_episodes": 6,
+              "episodes_with_defer": 233,
+              "correct_wholly_autonomous_episodes": 8,
+              "episodes": 253,
+              "base_groups": 51,
+              "weighted_correct_episode_mass": 1.0956349206349205,
+              "weighted_autonomous_coverage": 0.021483037659508247,
+              "false_stop_rate": 0.03076923076923077,
+              "all_row_decisions_before_reachability": {
+                "DEFER_LLM": 233,
+                "BLOCK": 13,
+                "STOP_UNKNOWN": 7
+              },
+              "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+            }
+          },
+          "unique_candidate_vectors_per_checkpoint": {
+            "P4": 40
+          }
+        },
+        "joint": {
+          "placement": "joint",
+          "status": "FEASIBLE",
+          "mode": "confidence",
+          "thresholds": {
+            "P2_afterFraud": {
+              "ALLOW": 0.95,
+              "BLOCK": 0
+            },
+            "P4": {
+              "ALLOW": 0.99,
+              "BLOCK": 0
+            }
+          },
+          "metrics": {
+            "source_scored_rows": 552,
+            "source_unscored_rows": 4,
+            "fully_scored_episodes": 301,
+            "mixed_episodes": 0,
+            "unscored_episodes": 2,
+            "gold_allow_episodes": 223,
+            "potential_reached_cuts": 539,
+            "deferred_call_opportunities": 368,
+            "automatic_decisive_cuts": 163,
+            "correct_automatic_decisive_cuts": 156,
+            "downstream_autonomous_opportunities_after_defer": 3,
+            "downstream_correct_opportunities_after_defer": 2,
+            "mandatory_unknown_stops": 8,
+            "unsafe_allow_episodes": 0,
+            "false_stop_episodes": 9,
+            "error_episodes": 9,
+            "episodes_with_defer": 212,
+            "correct_wholly_autonomous_episodes": 84,
+            "episodes": 303,
+            "base_groups": 51,
+            "weighted_correct_episode_mass": 10.020351543880974,
+            "weighted_autonomous_coverage": 0.19647748125256811,
+            "false_stop_rate": 0.04035874439461883,
+            "all_row_decisions_before_reachability": {
+              "DEFER_LLM": 368,
+              "ALLOW": 139,
+              "BLOCK": 41,
+              "STOP_UNKNOWN": 8
+            },
+            "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+          },
+          "control": {
+            "name": "fixed_block_only",
+            "status": "FEASIBLE",
+            "metrics": {
+              "source_scored_rows": 552,
+              "source_unscored_rows": 4,
+              "fully_scored_episodes": 301,
+              "mixed_episodes": 0,
+              "unscored_episodes": 2,
+              "gold_allow_episodes": 223,
+              "potential_reached_cuts": 553,
+              "deferred_call_opportunities": 532,
+              "automatic_decisive_cuts": 13,
+              "correct_automatic_decisive_cuts": 8,
+              "downstream_autonomous_opportunities_after_defer": 10,
+              "downstream_correct_opportunities_after_defer": 6,
+              "mandatory_unknown_stops": 8,
+              "unsafe_allow_episodes": 0,
+              "false_stop_episodes": 7,
+              "error_episodes": 7,
+              "episodes_with_defer": 299,
+              "correct_wholly_autonomous_episodes": 2,
+              "episodes": 303,
+              "base_groups": 51,
+              "weighted_correct_episode_mass": 0.4,
+              "weighted_autonomous_coverage": 0.00784313725490196,
+              "false_stop_rate": 0.03139013452914798,
+              "all_row_decisions_before_reachability": {
+                "DEFER_LLM": 532,
+                "BLOCK": 16,
+                "STOP_UNKNOWN": 8
+              },
+              "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+            }
+          },
+          "unique_candidate_vectors_per_checkpoint": {
+            "P2_afterFraud": 40,
+            "P4": 40
+          }
+        }
+      }
+    },
+    "scenario_decision-lr-43": {
+      "target": "scenario_decision",
+      "target_role": "primary_security",
+      "family": "lr",
+      "seed": 43,
+      "seed_role": "sensitivity",
+      "operating_points": {
+        "p4": {
+          "placement": "p4",
+          "status": "FEASIBLE",
+          "mode": "confidence",
+          "thresholds": {
+            "P4": {
+              "ALLOW": 0.99,
+              "BLOCK": 0
+            }
+          },
+          "metrics": {
+            "source_scored_rows": 251,
+            "source_unscored_rows": 2,
+            "fully_scored_episodes": 251,
+            "mixed_episodes": 0,
+            "unscored_episodes": 2,
+            "gold_allow_episodes": 195,
+            "potential_reached_cuts": 253,
+            "deferred_call_opportunities": 160,
+            "automatic_decisive_cuts": 86,
+            "correct_automatic_decisive_cuts": 79,
+            "downstream_autonomous_opportunities_after_defer": 0,
+            "downstream_correct_opportunities_after_defer": 0,
+            "mandatory_unknown_stops": 7,
+            "unsafe_allow_episodes": 0,
+            "false_stop_episodes": 8,
+            "error_episodes": 8,
+            "episodes_with_defer": 160,
+            "correct_wholly_autonomous_episodes": 79,
+            "episodes": 253,
+            "base_groups": 51,
+            "weighted_correct_episode_mass": 10.76814954051798,
+            "weighted_autonomous_coverage": 0.21114018706898,
+            "false_stop_rate": 0.041025641025641026,
+            "all_row_decisions_before_reachability": {
+              "DEFER_LLM": 160,
+              "BLOCK": 21,
+              "ALLOW": 65,
+              "STOP_UNKNOWN": 7
+            },
+            "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+          },
+          "control": {
+            "name": "fixed_block_only",
+            "status": "FEASIBLE",
+            "metrics": {
+              "source_scored_rows": 251,
+              "source_unscored_rows": 2,
+              "fully_scored_episodes": 251,
+              "mixed_episodes": 0,
+              "unscored_episodes": 2,
+              "gold_allow_episodes": 195,
+              "potential_reached_cuts": 253,
+              "deferred_call_opportunities": 233,
+              "automatic_decisive_cuts": 13,
+              "correct_automatic_decisive_cuts": 8,
+              "downstream_autonomous_opportunities_after_defer": 0,
+              "downstream_correct_opportunities_after_defer": 0,
+              "mandatory_unknown_stops": 7,
+              "unsafe_allow_episodes": 0,
+              "false_stop_episodes": 6,
+              "error_episodes": 6,
+              "episodes_with_defer": 233,
+              "correct_wholly_autonomous_episodes": 8,
+              "episodes": 253,
+              "base_groups": 51,
+              "weighted_correct_episode_mass": 1.0956349206349205,
+              "weighted_autonomous_coverage": 0.021483037659508247,
+              "false_stop_rate": 0.03076923076923077,
+              "all_row_decisions_before_reachability": {
+                "DEFER_LLM": 233,
+                "BLOCK": 13,
+                "STOP_UNKNOWN": 7
+              },
+              "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+            }
+          },
+          "unique_candidate_vectors_per_checkpoint": {
+            "P4": 40
+          }
+        },
+        "joint": {
+          "placement": "joint",
+          "status": "FEASIBLE",
+          "mode": "confidence",
+          "thresholds": {
+            "P2_afterFraud": {
+              "ALLOW": 0.95,
+              "BLOCK": 0
+            },
+            "P4": {
+              "ALLOW": 0.99,
+              "BLOCK": 0
+            }
+          },
+          "metrics": {
+            "source_scored_rows": 552,
+            "source_unscored_rows": 4,
+            "fully_scored_episodes": 301,
+            "mixed_episodes": 0,
+            "unscored_episodes": 2,
+            "gold_allow_episodes": 223,
+            "potential_reached_cuts": 539,
+            "deferred_call_opportunities": 368,
+            "automatic_decisive_cuts": 163,
+            "correct_automatic_decisive_cuts": 156,
+            "downstream_autonomous_opportunities_after_defer": 3,
+            "downstream_correct_opportunities_after_defer": 2,
+            "mandatory_unknown_stops": 8,
+            "unsafe_allow_episodes": 0,
+            "false_stop_episodes": 9,
+            "error_episodes": 9,
+            "episodes_with_defer": 212,
+            "correct_wholly_autonomous_episodes": 84,
+            "episodes": 303,
+            "base_groups": 51,
+            "weighted_correct_episode_mass": 10.020351543880974,
+            "weighted_autonomous_coverage": 0.19647748125256811,
+            "false_stop_rate": 0.04035874439461883,
+            "all_row_decisions_before_reachability": {
+              "DEFER_LLM": 368,
+              "ALLOW": 139,
+              "BLOCK": 41,
+              "STOP_UNKNOWN": 8
+            },
+            "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+          },
+          "control": {
+            "name": "fixed_block_only",
+            "status": "FEASIBLE",
+            "metrics": {
+              "source_scored_rows": 552,
+              "source_unscored_rows": 4,
+              "fully_scored_episodes": 301,
+              "mixed_episodes": 0,
+              "unscored_episodes": 2,
+              "gold_allow_episodes": 223,
+              "potential_reached_cuts": 553,
+              "deferred_call_opportunities": 532,
+              "automatic_decisive_cuts": 13,
+              "correct_automatic_decisive_cuts": 8,
+              "downstream_autonomous_opportunities_after_defer": 10,
+              "downstream_correct_opportunities_after_defer": 6,
+              "mandatory_unknown_stops": 8,
+              "unsafe_allow_episodes": 0,
+              "false_stop_episodes": 7,
+              "error_episodes": 7,
+              "episodes_with_defer": 299,
+              "correct_wholly_autonomous_episodes": 2,
+              "episodes": 303,
+              "base_groups": 51,
+              "weighted_correct_episode_mass": 0.4,
+              "weighted_autonomous_coverage": 0.00784313725490196,
+              "false_stop_rate": 0.03139013452914798,
+              "all_row_decisions_before_reachability": {
+                "DEFER_LLM": 532,
+                "BLOCK": 16,
+                "STOP_UNKNOWN": 8
+              },
+              "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+            }
+          },
+          "unique_candidate_vectors_per_checkpoint": {
+            "P2_afterFraud": 40,
+            "P4": 40
+          }
+        }
+      }
+    },
+    "scenario_decision-catboost-17": {
+      "target": "scenario_decision",
+      "target_role": "primary_security",
+      "family": "catboost",
+      "seed": 17,
+      "seed_role": "primary",
+      "operating_points": {
+        "p4": {
+          "placement": "p4",
+          "status": "FEASIBLE",
+          "mode": "all_defer",
+          "thresholds": null,
+          "metrics": {
+            "source_scored_rows": 251,
+            "source_unscored_rows": 2,
+            "fully_scored_episodes": 251,
+            "mixed_episodes": 0,
+            "unscored_episodes": 2,
+            "gold_allow_episodes": 195,
+            "potential_reached_cuts": 253,
+            "deferred_call_opportunities": 233,
+            "automatic_decisive_cuts": 13,
+            "correct_automatic_decisive_cuts": 8,
+            "downstream_autonomous_opportunities_after_defer": 0,
+            "downstream_correct_opportunities_after_defer": 0,
+            "mandatory_unknown_stops": 7,
+            "unsafe_allow_episodes": 0,
+            "false_stop_episodes": 6,
+            "error_episodes": 6,
+            "episodes_with_defer": 233,
+            "correct_wholly_autonomous_episodes": 8,
+            "episodes": 253,
+            "base_groups": 51,
+            "weighted_correct_episode_mass": 1.0956349206349205,
+            "weighted_autonomous_coverage": 0.021483037659508247,
+            "false_stop_rate": 0.03076923076923077,
+            "all_row_decisions_before_reachability": {
+              "DEFER_LLM": 233,
+              "BLOCK": 13,
+              "STOP_UNKNOWN": 7
+            },
+            "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+          },
+          "control": {
+            "name": "fixed_block_only",
+            "status": "FEASIBLE",
+            "metrics": {
+              "source_scored_rows": 251,
+              "source_unscored_rows": 2,
+              "fully_scored_episodes": 251,
+              "mixed_episodes": 0,
+              "unscored_episodes": 2,
+              "gold_allow_episodes": 195,
+              "potential_reached_cuts": 253,
+              "deferred_call_opportunities": 233,
+              "automatic_decisive_cuts": 13,
+              "correct_automatic_decisive_cuts": 8,
+              "downstream_autonomous_opportunities_after_defer": 0,
+              "downstream_correct_opportunities_after_defer": 0,
+              "mandatory_unknown_stops": 7,
+              "unsafe_allow_episodes": 0,
+              "false_stop_episodes": 6,
+              "error_episodes": 6,
+              "episodes_with_defer": 233,
+              "correct_wholly_autonomous_episodes": 8,
+              "episodes": 253,
+              "base_groups": 51,
+              "weighted_correct_episode_mass": 1.0956349206349205,
+              "weighted_autonomous_coverage": 0.021483037659508247,
+              "false_stop_rate": 0.03076923076923077,
+              "all_row_decisions_before_reachability": {
+                "DEFER_LLM": 233,
+                "BLOCK": 13,
+                "STOP_UNKNOWN": 7
+              },
+              "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+            }
+          },
+          "unique_candidate_vectors_per_checkpoint": {
+            "P4": 21
+          }
+        },
+        "joint": {
+          "placement": "joint",
+          "status": "FEASIBLE",
+          "mode": "confidence",
+          "thresholds": {
+            "P2_afterFraud": {
+              "ALLOW": 0.95,
+              "BLOCK": 0.7
+            },
+            "P4": {
+              "ALLOW": 0.99,
+              "BLOCK": 0.6
+            }
+          },
+          "metrics": {
+            "source_scored_rows": 552,
+            "source_unscored_rows": 4,
+            "fully_scored_episodes": 301,
+            "mixed_episodes": 0,
+            "unscored_episodes": 2,
+            "gold_allow_episodes": 223,
+            "potential_reached_cuts": 545,
+            "deferred_call_opportunities": 454,
+            "automatic_decisive_cuts": 83,
+            "correct_automatic_decisive_cuts": 74,
+            "downstream_autonomous_opportunities_after_defer": 4,
+            "downstream_correct_opportunities_after_defer": 3,
+            "mandatory_unknown_stops": 8,
+            "unsafe_allow_episodes": 0,
+            "false_stop_episodes": 11,
+            "error_episodes": 11,
+            "episodes_with_defer": 287,
+            "correct_wholly_autonomous_episodes": 7,
+            "episodes": 303,
+            "base_groups": 51,
+            "weighted_correct_episode_mass": 0.8806239512121865,
+            "weighted_autonomous_coverage": 0.01726713629827817,
+            "false_stop_rate": 0.04932735426008968,
+            "all_row_decisions_before_reachability": {
+              "DEFER_LLM": 454,
+              "BLOCK": 29,
+              "STOP_UNKNOWN": 8,
+              "ALLOW": 65
+            },
+            "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+          },
+          "control": {
+            "name": "fixed_block_only",
+            "status": "FEASIBLE",
+            "metrics": {
+              "source_scored_rows": 552,
+              "source_unscored_rows": 4,
+              "fully_scored_episodes": 301,
+              "mixed_episodes": 0,
+              "unscored_episodes": 2,
+              "gold_allow_episodes": 223,
+              "potential_reached_cuts": 553,
+              "deferred_call_opportunities": 532,
+              "automatic_decisive_cuts": 13,
+              "correct_automatic_decisive_cuts": 8,
+              "downstream_autonomous_opportunities_after_defer": 10,
+              "downstream_correct_opportunities_after_defer": 6,
+              "mandatory_unknown_stops": 8,
+              "unsafe_allow_episodes": 0,
+              "false_stop_episodes": 7,
+              "error_episodes": 7,
+              "episodes_with_defer": 299,
+              "correct_wholly_autonomous_episodes": 2,
+              "episodes": 303,
+              "base_groups": 51,
+              "weighted_correct_episode_mass": 0.4,
+              "weighted_autonomous_coverage": 0.00784313725490196,
+              "false_stop_rate": 0.03139013452914798,
+              "all_row_decisions_before_reachability": {
+                "DEFER_LLM": 532,
+                "BLOCK": 16,
+                "STOP_UNKNOWN": 8
+              },
+              "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+            }
+          },
+          "unique_candidate_vectors_per_checkpoint": {
+            "P2_afterFraud": 30,
+            "P4": 21
+          }
+        }
+      }
+    },
+    "scenario_decision-catboost-29": {
+      "target": "scenario_decision",
+      "target_role": "primary_security",
+      "family": "catboost",
+      "seed": 29,
+      "seed_role": "sensitivity",
+      "operating_points": {
+        "p4": {
+          "placement": "p4",
+          "status": "FEASIBLE",
+          "mode": "all_defer",
+          "thresholds": null,
+          "metrics": {
+            "source_scored_rows": 251,
+            "source_unscored_rows": 2,
+            "fully_scored_episodes": 251,
+            "mixed_episodes": 0,
+            "unscored_episodes": 2,
+            "gold_allow_episodes": 195,
+            "potential_reached_cuts": 253,
+            "deferred_call_opportunities": 233,
+            "automatic_decisive_cuts": 13,
+            "correct_automatic_decisive_cuts": 8,
+            "downstream_autonomous_opportunities_after_defer": 0,
+            "downstream_correct_opportunities_after_defer": 0,
+            "mandatory_unknown_stops": 7,
+            "unsafe_allow_episodes": 0,
+            "false_stop_episodes": 6,
+            "error_episodes": 6,
+            "episodes_with_defer": 233,
+            "correct_wholly_autonomous_episodes": 8,
+            "episodes": 253,
+            "base_groups": 51,
+            "weighted_correct_episode_mass": 1.0956349206349205,
+            "weighted_autonomous_coverage": 0.021483037659508247,
+            "false_stop_rate": 0.03076923076923077,
+            "all_row_decisions_before_reachability": {
+              "DEFER_LLM": 233,
+              "BLOCK": 13,
+              "STOP_UNKNOWN": 7
+            },
+            "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+          },
+          "control": {
+            "name": "fixed_block_only",
+            "status": "FEASIBLE",
+            "metrics": {
+              "source_scored_rows": 251,
+              "source_unscored_rows": 2,
+              "fully_scored_episodes": 251,
+              "mixed_episodes": 0,
+              "unscored_episodes": 2,
+              "gold_allow_episodes": 195,
+              "potential_reached_cuts": 253,
+              "deferred_call_opportunities": 233,
+              "automatic_decisive_cuts": 13,
+              "correct_automatic_decisive_cuts": 8,
+              "downstream_autonomous_opportunities_after_defer": 0,
+              "downstream_correct_opportunities_after_defer": 0,
+              "mandatory_unknown_stops": 7,
+              "unsafe_allow_episodes": 0,
+              "false_stop_episodes": 6,
+              "error_episodes": 6,
+              "episodes_with_defer": 233,
+              "correct_wholly_autonomous_episodes": 8,
+              "episodes": 253,
+              "base_groups": 51,
+              "weighted_correct_episode_mass": 1.0956349206349205,
+              "weighted_autonomous_coverage": 0.021483037659508247,
+              "false_stop_rate": 0.03076923076923077,
+              "all_row_decisions_before_reachability": {
+                "DEFER_LLM": 233,
+                "BLOCK": 13,
+                "STOP_UNKNOWN": 7
+              },
+              "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+            }
+          },
+          "unique_candidate_vectors_per_checkpoint": {
+            "P4": 21
+          }
+        },
+        "joint": {
+          "placement": "joint",
+          "status": "FEASIBLE",
+          "mode": "confidence",
+          "thresholds": {
+            "P2_afterFraud": {
+              "ALLOW": 0.95,
+              "BLOCK": 0.7
+            },
+            "P4": {
+              "ALLOW": 0.99,
+              "BLOCK": 0.6
+            }
+          },
+          "metrics": {
+            "source_scored_rows": 552,
+            "source_unscored_rows": 4,
+            "fully_scored_episodes": 301,
+            "mixed_episodes": 0,
+            "unscored_episodes": 2,
+            "gold_allow_episodes": 223,
+            "potential_reached_cuts": 545,
+            "deferred_call_opportunities": 457,
+            "automatic_decisive_cuts": 80,
+            "correct_automatic_decisive_cuts": 71,
+            "downstream_autonomous_opportunities_after_defer": 4,
+            "downstream_correct_opportunities_after_defer": 3,
+            "mandatory_unknown_stops": 8,
+            "unsafe_allow_episodes": 0,
+            "false_stop_episodes": 11,
+            "error_episodes": 11,
+            "episodes_with_defer": 287,
+            "correct_wholly_autonomous_episodes": 7,
+            "episodes": 303,
+            "base_groups": 51,
+            "weighted_correct_episode_mass": 0.8806239512121865,
+            "weighted_autonomous_coverage": 0.01726713629827817,
+            "false_stop_rate": 0.04932735426008968,
+            "all_row_decisions_before_reachability": {
+              "DEFER_LLM": 457,
+              "BLOCK": 29,
+              "STOP_UNKNOWN": 8,
+              "ALLOW": 62
+            },
+            "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+          },
+          "control": {
+            "name": "fixed_block_only",
+            "status": "FEASIBLE",
+            "metrics": {
+              "source_scored_rows": 552,
+              "source_unscored_rows": 4,
+              "fully_scored_episodes": 301,
+              "mixed_episodes": 0,
+              "unscored_episodes": 2,
+              "gold_allow_episodes": 223,
+              "potential_reached_cuts": 553,
+              "deferred_call_opportunities": 532,
+              "automatic_decisive_cuts": 13,
+              "correct_automatic_decisive_cuts": 8,
+              "downstream_autonomous_opportunities_after_defer": 10,
+              "downstream_correct_opportunities_after_defer": 6,
+              "mandatory_unknown_stops": 8,
+              "unsafe_allow_episodes": 0,
+              "false_stop_episodes": 7,
+              "error_episodes": 7,
+              "episodes_with_defer": 299,
+              "correct_wholly_autonomous_episodes": 2,
+              "episodes": 303,
+              "base_groups": 51,
+              "weighted_correct_episode_mass": 0.4,
+              "weighted_autonomous_coverage": 0.00784313725490196,
+              "false_stop_rate": 0.03139013452914798,
+              "all_row_decisions_before_reachability": {
+                "DEFER_LLM": 532,
+                "BLOCK": 16,
+                "STOP_UNKNOWN": 8
+              },
+              "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+            }
+          },
+          "unique_candidate_vectors_per_checkpoint": {
+            "P2_afterFraud": 35,
+            "P4": 21
+          }
+        }
+      }
+    },
+    "scenario_decision-catboost-43": {
+      "target": "scenario_decision",
+      "target_role": "primary_security",
+      "family": "catboost",
+      "seed": 43,
+      "seed_role": "sensitivity",
+      "operating_points": {
+        "p4": {
+          "placement": "p4",
+          "status": "FEASIBLE",
+          "mode": "all_defer",
+          "thresholds": null,
+          "metrics": {
+            "source_scored_rows": 251,
+            "source_unscored_rows": 2,
+            "fully_scored_episodes": 251,
+            "mixed_episodes": 0,
+            "unscored_episodes": 2,
+            "gold_allow_episodes": 195,
+            "potential_reached_cuts": 253,
+            "deferred_call_opportunities": 233,
+            "automatic_decisive_cuts": 13,
+            "correct_automatic_decisive_cuts": 8,
+            "downstream_autonomous_opportunities_after_defer": 0,
+            "downstream_correct_opportunities_after_defer": 0,
+            "mandatory_unknown_stops": 7,
+            "unsafe_allow_episodes": 0,
+            "false_stop_episodes": 6,
+            "error_episodes": 6,
+            "episodes_with_defer": 233,
+            "correct_wholly_autonomous_episodes": 8,
+            "episodes": 253,
+            "base_groups": 51,
+            "weighted_correct_episode_mass": 1.0956349206349205,
+            "weighted_autonomous_coverage": 0.021483037659508247,
+            "false_stop_rate": 0.03076923076923077,
+            "all_row_decisions_before_reachability": {
+              "DEFER_LLM": 233,
+              "BLOCK": 13,
+              "STOP_UNKNOWN": 7
+            },
+            "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+          },
+          "control": {
+            "name": "fixed_block_only",
+            "status": "FEASIBLE",
+            "metrics": {
+              "source_scored_rows": 251,
+              "source_unscored_rows": 2,
+              "fully_scored_episodes": 251,
+              "mixed_episodes": 0,
+              "unscored_episodes": 2,
+              "gold_allow_episodes": 195,
+              "potential_reached_cuts": 253,
+              "deferred_call_opportunities": 233,
+              "automatic_decisive_cuts": 13,
+              "correct_automatic_decisive_cuts": 8,
+              "downstream_autonomous_opportunities_after_defer": 0,
+              "downstream_correct_opportunities_after_defer": 0,
+              "mandatory_unknown_stops": 7,
+              "unsafe_allow_episodes": 0,
+              "false_stop_episodes": 6,
+              "error_episodes": 6,
+              "episodes_with_defer": 233,
+              "correct_wholly_autonomous_episodes": 8,
+              "episodes": 253,
+              "base_groups": 51,
+              "weighted_correct_episode_mass": 1.0956349206349205,
+              "weighted_autonomous_coverage": 0.021483037659508247,
+              "false_stop_rate": 0.03076923076923077,
+              "all_row_decisions_before_reachability": {
+                "DEFER_LLM": 233,
+                "BLOCK": 13,
+                "STOP_UNKNOWN": 7
+              },
+              "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+            }
+          },
+          "unique_candidate_vectors_per_checkpoint": {
+            "P4": 14
+          }
+        },
+        "joint": {
+          "placement": "joint",
+          "status": "FEASIBLE",
+          "mode": "confidence",
+          "thresholds": {
+            "P2_afterFraud": {
+              "ALLOW": 0.95,
+              "BLOCK": 0.7
+            },
+            "P4": {
+              "ALLOW": 0.99,
+              "BLOCK": 0.8
+            }
+          },
+          "metrics": {
+            "source_scored_rows": 552,
+            "source_unscored_rows": 4,
+            "fully_scored_episodes": 301,
+            "mixed_episodes": 0,
+            "unscored_episodes": 2,
+            "gold_allow_episodes": 223,
+            "potential_reached_cuts": 546,
+            "deferred_call_opportunities": 457,
+            "automatic_decisive_cuts": 81,
+            "correct_automatic_decisive_cuts": 73,
+            "downstream_autonomous_opportunities_after_defer": 4,
+            "downstream_correct_opportunities_after_defer": 3,
+            "mandatory_unknown_stops": 8,
+            "unsafe_allow_episodes": 0,
+            "false_stop_episodes": 10,
+            "error_episodes": 10,
+            "episodes_with_defer": 288,
+            "correct_wholly_autonomous_episodes": 7,
+            "episodes": 303,
+            "base_groups": 51,
+            "weighted_correct_episode_mass": 0.8806239512121865,
+            "weighted_autonomous_coverage": 0.01726713629827817,
+            "false_stop_rate": 0.04484304932735426,
+            "all_row_decisions_before_reachability": {
+              "DEFER_LLM": 460,
+              "BLOCK": 24,
+              "STOP_UNKNOWN": 8,
+              "ALLOW": 64
+            },
+            "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+          },
+          "control": {
+            "name": "fixed_block_only",
+            "status": "FEASIBLE",
+            "metrics": {
+              "source_scored_rows": 552,
+              "source_unscored_rows": 4,
+              "fully_scored_episodes": 301,
+              "mixed_episodes": 0,
+              "unscored_episodes": 2,
+              "gold_allow_episodes": 223,
+              "potential_reached_cuts": 553,
+              "deferred_call_opportunities": 532,
+              "automatic_decisive_cuts": 13,
+              "correct_automatic_decisive_cuts": 8,
+              "downstream_autonomous_opportunities_after_defer": 10,
+              "downstream_correct_opportunities_after_defer": 6,
+              "mandatory_unknown_stops": 8,
+              "unsafe_allow_episodes": 0,
+              "false_stop_episodes": 7,
+              "error_episodes": 7,
+              "episodes_with_defer": 299,
+              "correct_wholly_autonomous_episodes": 2,
+              "episodes": 303,
+              "base_groups": 51,
+              "weighted_correct_episode_mass": 0.4,
+              "weighted_autonomous_coverage": 0.00784313725490196,
+              "false_stop_rate": 0.03139013452914798,
+              "all_row_decisions_before_reachability": {
+                "DEFER_LLM": 532,
+                "BLOCK": 16,
+                "STOP_UNKNOWN": 8
+              },
+              "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+            }
+          },
+          "unique_candidate_vectors_per_checkpoint": {
+            "P2_afterFraud": 28,
+            "P4": 14
+          }
+        }
+      }
+    }
+  },
+  "fixed_block_only": {
+    "p4": {
+      "placement": "p4",
+      "profile": "fixed_block_only",
+      "status": "FEASIBLE",
+      "mode": "all_defer",
+      "thresholds": null,
+      "metrics": {
+        "source_scored_rows": 251,
+        "source_unscored_rows": 2,
+        "fully_scored_episodes": 251,
+        "mixed_episodes": 0,
+        "unscored_episodes": 2,
+        "gold_allow_episodes": 195,
+        "potential_reached_cuts": 253,
+        "deferred_call_opportunities": 233,
+        "automatic_decisive_cuts": 13,
+        "correct_automatic_decisive_cuts": 8,
+        "downstream_autonomous_opportunities_after_defer": 0,
+        "downstream_correct_opportunities_after_defer": 0,
+        "mandatory_unknown_stops": 7,
+        "unsafe_allow_episodes": 0,
+        "false_stop_episodes": 6,
+        "error_episodes": 6,
+        "episodes_with_defer": 233,
+        "correct_wholly_autonomous_episodes": 8,
+        "episodes": 253,
+        "base_groups": 51,
+        "weighted_correct_episode_mass": 1.0956349206349205,
+        "weighted_autonomous_coverage": 0.021483037659508247,
+        "false_stop_rate": 0.03076923076923077,
+        "all_row_decisions_before_reachability": {
+          "DEFER_LLM": 233,
+          "BLOCK": 13,
+          "STOP_UNKNOWN": 7
+        },
+        "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+      }
+    },
+    "joint": {
+      "placement": "joint",
+      "profile": "fixed_block_only",
+      "status": "FEASIBLE",
+      "mode": "all_defer",
+      "thresholds": null,
+      "metrics": {
+        "source_scored_rows": 552,
+        "source_unscored_rows": 4,
+        "fully_scored_episodes": 301,
+        "mixed_episodes": 0,
+        "unscored_episodes": 2,
+        "gold_allow_episodes": 223,
+        "potential_reached_cuts": 553,
+        "deferred_call_opportunities": 532,
+        "automatic_decisive_cuts": 13,
+        "correct_automatic_decisive_cuts": 8,
+        "downstream_autonomous_opportunities_after_defer": 10,
+        "downstream_correct_opportunities_after_defer": 6,
+        "mandatory_unknown_stops": 8,
+        "unsafe_allow_episodes": 0,
+        "false_stop_episodes": 7,
+        "error_episodes": 7,
+        "episodes_with_defer": 299,
+        "correct_wholly_autonomous_episodes": 2,
+        "episodes": 303,
+        "base_groups": 51,
+        "weighted_correct_episode_mass": 0.4,
+        "weighted_autonomous_coverage": 0.00784313725490196,
+        "false_stop_rate": 0.03139013452914798,
+        "all_row_decisions_before_reachability": {
+          "DEFER_LLM": 532,
+          "BLOCK": 16,
+          "STOP_UNKNOWN": 8
+        },
+        "defer_interpretation": "opportunity estimate only; no LLM answer or full cascade quality inferred"
+      }
+    }
+  },
+  "calibration_seconds": 5.187
+}

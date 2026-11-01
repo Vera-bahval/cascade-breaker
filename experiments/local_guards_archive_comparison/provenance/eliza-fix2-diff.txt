@@ -1,0 +1,46 @@
+diff --git a/experiments/local_guards_archive_comparison/eliza.py b/experiments/local_guards_archive_comparison/eliza.py
+index f900e8c2..28946fc3 100644
+--- a/experiments/local_guards_archive_comparison/eliza.py
++++ b/experiments/local_guards_archive_comparison/eliza.py
+@@ -123,13 +123,16 @@ def sanitize_metadata(meta):
+         if not name.startswith('chain:'):continue
+         usage[name]={'stats':{period:counts(value) for period,value in row.get('stats',{}).items()
+                               if period in ('daily','monthly')}}
+     models=[]
+     for row in meta['model']['data']:
+         if row.get('id')!=MODEL:continue
+-        models.append({k:row[k] for k in ('id','vendor','vendor_model','endpoint','prices','disabled') if k in row})
++        model={k:row[k] for k in ('id','vendor','vendor_model','endpoint','disabled') if k in row}
++        prices={k:float(row['prices'][k]) for k in ('input_tokens','output_tokens')}
++        if any(not math.isfinite(v) or v<0 for v in prices.values()):raise ValueError('invalid live prices')
++        model['prices']=prices;models.append(model)
+     return {'quotas':{'quotas':{'external':{'limits':limits}}},'usage':{'usage':usage},'model':{'data':models}}
+ 
+ 
+ def metadata():
+     import httpx
+     with httpx.Client(timeout=30,headers={'Authorization':'OAuth '+token()}) as client:
+diff --git a/experiments/local_guards_archive_comparison/tests/test_eliza.py b/experiments/local_guards_archive_comparison/tests/test_eliza.py
+index 4e394522..dee52c5b 100644
+--- a/experiments/local_guards_archive_comparison/tests/test_eliza.py
++++ b/experiments/local_guards_archive_comparison/tests/test_eliza.py
+@@ -53,15 +53,18 @@ class ElizaBoundaryTests(unittest.TestCase):
+             with self.assertRaises(RuntimeError):ledger.complete('a',.2)
+             self.assertEqual(ledger.summary()['cost_usd'],.2)
+ 
+     def test_metadata_does_not_persist_unknown_identity_fields(self):
+         meta={'quotas':{'quotas':{'external':{'limits':[]},'secret_key':'s'}},
+               'usage':{'usage':{},'email':'private'},
+-              'model':{'data':[{'id':'deepseek-flash','key':'private','prices':{'input_tokens':'0.3'}}]}}
++              'model':{'data':[{'id':'deepseek-flash','key':'private','prices':{
++                  'input_tokens':'0.3','output_tokens':'1.2','secret_key':'private'}}]}}
+         safe=sanitize_metadata(meta)
+         self.assertNotIn('private',str(safe));self.assertNotIn('secret_key',str(safe))
++        meta['model']['data'][0]['prices']['input_tokens']='nan'
++        with self.assertRaises(ValueError):sanitize_metadata(meta)
+ 
+     def test_freeze_binds_inputs_prompt_config_and_output_directory(self):
+         with tempfile.TemporaryDirectory() as d:
+             d=Path(d);code='experiments/local_guards_archive_comparison/eliza.py'
+             prompt=d/'prompt.txt';prompt.write_text('fixed policy')
+             config=d/'config.json';config.write_text(json.dumps(dict(prompt_path=str(prompt),model='deepseek-flash',

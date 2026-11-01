@@ -1,0 +1,16 @@
+{
+  "measurement_source_sha256": "05fa9f3cf62a0a7868cfb229ba343174849b43de96b3bc9771eb3a0ff1735197",
+  "final_source_sha256": "11e8b50d4a62540a4776e4a128e21d570e014f71db00e3d6815e5d3dbe9d702a",
+  "only_post_measurement_change": "Explicitly close final SQLite contention readback connection; no native hook, guard, schedule or timing boundary changed.",
+  "forward_replacements": [
+    {
+      "before": "from contextlib import contextmanager, ExitStack, nullcontext, redirect_stdout, redirect_stderr",
+      "after": "from contextlib import contextmanager, ExitStack, nullcontext, redirect_stdout, redirect_stderr, closing"
+    },
+    {
+      "before": "with sqlite3.connect(path) as db:",
+      "after": "with closing(sqlite3.connect(path)) as db:"
+    }
+  ],
+  "receipt_reconstruction": "Reverse these exact replacements in final replay.py; SHA256 must equal measurement_source_sha256."
+}

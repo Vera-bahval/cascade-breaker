@@ -1,0 +1,95 @@
+{
+  "status": "not_cleared_two_important_blockers",
+  "scope": "Scoped independent re-review; initial method-review.md/json preserved",
+  "reviewed_files": [
+    {
+      "path": "methods.py",
+      "sha256": "12bd9937145be015f11e56fcbf100e3385846aec63e589162282fb935a01fec5"
+    },
+    {
+      "path": "ml.py",
+      "sha256": "d31d05ad1203255084eb7935cc4a3ea5550c52a720fd1e1dceb0c63e7302529a"
+    },
+    {
+      "path": "tests/test_methods.py",
+      "sha256": "dbbac395779cb4471a4d060549aefe043535b73a287a6e836b15927bb389ac9b"
+    },
+    {
+      "path": "tests/test_ml.py",
+      "sha256": "2fe98068b918eccfbbdff17715ccab620d6a0c8dddd6a3371407b2a09687ffac"
+    },
+    {
+      "path": "provenance/evaluation-rulings.md",
+      "sha256": "0b27e55ba09685f4d426658367143a524b0e3018d6b38ba29197637dc7471ded"
+    },
+    {
+      "path": "briefs/INPUT_INTERFACE.md",
+      "sha256": "f7adbf2b61549afe4a44db84a658905782c83d214171d87e41911032d00e0055"
+    }
+  ],
+  "resolved_initial_findings": [
+    "M1: derived delta is now checked for finiteness and emitted as INVALID without inf.",
+    "M2: source-scored/unscored/mixed row and episode counts/identities are explicit; only fully scored episodes certify decisive coverage and legitimate denominators; known unsafe ALLOW is retained in mixed episodes."
+  ],
+  "findings": [
+    {
+      "id": "C1",
+      "severity": "important",
+      "blocking": true,
+      "locations": [
+        "methods.py:60",
+        "methods.py:125-126",
+        "methods.py:208-224",
+        "ml.py:145-147"
+      ],
+      "title": "Malformed operands become hard violations or exceptions rather than UNKNOWN",
+      "reproduction": [
+        "Authored positive fixture with supported facts.invoice_status=123 gives native_core BLOCK.",
+        "Supported facts.vendor_bank_details_present=\"true\" gives BLOCK.",
+        "Supported proposal.invoice_id=True gives BLOCK.",
+        "Supported facts.fraud_recommendation=[] causes features() TypeError.",
+        "Raw paired Fraud result {\"task_status\":[]} causes workflow() TypeError."
+      ],
+      "basis": "evaluation-rulings.md item 5: Schema-malformed operands are UNKNOWN; known violations outrank missing data. raw_context.tool_result has no restrictive nested schema and may carry malformed values.",
+      "repair": "Validate operand types before equality/membership and handle malformed raw status values without exceptions. Preserve an independently established real violation when another operand is malformed. Missing/invalid model states should remain explicit."
+    },
+    {
+      "id": "C2",
+      "severity": "important",
+      "blocking": true,
+      "locations": [
+        "methods.py:142-166",
+        "methods.py:228-234",
+        "tests/test_methods.py:53-58"
+      ],
+      "title": "An unexecuted Fraud proposal downgrades an established current HOLD",
+      "reproduction": [
+        "Start from authored positive fixture with evidenced current fraud_recommendation=hold at event_seq=2: native BLOCK.",
+        "Append only a same-vendor before_tool record at seq=5 with source_event_kind=recorded_model_proposal, without actual dispatch or return: native becomes UNKNOWN."
+      ],
+      "basis": "INPUT_INTERFACE explicitly says a recorded_model_proposal is not an observed dispatch; successful actual returns establish invocation. A later documented reassessment may make an older flag unresolved, but a mere proposal establishes no reassessment. Current known flags cannot be displaced solely by missing evidence of a future call.",
+      "repair": "Require evidence that a later same-subject reassessment actually occurred before downgrading old flag applicability. An unpaired proposal or explicitly failed follow-up must not erase a current established HOLD. Do not treat same-call completion or arbitrary notes as clearance."
+    }
+  ],
+  "accepted_checks": [
+    "P2 native proof order still distinguishes proposed and actual dispatch, successful native task_status, overlapping proposals and known actual misorder.",
+    "Current typed flag does not disappear merely from its own completion or free-text notes. C2 concerns the separate later-call path.",
+    "New structural event features use fixed native categories, counts and same-subject amount/account changes; no free text, source path, actor name or object ID value is vectorized.",
+    "LR StandardScaler(with_mean=False) is fit with group weights only inside fit_one on selected TRAIN rows. CAL/inference use transform only. Scaler object/parameters are saved, declared in frozen configuration; fallback has no scaler.",
+    "Target/role/placement are retained, including empty CAL INFEASIBLE."
+  ],
+  "verification": {
+    "real_data_or_labels_read": false,
+    "selected_predictions_read": false,
+    "full_test_suite_rerun": false,
+    "synthetic_execution": "One narrow command reproduced C1/C2 using authored test fixtures and ran one 2-row synthetic LR numerical probe. No files/models saved. PYTHONDONTWRITEBYTECODE=1.",
+    "synthetic_lr_probe": "Finite 1e200 amount fit returned with RuntimeWarning/ConvergenceWarning. No additional blocker asserted without proof of incorrect output.",
+    "source_edits": false,
+    "git_or_api_calls": false,
+    "subagents": false
+  },
+  "limits": [
+    "No archive fit quality or real-view compatibility claim.",
+    "Executed frozen-source and weight hash verification remains root-owned acceptance."
+  ]
+}

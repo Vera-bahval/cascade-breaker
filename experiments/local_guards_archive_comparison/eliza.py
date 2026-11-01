@@ -104,6 +104,21 @@ def remaining(meta):
                 daily_usd=float(daily)-sum(v['stats']['daily']['cost'] for v in usage.values()))
 
 
+def cumulative_cap(requested, summary, available):
+    # Live remaining quota already subtracts this job's completed requests.
+    # The ledger cap is cumulative, so add that expenditure back once.
+    spent=summary['cost_usd']
+    return min(requested,spent+available['daily_usd']-.5,spent+available['monthly_usd']-.5)
+
+
+async def run_batch(jobs):
+    # Drain all requests so a peer failure cannot discard an actual charge.
+    results=await asyncio.gather(*jobs,return_exceptions=True)
+    errors=[r for r in results if isinstance(r,BaseException)]
+    if errors:raise errors[0]
+    return results
+
+
 def token():
     sys.path.insert(0,str(Path.home()/'.agents/skills/store/scripts'))
     from agent_auth_client import resolve
@@ -194,23 +209,17 @@ async def run(args):
     for frozen,live in [('input_price_cap','input_tokens'),('output_price_cap','output_tokens')]:
         if float(model['prices'][live])>config[frozen]:raise RuntimeError('live price exceeds frozen bound')
     (root/'quota-before.json').write_text(json.dumps(meta,indent=2)+'\n')
-    cap=min(args.cap,meta['remaining']['daily_usd']-.5,meta['remaining']['monthly_usd']-.5)
+    ledger=Ledger(root/'ledger.sqlite',args.cap)
+    cap=cumulative_cap(args.cap,ledger.summary(),meta['remaining'])
     if cap<=0: raise RuntimeError('insufficient quota')
-    ledger=Ledger(root/'ledger.sqlite',cap)
+    ledger.cap=cap
+    concurrency=config.get('concurrency',1)
+    if type(concurrency) is not int or not 1<=concurrency<=8:raise RuntimeError('invalid concurrency')
     cached={r['query_id']:r for r in read_rows(root/'responses.jsonl.gz')} if (root/'responses.jsonl.gz').exists() else {}
     mapped={r['case_id'] for r in read_rows(root/'case-mapping.jsonl.gz')} if (root/'case-mapping.jsonl.gz').exists() else set()
     async with httpx.AsyncClient(timeout=90,headers={'Authorization':'OAuth '+token(),
                 'X-Retries':'1','X-Request-Timeout':'60s'}) as client:
-        for i,row in enumerate(rows):
-            body={k:config[k] for k in ('model','temperature','max_tokens','thinking','reasoning_effort')}
-            body.update(stream=False,messages=[{'role':'system','content':prompt},
-                {'role':'user','content':json.dumps(row['input'],ensure_ascii=False,sort_keys=True)}])
-            identity=query_identity(body)
-            if row['case_id'] not in mapped:
-                append(root/'case-mapping.jsonl.gz',dict(case_id=row['case_id'],query_id=identity))
-                mapped.add(row['case_id'])
-            if identity in cached: continue
-            if args.limit and ledger.summary()['requests']>=args.limit: break
+        async def infer(row,identity,body):
             payload=json.dumps(body,ensure_ascii=False).encode()
             worst=(len(payload)+1024)*float(config['input_price_cap'])+config['max_tokens']*float(config['output_price_cap'])
             ledger.reserve(identity,worst)
@@ -219,27 +228,39 @@ async def run(args):
             response=await client.post(BASE+config['endpoint'],content=payload,
                                        headers={'Content-Type':'application/json'})
             elapsed=time.perf_counter()-started
-            try: value=response.json()
+            try:value=response.json()
             except ValueError:
                 append(root/'errors.jsonl.gz',dict(query_id=identity,http_status=response.status_code,
                        error='invalid_response_json',latency_s=elapsed))
                 raise RuntimeError('unreconciled charge; stopped')
-            # Never persist auth headers, Eliza key identity, or arbitrary envelope fields.
             charge=value.get('cost')
-            if type(charge) in (int,float): ledger.complete(identity,charge)
-            else: raise RuntimeError('unknown actual charge; stopped')
+            if type(charge) in (int,float):ledger.complete(identity,charge)
+            else:raise RuntimeError('unknown actual charge; stopped')
             if response.status_code!=200:
                 append(root/'errors.jsonl.gz',dict(query_id=identity,http_status=response.status_code,cost=charge))
                 raise RuntimeError('non-success response; stopped without automatic paid retry')
-            if value.get('attempt_count')!=1: raise RuntimeError('unexpected provider retry count')
-            inner=value['response']; text=inner['choices'][0]['message']['content']
+            if value.get('attempt_count')!=1:raise RuntimeError('unexpected provider retry count')
+            inner=value['response'];answer=inner['choices'][0]['message']['content']
             result=dict(case_id=row['case_id'],query_id=identity,latency_s=elapsed,cost_usd=charge,
                         usage=inner.get('usage'),response_model=inner.get('model'),
-                        response_id=inner.get('id'),**parse_answer(text))
+                        response_id=inner.get('id'),**parse_answer(answer))
             append(root/'responses.jsonl.gz',result);cached[identity]=result
-            if (i+1)%25==0:
+        jobs=[];scheduled=set()
+        for row in rows:
+            body={k:config[k] for k in ('model','temperature','max_tokens','thinking','reasoning_effort')}
+            body.update(stream=False,messages=[{'role':'system','content':prompt},
+                {'role':'user','content':json.dumps(row['input'],ensure_ascii=False,sort_keys=True)}])
+            identity=query_identity(body)
+            if row['case_id'] not in mapped:
+                append(root/'case-mapping.jsonl.gz',dict(case_id=row['case_id'],query_id=identity));mapped.add(row['case_id'])
+            if identity in cached or identity in scheduled:continue
+            if args.limit and ledger.summary()['requests']+len(jobs)>=args.limit:break
+            jobs.append(infer(row,identity,body));scheduled.add(identity)
+            if len(jobs)>=concurrency:
+                await run_batch(jobs);jobs=[]
                 (root/'progress.json').write_text(json.dumps(ledger.summary(),indent=2)+'\n')
                 print(json.dumps(ledger.summary()),flush=True)
+        if jobs:await run_batch(jobs)
     (root/'quota-after.json').write_text(json.dumps(metadata(),indent=2)+'\n')
     (root/'summary.json').write_text(json.dumps(ledger.summary(),indent=2)+'\n')
     print(json.dumps(ledger.summary()))

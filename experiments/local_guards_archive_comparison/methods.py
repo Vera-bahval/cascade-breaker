@@ -29,7 +29,7 @@ def _parts(row):
     return observation, observation.get("facts") or {}, observation.get("proposal") or {}, observation.get("context") or {}
 
 
-def evidenced(row, path):
+def _supported(row, path):
     """Return only supported, pre-cut, non-conflicting supplied observations.
 
     The common collector owns causal reconstruction. Raw prose never supplies facts.
@@ -38,7 +38,7 @@ def evidenced(row, path):
     section, field = path.split(".", 1)
     value = (observation.get(section) or {}).get(field)
     if value is None:
-        return None
+        return None, []
     proof_key = field if section == "facts" else path
     records = (observation.get("provenance") or {}).get(proof_key, [])
     valid = []
@@ -54,12 +54,30 @@ def evidenced(row, path):
                 and record.get("source_ref")):
             valid.append(record)
     if not valid:
-        return None
+        return None, []
     latest = max(record["event_seq"] for record in valid)
     current = [record for record in valid if record["event_seq"] == latest]
     if any(record.get("field") != proof_key or record.get("status") not in {"observed", "derived", "instrumented"} or record.get("kind") not in {"historical", "deterministic_reconstruction", "declared_instrumentation"} or equality(record.get("value"), value) is not True for record in current):
+        return None, []
+    return value, current
+
+
+def evidenced(row, path):
+    return _supported(row, path)[0]
+
+
+def _typed(path, value):
+    """Apply interchange operand types before native comparisons."""
+    if value is None:
         return None
-    return value
+    field = path.rsplit(".", 1)[-1]
+    if field in {"invoice_id", "vendor_id", "invoice_vendor_id", "current_vendor_id"}:
+        return value if type(value) is int else None
+    if field in {"vendor_bank_details_present", "fraud_delegate_completed", "invoice_in_namespace", "vendor_in_namespace", "prefix_complete"}:
+        return value if type(value) is bool else None
+    if field in {"amount", "invoice_amount"}:
+        return value if isinstance(value, str) and decimal(value) is not None else None
+    return value if isinstance(value, str) else None
 
 
 def _all(checks):
@@ -83,10 +101,10 @@ def workflow(row):
     Fraud takes vendor_id; its invoice task is inherited from the already bound
     root context. A failed/ambiguous pair cannot establish successful review.
     """
-    invoice = evidenced(row, "context.invoice_id")
-    vendor = evidenced(row, "facts.invoice_vendor_id")
+    invoice = _typed("context.invoice_id", evidenced(row, "context.invoice_id"))
+    vendor = _typed("facts.invoice_vendor_id", evidenced(row, "facts.invoice_vendor_id"))
     if vendor is None:
-        vendor = evidenced(row, "context.vendor_id")
+        vendor = _typed("context.vendor_id", evidenced(row, "context.vendor_id"))
     events = (row.get("raw_context") or {}).get("events", []) if isinstance(row.get("raw_context"), dict) else []
     pending, invoice_done, fraud_done, misordered_fraud = {}, False, False, False
     for event in events:
@@ -118,6 +136,8 @@ def workflow(row):
             if pair is None or not isinstance(result, dict):
                 continue
             statuses = (result.get("status"), result.get("task_status"))
+            if any(status is not None and not isinstance(status, str) for status in statuses):
+                continue
             success = result.get("success") is True or any(status in {"success", "completed", "complete"} for status in statuses)
             failed = result.get("success") is False or bool(result.get("error")) or result.get("is_error") is True or any(status in {"failed", "error"} for status in statuses)
             if not success or failed or pair[0] is not True:
@@ -135,6 +155,52 @@ def workflow(row):
     return True if invoice_done and fraud_done else None
 
 
+def later_fraud_reassessment(row):
+    """Only observed later invocation can make an old flag unresolved.
+
+    Actual dispatch establishes start. A proposal needs a matched actual return;
+    an unexecuted proposal never weakens an already established native hold.
+    """
+    value, records = _supported(row, "facts.fraud_recommendation")
+    if not isinstance(value, str) or value not in {"hold", "reject", "escalate"} or not records:
+        return False
+    flag_seq = max(record["event_seq"] for record in records)
+    vendor = _typed("facts.invoice_vendor_id", evidenced(row, "facts.invoice_vendor_id"))
+    if vendor is None:
+        vendor = _typed("context.vendor_id", evidenced(row, "context.vendor_id"))
+    raw = row.get("raw_context")
+    events = raw.get("events", []) if isinstance(raw, dict) else []
+    pending, unresolved = [], False
+    for event in events:
+        if not isinstance(event, dict):
+            continue
+        seq = event.get("event_seq")
+        if not isinstance(seq, int) or isinstance(seq, bool) or not flag_seq < seq <= row.get("event_seq", -1):
+            continue
+        tool = str(event.get("tool_name") or "").split("__")[-1]
+        if tool != "delegate_to_fraud":
+            continue
+        if event.get("hook_kind") == "before_tool":
+            args = event.get("tool_arguments") or {}
+            subject = equality(args.get("vendor_id"), vendor) if isinstance(args, dict) else None
+            actual = event.get("source_event_kind") != "recorded_model_proposal"
+            if actual:
+                pending = [(subject, True)]
+            else:
+                pending.append((subject, False))
+        elif event.get("hook_kind") == "after_tool":
+            if len(pending) == 1 and pending[0][0] is True:
+                result = _result(event.get("tool_result"))
+                statuses = (result.get("status"), result.get("task_status")) if isinstance(result, dict) else ()
+                failed = isinstance(result, dict) and (result.get("success") is False or result.get("is_error") is True or bool(result.get("error")) or any(isinstance(status, str) and status in {"failed", "error"} for status in statuses))
+                if not failed:
+                    unresolved = True
+            elif any(subject is True and actual for subject, actual in pending):
+                unresolved = True
+            pending = []
+    return unresolved or any(subject is True and actual for subject, actual in pending)
+
+
 def guard(row, profile="native"):
     """Return a conservative structural result, optionally with typed Fraud flags.
 
@@ -150,10 +216,12 @@ def guard(row, profile="native"):
     observation, facts, proposal, context = _parts(row)
 
     def get(path):
-        value = evidenced(row, path)
+        raw_value, records = _supported(row, path)
+        value = _typed(path, raw_value)
+        if raw_value is not None and value is None:
+            checks.append(("invalid_typed_operand:" + path, None))
         if value is not None:
-            proof_key = path.split(".", 1)[1] if path.startswith("facts.") else path
-            used.extend(record["source_ref"] for record in (observation.get("provenance") or {}).get(proof_key, []) if record.get("source_ref"))
+            used.extend(record["source_ref"] for record in records)
         return value
 
     def check(name, result):
@@ -197,7 +265,10 @@ def guard(row, profile="native"):
         if profile == "native":
             recommendation = get("facts.fraud_recommendation")
             if recommendation in {"hold", "reject", "escalate"}:
-                check("N09:current_typed_" + recommendation, False)
+                if later_fraud_reassessment(row):
+                    check("N09:later_reassessment_unresolved", None)
+                else:
+                    check("N09:current_typed_" + recommendation, False)
     failed = [name for name, value in checks if value is False]
     unknown = [name for name, value in checks if value is None]
     return {"decision": "BLOCK" if failed else ("UNKNOWN" if unknown else "ALLOW"),
