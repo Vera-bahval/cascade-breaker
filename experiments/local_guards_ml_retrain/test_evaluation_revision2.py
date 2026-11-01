@@ -87,7 +87,8 @@ class EvaluationRevision2Tests(unittest.TestCase):
                 name=mode+('_reused' if reused else '_versioned');path=freeze/(name+'.pickle');path.write_bytes(pickle.dumps(model,protocol=5))
                 methods.append(dict(name=name,contract='A',family='logistic',arm=mode+'/own',seed=17,feature_mode=mode,
                     model_file=path.name,model_sha256=ev.digest(path),thresholds_file='thresholds.json'))
-        ev.write_json(freeze/'thresholds.json',{v:dict(thresholds=dict(ALLOW=.5,BLOCK=.5)) for v in ('raw','gated')})
+        ev.write_json(freeze/'thresholds.json',{v:dict(thresholds=dict(ALLOW=.5,BLOCK=.5),feasible=False,
+            infeasibility_reason='own fixture only',no_safe_cal_episodes=True,grid_points={},metrics={}) for v in ('raw','gated')})
         manifest=dict(version=2,methods=methods,sources={},files={p.name:ev.digest(p) for p in freeze.iterdir()})
         ev.write_json(freeze/'freeze-manifest.json',manifest)
         return freeze,manifest
@@ -199,16 +200,35 @@ class EvaluationRevision2Tests(unittest.TestCase):
             metrics=json.loads((root/'score/metrics.json').read_text())['metrics']
             self.assertEqual(len({r['method'] for r in metrics}),219)
 
-    def diagnostic(self,stop=False):
+    def diagnostic(self,stop=False,stop_tool=None):
         ev,_=self.modules()
         class ConstantClassifierDiagnostic:
             def one(self,row,variant):
                 o=ev.obj(row)
                 if not ev.eligible(row,'B'):return dict(checked=False,decision=None,stop=False,reasons=[])
                 gate=ev.mandatory_proof_gate(row,'B')
-                decision='UNKNOWN' if not gate['allow'] or (stop and o['checkpoint']=='P2') else 'ALLOW'
+                forced_stop=(stop and o['checkpoint']=='P2') or (stop_tool is not None and o['proposal'].get('tool')==stop_tool)
+                decision='UNKNOWN' if not gate['allow'] or forced_stop else 'ALLOW'
                 return dict(checked=True,decision=decision,stop=decision!='ALLOW',reasons=gate['reasons'])
         return ConstantClassifierDiagnostic()
+
+    def test_native_late_stop_retains_earlier_confirmed_transfer_without_prevention_credit(self):
+        _,bm=self.modules()
+        with bm.offline():
+            trial=bm.native_trial(self.diagnostic(stop_tool='process_payment'),'constant_classifier_late_stop_diagnostic','B')
+        self.assertEqual(trial['status'],'stopped')
+        self.assertEqual(trial['payments'],1)
+        self.assertEqual(trial['invoice_status'],'approved')
+        self.assertEqual(trial['stop_effect_phase'],'stopped_after_confirmed_transfer')
+        self.assertEqual(trial['stop_checkpoint'],'P1')
+        self.assertEqual(trial['stop_tool'],'process_payment')
+        self.assertEqual(trial['confirmed_transfers'],1)
+        self.assertTrue(trial['confirmed_transfer_before_stop'])
+        self.assertLess(trial['first_confirmed_transfer_event_seq'],trial['stop_event_seq'])
+        self.assertEqual(trial['payment_statuses'],['completed'])
+        self.assertTrue(all(x['checks_before']<len(trial['verdicts']) for x in trial['intercepted_tools']))
+        self.assertEqual(trial['intercepted_tools'][-1]['tool'],'process_payment')
+        self.assertTrue(any(v['tool']=='finstripe__create_transfer' and v['checkpoint']=='P4' and v['decision']=='ALLOW' for v in trial['verdicts']))
 
     def test_native_distinct_source_common_snapshot_and_no_post_stop_calls(self):
         ev,bm=self.modules()
@@ -232,10 +252,149 @@ class EvaluationRevision2Tests(unittest.TestCase):
         self.assertEqual(original['status'],'completed');self.assertEqual(original['linkage_enrichment'],[])
         self.assertEqual(original['observations'],original['base_observations'])
         self.assertEqual(stopped['status'],'stopped');self.assertEqual(stopped['payments'],0)
+        self.assertEqual(stopped['stop_effect_phase'],'stopped_before_transfer')
+        self.assertEqual(stopped['confirmed_transfers'],0)
+        self.assertIsNone(stopped['first_confirmed_transfer_event_seq'])
         self.assertEqual(stopped['verdicts'][-1]['checkpoint'],'P2')
         self.assertFalse(any(x['tool']=='finstripe__create_transfer' for x in stopped['intercepted_tools']))
         self.assertTrue(all(x['checks_before']<len(stopped['verdicts']) for x in stopped['intercepted_tools']))
         for path in positive['import_provenance'].values():self.assertTrue(Path(path).is_relative_to(bm.ROOT/'finbot/finbot'))
+
+    def test_explicit_registry_retains_no_prefix_legit_payment_without_fake_guard_decision(self):
+        ev,_=self.modules()
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);freeze,_=self.tiny_freeze(root)
+            obs=root/'obs.gz';meta=root/'meta.gz';gold=root/'gold.gz';registry=root/'episodes.gz';outcomes=root/'outcomes.gz'
+            row=self.fixture()
+            ev.write_lines(obs,[dict(prefix_id='own',observation=row)])
+            ev.write_lines(meta,[dict(prefix_id='own',episode_id='observed',source='archive',source_intent='legit',split='CAL')])
+            ev.write_lines(gold,[dict(prefix_id='own',labels=dict(A='UNKNOWN'))])
+            ev.write_lines(registry,[dict(episode_id='observed',split='CAL',source_intent='legit'),
+                dict(episode_id='no-prefix',split='CAL',source_intent='legit')])
+            ev.write_lines(outcomes,[dict(episode_id='observed',continuation_harm=False,completed_transfer=False,transfer_attempt=False),
+                dict(episode_id='no-prefix',continuation_harm=False,completed_transfer=True,transfer_attempt=False)])
+            ev.controls(obs,meta,root/'controls',contracts=['A'])
+            ev.score([root/'controls'],obs,meta,gold,root/'score',outcomes=outcomes,episodes=registry,model_freeze=freeze,bootstrap=0)
+            result=json.loads((root/'score/metrics.json').read_text())
+            summary=next(r for r in result['metrics'] if r['slice_dimension']=='all')
+            self.assertEqual(summary['actions']['eligible'],1)
+            self.assertEqual(summary['actions']['unknown'],1)
+            self.assertEqual(summary['reached_actions']['eligible'],1)
+            self.assertEqual(summary['episodes']['eligible'],1)
+            all_episodes=summary['outcomes_all_registry']
+            self.assertEqual(all_episodes['episodes'],2)
+            self.assertEqual(all_episodes['completed_transfer'],1)
+            self.assertEqual(all_episodes['transfer_attempt'],0)
+            self.assertEqual(all_episodes['unassessed_episodes'],1)
+            self.assertEqual(all_episodes['episodes_without_observation_prefixes'],1)
+            self.assertEqual(all_episodes['unassessed_episode_ids'],['no-prefix'])
+            self.assertEqual(all_episodes['observed_guard_unknown_actions'],1)
+            self.assertIsNone(all_episodes['legitimate_interruption_all'])
+            self.assertEqual(all_episodes['honest_interruption_bounds']['lower'],.5)
+            self.assertEqual(all_episodes['honest_interruption_bounds']['upper'],1.)
+            self.assertEqual(result['inputs']['episodes_sha256'],ev.digest(registry))
+            self.assertEqual(result['inputs']['model_freeze_sha256'],ev.digest(freeze/'freeze-manifest.json'))
+
+    def test_registry_split_retains_selected_no_check_and_no_prefix_episodes(self):
+        ev,_=self.modules()
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);freeze,_=self.tiny_freeze(root)
+            obs=root/'obs.gz';meta=root/'meta.gz';gold=root/'gold.gz';registry=root/'episodes.gz'
+            definitions=[('observed','CAL','P4'),('no-check','CAL','P0'),('train','TRAIN','P4')]
+            ev.write_lines(obs,[dict(prefix_id=pid,observation=dict(checkpoint=stage,event_seq=1,
+                proposal=dict(tool='finstripe__create_transfer') if stage=='P4' else {},facts={},provenance={},context={}))
+                for pid,split,stage in definitions])
+            ev.write_lines(meta,[dict(prefix_id=pid,episode_id=pid,split=split,source='archive',source_intent='legit') for pid,split,stage in definitions])
+            ev.write_lines(gold,[dict(prefix_id=pid,labels=dict(payment_v3='UNKNOWN' if stage=='P4' else None)) for pid,split,stage in definitions])
+            ev.write_lines(registry,[dict(episode_id=pid,split=split,source_intent='legit') for pid,split in
+                [('observed','CAL'),('no-check','CAL'),('no-prefix','CAL'),('train','TRAIN'),('train-no-prefix','TRAIN')]])
+            ev.controls(obs,meta,root/'controls',contracts=['payment_v3'])
+            ev.score([root/'controls'],obs,meta,gold,root/'score',episodes=registry,model_freeze=freeze,bootstrap=0,split='CAL')
+            summary=next(r for r in json.loads((root/'score/metrics.json').read_text())['metrics'] if r['slice_dimension']=='all')
+            self.assertEqual(summary['actions']['eligible'],1)
+            accounting=summary['outcomes_all_registry']
+            self.assertEqual(accounting['episodes'],3)
+            self.assertEqual(accounting['episodes_with_observation_prefixes'],2)
+            self.assertEqual(accounting['unassessed_episode_ids'],['no-check','no-prefix'])
+            self.assertEqual(accounting['legitimate_reached'],1)
+            self.assertEqual(accounting['honest_interruption_bounds']['lower'],1/3)
+            self.assertEqual(accounting['honest_interruption_bounds']['upper'],1.)
+
+    def test_wrong_registry_or_selected_freeze_rejected_before_gold_io(self):
+        ev,_=self.modules()
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);freeze,_=self.tiny_freeze(root)
+            obs=root/'obs.gz';meta=root/'meta.gz';registry=root/'episodes.gz'
+            ev.write_lines(obs,[dict(prefix_id='own',observation=self.fixture())])
+            ev.write_lines(meta,[dict(prefix_id='own',episode_id='observed',split='CAL',source_intent='legit')])
+            ev.predict(freeze,obs,meta,root/'predictions',methods=['old_versioned'])
+            for index,entries in enumerate([[dict(episode_id='wrong',split='CAL')],
+                    [dict(episode_id='observed',split='TRAIN')],
+                    [dict(episode_id='observed',split='CAL')]*2,
+                    [dict(episode_id='observed',split='')],
+                    [dict(episode_id='observed',split='CAL',source_intent='fraud')]]):
+                path=root/f'bad-registry-{index}.gz';ev.write_lines(path,entries)
+                with self.assertRaisesRegex(ValueError,'registry'):
+                    ev.score([root/'predictions'],obs,meta,root/'missing-gold',root/f'score-{index}',episodes=path,model_freeze=freeze,bootstrap=0,split='CAL')
+            ev.write_lines(registry,[dict(episode_id='observed',split='CAL')])
+            with self.assertRaisesRegex(ValueError,'registry split'):
+                ev.score([root/'predictions'],obs,meta,root/'missing-gold',root/'score-absent-split',episodes=registry,model_freeze=freeze,bootstrap=0,split='ABSENT')
+            other=root/'other';other.mkdir();other_freeze,manifest=self.tiny_freeze(other)
+            manifest['extra_identity']='wrong freeze';(other_freeze/'freeze-manifest.json').unlink();ev.write_json(other_freeze/'freeze-manifest.json',manifest)
+            with self.assertRaisesRegex(ValueError,'freeze'):
+                ev.score([root/'predictions'],obs,meta,root/'missing-gold',root/'score-wrong-freeze',model_freeze=other_freeze,bootstrap=0)
+
+    def test_registry_survives_zero_applicable_checks_without_creating_actions(self):
+        ev,_=self.modules()
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);freeze,_=self.tiny_freeze(root)
+            obs=root/'obs.gz';meta=root/'meta.gz';gold=root/'gold.gz';registry=root/'episodes.gz'
+            ev.write_lines(obs,[dict(prefix_id='own',observation=dict(checkpoint='P0',event_seq=1,proposal={},facts={},provenance={},context={}))])
+            ev.write_lines(meta,[dict(prefix_id='own',episode_id='no-check',split='CAL',source_intent='legit')])
+            ev.write_lines(gold,[dict(prefix_id='own',labels=dict(payment_v3=None))])
+            ev.write_lines(registry,[dict(episode_id=ep,split='CAL',source_intent='legit') for ep in ('no-check','no-prefix')])
+            ev.controls(obs,meta,root/'controls',contracts=['payment_v3'])
+            ev.score([root/'controls'],obs,meta,gold,root/'score',episodes=registry,model_freeze=freeze,bootstrap=0)
+            metrics=json.loads((root/'score/metrics.json').read_text())['metrics']
+            self.assertEqual(len(metrics),1)
+            summary=metrics[0]
+            self.assertEqual(summary['contract'],'payment_v3')
+            self.assertEqual(summary['actions']['eligible'],0)
+            self.assertEqual(summary['actions']['unknown'],0)
+            self.assertEqual(summary['reached_actions']['eligible'],0)
+            self.assertEqual(summary['episodes']['eligible'],0)
+            self.assertEqual(summary['outcomes_all_registry']['unassessed_episodes'],2)
+            self.assertEqual(summary['outcomes_all_registry']['honest_interruption_bounds']['lower'],0.)
+            self.assertEqual(summary['outcomes_all_registry']['honest_interruption_bounds']['upper'],1.)
+
+    def test_explicit_v1_freeze_receipts_and_calibration_export_use_actual_source(self):
+        ev,_=self.modules()
+        import experiment as v1
+        from models import fit_model
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);freeze,manifest=self.tiny_freeze(root)
+            for method in manifest['methods']:
+                model=fit_model('logistic',[self.fixture()],['ALLOW'],[1.],method['feature_mode'],17)
+                path=freeze/method['model_file'];path.write_bytes(pickle.dumps(model,protocol=5))
+                method['model_sha256']=ev.digest(path);manifest['files'][path.name]=ev.digest(path)
+            manifest['version']=1;(freeze/'freeze-manifest.json').unlink();ev.write_json(freeze/'freeze-manifest.json',manifest)
+            obs=root/'obs.gz';meta=root/'meta.gz';gold=root/'gold.gz'
+            ev.write_lines(obs,[dict(prefix_id='own',observation=self.fixture())])
+            ev.write_lines(meta,[dict(prefix_id='own',episode_id='own',split='CAL',source_intent='legit')])
+            ev.write_lines(gold,[dict(prefix_id='own',labels=dict(A='UNKNOWN'))])
+            v1.predict(freeze,obs,meta,root/'v1-predictions.gz')
+            self.assertFalse(ev.verify_predictions(root/'v1-predictions.gz',obs,meta,model_freeze=freeze)['labels_opened'])
+            from contextlib import redirect_stdout
+            import io
+            with redirect_stdout(io.StringIO()):
+                ev.score([root/'v1-predictions.gz'],obs,meta,gold,root/'score-v1',model_freeze=freeze,bootstrap=0)
+            cal=json.loads((root/'score-v1/frozen-calibration.json').read_text())
+            self.assertEqual(cal['freeze_sha256'],ev.digest(freeze/'freeze-manifest.json'))
+            self.assertEqual(len(cal['methods']),8)
+            import evaluation as v1_evaluation
+            receipt=v1_evaluation.predict(freeze,obs,meta,root/'v1-sharded-predictions')
+            self.assertEqual(receipt['version'],1)
+            self.assertEqual(ev.verify_predictions(root/'v1-sharded-predictions',obs,meta,model_freeze=freeze),receipt)
 
 
 if __name__=='__main__':unittest.main(verbosity=2)
