@@ -52,6 +52,16 @@
       "path": "/Users/proskurin-dmi/Documents/hw-itmo/cascades/deepseek-flash-control-placement/experiments/control-placement/deepseek_flash/results/paid/manifest.json",
       "sha256": "bd4b5fc1890a6007bbfab54d40a92a1573ecc694c09a6148cd9ac168408e2f4c",
       "projection": "policy/source text; no result data"
+    },
+    {
+      "path": "/Users/proskurin-dmi/Documents/hw-itmo/cascades/research/finbot-archive-comparison/experiments/local_guards_archive_comparison/provenance/policy-review.md",
+      "sha256": "5ff0cb2a265a22daf80eed021ace0516d238e982aa2a0cad660333d3708cca6d",
+      "projection": "Review/source correction only; no new target predictions or outcomes."
+    },
+    {
+      "path": "/Users/proskurin-dmi/.codex-igaming/plugins/cache/openai-curated-remote/superpowers/7.0.1/skills/receiving-code-review/SKILL.md",
+      "sha256": "091df1629510af1b92fc4abd6f96732ebedb4cb2c0f3457e8f2740b0504a2438",
+      "projection": "Review/source correction only; no new target predictions or outcomes."
     }
   ],
   "historical_sources": {
@@ -99,6 +109,10 @@
         [
           94,
           179
+        ],
+        [
+          76,
+          85
         ]
       ],
       "kind": "historical_git_object",
@@ -369,6 +383,52 @@
       "execution_manifest_binding": {
         "manifest_sha256": "bd4b5fc1890a6007bbfab54d40a92a1573ecc694c09a6148cd9ac168408e2f4c",
         "json_pointer": "/execution_spec/finbot_hashes/finbot~1agents~1base.py",
+        "matches_historical_git_sha256": true
+      }
+    },
+    "mcp_factory": {
+      "repository": "/Users/proskurin-dmi/Documents/hw-itmo/cascades/vendor/finbot",
+      "revision": "a7f6964fbc60da807e2544d826a5b4e20eb0c5dc",
+      "path": "finbot/mcp/factory.py",
+      "sha256": "85342ca7b94149968b0fb9640e1bc1ad8322e9a67db8f7055202fe529e13e038",
+      "lines": [
+        [
+          19,
+          25
+        ],
+        [
+          65,
+          112
+        ]
+      ],
+      "kind": "historical_git_object",
+      "historical_execution_binding": "Exact Git object and manifest execution_spec.finbot_hashes match; per-episode source/initialization binding required for older archives.",
+      "execution_manifest_binding": {
+        "manifest_sha256": "bd4b5fc1890a6007bbfab54d40a92a1573ecc694c09a6148cd9ac168408e2f4c",
+        "json_pointer": "/execution_spec/finbot_hashes/finbot~1mcp~1factory.py",
+        "matches_historical_git_sha256": true
+      }
+    },
+    "taxcalc": {
+      "repository": "/Users/proskurin-dmi/Documents/hw-itmo/cascades/vendor/finbot",
+      "revision": "a7f6964fbc60da807e2544d826a5b4e20eb0c5dc",
+      "path": "finbot/mcp/servers/taxcalc/server.py",
+      "sha256": "579386278b26961c0a6c7771ba6eab3ab316893314b9d556d2b51221c6099f24",
+      "lines": [
+        [
+          17,
+          50
+        ],
+        [
+          52,
+          102
+        ]
+      ],
+      "kind": "historical_git_object",
+      "historical_execution_binding": "Exact Git object and manifest execution_spec.finbot_hashes match; per-episode source/initialization binding required for older archives.",
+      "execution_manifest_binding": {
+        "manifest_sha256": "bd4b5fc1890a6007bbfab54d40a92a1573ecc694c09a6148cd9ac168408e2f4c",
+        "json_pointer": "/execution_spec/finbot_hashes/finbot~1mcp~1servers~1taxcalc~1server.py",
         "matches_historical_git_sha256": true
       }
     }
@@ -667,7 +727,16 @@
     "unique_requirement_ids": true,
     "source_refs_resolve": true,
     "semantic_gold_features_absent": true,
-    "schema_shape_frozen": true
+    "schema_shape_frozen": true,
+    "taxcalc_correction": {
+      "new_requirement_semantic_only": true,
+      "P2_not_required": true,
+      "N01_N13_unchanged": true,
+      "structural_core_unchanged": true,
+      "schema_sha256_unchanged": "369a30779bae94dbe24376e5f63ff388106c5cf17d46da42bbb9f4bc2335c492",
+      "all_source_refs_resolve": true,
+      "exact_source_clause_confirmed": true
+    }
   },
   "historical_execution_receipt": {
     "path": "/Users/proskurin-dmi/Documents/hw-itmo/cascades/deepseek-flash-control-placement/experiments/control-placement/deepseek_flash/results/paid/manifest.json",
@@ -686,5 +755,29 @@
     "correction": "Nested execution_spec.finbot_hashes has 307 entries, all match exact a7f Git objects.",
     "schema_changed": false,
     "requirements_changed": false
+  },
+  "taxcalc_review_correction": {
+    "finding": "I1: native conditional tax verification omitted",
+    "new_requirement": "N14",
+    "domain": "semantic_review",
+    "checkpoint": "P4",
+    "source_refs": [
+      "payments:76-85",
+      "payments:165-170",
+      "mcp_factory:19-25",
+      "mcp_factory:65-112",
+      "taxcalc:33-50"
+    ],
+    "schema_changed": false,
+    "old_requirements_changed": false,
+    "core_checks_changed": false,
+    "new_source_hashes_verified_against_manifest": 2,
+    "notes": "Actual per-run callable availability is required for applicability; no universal receipt requirement. Raw context/provenance channels unchanged."
+  },
+  "artifact_hashes_after_taxcalc_correction": {
+    "POLICY.md": "9a77aeed7e7642086321483fb60d5f8d9c1b965fee0aaabce9cc88617cc752c9",
+    "policy.json": "31727d8173217fe269f4188635bc68757e3b063db626c4dc78e230b2a0909775",
+    "schema.json": "369a30779bae94dbe24376e5f63ff388106c5cf17d46da42bbb9f4bc2335c492",
+    "provenance/policy-audit.md": "d387f674a8baf71e448e3203bcfaa799b200c1d4d5ebe096aede2c43aa6ac29e"
   }
 }

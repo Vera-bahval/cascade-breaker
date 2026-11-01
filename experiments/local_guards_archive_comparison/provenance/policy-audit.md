@@ -34,6 +34,7 @@ All paths below are within historical FinBot at `a7f6964…`. Full SHA-256 value
 | Sticky HOLD? | `agents/specialized/fraud.py:108-124`; `tools/data/fraud.py:168-192` | Recommendation semantics matter; no native hold lock/clearance registry. Only reject can change submitted/processing status. Human-only indefinite persistence was an experimental strengthening. |
 | New vendors/high risk? | `agents/specialized/invoice.py:131-144`; `agents/specialized/fraud.py:117-169` | Risk/trust guide scrutiny. New low-value vendors must not be held solely for sparse history/low trust. No universal high-trust gate. |
 | Reference and bookkeeping? | `agents/specialized/payments.py:110-139,165-170`; `tools/data/payment.py:47-104` | Invoice reference is needed at transfer; successful transfer ID is needed later before marking paid. A future transfer ID is not a P4 prerequisite. |
+| Tax verification? | `agents/specialized/payments.py:76-85,165-170`; `mcp/factory.py:19-25,65-112`; `mcp/servers/taxcalc/server.py:33-50` | N14 is conditional semantic review at P4 only. Establish actual per-run availability; retain pre-cut tax/context evidence. No universal receipt gate and no tax-inclusive transfer-amount rule. |
 | External instructions always forbidden? | `agents/orchestrator.py:119-121,165-168`; `agents/specialized/fraud.py:185-201` | Native workflow itself requests document routing and verbatim forwarding. Audit authority and concrete effects; keep modern anti-injection policy separate. |
 
 ## Contradictions and source priority
@@ -51,3 +52,9 @@ Absence of a v4 claim UUID, source-call receipt invented later, material version
 ## Validation and limitations
 
 Policy/schema/read-log JSON parse successfully; requirement IDs, source references, hashes and schema shape are checked locally. This audit makes no target predictions. Source read hashes do not authenticate the historical collector. The nested FinBot hashes strengthen the manifest-governed DeepSeek source binding but do not bind all older archives, matching system paragraphs do not prove all code identity, and successful Fraud completion does not establish genuine invoice intent. Report core safety, semantic/source safety and continuation harm separately.
+
+## Bounded review correction: conditional TaxCalc obligation
+
+Independent review I1 identified an omitted native Payments clause. The exact historical source confirms conditional tax verification at `payments.py:169`, Payments attempts to load TaxCalc at `76-85`, the factory supports it but returns no server for disabled namespace configuration, and TaxCalc exposes `calculate_tax`. N14 now records this as semantic-only P4 review with per-run availability and retained history/context evidence. P2 does not require this future Payments step. The schema and N01–N13, including all structural core checks, are unchanged. Structural core ALLOW remains insufficient for full native compliance. This correction establishes no case-specific violation and requires no fabricated tax receipt or added tax on the transfer amount.
+
+Scoped verification: policy/schema/read-log parse; N14 source references resolve; both added exact-source SHA-256 values match the manifest nested FinBot hashes; source text contains the conditional clause; N01–N13 and structural core are byte-equivalent after canonical JSON projection; schema SHA-256 remains `369a30779bae94dbe24376e5f63ff388106c5cf17d46da42bbb9f4bc2335c492`.
