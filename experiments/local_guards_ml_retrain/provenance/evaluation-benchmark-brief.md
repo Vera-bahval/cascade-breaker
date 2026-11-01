@@ -74,3 +74,9 @@ Do not silently sample the archive to reduce artifact size. No upload of secrets
 Use one declared latency quantile convention consistently (nearest-rank p50/p95
 recommended, matching prior follow-up). Never mix even-n statistical median with
 nearest-rank p50 under the same label. Preserve raw timings for recomputation.
+
+Local numerical runtime for the accepted fit is capped uniformly:
+OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2.
+Use the same environment for model benchmarks and rule/native controls; report
+it with OS/Python/library versions. This changes compute parallelism, no model
+hyperparameter or data. CatBoost still uses its fixed thread_count=2.
