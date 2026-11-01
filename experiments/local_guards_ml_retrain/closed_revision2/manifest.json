@@ -15,11 +15,19 @@
   },
   "episodes": 1200,
   "basegroups": 60,
+  "correction_round1": {
+    "label_slots": 13,
+    "label_states": 11,
+    "focused_regressions": 16,
+    "guard_observations_unchanged": true,
+    "metadata_unchanged": true,
+    "original_seal": "drafts/pre-review-round1"
+  },
   "group_semantics": "All recipe counterfactuals share family+meaningful base variant; every state is an independent episode. No sequential trajectory is asserted.",
   "files": {
     "observations.jsonl.gz": {
-      "sha256": "0817d671b3b2e34add067a416335071af6fcedd1a9c75091e43598798057cea7",
-      "uncompressed_sha256": "523d1843776bb88f3cf7fd5defb066c9fbb8ac41488d900a68dd7e6e163b3b14",
+      "sha256": "890adbd5973c6c46e7f9d0d453cafcd5a000acbbf887d52d61daab8d12ec18d2",
+      "uncompressed_sha256": "16846552e520a1bf20762a054f68a329cecb140b60e6892ce99d86e8a14c72a9",
       "rows": 1200
     },
     "metadata.jsonl.gz": {
@@ -28,42 +36,51 @@
       "rows": 1200
     },
     "gold.jsonl.gz": {
-      "sha256": "bae5a5c6910deeace35c3d8ad68ebe222a0372a995d5afb97d7dfb42fe7b1087",
-      "uncompressed_sha256": "0239f8e4f6aa749666f76b60344b90f56f52c876f1122e4a01384474037649f4",
+      "sha256": "e9e907321a39d48084acc0ab7fa6bc75f585de5c9f434a73b5e97fc00ed5aa2a",
+      "uncompressed_sha256": "498359686964799a0344940ce7995c0434e53fb9669a45fd355e66c3dbba6d3d",
       "rows": 1200
     },
     "schema-validation.jsonl.gz": {
       "sha256": "0abe70f5bf3b84232cf4b820823ea0d2f5bc3e69b7bbe6cc4f6ea50c17569cd7",
       "uncompressed_sha256": "99c4a2a3695752dbfc941bd2320faffcfecf80503112998e2485fa2dbf48f987",
       "rows": 1200
+    },
+    "regressions-round1.json": {
+      "sha256": "973485691c964c6fdbe5e64879f40647217451ae5650032d498feaf93036419d"
+    },
+    "corrections-round1.json": {
+      "sha256": "88d8590553758c9547872af7fcc8f9ae829b7c0ac4312b013d4ad61e58a1cae2"
+    },
+    "corrections-round1-source.diff": {
+      "sha256": "4f48d3975b2faf66e39a211fa58d267f1567ec686062e399b3cdbe2acfd8a07f"
     }
   },
   "source": {
     "file": "closed_author_revision2.py",
-    "sha256": "ac080238f9d4704775cdb4e1c31e18dffde8f1e5052168808611600aea32cd72"
+    "sha256": "24a882791f6afaf21421f9e2813fa35819875a8b5ee36acad1273c50b2d89ad9"
   },
   "freeze_receipt_sha256": "c3289efda53ad12657db312dff8d7f694fad2dee14496613330c698e9067aba2",
-  "read_log_sha256": "dfba0c57dd321d1a5f2fcc3b476554aa44a8b61c4260679ebe284b2baf419bcc",
+  "read_log_sha256": "bfae79356b536b0469895b0b95238fdfd137d5059f5174093d82b2fc665a7c44",
   "labels": {
     "payment_v3": {
       "None": 740,
-      "ALLOW": 210,
+      "ALLOW": 212,
       "BLOCK": 135,
-      "UNKNOWN": 115
+      "UNKNOWN": 113
     },
     "A": {
-      "ALLOW": 404,
-      "BLOCK": 343,
+      "ALLOW": 403,
+      "BLOCK": 344,
       "UNKNOWN": 453
     },
     "B": {
-      "ALLOW": 232,
-      "BLOCK": 479,
-      "UNKNOWN": 489
+      "ALLOW": 230,
+      "BLOCK": 487,
+      "UNKNOWN": 483
     }
   },
   "provenance": "No implementation, learned feature, model, training, calibration, oracle, historical test, result or other-thread access; no API, subagent, commit or install. Declared synthetic adapter/registry/complete ledger assumptions only.",
-  "payment_baseline": "Separate v3-shaped envelope manually projected from independent accepted payment evidence, excluding v4-only controls. Explicit recipe overrides mark policy-unavailable payment facts null. Envelope-only v4 corruption does not poison separately authored v3 payment baseline; malformed actual transfer proposal amount is shared.",
+  "payment_baseline": "Separate v3-shaped envelope manually projected from independent accepted payment evidence, excluding v4-only controls. Explicit recipe overrides mark policy-unavailable payment facts null, except shared HOLD/clearance event chronology and source relations are preserved for independent v3 exact-HOLD adjudication. Envelope-only v4 corruption does not poison separately authored v3 payment baseline; malformed actual transfer proposal amount is shared.",
   "limitations": [
     "Pure synthetic trusted producer, not adapter authentication or external-writer atomicity proof.",
     "P5 A/B use no preventive requirements: ALLOW denotes no enforcement stop, never measured preventive success.",
