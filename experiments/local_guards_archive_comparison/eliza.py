@@ -126,7 +126,10 @@ def sanitize_metadata(meta):
     models=[]
     for row in meta['model']['data']:
         if row.get('id')!=MODEL:continue
-        models.append({k:row[k] for k in ('id','vendor','vendor_model','endpoint','prices','disabled') if k in row})
+        model={k:row[k] for k in ('id','vendor','vendor_model','endpoint','disabled') if k in row}
+        prices={k:float(row['prices'][k]) for k in ('input_tokens','output_tokens')}
+        if any(not math.isfinite(v) or v<0 for v in prices.values()):raise ValueError('invalid live prices')
+        model['prices']=prices;models.append(model)
     return {'quotas':{'quotas':{'external':{'limits':limits}}},'usage':{'usage':usage},'model':{'data':models}}
 
 

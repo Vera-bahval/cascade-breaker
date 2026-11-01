@@ -56,9 +56,12 @@ class ElizaBoundaryTests(unittest.TestCase):
     def test_metadata_does_not_persist_unknown_identity_fields(self):
         meta={'quotas':{'quotas':{'external':{'limits':[]},'secret_key':'s'}},
               'usage':{'usage':{},'email':'private'},
-              'model':{'data':[{'id':'deepseek-flash','key':'private','prices':{'input_tokens':'0.3'}}]}}
+              'model':{'data':[{'id':'deepseek-flash','key':'private','prices':{
+                  'input_tokens':'0.3','output_tokens':'1.2','secret_key':'private'}}]}}
         safe=sanitize_metadata(meta)
         self.assertNotIn('private',str(safe));self.assertNotIn('secret_key',str(safe))
+        meta['model']['data'][0]['prices']['input_tokens']='nan'
+        with self.assertRaises(ValueError):sanitize_metadata(meta)
 
     def test_freeze_binds_inputs_prompt_config_and_output_directory(self):
         with tempfile.TemporaryDirectory() as d:
