@@ -126,3 +126,7 @@ timing, bootstrap, corpus calculation, broad test or full analysis was repeated.
 }
 
 No commits were made. Writes stop at this handoff; the parent refreshes the release manifest with this report and the audit chain.
+
+## Final scoped-review editorial clarification
+
+Applied the reviewer-proposed phrase “на 158 строках вне обеих частей набора разработки” across its existing line wrap. Initial exact-match assertion found no single-line phrase and changed nothing; the verified line-wrapped replacement occurred exactly once. Markdown-table digest is unchanged. No number, calculation, model or source changed. Current Appendix SHA256: `abbf8adf53be795bdb7e80c889270bb7f6c6ed8675be32c49268aff1bc9b2c13`. Verification metadata is refreshed. Earlier hash maps remain historical fix-wave records.
