@@ -93,10 +93,32 @@ class EvaluationTests(unittest.TestCase):
         self.assertEqual(c['legitimate_interruption_all'],.5)
         self.assertEqual(c['legitimate_interruption_reached'],1.)
 
+    def test_argmax_diagnostic_preserves_tie_abstention_and_gate_separation(self):
+        ev=self.module()
+        p=dict(prefix_id='own',method='A__new__mixed__logistic__17__raw',decision='UNKNOWN',raw_decision='UNKNOWN',gold='ALLOW',gate_changed=True,probabilities={'ALLOW':.7,'BLOCK':.2,'UNKNOWN':.1})
+        r=ev.argmax_diagnostic(p)
+        self.assertEqual(r['decision'],'ALLOW');self.assertFalse(r['gate_changed']);self.assertEqual(r['variant'],'argmax_diagnostic')
+        p['probabilities']={'ALLOW':.5,'BLOCK':.5,'UNKNOWN':0.}
+        self.assertEqual(ev.argmax_diagnostic(p)['decision'],'UNKNOWN')
+
     def test_quantile_is_nearest_rank_even_n(self):
         ev=self.module()
         self.assertEqual(ev.stats([1,2,3,4])['p50_ms'],2)
         self.assertEqual(ev.stats([1,2,3,4])['p95_ms'],4)
+
+    def test_receipt_count_cannot_hide_duplicate_or_missing_prefix(self):
+        ev=self.module()
+        import json
+        with tempfile.TemporaryDirectory() as td:
+            obs=Path(td)/'observations.gz';meta=Path(td)/'metadata.gz';out=Path(td)/'controls'
+            base={'observation':{'checkpoint':'P0','event_seq':1,'proposal':{},'facts':{},'provenance':{},'context':{}}}
+            ev.write_lines(obs,[dict(base,prefix_id=p) for p in ('a','b')])
+            ev.write_lines(meta,[dict(prefix_id=p,episode_id=p,group_id=p,source='synthetic') for p in ('a','b')])
+            ev.controls(obs,meta,out,contracts=['A'])
+            receipt=json.loads((out/'receipt.json').read_text());entry=receipt['files'][0];shard=out/entry['path']
+            rows=list(ev.read_lines(shard));rows[1]['prefix_id']='a';shard.unlink();ev.write_lines(shard,rows)
+            entry['sha256']=ev.digest(shard);(out/'receipt.json').write_text(json.dumps(receipt))
+            with self.assertRaisesRegex(ValueError,'duplicate|coverage'):ev.verify_predictions(out,obs,meta)
 
     def test_label_read_follows_complete_receipt_validation(self):
         ev=self.module()
@@ -112,6 +134,7 @@ class EvaluationTests(unittest.TestCase):
             ev.write_lines(labels,[dict(prefix_id='own',labels={'A':'UNKNOWN'})])
             ev.score([out],obs,meta,labels,Path(td)/'scored',bootstrap=10)
             self.assertTrue((Path(td)/'scored/metrics.csv').exists())
+            self.assertTrue((Path(td)/'scored/frozen-calibration.json').exists())
             shard=out/receipt['files'][0]['path'];shard.write_bytes(b'tamper')
             with self.assertRaisesRegex(ValueError,'hash'):ev.verify_predictions(out,obs,meta)
 

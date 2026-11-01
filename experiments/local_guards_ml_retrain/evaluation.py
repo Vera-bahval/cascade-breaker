@@ -193,28 +193,61 @@ def predict(freeze,observations,metadata,output,batch_size=512,methods=None,cont
 
 
 def verify_predictions(path,observations,metadata):
-    path=Path(path)
+    path=Path(path);meta=keyed(metadata);validate_join(observations,meta)
+    expected={c:set() for c in CONTRACTS}
+    for row in read_lines(observations):
+        for contract in CONTRACTS:
+            if eligible(row,contract):expected[contract].add(row['prefix_id'])
     if path.is_dir():
         receipt=json.loads((path/'receipt.json').read_text())
         if receipt.get('labels_opened') is not False or receipt.get('fit_called') is not False:raise ValueError('not a label-blind prediction receipt')
         for k,v in input_identity(observations,metadata).items():
             if receipt.get(k)!=v:raise ValueError('prediction input hash/path mismatch')
-        counts=Counter()
+        descriptors={m['name']:m for m in receipt['methods']}
+        if len(descriptors)!=len(receipt['methods']):raise ValueError('duplicate method declaration')
+        groups=defaultdict(list)
         for f in receipt['files']:
             relative=Path(f['path'])
             if relative.is_absolute() or '..' in relative.parts:raise ValueError('invalid prediction shard')
             if digest(path/relative)!=f['sha256']:raise ValueError('prediction shard hash mismatch')
-            n=0
-            for row in read_lines(path/relative):
-                if row['method']!=f['method']:raise ValueError('prediction method mismatch')
-                counts[row['method']]+=1;n+=1
-            if n!=f['rows']:raise ValueError('prediction row mismatch')
-        if dict(counts)!={k:v for k,v in receipt['expected_eligible'].items() if v}:raise ValueError('prediction count mismatch')
+            if f['method'] not in descriptors:raise ValueError('unknown prediction method')
+            groups[f['method']].append(f)
+        for name,method in descriptors.items():
+            contract=method['contract'];seen=set()
+            for f in groups[name]:
+                n=0
+                for row in read_lines(path/f['path']):
+                    if row['method']!=name or row.get('contract')!=contract:raise ValueError('prediction method/contract mismatch')
+                    if row['prefix_id'] in seen:raise ValueError('duplicate prediction prefix')
+                    seen.add(row['prefix_id']);n+=1
+                    if row.get('checked') is not True or row.get('decision') not in CLASSES:raise ValueError('invalid prediction')
+                if n!=f['rows']:raise ValueError('prediction row mismatch')
+            if seen!=expected[contract] or receipt['expected_eligible'].get(name)!=len(seen):raise ValueError('prediction coverage mismatch')
+        if set(receipt['expected_eligible'])!=set(descriptors):raise ValueError('method coverage mismatch')
+        if receipt.get('freeze_path'):
+            freeze=Path(receipt['freeze_path']);verify_freeze(freeze)
+            if digest(freeze/'freeze-manifest.json')!=receipt['freeze_sha256']:raise ValueError('prediction freeze hash mismatch')
         return receipt
     receipt=json.loads(path.with_name(path.name+'.receipt.json').read_text())
     if receipt.get('labels_opened') is not False:raise ValueError('not a label-blind receipt')
     if digest(path)!=receipt['predictions_sha256']:raise ValueError('prediction hash mismatch')
     if digest(observations)!=receipt['observations_sha256'] or digest(metadata)!=receipt['metadata_sha256']:raise ValueError('prediction input hash mismatch')
+    # The immutable original predict command always emits every frozen model,
+    # raw and gated; validate that complete declaration before label IO as well.
+    manifest=verify_freeze(HERE/'frozen')
+    if digest(HERE/'frozen/freeze-manifest.json')!=receipt['freeze_sha256']:raise ValueError('original prediction freeze hash mismatch')
+    methods={m['name']+'__'+variant:m['contract'] for m in manifest['methods'] for variant in ('raw','gated')}
+    import itertools
+    seen_methods=set()
+    for name,rows in itertools.groupby(read_lines(path),lambda r:r['method']):
+        if name in seen_methods or name not in methods:raise ValueError('duplicate/unknown prediction method')
+        seen_methods.add(name);seen=set();contract=methods[name]
+        for row in rows:
+            if row['prefix_id'] in seen:raise ValueError('duplicate prediction prefix')
+            if row.get('contract')!=contract or row.get('checked') is not True or row.get('decision') not in CLASSES:raise ValueError('invalid original prediction')
+            seen.add(row['prefix_id'])
+        if seen!=expected[contract]:raise ValueError('original prediction coverage mismatch')
+    if seen_methods!={name for name,contract in methods.items() if expected[contract]}:raise ValueError('original method coverage mismatch')
     return receipt
 
 
@@ -367,6 +400,13 @@ def summarize(rows,outcomes=None,bootstrap=1000):
     return result
 
 
+def argmax_diagnostic(row):
+    p=row['probabilities'];winners=[k for k in CLASSES if p[k]==max(p.values())]
+    d=winners[0] if len(winners)==1 else 'UNKNOWN'
+    return dict(row,method=row['method'].removesuffix('__raw')+'__argmax_diagnostic',variant='argmax_diagnostic',
+                decision=d,raw_decision=d,gate_changed=False,gate_reasons=[])
+
+
 def score(predictions,observations,metadata,labels,output,outcomes=None,bootstrap=1000,split=None):
     # Verify every prediction byte/receipt before opening any target labels.
     receipts=[verify_predictions(p,observations,metadata) for p in predictions]
@@ -390,14 +430,17 @@ def score(predictions,observations,metadata,labels,output,outcomes=None,bootstra
                 rows.append(join_record(p,meta[pid],obs[pid],g));descriptor={k:p.get(k) for k in ('family','arm','seed','variant')}
             required={pid for pid,r in obs.items() if eligible(r,contract)} if contract else set()
             if seen!=required:raise ValueError('incomplete method predictions')
-            rows=mark_reachability(rows)
-            slices=defaultdict(list)
-            for r in rows:
-                for dimension,value in [('all','all'),('source',r['source']),('checkpoint',r['checkpoint']),('family',r['data_family']),('split',r['split'])]:slices[(dimension,str(value))].append(r)
-            for (dimension,value),rs in slices.items():
-                summary=summarize(rs,truth,bootstrap=bootstrap)
-                if dimension=='all':summary['outcomes_all_registry']=registry_outcomes(rows,meta,truth)
-                all_metrics.append(dict(method=method,contract=contract,**descriptor,slice_dimension=dimension,slice_value=value,**summary))
+            variants=[(method,rows,descriptor)]
+            if Path(path).is_file() and method.endswith('__raw'):
+                variants.append((method.removesuffix('__raw')+'__argmax_diagnostic',[argmax_diagnostic(r) for r in rows],dict(descriptor,variant='argmax_diagnostic')))
+            for variant_name,variant_rows,variant_descriptor in variants:
+                variant_rows=mark_reachability(variant_rows);slices=defaultdict(list)
+                for r in variant_rows:
+                    for dimension,value in [('all','all'),('source',r['source']),('checkpoint',r['checkpoint']),('family',r['data_family']),('split',r['split'])]:slices[(dimension,str(value))].append(r)
+                for (dimension,value),rs in slices.items():
+                    summary=summarize(rs,truth,bootstrap=bootstrap)
+                    if dimension=='all':summary['outcomes_all_registry']=registry_outcomes(variant_rows,meta,truth)
+                    all_metrics.append(dict(method=variant_name,contract=contract,**variant_descriptor,slice_dimension=dimension,slice_value=value,**summary))
             print('scored',method,len(rows),flush=True)
     inputs=dict(input_identity(observations,metadata),labels_sha256=digest(labels),outcomes_sha256=digest(outcomes) if outcomes else None,
                 predictions=[dict(path=str(Path(p).resolve()),receipt_sha256=digest(Path(p)/'receipt.json' if Path(p).is_dir() else Path(str(p)+'.receipt.json'))) for p in predictions])
@@ -408,6 +451,19 @@ def score(predictions,observations,metadata,labels,output,outcomes=None,bootstra
         writer=csv.DictWriter(stream,fieldnames=fields);writer.writeheader()
         for r in all_metrics:
             writer.writerow(dict({k:r.get(k) for k in fields[:8]},**{k:r['actions'][k] for k in fields[8:18]},reached_eligible=r['reached_actions']['eligible'],reached_correct_decisive=r['reached_actions']['correct_decisive'],episodes=r['episodes']['eligible'],episode_correct_decisive_coverage=r['episodes']['correct_decisive_coverage'],episode_safe_stop_fpr=r['episodes']['safe_stop_fpr']))
+    calibration=[]
+    frozen_manifest=json.loads((HERE/'frozen/freeze-manifest.json').read_text())
+    for m in frozen_manifest['methods']:
+        path=HERE/'frozen'/m['thresholds_file']
+        if digest(path)!=frozen_manifest['files'][path.name]:raise ValueError('frozen CAL threshold hash mismatch')
+        thresholds=json.loads(path.read_text())
+        for variant in ('raw','gated'):
+            c=thresholds[variant]
+            calibration.append(dict(method=m['name']+'__'+variant,contract=m['contract'],arm=m['arm'],family=m['family'],seed=m['seed'],variant=variant,
+                feasible=c['feasible'],infeasibility_reason=c['infeasibility_reason'],no_safe_cal_episodes=c['no_safe_cal_episodes'],
+                thresholds=c['thresholds'],grid_points=c['grid_points'],cal_metrics=c['metrics']))
+    write_json(output/'frozen-calibration.json',dict(freeze_sha256=digest(HERE/'frozen/freeze-manifest.json'),methods=calibration,
+        interpretation='No feasible pair FOUND in the fixed41-quantile confidence search; not proof of global impossibility. No-safe-CAL denominators are null, not a measured FPR. Rules are assessed by score on the same corrected CAL without tuning.'))
     write_json(output/'artifact-hashes.json',{p.name:digest(p) for p in sorted(output.iterdir()) if p.is_file()})
 
 
