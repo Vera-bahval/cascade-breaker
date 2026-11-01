@@ -135,6 +135,27 @@ class TrainingTests(unittest.TestCase):
         result=calibrate([{'ALLOW':0.,'BLOCK':0.,'UNKNOWN':1.}],['ALLOW'],[{'episode_id':'x','event_seq':1}])
         self.assertFalse(result['feasible']);self.assertGreater(result['thresholds']['ALLOW'],1)
 
+    def test_calibration_without_safe_episodes_is_unassessable(self):
+        from experiment import calibrate,SENTINEL
+        ps=[{'ALLOW':.05,'BLOCK':.9,'UNKNOWN':.05}]
+        meta=[{'episode_id':'block-only','event_seq':1}]
+        for gate in [None,[True]]:
+            with self.subTest(gate=gate):
+                result=calibrate(ps,['BLOCK'],meta,gate)
+                self.assertFalse(result['feasible'])
+                self.assertEqual(result['infeasibility_reason'],'unassessable_safe_denominator')
+                self.assertTrue(result['no_safe_cal_episodes'])
+                self.assertEqual(result['metrics']['safe_episodes'],0)
+                self.assertIsNone(result['metrics']['safe_stop_fpr'])
+                self.assertEqual(result['thresholds'],{'ALLOW':SENTINEL,'BLOCK':SENTINEL})
+                self.assertEqual(result['unconstrained_argmax']['correct_episodes'],1)
+        informative=calibrate([{'ALLOW':.9,'BLOCK':.05,'UNKNOWN':.05},*ps],
+            ['ALLOW','BLOCK'],[{'episode_id':'safe','event_seq':1},*meta])
+        self.assertTrue(informative['feasible'])
+        self.assertIsNone(informative['infeasibility_reason'])
+        self.assertEqual(informative['metrics']['safe_stop_fpr'],0.)
+        self.assertEqual(informative['metrics']['correct_episode_coverage'],1.)
+
     def test_stop_timing(self):
         from experiment import replay_metrics
         meta=[dict(episode_id='x',event_seq=i) for i in range(3)]

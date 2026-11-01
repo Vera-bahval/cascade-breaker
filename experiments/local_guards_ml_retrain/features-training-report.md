@@ -134,8 +134,9 @@ finite sentinel1.000001. ALLOW/BLOCK requires strict unique winning class; ties
 and all other cases are UNKNOWN. Select correct decisive episode coverage under
 zero reached false ALLOW on gold!=ALLOW and <=5% stops (including UNKNOWN) on
 all-gold-ALLOW episodes. Tie order is coverage, fewer safe stops, then larger
-ALLOW and BLOCK thresholds lexicographically. Zero safe episodes is flagged as
-an unmeasured FPR denominator; no minimum denominator is invented. Infeasible
+ALLOW and BLOCK thresholds lexicographically. As of review round2, zero safe episodes makes calibration infeasible with
+reason `unassessable_safe_denominator` and null FPR. A positive safe denominator
+is required; no larger minimum denominator is invented. Infeasible
 CAL returns sentinel thresholds and explicit infeasible plus unconstrained
 argmax diagnostics. Zero observed CAL error is not a test guarantee.
 
@@ -266,3 +267,68 @@ No-safe-CAL behavior is unchanged: `no_safe_cal_episodes=True` and
 | models.py | c270e53aa2d5636e5dae672f2ef77783f1b8837716befc124600ef1d0d8f3144 |
 | experiment.py (unchanged) | fb32014ff273f737bc4547fa17c780ceb2fa1bf77d397784d748fe498218b160 |
 | tests/test_training.py | 49dbd603f099d25d58dd20d63d4def2b422bf2081773494c4220da7c9731be5e |
+
+
+## Review fix round2/5, pre-freeze safe denominator
+
+The previously disclosed vacuous feasibility convention is superseded before
+freeze: feasibility now requires `safe_episodes>0`, in addition to zero false
+ALLOW and the observed <=5% safe-stop constraint. A zero denominator cannot
+establish evidence for that FPR bound. Such CAL returns `feasible=False`,
+`infeasibility_reason="unassessable_safe_denominator"`,
+`no_safe_cal_episodes=True`, `safe_stop_fpr=null`, and both abstention thresholds
+at1.000001. Existing unconstrained argmax diagnostics remain intact. Other
+infeasible cases have reason `no_threshold_satisfies_cal_constraints`; feasible
+cases have a null reason. No model, feature, train/source weighting, confidence
+grid, or positive-denominator tie/constraint behavior changed.
+
+The focused own-fixture regression covers BLOCK-only CAL with both raw and gated
+entry points. It also checks that an informative ALLOW+BLOCK CAL remains feasible
+with zero safe stops and complete correct episode coverage. This enforces the
+stated evidence requirement; it was not chosen from model/test performance.
+Aborted fitting artifacts were not opened. No full fits, old test access, test
+author work, old-file edits, model API calls, subagents or commits were performed.
+
+Commands were run from
+`/Users/proskurin-dmi/Documents/hw-itmo/cascades/research/finbot-general-guards`.
+
+Red command before the implementation change:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 /Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/.venv/bin/python experiments/local_guards_ml_retrain/tests/test_training.py TrainingTests.test_calibration_without_safe_episodes_is_unassessable
+```
+
+Observed output began `FFE`: the two zero-safe subtests raised
+`AssertionError: True is not false`, and the new informative-case reason field
+was absent (`KeyError: 'infeasibility_reason'`). Exact final summary, exit1:
+
+```text
+Ran 1 test in 1.404s
+
+FAILED (failures=2, errors=1)
+```
+
+Green covering command:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 /Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/.venv/bin/python experiments/local_guards_ml_retrain/tests/test_training.py
+```
+
+Exact output, exit0:
+
+```text
+..................
+----------------------------------------------------------------------
+Ran 18 tests in 2.133s
+
+OK
+```
+
+`git diff --check` returned exit0.
+
+| Round2 final source | SHA256 |
+| --- | --- |
+| features.py (unchanged) | 06bff0aa070c89fda38d2ff61ba03940f72521c02ae9a5fe837be05650719c7b |
+| models.py (unchanged) | c270e53aa2d5636e5dae672f2ef77783f1b8837716befc124600ef1d0d8f3144 |
+| experiment.py | ddea700e5293bb2f3200427a64bf650f82e6c910c79eee0a49c293cd1c2b2892 |
+| tests/test_training.py | 31ff93fae5117ebaa0d3a5be6a2c4be1829245be11104d0321cd136990c74492 |

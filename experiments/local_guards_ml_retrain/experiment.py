@@ -210,7 +210,7 @@ def calibrate(probabilities_,gold,metadata,gate_allow=None):
     for ta,a in zip(grid[0],am):
         for tb,b in zip(grid[1],bm):
             d=np.where(a,0,np.where(b,1,2)).astype(np.uint8);m=metric_counts(d,numeric_gold,ordered_layout)
-            feasible=m['episodes']>0 and m['false_allows']==0 and m['safe_stops']<=.05*m['safe_episodes']
+            feasible=m['episodes']>0 and m['safe_episodes']>0 and m['false_allows']==0 and m['safe_stops']<=.05*m['safe_episodes']
             if feasible:
                 rank=(m['correct_episodes'],-m['safe_stops'],ta,tb)
                 if best is None or rank>best[0]:best=(rank,ta,tb,m)
@@ -223,6 +223,7 @@ def calibrate(probabilities_,gold,metadata,gate_allow=None):
     else:_,ta,tb,_=best;feasible=True
     raw=decisions_array(p,ta,tb);gated=raw.copy();gated[(raw=='ALLOW')&~gate]='UNKNOWN'
     return dict(thresholds={'ALLOW':ta,'BLOCK':tb},feasible=feasible,
+        infeasibility_reason=None if feasible else 'unassessable_safe_denominator' if not bool(layout['safe'].sum()) else 'no_threshold_satisfies_cal_constraints',
         objective='correct decisive episode coverage; zero reached false ALLOW; safe episode stops <=0.05 including UNKNOWN',
         no_safe_cal_episodes=not bool(layout['safe'].sum()),grid_points={CLASSES[i]:len(grid[i]) for i in (0,1)},
         metrics=action_metrics(gated.tolist(),gold,metadata),unconstrained_argmax=action_metrics(argmax.tolist(),gold,metadata),

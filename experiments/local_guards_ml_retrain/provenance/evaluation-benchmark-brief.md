@@ -70,3 +70,7 @@ Storage: all archive method/action predictions may exceed a GitHub100MB file.
 Stream and shard deterministic gzip outputs by contract/method or <50MB per
 compressed shard; preserve all records and hash every shard plus input receipt.
 Do not silently sample the archive to reduce artifact size. No upload of secrets.
+
+Use one declared latency quantile convention consistently (nearest-rank p50/p95
+recommended, matching prior follow-up). Never mix even-n statistical median with
+nearest-rank p50 under the same label. Preserve raw timings for recomputation.
