@@ -80,3 +80,15 @@ OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2.
 Use the same environment for model benchmarks and rule/native controls; report
 it with OS/Python/library versions. This changes compute parallelism, no model
 hyperparameter or data. CatBoost still uses its fixed thread_count=2.
+
+Unit audit: synthetic variants are independent one-state episodes; base groups
+and duplicate collision components still cluster splits/weights/CI. Archive
+episodes remain genuine prefixes. Shared corrected CAL: payment1342episodes/
+616safe;A2725episodes/787safe;B2725episodes/501safe. Full-v4 safe denominators
+come from synthetic states, not complete archive safety proofs; do not claim
+calibrated <=5% interruptions of real honest tasks from this condition.
+
+Assess unchanged rule controls on the SAME corrected CAL as well: disclose
+falseALLOW/safe-stop rates and whether they themselves satisfy the predeclared
+conditions. They have no tuned thresholds; do not imply the rule baseline has
+met calibration constraints merely because classifiers must pass them.
