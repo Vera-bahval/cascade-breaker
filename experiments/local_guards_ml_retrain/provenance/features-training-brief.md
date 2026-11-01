@@ -42,3 +42,15 @@ slightly from75/25. Preserve group_id for fit equal-base weighting, use
 split_group_id for disjointness and clustered uncertainty. Never assume fixed
 6000/2000 row counts if connected split requires different counts. Independent
 data manifest is authoritative.
+
+Efficiency: archive has55492 TRAIN and18753 CAL prefixes, plus synthetic6000/2000.
+Precompute feature/probability/gate arrays and episode grouping once; don't
+materialize/call Python episode replay for every row of every41x41 threshold grid.
+Vectorized masks/reduceat/chunking are appropriate. Preserve exact first-STOP
+semantics and test fast calibration against a small straightforward oracle.
+Zero false allows counts reached actions (gold!=ALLOW); episode safe-stop uses
+all-gold-ALLOW episodes. Correct episode coverage cannot credit a later stop
+when earlier ALLOW was wrong or UNKNOWN already stopped execution.
+
+JSON thresholds may use finite >1 sentinel1.000001 for abstain; avoid nonstandard
+Infinity/NaN in exported JSON. State exact conventions in manifest.
