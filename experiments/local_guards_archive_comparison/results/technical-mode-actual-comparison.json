@@ -1390,7 +1390,10 @@
       "payment_only": false
     },
     "source_path": "experiments/local_guards_v4_followup/methods-freeze.json",
-    "source_sha256": "ba02406223e93b6bb4b5c646c693ba496e173239a05be779ad57d34eb92c3827"
+    "source_sha256": "ba02406223e93b6bb4b5c646c693ba496e173239a05be779ad57d34eb92c3827",
+    "applicable_P4_states": 0,
+    "outside_declared_mask_states": 542,
+    "decision_distribution": null
   },
   "quality_exclusions": {
     "technical_DeepSeek_pilot_queries": 4,
@@ -1423,5 +1426,113 @@
   "no_new_inference": true,
   "no_new_gold": true,
   "no_model_or_threshold_changes": true,
-  "descriptive_only": true
+  "descriptive_only": true,
+  "retained_guard_reason_counts": {
+    "historical": {
+      "v42_payment_common": {
+        "missing_or_invalid:invoice_amount": 542,
+        "missing_or_invalid:invoice_currency": 542,
+        "missing_or_invalid:invoice_status": 542,
+        "missing_or_invalid:vendor_status": 542,
+        "missing_or_invalid:fraud_review_completed": 542,
+        "missing_or_invalid:binding_hold": 542,
+        "missing_or_invalid:prior_completed_transfers": 542,
+        "missing_or_invalid:amount_matches_invoice": 542,
+        "missing_or_invalid:recipient_matches_authorized": 542,
+        "A08:unknown": 542,
+        "missing_or_invalid:proposal.currency": 459
+      },
+      "v42_fullA": {
+        "A01:unknown": 542,
+        "A02:unknown": 542,
+        "A03:unknown": 542,
+        "missing_or_invalid:invoice_amount": 542,
+        "missing_or_invalid:invoice_currency": 542,
+        "missing_or_invalid:invoice_status": 542,
+        "missing_or_invalid:vendor_status": 542,
+        "missing_or_invalid:fraud_review_completed": 542,
+        "missing_or_invalid:binding_hold": 542,
+        "missing_or_invalid:prior_completed_transfers": 542,
+        "missing_or_invalid:amount_matches_invoice": 542,
+        "missing_or_invalid:recipient_matches_authorized": 542,
+        "A08:unknown": 542,
+        "missing_or_invalid:proposal.currency": 459
+      },
+      "v3": {
+        "missing_or_invalid:invoice_currency": 530,
+        "missing_or_invalid:binding_hold": 530,
+        "missing_or_invalid:prior_completed_transfers": 530,
+        "missing_or_invalid:proposal.currency": 448,
+        "missing_or_invalid:human_approved": 260,
+        "active_vendor_required": 5,
+        "invoice_matching_amount_required": 3,
+        "approved_invoice_required": 3,
+        "authorized_recipient_required": 2,
+        "missing_or_invalid:recipient_matches_authorized": 1,
+        "fraud_review_required": 1
+      }
+    },
+    "instrumented": {
+      "v42_payment_common": {
+        "missing_or_invalid:invoice_amount": 542,
+        "missing_or_invalid:invoice_currency": 542,
+        "missing_or_invalid:invoice_status": 542,
+        "missing_or_invalid:vendor_status": 542,
+        "missing_or_invalid:fraud_review_completed": 542,
+        "missing_or_invalid:binding_hold": 542,
+        "missing_or_invalid:prior_completed_transfers": 542,
+        "missing_or_invalid:amount_matches_invoice": 542,
+        "missing_or_invalid:recipient_matches_authorized": 542,
+        "A08:unknown": 542,
+        "missing_or_invalid:proposal.currency": 459
+      },
+      "v42_fullA": {
+        "A01:unknown": 542,
+        "A02:unknown": 542,
+        "A03:unknown": 542,
+        "missing_or_invalid:invoice_amount": 542,
+        "missing_or_invalid:invoice_currency": 542,
+        "missing_or_invalid:invoice_status": 542,
+        "missing_or_invalid:vendor_status": 542,
+        "missing_or_invalid:fraud_review_completed": 542,
+        "missing_or_invalid:binding_hold": 542,
+        "missing_or_invalid:prior_completed_transfers": 542,
+        "missing_or_invalid:amount_matches_invoice": 542,
+        "missing_or_invalid:recipient_matches_authorized": 542,
+        "A08:unknown": 542,
+        "missing_or_invalid:proposal.currency": 459
+      },
+      "v3": {
+        "missing_or_invalid:invoice_currency": 530,
+        "missing_or_invalid:binding_hold": 530,
+        "missing_or_invalid:prior_completed_transfers": 530,
+        "missing_or_invalid:proposal.currency": 448,
+        "missing_or_invalid:human_approved": 260,
+        "active_vendor_required": 5,
+        "invoice_matching_amount_required": 3,
+        "approved_invoice_required": 3,
+        "authorized_recipient_required": 2,
+        "missing_or_invalid:recipient_matches_authorized": 1,
+        "fraud_review_required": 1
+      }
+    }
+  },
+  "flip_meanings": {
+    "LR17raw": {
+      "directions": {
+        "ALLOW->BLOCK": 18
+      },
+      "source_labels_on_flips": {
+        "UNKNOWN": 15,
+        "BLOCK": 2,
+        "ALLOW": 1
+      },
+      "native_core_labels_on_flips": {
+        "ALLOW": 18
+      },
+      "interpretation": "18 decisions changed with the technical representation. This supplies no new execution or historical authorization proof; the same three formal violations still receive ALLOW in both modes."
+    },
+    "v42": "All 542 outputs remain UNKNOWN in both modes. The frozen guard did not accept the required evidence under its extension contract; this is not solved native policy coverage.",
+    "others": "No decision changes on the same paired 542 states; no equivalence claim outside this scope."
+  }
 }
