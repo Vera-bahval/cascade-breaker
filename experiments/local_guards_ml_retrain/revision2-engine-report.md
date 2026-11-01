@@ -151,3 +151,82 @@ Independent code review and the actual TRAIN/CAL equivalence audit/full fits are
 still required. No reuse count, corpus performance or final frozen acceptance is
 claimed here. Parent must retain a complete new freeze before dispatching the
 fresh policy-only closed1200 author/reviewer, and preserve the original freeze.
+
+## Review round1 correction (base 3970e0c)
+
+Addressed the required P2 freeze-input addition only: `sources()` now includes
+`P2_CALL_BINDING_CLARIFICATION.md`. Its absolute path and exact SHA-256
+`85d32c17bf36f89b92383894f3710cc0057e6fc0b529d1babc1afdde23088978`
+are asserted by the new own test `test_call_binding_clarification_is_frozen`.
+This puts the named policy interpretation under pre/post-fit source readback and
+later generic freeze verification. No inference, learned model, calibration or
+prediction behavior was changed. No corpus reads or full fits occurred.
+
+Failed-first command, from finbot-general-guards root (exit 1):
+
+```sh
+OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2 PYTHONPATH=experiments/local_guards_ml_retrain /Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/.venv/bin/python -m unittest -v test_revision2.PolicyFixtures.test_call_binding_clarification_is_frozen
+```
+
+```text
+test_call_binding_clarification_is_frozen (test_revision2.PolicyFixtures.test_call_binding_clarification_is_frozen) ... FAIL
+
+======================================================================
+FAIL: test_call_binding_clarification_is_frozen (test_revision2.PolicyFixtures.test_call_binding_clarification_is_frozen)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/proskurin-dmi/Documents/hw-itmo/cascades/research/finbot-general-guards/experiments/local_guards_ml_retrain/test_revision2.py", line 117, in test_call_binding_clarification_is_frozen
+    self.assertEqual(experiment.sources().get(str(path.resolve())),expected)
+AssertionError: None != '85d32c17bf36f89b92383894f3710cc0057e6fc0b529d1babc1afdde23088978'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.004s
+
+FAILED (failures=1)
+```
+
+After adding the single source-registry member, covering own-file command (exit 0):
+
+```sh
+OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2 /Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/.venv/bin/python experiments/local_guards_ml_retrain/test_revision2.py
+```
+
+```text
+test_call_binding_clarification_is_frozen (__main__.PolicyFixtures.test_call_binding_clarification_is_frozen) ... ok
+test_conflicting_newest_value_is_unavailable (__main__.PolicyFixtures.test_conflicting_newest_value_is_unavailable) ... ok
+test_distinct_source_completion_is_available_and_relation_retained (__main__.PolicyFixtures.test_distinct_source_completion_is_available_and_relation_retained) ... ok
+test_foreign_proof_is_unavailable_and_features_distinguish_it (__main__.PolicyFixtures.test_foreign_proof_is_unavailable_and_features_distinguish_it) ... ok
+test_missing_source_or_checking_call_is_unavailable (__main__.PolicyFixtures.test_missing_source_or_checking_call_is_unavailable) ... ok
+test_newest_foreign_ignored_newest_bound_value_not_skipped (__main__.PolicyFixtures.test_newest_foreign_ignored_newest_bound_value_not_skipped) ... ok
+test_original_sources_unchanged (__main__.PolicyFixtures.test_original_sources_unchanged) ... ok
+test_renaming_opaque_ids_does_not_change_features_or_gate (__main__.PolicyFixtures.test_renaming_opaque_ids_does_not_change_features_or_gate) ... ok
+test_same_call_remains_available (__main__.PolicyFixtures.test_same_call_remains_available) ... ok
+test_tool_proof_binds_checking_call (__main__.PolicyFixtures.test_tool_proof_binds_checking_call) ... ok
+test_labelblind_72_methods_both_variants_and_integrity_receipt (__main__.TinyModelParity.test_labelblind_72_methods_both_variants_and_integrity_receipt) ... ok
+test_matrix_proof_includes_cal_and_dictionary_values (__main__.TinyModelParity.test_matrix_proof_includes_cal_and_dictionary_values) ... ok
+test_new_and_reused_pickle_raw_precomputed_parity (__main__.TinyModelParity.test_new_and_reused_pickle_raw_precomputed_parity) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.345s
+
+OK
+```
+
+For P3 provenance, the earlier brief digest
+`ea3cfe6e61daa002035bdc8c6b76672fe22a10399fb47b1616259fe89cbb502d`
+is retained above and in the read log as a historical initial read before the
+controller appended its reuse clarification. The final current brief was read
+in this correction round; its SHA-256 is
+`f4e8c429fb14b86d44c0ec5eb4d6018620229be01aeb4f515314d7f7f09424d4`.
+A separate final read/hash entry is appended in `revision2-read-log.json`; the
+historical initial digest was not erased or presented as the final scope revision.
+
+Final round1 source hashes (features/model sources unchanged):
+
+- `features_revision2.py`: `74d007f275120dce9dfca1b6ce86097a95f85ea348e032693eeaa908a60a37cc`
+- `models_revision2.py`: `550c99c3f75b52964a548af1cb04c6d7a4b73ee1342fd5fe075b8a06767fed75`
+- `experiment_revision2.py`: `b2850eeb68772197fe58215aeb0e909d5502b0b4807ab8c9cb92e0a45ac39c0c`
+- `test_revision2.py`: `f7788ffe81e5de6094b7b19a4eeb820e260218dec0d2d3dde2bb1f3f8e1f426e`
+
+Only the versioned source registry, own test, implementation report and read log
+were changed by this correction. No original source/model/policy was modified.

@@ -233,7 +233,7 @@ def calibrate(probabilities_,gold,metadata,gate_allow=None):
 
 
 def sources():
-    paths=[HERE/n for n in ('features.py','models.py','experiment.py','v4-policy.json','v4-schema.json','v4-POLICY.md','v3-policy.json','v3-schema.json','v3-POLICY.md','PLAN.md','features_revision2.py','models_revision2.py','experiment_revision2.py','REVISION_2_PLAN.md','test_revision2.py')]+[OLD_SOURCE]
+    paths=[HERE/n for n in ('features.py','models.py','experiment.py','v4-policy.json','v4-schema.json','v4-POLICY.md','v3-policy.json','v3-schema.json','v3-POLICY.md','PLAN.md','features_revision2.py','models_revision2.py','experiment_revision2.py','REVISION_2_PLAN.md','P2_CALL_BINDING_CLARIFICATION.md','test_revision2.py')]+[OLD_SOURCE]
     return {str(p.resolve()):digest(p) for p in paths}
 
 

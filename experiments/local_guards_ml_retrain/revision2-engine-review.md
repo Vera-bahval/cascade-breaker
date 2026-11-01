@@ -1,0 +1,44 @@
+# Revision2 engine review
+
+Reviewed: `4b40245..3970e0c`, supplied diff `.superpowers/sdd/PLAN/review-4b40245..3970e0c.diff` (SHA-256 `f525af16abaa49c424a24181518ce36cc8b93af4d6aafe33603f6d244be70d92`). Date: 2026-11-01.
+
+**Specification verdict: source-call correction PASS; freeze-input specification NEEDS FIX before fitting.**
+
+**Quality verdict: engine implementation PASS, with one required freeze-input addition and one low-severity provenance-documentation finding.** Add the named policy clarification to the freeze inputs before the parent-owned TRAIN/CAL fit/equivalence audit. This review is not acceptance of corpus-level equivalence, any performance result, a complete freeze, or the future closed test.
+
+## Findings
+
+**[P2] Include the final A04 clarification in frozen sources before fit.** `experiment_revision2.py:236` does not include `P2_CALL_BINDING_CLARIFICATION.md`. The controller added this input after implementation and identified it as policy context for the forthcoming independent closed-test author. It explicitly fixes which call each proof refers to, so the experiment and later authorship need an immutable reference to its exact text. Without inclusion, changing it neither fails the pre/post-fit source check nor later `verify_freeze`, leaving that policy interpretation outside the recorded freeze. Add this file to `sources()` before fitting and record it in policy references supplied to the author. Current SHA-256: `85d32c17bf36f89b92383894f3710cc0057e6fc0b529d1babc1afdde23088978`. This is a freeze-input completeness issue, not an inference defect; no model refit or repeat of the twelve tests is needed before the first corpus fit.
+
+**[P3] Record the final clarification-bearing brief hash.** `revision2-read-log.json:6` and `revision2-engine-report.md:128` record brief SHA-256 `ea3cfe6e61daa002035bdc8c6b76672fe22a10399fb47b1616259fe89cbb502d`. The reviewed brief, including the explicit reused-weight inference clarification, currently hashes to `f4e8c429fb14b86d44c0ec5eb4d6018620229be01aeb4f515314d7f7f09424d4`. The old digest may accurately describe an earlier read, but the report presents it as the scope evidence without distinguishing that revision. Add a final brief-read entry/hash, retaining the historical earlier digest if useful, and make the report identify the final scope revision. No model/test rerun is needed for this documentation correction. All other logged development-input and output hashes matched current files. The controller confirmed that the earlier hash describes a real initial read before appending the reuse clarification; preserve it as historical evidence and add the final read rather than erasing it.
+
+## Specification checks
+
+- **P2 semantics:** `features_revision2.py:103-104` binds `delegation_subject_matches` to completed `delegation_call_id`, and preserves current `call_id` binding for tool-scope evidence. `:259-266` removes the current/source equality requirement while retaining presence, completion, parent and delegated-actor requirements. `:170` retains the context equality feature. Selection still excludes foreign-call evidence before choosing the newest eligible proof, then evaluates newest conflicts/value/version. No observation identity rewrite, stage-specific feature bypass, raw-ID feature or global patch was introduced.
+- **Versioned inference:** `models_revision2.py:15-16,25-29,51` imports the revision2 extractor and shared original batch type. New pipelines persist `models_revision2.feature_rows`. `:67-75` explicitly rebinds only a deserialized reused pipeline's stateless transformer. `experiment_revision2.py:356-361` checks learned-state equality before writing a new pickle. Original pickle bytes and fitting provenance are not modified. Raw input and correctly prepared FeatureBatch input follow the same revision2 semantics, including after serialization; the shared batch remains a trusted internal precomputation interface, not a mechanism to authenticate arbitrary external dictionaries.
+- **Reuse evidence:** `experiment_revision2.py:287-302` fingerprints ordered TRAIN and CAL dictionaries plus row identities, labels and weights (CAL is explicitly unweighted). `:309-317` verifies the original freeze and exact prepared-manifest identity before loading prepared files; `load_prepared` checks each prepared file hash. TRAIN/CAL selection and weighting remain the same as original `experiment.py:285-306`. Thus the two extraction comparisons share the same verified data, labels, ordering and weight recipe, rather than merely trusting equal row counts. `:343` forbids reuse for new-feature A/B arms; dictionary mismatch forces a refit elsewhere. Actual matching arms/counts remain unproven until the corpus run.
+- **Original-model provenance:** `experiment_revision2.py:345-355` verifies original pickle hash before deserialization and then checks embedded training-prefix, weight, input-manifest, source, family/mode/seed provenance before reuse. Original source/artifact hashes are already checked by `verify_freeze` before deserialization. The original `.model.json` is copied with its provenance intact; the separate revision2 provenance records origin and before/after learned-state identity. Embedded provenance necessarily becomes readable after unpickling; this does not mean the pickle is unverified at that point.
+- **Frozen design:** independent AST comparison confirms unchanged bodies for `fit_model`, `feature_rows`, `probabilities`, calibration, threshold decisions, weighting, eligibility, prediction and verification. Model `CLASSES` and `PARAMETERS` assignments are identical. Preprocessing still fits on TRAIN only. Both raw and gated CAL thresholds are recomputed in `experiment_revision2.py:387`; no fitting occurs afterward. Absent classes retain probability zero, with the same honest no-class/one-class behavior.
+- **Freeze/prediction:** `experiment_revision2.py:235-249` includes original and revised inference sources, both plans, the six contracts, own tests and the v3 feature dependency, and verifies source/artifact hashes. Final source readback at `:403` precedes writing the freeze manifest. Prediction at `:420,429-431` verifies the freeze and individual pickle before loading it; thresholds are verified manifest members. The labelblind CLI retains all method/variant identities and receipts. The generic verifier stays compatible with both manifest versions; it is not a license to mix an original freeze with revision2 evaluation semantics.
+
+## Review evidence and limits
+
+Read the supplied brief, revision2 plan, implementation report and review diff. The tool truncated the first combined diff output, so the omitted source portion was read by bounded line ranges; no broader repository scan was used. Named original-source checks were limited to `features.py`, `models.py`, `experiment.py`, and hashes of the authorized files listed in the development read log. An independent stdlib AST audit confirmed:
+
+```text
+features: changed _mandatory_proof_gate, proof_relations; no added/removed definitions
+models: unchanged common definitions; added bind_reused_model; shared FeatureBatch/UnavailableModel imported
+experiment: changed fit, main, sources; added learned_state_fingerprint, matrix_equivalence
+CLASSES/PARAMETERS unchanged: true
+original source and copied contract hashes: matched
+all four new Python output hashes: matched
+brief read hash: mismatch documented above
+```
+
+Reviewed the twelve own fixture tests and their reported successful output; did not rerun them because no new runtime doubt justified repetition. The tests exercise source/current/foreign distinctions, missing fields, ordering and conflict, ID-renaming invariance, LR/CatBoost raw/precomputed/pickle parity, learned-state preservation, class handling, CAL dictionary comparison, and the 72-method/144-variant receipt protocol. The protocol fixture aliases tiny models and is correctly described as interface coverage rather than 72 research fits.
+
+A controller-requested targeted follow-up also read only `P2_CALL_BINDING_CLARIFICATION.md` and the `sources()` registry to verify the newly named freeze-input gap. Its meaning agrees with the accepted source-call correction.
+
+No corpus fit, CAL observation/gold read, new closed-test creation, original1200 read, target-rule read, model modification, API call or subagent was performed in this review. Only this review file was written. The earlier independent protocol judgment was carried forward; no new performance information was used to judge this correction.
+
+Parent-owned next gates remain actual TRAIN/CAL equivalence/reuse evidence, complete revision2 fit and freeze, and the separately authored/reviewed new closed assessment. Preserve the initial frozen assessment and its qualified negative finding.

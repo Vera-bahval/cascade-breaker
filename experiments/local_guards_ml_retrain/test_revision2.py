@@ -110,6 +110,12 @@ class PolicyFixtures(unittest.TestCase):
         self.assertEqual(features(row),features(renamed))
         self.assertEqual(mandatory_proof_gate(row,'A'),mandatory_proof_gate(renamed,'A'))
 
+    def test_call_binding_clarification_is_frozen(self):
+        path=HERE/'P2_CALL_BINDING_CLARIFICATION.md'
+        expected='85d32c17bf36f89b92383894f3710cc0057e6fc0b529d1babc1afdde23088978'
+        self.assertEqual(experiment.digest(path),expected)
+        self.assertEqual(experiment.sources().get(str(path.resolve())),expected)
+
     def test_original_sources_unchanged(self):
         log=json.loads((HERE/'revision2-read-log.json').read_text())
         for record in log['reads']:
