@@ -59,3 +59,12 @@ test. Parent will freeze then dispatch fresh policy-only author1200 +reviewer.
 Resource coordination: original-method latency measurements may be running.
 You may read/write source now, but WAIT for parent CPU-clear before model-fit
 tests or heavy data scans; tiny stdlib own fixtures are okay. Parent will notify.
+
+Reuse clarification: reuse fitted weights, not necessarily pickle bytes. New
+Pipeline artifacts may explicitly replace FunctionTransformer.func with the
+revision2 feature_rows while preserving classifier/scaler/vectorizer learned
+state and original training provenance. Record original artifact/weight hashes
+and revised inference-source provenance. Raw-input inference MUST use revision2
+features even for reused weights on unseen states; do not rely on every caller
+remembering a special precomputed FeatureBatch. Test this with an own new source-
+linkage counterfactual. Original pipeline/pickle/provenance remain untouched.
