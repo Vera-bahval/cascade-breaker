@@ -5,7 +5,7 @@ off at acceptable latency and false positive rate. The test bed is FinBot (OWASP
 
 This is research code, not a product.
 
-[General non-LLM FinBot guards](experiments/local_guards_v3/REPORT.md): policy-based rules, fixed ML baselines, independent sealed contract test, measured runtime and limitations of saved LLM fallback.
+[No-LLM FinBot research: consolidated report](experiments/NO_LLM_REPORT.md): autonomous coverage and decision errors, rules versus local ML, staged execution controls, latency and concurrency tradeoffs. Version-specific methods and evidence are linked from the report.
 
 | Path | What |
 | --- | --- |

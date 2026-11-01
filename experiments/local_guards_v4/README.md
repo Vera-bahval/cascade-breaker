@@ -79,7 +79,7 @@ $PY -m experiments.local_guards_v4.robustness --native $V4/results/native-untrac
   --output /tmp/finbot-v4-invariance.json
 
 # Точные файлы, без broad discover и лишних импортов.
-$PY -m unittest experiments.local_guards_v4.tests.test_guard \
+PYTHONPATH="$V4/tests${PYTHONPATH:+:$PYTHONPATH}" $PY -m unittest experiments.local_guards_v4.tests.test_guard \
   experiments.local_guards_v4.tests.test_store \
   experiments.local_guards_v4.tests.test_data \
   experiments.local_guards_v4.tests.test_evaluate
