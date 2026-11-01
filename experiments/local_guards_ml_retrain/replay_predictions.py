@@ -165,7 +165,7 @@ def predict(method_revision,freeze,observations,metadata,output,batch_size=512,m
                                 result=decision(revision,row,scored,thresholds,contract,variant)
                                 if result.get('execution_error'):errors[(name,result['execution_error_stage'],result['execution_error_class'])]+=1
                                 sink.write(contract,name,dict(prefix_id=row['prefix_id'],method=name,contract=contract,variant=variant,
-                                    family=method['family'],arm=method['arm'],seed=method['seed'],event_seq=revision.features.obj(row)['event_seq'],**result));n+=1
+                                    family=method['family'],arm=method['arm'],seed=method['seed'],event_seq=revision.features.obj(row).get('event_seq'),**result));n+=1
                     expected[name]=n
     if (freeze_hash!=exp.digest(freeze/'freeze-manifest.json') or
             any(exp.digest(path)!=expected_hash for path,expected_hash in adapter_sources.items())):

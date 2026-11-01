@@ -69,7 +69,13 @@ class EvaluationRevision2Tests(unittest.TestCase):
         import evaluation as old
         rows=[dict(prefix_id='a',decision='UNKNOWN',gold='ALLOW',event_seq=1,episode_id='e',cluster='g'),
               dict(prefix_id='b',decision='BLOCK',gold='BLOCK',event_seq=2,episode_id='e',cluster='g')]
-        self.assertEqual(ev.summarize(rows,bootstrap=20),old.summarize(rows,bootstrap=20))
+        def original_fields_equal(actual,expected):
+            for key,value in expected.items():
+                if isinstance(value,dict):original_fields_equal(actual[key],value)
+                else:self.assertEqual(actual[key],value,key)
+        # Additional availability/ordering denominators must not change any
+        # original metric on this fully numeric engineering fixture.
+        original_fields_equal(ev.summarize(rows,bootstrap=20),old.summarize(rows,bootstrap=20))
         self.assertEqual(ev.stats([1,2,3,4]),old.stats([1,2,3,4]))
         self.assertEqual(ev.argmax_diagnostic(dict(method='own__raw',probabilities=dict(ALLOW=.5,BLOCK=.5,UNKNOWN=0.)))['decision'],'UNKNOWN')
         summary=bm.native_summary([dict(method='m',status='completed',elapsed_ms=100,check_ms=[1]),dict(method='m',status='stopped',elapsed_ms=10,check_ms=[2])])['m']

@@ -53,7 +53,8 @@ class ReplayTests(unittest.TestCase):
             path=freeze/(mode+'.pickle');path.write_bytes(pickle.dumps(model,protocol=5))
             methods.append(dict(name=mode,contract='A',family='logistic',arm=mode+'/own',seed=17,feature_mode=mode,
                 model_file=path.name,model_sha256=experiment.digest(path),thresholds_file='thresholds.json'))
-        experiment.write_json(freeze/'thresholds.json',{v:dict(thresholds=dict(ALLOW=.5,BLOCK=.5)) for v in ('raw','gated')})
+        experiment.write_json(freeze/'thresholds.json',{v:dict(thresholds=dict(ALLOW=.5,BLOCK=.5),feasible=False,
+            infeasibility_reason='own diagnostic',no_safe_cal_episodes=True,grid_points={},metrics={}) for v in ('raw','gated')})
         manifest=dict(version=1 if revision=='original' else 2,methods=methods,sources={},files={p.name:experiment.digest(p) for p in freeze.iterdir()})
         experiment.write_json(freeze/'freeze-manifest.json',manifest)
         return freeze,manifest
@@ -202,6 +203,88 @@ class ReplayTests(unittest.TestCase):
                 self.assertIsNone(row['component_diagnostic']['precomputed_pipeline_ms'])
                 self.assertEqual(row['component_error']['stage'],'features')
                 self.assertEqual(row['component_error']['error_class'],'TypeError')
+
+    def test_missing_mixed_timestamps_keep_all_actions_but_withhold_episode_order_and_prevention(self):
+        replay=self.module()
+        import evaluation_revision2 as ev
+        from contextlib import redirect_stdout
+        import io
+        for revision in ('original','revision2'):
+            with self.subTest(revision=revision),tempfile.TemporaryDirectory() as temp:
+                root=Path(temp);freeze,_=self.freeze(root,revision)
+                rows=[]
+                for pid,stamp in [('numeric',10),('null',None),('string','untyped-time'),('missing',None)]:
+                    row=self.fixture();row['event_seq']=stamp
+                    if pid=='missing':row.pop('event_seq')
+                    rows.append(dict(prefix_id=pid,observation=row))
+                obs=root/'obs.gz';meta=root/'meta.gz';gold=root/'gold.gz';outcomes=root/'outcomes.gz'
+                ev.write_lines(obs,rows)
+                ev.write_lines(meta,[dict(prefix_id=r['prefix_id'],episode_id='shared',source='archive',source_intent='legit',split='CAL',event_seq=999) for r in rows])
+                receipt=replay.predict(revision,freeze,obs,meta,root/'predictions',batch_size=2)
+                self.assertEqual(ev.verify_predictions(root/'predictions',obs,meta,model_freeze=freeze),receipt)
+                results=[r for _,stream in replay.prediction_methods(root/'predictions',receipt) for r in stream]
+                self.assertEqual(len(results),24)
+                self.assertTrue(all(r['event_seq'] is None for r in results if r['prefix_id'] in {'missing','null'}))
+                self.assertTrue(all(r['event_seq']=='untyped-time' for r in results if r['prefix_id']=='string'))
+                controls=ev.controls(obs,meta,root/'controls',contracts=['A'])
+                self.assertEqual(ev.verify_predictions(root/'controls',obs,meta),controls)
+                ev.write_lines(gold,[dict(prefix_id=r['prefix_id'],labels=dict(A='UNKNOWN')) for r in rows])
+                ev.write_lines(outcomes,[dict(episode_id='shared',continuation_harm=True,first_harm_event_seq=100,transfer_attempt=True,first_attempt_event_seq=100)])
+                with redirect_stdout(io.StringIO()):
+                    ev.score([root/'predictions',root/'controls'],obs,meta,gold,root/'score',outcomes=outcomes,model_freeze=freeze,bootstrap=10)
+                metrics=json.loads((root/'score/metrics.json').read_text())['metrics']
+                import csv
+                with (root/'score/metrics.csv').open() as stream:
+                    table=list(csv.DictReader(stream))
+                for record in (r for r in table if r['slice_dimension']=='all'):
+                    self.assertEqual(record['eligible'],'4')
+                    self.assertEqual(record['ordering_unassessed_actions'],'4')
+                    self.assertEqual(record['ordering_assessed_episodes'],'0')
+                for summary in (m for m in metrics if m['slice_dimension']=='all'):
+                    self.assertEqual(summary['actions']['eligible'],4)
+                    self.assertEqual(sum(summary['actions']['confusion']['UNKNOWN'].values()),4)
+                    self.assertEqual(summary['reached_actions']['eligible'],0)
+                    self.assertEqual(summary['episodes']['eligible'],1)
+                    self.assertEqual(summary['episodes']['ordering_assessed'],0)
+                    self.assertEqual(summary['ordering']['unassessed_actions'],4)
+                    self.assertIsNone(summary['episodes']['correct_decisive_coverage'])
+                    self.assertIsNone(summary['outcomes']['harm_prevention_rate_timed'])
+                    self.assertEqual(summary['outcomes']['harm_prevented'],0)
+                    self.assertEqual(summary['outcomes']['actual_harm'],1)
+                    self.assertFalse(summary['calibration_constraints']['assessable'])
+                shard=root/'predictions'/receipt['files'][0]['path'];shard.write_bytes(b'bad')
+                with self.assertRaisesRegex(ValueError,'hash'):
+                    ev.score([root/'predictions'],obs,meta,root/'no-gold',root/'invalid-score',model_freeze=freeze)
+
+    def test_numeric_ordering_still_replays_first_stop_and_strict_prevention(self):
+        self.module()
+        import evaluation_revision2 as ev
+        rows=[dict(prefix_id='first',decision='UNKNOWN',gold='ALLOW',event_seq=1,episode_id='e',original_episode_id='e',cluster='g',source_intent='legit'),
+            dict(prefix_id='later',decision='BLOCK',gold='BLOCK',event_seq=2,episode_id='e',original_episode_id='e',cluster='g',source_intent='legit')]
+        summary=ev.summarize(rows,{'e':dict(continuation_harm=True,first_harm_event_seq=2)},bootstrap=10)
+        self.assertEqual(summary['reached_actions']['eligible'],1)
+        self.assertEqual(summary['episodes']['ordering_assessed'],1)
+        self.assertEqual(summary['episodes']['stopped_unknown'],1)
+        self.assertEqual(summary['outcomes']['harm_prevented'],1)
+        marked=ev.mark_reachability(rows)
+        later=ev.summarize([marked[1]],bootstrap=0)
+        self.assertEqual(later['reached_actions']['eligible'],0)
+
+    def test_missing_timestamp_payment_control_retains_eligible_exception_row(self):
+        self.module()
+        import evaluation_revision2 as ev
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);row=self.fixture();row.pop('event_seq');row['checkpoint']='P4'
+            row['proposal']['tool']='finstripe__create_transfer'
+            obs=root/'obs.gz';meta=root/'meta.gz'
+            ev.write_lines(obs,[dict(prefix_id='missing-time',observation=row)])
+            ev.write_lines(meta,[dict(prefix_id='missing-time',episode_id='own',checkpoint='P4')])
+            receipt=ev.controls(obs,meta,root/'controls',contracts=['payment_v3'])
+            records=[r for _,stream in ev.prediction_methods(root/'controls',receipt) for r in stream]
+            self.assertEqual(len(records),1)
+            self.assertIsNone(records[0]['event_seq']);self.assertEqual(records[0]['decision'],'UNKNOWN')
+            self.assertTrue(records[0]['stop']);self.assertEqual(records[0]['execution_error_class'],'KeyError')
+            self.assertEqual(ev.verify_predictions(root/'controls',obs,meta),receipt)
 
 
 if __name__=='__main__':unittest.main(verbosity=2)

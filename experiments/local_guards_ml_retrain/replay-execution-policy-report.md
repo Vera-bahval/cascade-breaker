@@ -184,3 +184,140 @@ not repeat blind predictions, reveal gold or inspect failed parent artifacts.
 | `test_replay_predictions.py` | `baf0fc2f050a39e9598c3ab75c1bc88283a4e8048901cb1a6701d2a51e39e14e` |
 
 All nine protected original/interface/method files still match the initial revision2-evaluation-read-log.json hashes. These new measurement hashes supersede earlier report hashes only for changed adapter files. Independent review precedes parent rerun; no further writes are active.
+
+
+## Review round1: unavailable event timing and ordering
+
+Read replay-execution-policy-review.md and fixed its sole Important finding.
+Only replay_predictions.py, NEW evaluation_revision2 accounting, the affected
+own-fixture tests and this appended report changed. benchmark_revision2.py is
+unchanged from the preceding stable handoff. Original/frozen source, models,
+thresholds and historical seals/results are unchanged.
+
+Replay and new control writers preserve an absent event_seq as null. Existing
+null/string values are retained verbatim. Input observations are never mutated,
+normalized or schema-filtered. No event time is fabricated or filled from
+metadata: the test deliberately supplies metadata event_seq999 while the missing
+source timestamp remains null. Source callback exceptions still follow the
+already declared UNKNOWN/STOP policy without class probability invention. The
+new control execution wrapper also catches an escaped missing-time KeyError from
+the unchanged payment_v3 projection, retaining its eligible row and measured
+error instead of failing before the writer; the identical generic wrapper is
+applied to optional TFIDF callback exceptions. Frozen control code is unchanged.
+
+Downstream joins preserve unavailable event time. Replay ordering is assessable
+only when the episode's source event_seq values are nonnegative integers. The
+existing numeric sort and prefix-ID tie convention are unchanged. Missing/null/
+string/boolean/other timestamp values never receive an order from serialization,
+lexical comparison, metadata placeholders or file row order. Such episodes keep
+every eligible action and its exact confusion counts, but global_reached,
+first-STOP sequence/decision, episode correctness and stopped/reached status are
+unavailable. They produce no reached-action or harm/attempt/payment prevention
+credit. Slices inherit that same global ordering unavailability; a numeric member
+inside an otherwise unordered episode does not gain later-check credit.
+
+JSON and CSV now distinguish all eligible actions/episodes, ordering-assessed
+and ordering-unassessed actions/episodes, and reached actions. Episode
+correct-decisive coverage is null if an eligible episode has unavailable order;
+ordered-subset coverage is separately named. Safe-stop FPR likewise remains null
+when relevant safe-episode order is unavailable, with an explicit assessed-safe
+denominator/rate. Calibration constraints are unassessable, with null
+zero-false-allow/satisfies fields, rather than claiming a pass from zero assessed
+reached actions. All action confusion/coverage rows remain assessable and intact.
+
+Outcome counts retain known outcomes even when guard ordering is unavailable.
+They expose ordering-assessed/unassessed episode counts and harm/attempt/payment
+prevention-assessable denominators; stop comparisons require valid source order
+and a valid integer STOP sequence. Timed prevention rate is null when that
+assessed denominator is zero. Full harm-prevention and honest-interruption point
+rates are null where unknown ordering prevents full-registry assessment.
+Registry-level honest interruption bounds include unknown stop evidence from
+both no-check/no-prefix members and unordered eligible episodes. Guard-decision
+availability, ordering availability and outcome availability remain distinct.
+Bootstrap intervals for stop-dependent metrics use explicitly named assessed
+ordering denominators when order is incomplete; action intervals still use all
+eligible states. Existing valid numeric-order metric values are preserved.
+
+Failed-first command:
+
+```sh
+OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2 /Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/.venv-finbot/bin/python experiments/local_guards_ml_retrain/test_replay_predictions.py ReplayTests.test_missing_mixed_timestamps_keep_all_actions_but_withhold_episode_order_and_prevention
+```
+
+Exact red summary (both original and revision2 subcases):
+
+```text
+KeyError: 'event_seq'
+Ran 1 test in 1.139s
+FAILED (errors=2)
+```
+
+The directly related control projection regression was also failed first:
+
+```sh
+OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2 /Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/.venv-finbot/bin/python experiments/local_guards_ml_retrain/test_replay_predictions.py ReplayTests.test_missing_timestamp_payment_control_retains_eligible_exception_row
+```
+
+```text
+KeyError: 'event_seq'
+Ran 1 test in 1.232s
+FAILED (errors=1)
+```
+
+Final affected-suite commands:
+
+```sh
+OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2 /Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/.venv-finbot/bin/python experiments/local_guards_ml_retrain/test_replay_predictions.py
+OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2 /Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/.venv-finbot/bin/python -m unittest discover -s experiments/local_guards_ml_retrain -p 'test_evaluation_revision2.py' -k test_metric_replay_denominators_and_timing_definitions_unchanged -v
+```
+
+Exact final summaries:
+
+```text
+Ran 9 tests in 1.375s
+OK
+Ran 1 test in 0.802s
+OK
+```
+
+New own mixed-time fixtures cover integer/null/string/missing values in one
+multi-check archive episode under both revisions and both feature modes. Every
+eligible prefix survives writer/receipt verification/scoring; gold is an own
+fixture created after prediction. A corrupted prediction shard still rejects
+before a nonexistent gold path is opened. Each all-slice contains all4 eligible
+confusion rows,0 reached rows,1 eligible episode,0 ordering-assessed episodes,
+4 ordering-unassessed actions, actual harm1, prevented harm0 and unavailable
+prevention rate. CSV carries the same explicit denominators. The payment control
+fixture retains its eligible missing-time row as UNKNOWN/STOP with KeyError and
+null time. The numeric fixture retains first UNKNOWN STOP at sequence1, excludes
+the later check from reached credit and correctly prevents harm at sequence2.
+The amended minimal metric fixture recursively compares every original metric
+value, including bootstrap and calibration fields, on fully valid numeric rows;
+only newly added availability fields are additional. No fit, corpus, native
+chain, API, full benchmark or new target/gold read occurred this round.
+
+Exact immutable revision2 drift verification used experiment_revision2.verify_freeze
+and compared the current frozen manifest byte-for-byte with committed1de30a7:
+
+```text
+Revision2 manifest equals committed1de30a7 bytes; SHA256 a69e59ef3f56094a6bad1b183b4aa68b9a7e9a43c026df53a95f531d436d3e76
+72 model hashes,72 threshold hashes, all 434 freeze members and all 17 frozen source hashes verified; no drift
+Nine protected original/interface/method files equal initial read-log hashes
+```
+
+This is integrity hashing, not deserializing research models or reading closed2
+assessment artifacts. The earlier package seal is retained unchanged; parent can
+bind the accepted new execution-helper hashes in its separate preprediction
+execution-policy seal.
+
+Final stable source hashes superseding prior adapter-only hashes:
+
+| Source | SHA256 |
+| --- | --- |
+| `replay_predictions.py` | `06d2eeb0d61a125af9ba8cff93d680600b6137de8b921564b9c38dcb661e85d4` |
+| `evaluation_revision2.py` | `bca229e7075d38bae6ef77a64f12433ab37f375edf7a2860a2f119b3fb1b7e3c` |
+| `benchmark_revision2.py` | `455d72ee231ab4afc7fece0c31bb27d7081f72d288e9606d0a7c178cb779a79c` |
+| `test_replay_predictions.py` | `829e747d61bffebcc7ea518a114f07f44068c68cd848a457666588aa6d3fd4cf` |
+| `test_evaluation_revision2.py` | `b1846c8fcbdb39166daeacea89566d792eac9ee5c797a14fb762266d36f1a80c` |
+
+Review input SHA256: `721de4a9464fd5f50a8a6b8c9dce2791e5cada9b92001e3a447815774cfc0517`. Stable for independent re-review; no further writes active.
