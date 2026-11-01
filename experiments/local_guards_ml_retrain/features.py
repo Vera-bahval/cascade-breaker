@@ -116,7 +116,10 @@ def evidence(o,fact):
     eligible=[(p,r) for p,r in pairs if all(r[k] for k in ('source_known','source_permitted','prior','scope','subject','record','operation','call'))]
     newest=max((p['event_seq'] for p,r in eligible),default=-1)
     selected=[(p,r) for p,r in eligible if p['event_seq']==newest]
-    values={json.dumps(normalized(fact,p.get('value')),default=str,sort_keys=True) for p,r in selected}
+    # Decimal equality/hashing normalizes100,100.0,100.00 without a rounded
+    # string conversion. Keep type identity for invalid bool/int confusions.
+    values={(type(p.get('value')).__name__, normalized(fact,p.get('value'))
+             if not isinstance(p.get('value'),(dict,list)) else json.dumps(p['value'],sort_keys=True)) for p,r in selected}
     conflict=len(values)>1
     valid=known_fact(fact,o.get('facts',{}).get(fact)) and bool(selected) and not conflict and all(r['value'] and r['versions'] for p,r in selected)
     return dict(pairs=pairs,selected=selected,conflict=conflict,valid=valid,newest=newest)

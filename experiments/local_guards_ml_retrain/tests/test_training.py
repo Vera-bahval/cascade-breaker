@@ -139,6 +139,14 @@ class TrainingTests(unittest.TestCase):
         a['provenance']['binding_hold'].append(p2)
         self.assertFalse(evidence(a,'binding_hold')['valid'])
 
+    def test_equal_decimal_proofs_do_not_conflict(self):
+        from features import evidence
+        a=fixture();a['facts']['invoice_amount']='100.00'
+        p=copy.deepcopy(a['provenance']['session_valid'][0]);p.update(source='native_tool',operation='amount_read',value='100')
+        q=copy.deepcopy(p);q['value']='100.0';a['provenance']['invoice_amount']=[p,q]
+        self.assertFalse(evidence(a,'invoice_amount')['conflict'])
+        self.assertTrue(evidence(a,'invoice_amount')['valid'])
+
     def test_payment_optional_human_threshold_and_clearance(self):
         from features import mandatory_proof_gate,PAYMENT
         a=fixture('P4');a['context']['technical_actor']='payments';a['proposal'].update(tool='finstripe__create_transfer',amount='10000',currency='USD')

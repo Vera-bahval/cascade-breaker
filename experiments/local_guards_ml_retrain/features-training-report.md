@@ -168,8 +168,8 @@ Command:
 `.../experiments/local_guards/.venv/bin/python experiments/local_guards_ml_retrain/tests/test_training.py`
 from research/finbot-general-guards.
 
-14 own-fixture tests passed, latest pre-report run1.126s (afterwards only manifest
-preprocessing fingerprints were added; final verification is reported to parent).
+15 own-fixture tests passed in the final run0.951s after preprocessing
+fingerprints and the normalized Decimal newest-proof equality repair.
 Covered old/new differentiation, trusted proof mutation, raw-ID/text/metadata/
 operation renaming invariance, source/group weights, split overlap and Luna
 rejection, LR/CatBoost two-class tiny fits, absent classes0, one/no-class cases,
@@ -184,3 +184,27 @@ unpickle failure. Broader project discovery is intentionally excluded by brief.
 observations/gold/outcomes were not opened by this implementer; loader behavior
 was verified with own fixtures. No corpus model results exist from this task;
 feature-collision counts appear only when parent runs full fit.
+
+## Final verification (source state delivered to parent)
+
+Exact final own-test output:
+
+```text
+...............
+----------------------------------------------------------------------
+Ran 15 tests in 0.951s
+
+OK
+```
+
+`python -m py_compile` of features/models/experiment and `git diff --check`
+completed with exit0. The added Decimal equality regression first failed with
+`AssertionError: True is not false`, then passed with the full own-test file.
+No full72 fits were run.
+
+| Final source | SHA256 |
+| --- | --- |
+| features.py | 7121544384a4e54127295c502bbf17bc1bd45f1842c3d277e2a8a008d99976df |
+| models.py | 6d80646b02a8cb1f13449e47728fb8ad7e09249d4e311a21f446cc001d00c365 |
+| experiment.py | fb32014ff273f737bc4547fa17c780ceb2fa1bf77d397784d748fe498218b160 |
+| tests/test_training.py | 722d50c3db341782ce9a1fcd6549b9489b8e84daa475a0d668282c342de2f00c |
