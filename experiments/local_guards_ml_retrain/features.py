@@ -255,6 +255,8 @@ def _mandatory_proof_gate(row,contract):
         if stage=='P2':
             required.add('delegation_subject_matches');permission.add('delegation_subject_matches')
             if c.get('delegation_succeeded') is not True:reasons.append('delegation_not_successful')
+            if not present(c.get('call_id')) or not present(c.get('delegation_call_id')) or c['delegation_call_id']!=c['call_id']:
+                reasons.append('delegation_call_linkage_unavailable_or_mismatched')
             for k in ('parent_workflow_id','delegation_call_id'):
                 if not present(c.get(k)):reasons.append('delegation_missing:'+k)
             if c.get('delegated_actor') not in POLICY['actor_matrix']:reasons.append('delegation_actor_unavailable')

@@ -77,6 +77,39 @@ class TrainingTests(unittest.TestCase):
         self.assertFalse(unavailable.available_)
         self.assertEqual(probabilities(unavailable,[a])[0],{'ALLOW':0.,'BLOCK':0.,'UNKNOWN':0.})
 
+    def test_precomputed_cal_probabilities_match_raw_rows(self):
+        from features import features
+        from models import FeatureBatch,fit_model,probabilities
+        train=[fixture(),fixture('P1')]*2
+        cal=[fixture('P1'),fixture()]
+        cal[0]['context']['technical_actor']='payments'
+        for mode in ['old','new']:
+            for family in ['logistic','catboost']:
+                with self.subTest(mode=mode,family=family):
+                    prepared=FeatureBatch([features(row,mode) for row in train],mode)
+                    model=fit_model(family,prepared,['ALLOW','UNKNOWN']*2,[1]*4,mode,17)
+                    expected=probabilities(model,cal)
+                    actual=probabilities(model,FeatureBatch([features(row,mode) for row in cal],mode))
+                    self.assertEqual(actual,expected)
+
+    def test_p2_requires_matching_explicit_delegation_call(self):
+        from features import mandatory_proof_gate
+        a=fixture('P2');c=a['context']
+        c.update(technical_actor='orchestrator',delegated_actor='fraud',
+                 delegation_succeeded=True,delegation_call_id=c['call_id'])
+        a['facts']['delegation_subject_matches']=True
+        a['provenance']['delegation_subject_matches']=copy.deepcopy(a['provenance']['tool_scope_matches'])
+        c['claim']=dict(record_id='claim',key=json.dumps(['ns','invoice',2,1]),
+            owner_workflow_id='flow',generation=1,state='active',acquired_seq=5)
+        for contract in ['A','B']:
+            with self.subTest(contract=contract):
+                self.assertTrue(mandatory_proof_gate(a,contract)['allow'])
+                b=copy.deepcopy(a);b['context']['delegation_call_id']='different-call'
+                self.assertFalse(mandatory_proof_gate(b,contract)['allow'])
+                for field in ['call_id','delegation_call_id']:
+                    missing=copy.deepcopy(a);missing['context'][field]=None
+                    self.assertFalse(mandatory_proof_gate(missing,contract)['allow'])
+
     def test_optional_human_and_permission_denial(self):
         from features import mandatory_proof_gate
         a=fixture(); a['facts']['human_approved']=False

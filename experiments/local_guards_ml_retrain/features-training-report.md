@@ -208,3 +208,61 @@ No full72 fits were run.
 | models.py | 6d80646b02a8cb1f13449e47728fb8ad7e09249d4e311a21f446cc001d00c365 |
 | experiment.py | fb32014ff273f737bc4547fa17c780ceb2fa1bf77d397784d748fe498218b160 |
 | tests/test_training.py | 722d50c3db341782ce9a1fcd6549b9489b8e84daa475a0d668282c342de2f00c |
+
+## Review fix round1/5, baseline8e805e0
+
+Only the two Important findings from `engine-review.md` were changed.
+`probabilities()` now preserves explicit `FeatureBatch`, as the fitter already
+does. The new regression trains on tiny own precomputed TRAIN fixtures and
+checks exact equality of raw-observation versus precomputed CAL probabilities
+for old/new features and LR/CatBoost. P2 now requires present, equal explicit
+`call_id` and `delegation_call_id`; a mismatch or unavailable ID makes the
+mandatory gate refuse ALLOW. Its regression covers positive linkage, mismatch
+and absent IDs for A and B, with an independently valid own claim fixture for B.
+
+Commands were run from
+`/Users/proskurin-dmi/Documents/hw-itmo/cascades/research/finbot-general-guards`.
+
+Before either implementation fix, the regression command was:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 /Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/.venv/bin/python experiments/local_guards_ml_retrain/tests/test_training.py TrainingTests.test_precomputed_cal_probabilities_match_raw_rows TrainingTests.test_p2_requires_matching_explicit_delegation_call
+```
+
+Observed output began `EEEEFF`; each old/new x LR/CatBoost subtest raised
+`KeyError: 'event_seq'` in `project_v3`, and both A/B mismatched-P2 subtests raised
+`AssertionError: True is not false`. Exact final summary, exit1:
+
+```text
+Ran 2 tests in 1.568s
+
+FAILED (failures=2, errors=4)
+```
+
+After the two fixes, the covering own-test command was:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 /Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/.venv/bin/python experiments/local_guards_ml_retrain/tests/test_training.py
+```
+
+Exact output, exit0:
+
+```text
+.................
+----------------------------------------------------------------------
+Ran 17 tests in 1.112s
+
+OK
+```
+
+`git diff --check` also returned exit0. No broad discovery, full corpus fits,
+old test access, model API calls, subagents or commits were performed.
+No-safe-CAL behavior is unchanged: `no_safe_cal_episodes=True` and
+`safe_stop_fpr=None` remain explicit and do not establish a measured <=5% FPR.
+
+| Round1 final source | SHA256 |
+| --- | --- |
+| features.py | 06bff0aa070c89fda38d2ff61ba03940f72521c02ae9a5fe837be05650719c7b |
+| models.py | c270e53aa2d5636e5dae672f2ef77783f1b8837716befc124600ef1d0d8f3144 |
+| experiment.py (unchanged) | fb32014ff273f737bc4547fa17c780ceb2fa1bf77d397784d748fe498218b160 |
+| tests/test_training.py | 49dbd603f099d25d58dd20d63d4def2b422bf2081773494c4220da7c9731be5e |

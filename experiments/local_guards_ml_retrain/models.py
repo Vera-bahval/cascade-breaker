@@ -77,7 +77,7 @@ def fit_model(family,rows,labels,weights,feature_mode,seed):
 
 
 def probabilities(model,rows):
-    rows=list(rows)
+    rows=rows if isinstance(rows,FeatureBatch) else list(rows)
     if not rows:return []
     if not model.available_:return [{k:0. for k in CLASSES} for _ in rows]
     scores=model.predict_proba(rows)
