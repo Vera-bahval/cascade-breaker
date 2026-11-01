@@ -59,3 +59,27 @@ reproductioncommands and artifactcoverage. Report machineabsolute-path/platform
 or fixtureavailability limits honestly. Final delivery later merges already
 user-authorized otherthread reportchanges withoutchanging MLtree; that is outside
 this pureaudit, parentverifies treeidentity and PRexacthead separately.
+
+## Audit delivery binding under shared-disk limit
+
+Large newly generated archive/CAL gzip predictions may be present as untracked
+working files during review, with their exact path/size/SHA256 committed in the
+release manifest. Source, reports, point metrics, models, closed-test predictions
+and metadata are committed. Audit both the exact code HEAD and manifest-bound
+artifacts. Parent will add only those already audited bytes immediately before
+push and verify the manifest again. This avoids holding the last500-600MiB in
+Gitobjects throughout review; all originalV1shards temporarily unmaterialized
+for peakdisk have already been restored and everySHA256verified. No deletions
+remain and scientificdata are complete. FinalGithead/readback remains parentgate.
+
+The review package supplies the whole branch change index, full code/contracts/
+prose diffs and explicit generated-file index, rather than hundreds ofMB of raw
+CSV/threshold/prediction diffs. Generated files are directly inspectable through
+the committed manifest and exact receipts; no code is excluded by this filter.
+
+Known pre-audit measurement correction: original scorer prefixes bootstrap
+cluster bysourcecohort, splitting global archive group_id across sources. Those
+intervals are explicitly superseded/withheld; archive_intervals.py independently
+recomputes51 primaryseed17raw/gated+3rule intervals with exactglobalgroup_ids.
+All point summaries must match untouched scoredmetrics. Inspect grouping/corrected
+counts/coverage; don'tinfer statisticalindependence from repeat executors.

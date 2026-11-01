@@ -110,3 +110,12 @@ blocking its invocation is not evidence of preventing actual DB destruction.
 Any ordering-unassessed malformed events remain in action confusion but do not
 receive unsupported firstSTOP/reachability/archivalprevention credit. Include
 raw classifier checker-exception counts and incomplete timeline denominators.
+
+Post-release facts from finalclosed2review: author rawgroups60, conservative
+semanticcomponents31, normalizedfullunique1112. Suppliedpaymentview148unique,
+61 sharedunique withdev8000 and302/460rows overlap; therefore158rows outside
+thatreference beforededup. Preserve distinction, preferably show shared/novel
+payment-view sensitivity in additiontodupbalanced. Full/commonP4view149unique
+andprovided148. Do notclaim1200independent novelstates; rawstructural uniqueness
+isnotsemantic uniqueness. Author/reviewer reports nowreleased after b7afad7c
+predictioncommit; use finalrereview ratherthan initialreviewFAIL forfinalnumbers.
