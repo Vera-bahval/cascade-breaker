@@ -75,6 +75,14 @@ class Rule:
         return dict(r,checked=True,stop=r['decision']!='ALLOW')
 
 
+def execution_exception(error,stage):
+    """Predeclared Runtime.fail policy, not an invented UNKNOWN class score."""
+    return dict(checked=True,decision='UNKNOWN',raw_decision=None,stop=True,gate_changed=False,
+        gate_reasons=[],reasons=['verifier_exception'],probabilities=None,scores_available=False,
+        execution_error=True,execution_error_stage=stage,execution_error_class=type(error).__name__,
+        execution_error_reason=str(error))
+
+
 class Frozen:
     def __init__(self,freeze,method,manifest=None):
         self.freeze=Path(freeze);self.manifest=manifest or verify_freeze(freeze);self.method=method
@@ -89,8 +97,14 @@ class Frozen:
         self.thresholds=json.loads((self.freeze/method['thresholds_file']).read_text())
     def one(self,row,variant='gated'):
         if not eligible(row,self.contract):return dict(checked=False,decision=None,stop=False,reasons=[])
-        start=time.perf_counter_ns();p=probabilities(self.model,[row])[0];score_ms=(time.perf_counter_ns()-start)/1e6
-        return self.from_probability(row,p,variant,score_ms)
+        start=time.perf_counter_ns()
+        try:p=probabilities(self.model,[row])[0]
+        except Exception as error:
+            return dict(execution_exception(error,'model'),timing=dict(model_single_ms=(time.perf_counter_ns()-start)/1e6,gate_ms=0.))
+        score_ms=(time.perf_counter_ns()-start)/1e6;start=time.perf_counter_ns()
+        try:return self.from_probability(row,p,variant,score_ms)
+        except Exception as error:
+            return dict(execution_exception(error,'decision_or_gate'),timing=dict(model_single_ms=score_ms,gate_ms=(time.perf_counter_ns()-start)/1e6))
     def from_probability(self,row,p,variant,score_ms=None):
         d=decide([p],self.thresholds[variant]['thresholds'])[0]
         start=time.perf_counter_ns();gate=mandatory_proof_gate(row,self.contract) if variant=='gated' and d=='ALLOW' else dict(allow=True,reasons=[])

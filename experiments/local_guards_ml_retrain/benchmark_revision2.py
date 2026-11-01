@@ -34,6 +34,10 @@ def evaluation():
     return ev
 
 
+def execution_fields(result):
+    return {k:v for k,v in result.items() if k.startswith('execution_error') or k=='scores_available'}
+
+
 @contextmanager
 def offline():
     from unittest.mock import patch
@@ -101,15 +105,25 @@ def single(freeze,observations,metadata,output,repeats=5,limit=128,methods=None)
                     name=config['name'] if is_rule else config['name']+'__'+variant
                     for row in states:
                         start=time.perf_counter_ns();r=candidate(row) if is_rule else candidate.one(row,variant);elapsed=(time.perf_counter_ns()-start)/1e6
-                        record=dict(method=name,contract=config['contract'],repeat=repeat,prefix_id=row['prefix_id'],variant=variant,elapsed_ms=elapsed,decision=r['decision'],checked=r['checked'],timing=r.get('timing',{}))
+                        record=dict(method=name,contract=config['contract'],repeat=repeat,prefix_id=row['prefix_id'],variant=variant,elapsed_ms=elapsed,decision=r['decision'],checked=r['checked'],timing=r.get('timing',{}),**execution_fields(r))
                         # Separate component measurement on this same individual
                         # state. These diagnostic timings are not subtracted from
                         # end-to-end wall time and never batch-amortized.
                         if not is_rule:
-                            start=time.perf_counter_ns();f=ev.features(row,config['feature_mode']);feature_ms=(time.perf_counter_ns()-start)/1e6
-                            start=time.perf_counter_ns();ps=ev.probabilities(candidate.model,ev.FeatureBatch([f],config['feature_mode']));proba_ms=(time.perf_counter_ns()-start)/1e6
-                            if ps[0]!=r['probabilities']:raise AssertionError('FeatureBatch pipeline differs from full single-state pipeline')
-                            record['component_diagnostic']=dict(feature_ms=feature_ms,precomputed_pipeline_ms=proba_ms)
+                            # Optional probes cannot discard an already measured
+                            # checker STOP. Failed components have no valid latency
+                            # or invented probabilities; main decision is retained.
+                            component=dict(feature_ms=None,precomputed_pipeline_ms=None);stage='features';start=time.perf_counter_ns()
+                            try:
+                                f=ev.features(row,config['feature_mode']);component['feature_ms']=(time.perf_counter_ns()-start)/1e6
+                                stage='probabilities';start=time.perf_counter_ns()
+                                ps=ev.probabilities(candidate.model,ev.FeatureBatch([f],config['feature_mode']));proba_ms=(time.perf_counter_ns()-start)/1e6
+                                stage='equivalence'
+                                if not r.get('execution_error') and ps[0]!=r['probabilities']:raise AssertionError('FeatureBatch pipeline differs from full single-state pipeline')
+                                component['precomputed_pipeline_ms']=proba_ms
+                            except Exception as error:
+                                record['component_error']=dict(stage=stage,error_class=type(error).__name__,error_reason=str(error),attempt_elapsed_ms=(time.perf_counter_ns()-start)/1e6)
+                            record['component_diagnostic']=component
                         sink.write(config['contract'],name,record)
                         summaries[name]['single_call'].append(elapsed)
                         for k,v in r.get('timing',{}).items():
@@ -132,6 +146,7 @@ def cold_worker(freeze,method,observation):
         first_applicable_call_ms=(ready-loaded)/1e6,
         model_file_bytes=(Path(freeze)/entry['model_file']).stat().st_size,
         peak_process_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*(1 if sys.platform=='darwin' else 1024))
+    record.update(execution_fields(r))
     print(json.dumps(record),flush=True)
 
 
@@ -249,7 +264,7 @@ def native_trial(candidate,name,contract,variant='gated',enriched=True,fixture='
             start=time.perf_counter_ns()
             r=candidate({'observation':o}) if isinstance(candidate,ev.Rule) else candidate.one({'observation':o},variant)
             wall=(time.perf_counter_ns()-start)/1e6
-            verdicts.append(dict(checkpoint=o['checkpoint'],event_seq=o['event_seq'],tool=o['proposal'].get('tool'),decision=r['decision'],checked=r['checked'],stop=r['stop'],reasons=r.get('reasons',[]),gate_reasons=r.get('gate_reasons',[]),candidate_wall_ms=wall))
+            verdicts.append(dict(checkpoint=o['checkpoint'],event_seq=o['event_seq'],tool=o['proposal'].get('tool'),decision=r['decision'],checked=r['checked'],stop=r['stop'],reasons=r.get('reasons',[]),gate_reasons=r.get('gate_reasons',[]),candidate_wall_ms=wall,**execution_fields(r)))
             for k,v in r.get('timing',{}).items():
                 if v is not None:timings[k].append(v)
             return dict(r,evidence=[],timing_ms=wall)
@@ -304,7 +319,12 @@ def native_trial(candidate,name,contract,variant='gated',enriched=True,fixture='
             if fixture=='amount_mismatch' and (status!='stopped' or stopped['decision']!='BLOCK'):raise AssertionError('negative native fixture not blocked')
         proof_gate_diagnostic=[]
         if isinstance(candidate,ev.Rule):
-            proof_gate_diagnostic=[dict(checkpoint=o['checkpoint'],tool=o['proposal'].get('tool'),**ev.mandatory_proof_gate({'observation':o},contract)) for o in observations if ev.eligible({'observation':o},contract)]
+            for o in observations:
+                if not ev.eligible({'observation':o},contract):continue
+                try:gate=ev.mandatory_proof_gate({'observation':o},contract)
+                except Exception as error:
+                    gate=dict(allow=None,reasons=[],gate_ms=None,component_error=dict(stage='proof_gate',error_class=type(error).__name__,error_reason=str(error)))
+                proof_gate_diagnostic.append(dict(checkpoint=o['checkpoint'],tool=o['proposal'].get('tool'),**gate))
         return dict(method=name,contract=contract,variant=variant,fixture=fixture,adapter='revision2_actual_parent_and_completed_source' if enriched else 'original_v4_snapshot',
             status=status,elapsed_ms=elapsed,check_ms=checks,verdicts=verdicts,observations=observations,base_observations=base_observations,
             payments=payments,invoice_status=invoice_status,model_stub_calls=len(case.calls),intercepted_tools=invocations,
