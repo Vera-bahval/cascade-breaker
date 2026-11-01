@@ -92,3 +92,15 @@ Assess unchanged rule controls on the SAME corrected CAL as well: disclose
 falseALLOW/safe-stop rates and whether they themselves satisfy the predeclared
 conditions. They have no tuned thresholds; do not imply the rule baseline has
 met calibration constraints merely because classifiers must pass them.
+
+Calibration search is a fixed41-quantile confidence grid, not an exhaustive
+mathematical optimization. Say no feasible pair FOUND in the fixed search, not
+proof that no possible threshold or classifier can meet constraints. Keep any
+CAL-only grid-resolution sensitivity diagnostic separate without replacing the
+frozen thresholds/predictions. No method changes after verifiedfreeze.
+
+Russian appendix tone: follow /Users/proskurin-dmi/.codex-igaming/skills/
+humanizer-ru/SKILL.md and its PATTERNS.md for human prose only. Explain method,
+then results, then interpretation; avoid unexplained A/B abbreviations and
+implementation trivia in main appendix. Bold only key findings. Detailed full
+tables/timings/limitations belong in separate technical appendix if needed.
