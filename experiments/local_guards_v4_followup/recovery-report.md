@@ -96,4 +96,3 @@ unchanged afterwards:
 This is isolated execution/recovery evidence, not a corpus-accuracy result,
 production authorization, sidecar/source-DB atomicity proof or external-write race
 guarantee.
-
