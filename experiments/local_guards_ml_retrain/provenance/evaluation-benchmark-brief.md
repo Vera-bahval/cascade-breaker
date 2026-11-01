@@ -58,3 +58,15 @@ to rules; mistakes and gate contribution; local full-chain cost; unresolved
 realLLM adaptive/latency/cost claims. Main experiments/NO_LLM_REPORT.md stays
 unchanged. No winner by rawcoverage or recall alone. Final independent audit to
 be run by parent, not by implementer.
+
+Interpretability check fixed before closed test: retain feature-collisions.json.
+Identical feature vectors with different independent labels demonstrate lost
+information in that representation; report this limit rather than changing the
+features after seeing evaluation. No-safe-CAL flags cannot establish measured
+FPR<=5%; preserve null denominator. Predict receipt labels_opened=false refers
+to prediction-dataset gold; integrity hashes may read historical CAL bytes.
+
+Storage: all archive method/action predictions may exceed a GitHub100MB file.
+Stream and shard deterministic gzip outputs by contract/method or <50MB per
+compressed shard; preserve all records and hash every shard plus input receipt.
+Do not silently sample the archive to reduce artifact size. No upload of secrets.
