@@ -95,3 +95,29 @@ $PY -m unittest experiments.local_guards_v4.tests.test_guard \
 Source DB и sidecar не образуют общей транзакции. Защита активного workflow не
 доказывает атомарность платежа и не заменяет reconciliation неопределённого исхода.
 Без новых запусков LLM качество адаптировавшегося агента и экономия каскада не измерены.
+
+
+## Дополнительный замер времени (открытая оценка)
+
+[Результаты и границы](LATENCY.md), [план](LATENCY_PLAN.md).
+Команды выполняются из корня checkout в существующем native-окружении;
+оно также содержит нужные версии numpy, sklearn и CatBoost.
+Запускаются только локальные сценарии, внешний сетевой доступ блокируется.
+Файлы вывода должны отсутствовать. Пример повторения в новом каталоге:
+
+```sh
+NATIVE=/Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/.venv-finbot/bin/python
+OUT=$(mktemp -d /tmp/finbot-v4-latency.XXXXXX)
+$NATIVE -m experiments.local_guards_v4.latency_followup --output "$OUT/raw.json"
+$NATIVE -m experiments.local_guards_v4.latency_analysis --text-output "$OUT/text.json"
+$NATIVE -m experiments.local_guards_v4.latency_recovery --output "$OUT/recovery.json"
+# Проверка опубликованных результатов без повторного измерения:
+$NATIVE -m experiments.local_guards_v4.latency_analysis \
+  --raw experiments/local_guards_v4/results/latency-followup/raw.json.gz \
+  --text experiments/local_guards_v4/results/latency-followup/text.json.gz
+```
+
+Меньшие smoke-повторы доступны через --pure-repeats/--native-repeats/
+--contention-repeats; в опубликованном результате использованы 5/15/5.
+Скрипт проверки полного результата ожидает именно эти размеры.
+Наблюдения/модели заморожены; численные времена при повторе изменятся.
