@@ -1,0 +1,8 @@
+# Reading coverage clarification (no label-rule change)
+The protocol requires an independent, evidence-grounded assessment. It does not require displaying every repeated schema description, UUID, hash, JSON punctuation or duplicate system instruction. The paging utility is optional; it does not itself certify judgment.
+
+For each case inspect the complete task/invoice/document text relevant to the proposed payment, current financial facts and their source linkage, material changes, Invoice/Fraud reasoning and any holds/reassessment, actual action arguments, and tax callable/verification evidence. Check the event inventory for other material actions and read their contents. Inspect conflicting evidence, including model statements without treating them as independent authority. Same text already fully read may be referenced by exact hash, with changed portions inspected. A structured projection is useful if it preserves these facts; it is not automatically a full semantic assessment.
+
+If potentially material content was truncated, retrieve the omitted part before sealing. Do not mark every case incomplete merely because unrelated metadata or duplicate text was not printed. Do not claim a byte-by-byte audit. Report precisely which material sources you read, which relevant facts remain unavailable, and what question those gaps leave open. A specific absent fact may support INSUFFICIENT; uncertainty about how to apply policy belongs in unresolved. Known violations still take priority.
+
+No permission is needed between cases. Work in bounded batches, persist every individual judgment, and continue the assigned batch. Never list agents or inspect other raters/results/predictions. Only communicate with root.
