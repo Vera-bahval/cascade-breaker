@@ -311,3 +311,34 @@ established cause or invalidity of the TaxCalc obligation.
 
 No unresolved editorial finding remains. No inference, fitting, benchmark,
 label change, model change or API request was needed for this revision audit.
+
+## Source-section addendum: FinBot deficiencies and experimental limits
+
+**PASS after two wording clarifications.** Reviewed the added six-topic section
+against the exact FinBot files at Git revision
+`31d0351d7fee2fb1f7edb3f3b12d3ccb9bd43e86`. All 12 pinned code links resolve to
+the checked line coordinates in eight unchanged local source files; the GitHub
+repository matches the checkout's origin. Also read the transfer repository and
+MCP factory to check the surrounding behavior.
+
+The source supports the separate TaxCalc instruction, notes-based Fraud flags,
+the independent mock transfer and paid-status operations, text-based workflow
+and context forwarding, and contextual business exceptions. The revised tax
+heading correctly limits the omission to the main numbered flow: the Decision
+Framework still explicitly requires applicable tax verification before transfer.
+The payment function reads notes to append them, but does not apply the Fraud
+recommendation as a prohibition; the revised text now says that precisely.
+
+The section does not treat checkout code as proof of every historical runtime,
+infer why TaxCalc was rarely used, or equate a mock success/paid state with
+correct payment or prevented real loss. Missing original benchmark targets and
+our adapter/link/pairing defects are explicitly distinguished from FinBot code.
+No unresolved source-claim finding remains.
+
+The final rendered report now has **226 lines**. Main SHA-256:
+`a589581cef705bde8b1e8c86f35f614a0bd061250738b355c7e7d4355f87c694`;
+directory-local report:
+`84ba9c035f14dffa5ab03c024decfffd1601ad65638d66ba9446b1e1a0cd43a9`.
+Both match a read-only rebuild and the refreshed public-render receipt. The
+sealed summary, complete tables and PNG/SVG plots are byte-identical to the
+preceding publication. No inference, fitting, benchmark or API request ran.
