@@ -1,0 +1,93 @@
+{
+  "code_sha256": "664407b7e4e2de671d3d7873b837ff914a64b3d74997eb8feb0e15232f2fff35",
+  "comparability": "Full canonical records matched exactly. New-rule packets also expose recorded callable schemas for omitted transfer defaults; these do not establish invoice currency. No financial permission added.",
+  "files": {
+    "/Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/results/guard-v2/evaluation-v5/archive-predictions.jsonl": "d7c77657e913fc1f1556b0a956c6697a424b61d3e1f4c296764016cd8f635818",
+    "/Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/results/guard-v2/inputs-v5/archive-all-inputs.jsonl": "7683d7d73cc1073252d767a2dc2eb89e4fa6cff0b64b3f926218ff10685f47a3",
+    "/Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/results/guard-v2/jev-v5/08/archive-all-inputs.jsonl": "6d6016ae3aa6248f39e554ae168d27515b85b86754fc9c0ab19493d0163311dd",
+    "/Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/results/guard-v2/jev-v5/08/archive-all-scores.jsonl": "579a5013b36e7fdda5f4da5921c823080f79510132b69950f92837ec26259384",
+    "/Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/results/guard-v2/jev-v5/08/features-archive-all.jsonl": "3afafa416047d524fac02a3219251658ff15dd7a93cd4c4b4f7fa3b3b2e7eafd",
+    "/Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/results/jev27b-mlx-20261019/nvfp4-cached-v5/scores.jsonl": "a06e39c70cdd59d54b8d86b669922c5bc604e6149e07ca193320741b885ecbf3",
+    "/Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/results/secjev9b-night-20261018/mps-cached-v6/scores.jsonl": "f9553351233b2ef5a51715bb73ea79c3a8145f33f2c99d3c053882c7fdabbed1",
+    "/Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/results/secjev9b-night-20261018/mps-only-v3/scores.jsonl": "0e1f4c7736bd4711881684766c7799a0f46a013bc0b027e3b5287eb5dc0540ef"
+  },
+  "methods": {
+    "Jev27B_MLX_NVFP4_cached_fixed05": 176,
+    "SecJev08_CV_catboost_J_cur_none_seed17": 176,
+    "SecJev08_CV_catboost_J_cur_none_seed29": 176,
+    "SecJev08_CV_catboost_J_cur_none_seed43": 176,
+    "SecJev08_CV_catboost_J_seq_none_seed17": 176,
+    "SecJev08_CV_catboost_J_seq_none_seed29": 176,
+    "SecJev08_CV_catboost_J_seq_none_seed43": 176,
+    "SecJev08_CV_scalar_J_cur_none_seed17": 176,
+    "SecJev08_CV_scalar_J_cur_none_seed29": 176,
+    "SecJev08_CV_scalar_J_cur_none_seed43": 176,
+    "SecJev08_canonical_fixed05": 176,
+    "SecJev9B_MPS_mixed_fixed05": 176
+  },
+  "models": {
+    "Jev27B": {
+      "execution_mode": "mlx_prefix_cache_v5",
+      "model": "nativ-community/JEV-27B-VL-MLX-NVFP4"
+    },
+    "SecJev08": {
+      "adapter_merged": false,
+      "all_modules_eval": true,
+      "attention": "sdpa",
+      "base_repo": "Qwen/Qwen3.5-0.8B-Base",
+      "base_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+      "base_weights_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+      "code_archive_sha256": "91b712d3c0715f6975833ed953bb586bf9dc86df858f52e78706ac2f741d572a",
+      "device": "mps",
+      "environment": {
+        "PYTORCH_ENABLE_MPS_FALLBACK": "0",
+        "PYTORCH_MPS_FAST_MATH": "0",
+        "PYTORCH_MPS_PREFER_METAL": null
+      },
+      "format_version": "secjev-reference-v1-diagnostic",
+      "kev_archive_sha256": "8d438f17b446a32f43002942b2a90314f77c6cd551fc6f84d182b8be3d5a1e00",
+      "kev_revision": "90990a5fac2995b9faa3190f7d437e84f2067768",
+      "model": "SecJev-0.8B",
+      "model_archive_sha256": "afb7e216edfbde4bfc19335312e4ae6577e98f29c915545ae2f7284e052e13dc",
+      "parameter_devices": [
+        "mps:0"
+      ],
+      "parameter_dtypes": [
+        "torch.float32"
+      ],
+      "patch": "solver_block",
+      "precision": "FP32",
+      "python": "3.12.14",
+      "release": "v1.0.0",
+      "scorer_sha256": "31d5d5e965a6c53ab5af7746eecdfbb0a2dc66d3df35ffa7db2177b6364b0b33",
+      "shape_bucket": 64,
+      "temperature": 1.3525612043415394,
+      "threads": 1,
+      "torch": "2.14.0",
+      "transformers": "5.17.0"
+    },
+    "SecJev9B": {
+      "adapter_merged": false,
+      "attention": "sdpa",
+      "base_revision": "68c46c4b3498877f3ef123c856ecfde50c39f404",
+      "device": "mps",
+      "lora_restored_exact": true,
+      "model": "SecJev-9B",
+      "model_load_ms": 17087.528874981217,
+      "patch": "solver_block",
+      "precision": "BF16 backbone, original FP32 LoRA/head",
+      "provenance_sha256": "775aaab35d2e3f22a7d028b40752bbb7233ecdd12510e7ca54e7413094845676",
+      "python": "3.12.14",
+      "question_microbatch_size": 1,
+      "release": "v1.3.0",
+      "scorer_sha256": "fa947a58781bd16b72601b2861dcf717a8dd27ff5ea84256f3e03bfbbe2c625b",
+      "temperature": 1.2424442703829575,
+      "threads": 4,
+      "torch": "2.14.0",
+      "transformers": "5.17.0"
+    }
+  },
+  "new_inference_calls": 0,
+  "output_sha256": "94db56fb1499f21abe88457ffed622153acfbeb616e7c6bd9dca79e8c4d74b5d",
+  "source_checks": 704
+}
