@@ -78,6 +78,9 @@ class ProfileTests(unittest.TestCase):
             dict(event_seq=3,hook_kind='before_tool',tool_name='delegate_to_fraud',tool_arguments={'vendor_id':2}),
             dict(event_seq=5,hook_kind='after_tool',tool_name='delegate_to_fraud',tool_arguments={'vendor_id':2},tool_result={'task_status':'success'})]
         self.assertEqual(self.decision(r),'ALLOW')
+        r['bundle']['checkpoint']='P3';r['bundle']['proposal']={'tool':'update_invoice_status','target_status':'approved'}
+        r['fraud_events']=r['adapters'].pop('native')['payload']['raw_context']['events']
+        self.assertEqual(self.decision(r),'ALLOW')
 
 
 if __name__=='__main__':unittest.main()

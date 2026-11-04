@@ -12,7 +12,7 @@ def prepare(row,method):
     if method not in METHODS:raise ValueError(method)
     b=row['bundle'];cut=b['event_seq'];ctx=b['context'];facts={};evidence=[];assumptions=[]
     native=(row.get('adapters',{}).get('native') or {}).get('payload',{})
-    raw=native.get('raw_context') or {};events=raw.get('events') or []
+    raw=native.get('raw_context') or {};events=raw.get('events') or row.get('fraud_events') or []
     if any(type(e.get('event_seq')) is not int or e['event_seq']>=cut for e in events):
         raise ValueError('future/invalid event in prepared source')
     def record(key):
