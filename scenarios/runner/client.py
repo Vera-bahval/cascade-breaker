@@ -50,6 +50,18 @@ class FinBotClient:
             raise RuntimeError(f"POST {path} -> {resp.status_code}: {resp.text[:500]}")
         return resp.json()
 
+    def post(self, path: str, payload: dict[str, Any]) -> dict[str, Any]:
+        return self._post(path, payload)
+
+    def put(self, path: str, payload: dict[str, Any]) -> dict[str, Any]:
+        resp = self.http.put(path, json=payload, headers={"X-CSRF-Token": self.csrf_token or ""})
+        if resp.status_code >= 400:
+            raise RuntimeError(f"PUT {path} -> {resp.status_code}: {resp.text[:500]}")
+        return resp.json()
+
+    def get(self, path: str, **params: Any) -> dict[str, Any]:
+        return self._get(path, **params)
+
     def _get(self, path: str, **params: Any) -> dict[str, Any]:
         # While agents run, the server sometimes drops a pooled connection; a GET is safe to repeat.
         for attempt in range(1, GET_ATTEMPTS + 1):
@@ -73,13 +85,13 @@ class FinBotClient:
     def create_invoice(self, fields: dict[str, Any]) -> dict[str, Any]:
         return self._post(f"{API}/invoices", fields)
 
-    def chat(self, message: str) -> dict[str, Any]:
+    def chat(self, message: str, attachments: list[dict[str, Any]] | None = None) -> dict[str, Any]:
         events: list[dict[str, Any]] = []
         error = None
         try:
             # A failed stream leaves a dead socket behind, so never reuse it.
             with self.http.stream(
-                "POST", f"{API}/chat", json={"message": message},
+                "POST", f"{API}/chat", json={"message": message, "attachments": attachments or []},
                 headers={"X-CSRF-Token": self.csrf_token or "", "Connection": "close"},
             ) as resp:
                 if resp.status_code >= 400:

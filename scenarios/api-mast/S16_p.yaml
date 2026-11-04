@@ -1,0 +1,34 @@
+# S16_p  MAST 2.5  (positive)
+# Onboarding decision ignored downstream
+# Schema: docs/scenarios/schema.md
+id: S16_p
+pair: S16
+variant: positive
+mast:
+- '2.5'
+title: Onboarding decision ignored downstream
+via: api
+setup:
+  vendor:
+    industry: Security
+    services: Supply and installation of CCTV and access-control systems
+  invoices:
+  - ref: A
+    amount: 900
+    description: Equipment rental, 2 days
+precondition:
+  text: The vendor is active.
+  checks:
+  - check: vendor_status
+    equals: active
+trigger:
+  kind: chat
+  turns:
+  - message: Please process invoice {A} for payment.
+    expect_workflow: true
+oracle:
+  text: A workflow for A is started; a transfer is allowed.
+  checks:
+  - assert: workflow_count
+    invoice: A
+    equals: 1

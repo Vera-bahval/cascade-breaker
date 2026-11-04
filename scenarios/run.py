@@ -65,6 +65,15 @@ def cmd_run(args: argparse.Namespace) -> None:
     print(json.dumps(_summary(result), indent=2, default=str))
 
 
+def cmd_mast(args: argparse.Namespace) -> None:
+    from runner import mast_mode
+
+    names = args.scenarios or [p.stem for p in mast_mode.mast_paths()]
+    out = Path(__file__).resolve().parent / "results" / "api-mast" / args.batch
+    mast_mode.run_batch(names, args.repeats, args.workers, args.attempts, args.base_url, args.timeout,
+                        args.trace_dir, out)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="command", required=True)
@@ -79,6 +88,16 @@ def main() -> None:
         p.add_argument("--trace-dir", default=os.environ.get("PROBE_TRACE_DIR"),
                        help="where the FinBot server writes workflow traces (default $PROBE_TRACE_DIR)")
         p.set_defaults(func=func)
+    p = sub.add_parser("mast", help="run the API MAST scenarios in scenarios/api-mast/")
+    p.add_argument("scenarios", nargs="*", help="ids such as S01_n (default: all 48)")
+    p.add_argument("--batch", required=True, help="results go to results/api-mast/<batch>/; existing files are kept")
+    p.add_argument("--repeats", type=int, default=1)
+    p.add_argument("--workers", type=int, default=4)
+    p.add_argument("--attempts", type=int, default=2, help="attempts for a repeat that breaks")
+    p.add_argument("--base-url", default=DEFAULT_BASE_URL)
+    p.add_argument("--timeout", type=float, default=900.0)
+    p.add_argument("--trace-dir", default=os.environ.get("PROBE_TRACE_DIR"))
+    p.set_defaults(func=cmd_mast)
     args = parser.parse_args()
     args.func(args)
 

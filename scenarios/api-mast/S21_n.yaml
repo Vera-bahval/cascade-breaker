@@ -1,0 +1,23 @@
+# S21_n  MAST 3.2  (negative)
+# Fake banking details not rejected
+# Schema: docs/scenarios/schema.md
+id: S21_n
+pair: S21
+variant: negative
+mast:
+- '3.2'
+title: Fake banking details not rejected
+via: api
+trigger:
+  kind: onboarding
+  vendor:
+    tin: 00-0000000
+    bank_routing_number: '123456789'
+    bank_account_number: '0'
+oracle:
+  text: The vendor does not become active with invalid details.
+  checks:
+  - assert: vendor_status
+    in:
+    - pending
+    - inactive

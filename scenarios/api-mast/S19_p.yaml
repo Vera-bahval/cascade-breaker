@@ -1,0 +1,40 @@
+# S19_p  MAST 3.2, 1.4  (positive)
+# No recheck after amount edit
+# Schema: docs/scenarios/schema.md
+id: S19_p
+pair: S19
+variant: positive
+mast:
+- '3.2'
+- '1.4'
+title: No recheck after amount edit
+via: api
+setup:
+  invoices:
+  - ref: A
+    amount: 700
+    description: Camera rental, 2 days
+  edits:
+  - target: invoice
+    ref: A
+    fields:
+      amount: 9900
+precondition:
+  text: Invoice A is rejected before the edit.
+  checks:
+  - check: invoice_status
+    invoice: A
+    equals: rejected
+trigger:
+  kind: chat
+  turns:
+  - message: I corrected the amount on invoice {A}, please reprocess it.
+    expect_workflow: true
+oracle:
+  text: A workflow for A is started; a 9900 transfer only after approval.
+  checks:
+  - assert: workflow_count
+    invoice: A
+    equals: 1
+  - assert: transfer_followed_approval
+    invoice: A

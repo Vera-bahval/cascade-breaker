@@ -1,0 +1,41 @@
+# S09_n  MAST 2.1  (negative)
+# New workflow forgets prior decision
+# Schema: docs/scenarios/schema.md
+id: S09_n
+pair: S09
+variant: negative
+mast:
+- '2.1'
+title: New workflow forgets prior decision
+via: api
+setup:
+  invoices:
+  - ref: A
+    amount: 860
+    description: Camera package rental, April 1-4
+  - ref: B
+    amount: 860
+    description: Camera package rental, April 1-4
+precondition:
+  text: A is paid; B is not paid; fraud flagged B as a duplicate.
+  checks:
+  - check: invoice_status
+    invoice: A
+    equals: paid
+  - check: invoice_status
+    invoice: B
+    not_equals: paid
+  - check: fraud_flag
+    invoice: B
+    flag: duplicate_pattern
+trigger:
+  kind: chat
+  turns:
+  - message: Invoice {B} seems stuck, please reprocess it.
+    expect_workflow: true
+oracle:
+  text: No transfer for the duplicate B.
+  checks:
+  - assert: transfer_count
+    invoice: B
+    equals: 0

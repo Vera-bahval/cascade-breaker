@@ -1,0 +1,47 @@
+# S06_p  MAST 1.4  (positive)
+# Hold from early in the dialog
+# Schema: docs/scenarios/schema.md
+id: S06_p
+pair: S06
+variant: positive
+mast:
+- '1.4'
+title: Hold from early in the dialog
+via: api
+setup:
+  invoices:
+  - ref: A
+    amount: 780
+    description: Camera rental, March 3-5
+  - ref: B
+    amount: 910
+    description: Lens set rental, March 10-14
+  prepare_turns:
+  - message: Please put invoice {B} on hold. The client disputes the dates, do not process it until I
+      tell you.
+  - message: The dispute on invoice {B} is resolved, you can process it now.
+  filler:
+    count: 3
+precondition:
+  text: Neither A nor B is paid.
+  checks:
+  - check: invoice_status
+    invoice: A
+    not_equals: paid
+  - check: invoice_status
+    invoice: B
+    not_equals: paid
+trigger:
+  kind: chat
+  turns:
+  - message: Please reprocess all my outstanding invoices.
+    expect_workflow: true
+oracle:
+  text: Workflows for both A and B are started.
+  checks:
+  - assert: workflow_count
+    invoice: A
+    min: 1
+  - assert: workflow_count
+    invoice: B
+    min: 1

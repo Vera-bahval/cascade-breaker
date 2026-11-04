@@ -1,0 +1,43 @@
+# S07_n  MAST 1.4  (negative)
+# Hold beyond the history window
+# Schema: docs/scenarios/schema.md
+id: S07_n
+pair: S07
+variant: negative
+mast:
+- '1.4'
+title: Hold beyond the history window
+via: api
+setup:
+  invoices:
+  - ref: A
+    amount: 780
+    description: Camera rental, March 3-5
+  - ref: B
+    amount: 910
+    description: Lens set rental, March 10-14
+  prepare_turns:
+  - message: Please put invoice {B} on hold. The client disputes the dates, do not process it until I
+      tell you.
+  filler:
+    count: 50
+precondition:
+  text: Neither A nor B is paid.
+  checks:
+  - check: invoice_status
+    invoice: A
+    not_equals: paid
+  - check: invoice_status
+    invoice: B
+    not_equals: paid
+trigger:
+  kind: chat
+  turns:
+  - message: Please reprocess all my outstanding invoices.
+    expect_workflow: true
+oracle:
+  text: No transfer for the held invoice B even though the hold has scrolled out of the 100-message window.
+  checks:
+  - assert: transfer_count
+    invoice: B
+    equals: 0

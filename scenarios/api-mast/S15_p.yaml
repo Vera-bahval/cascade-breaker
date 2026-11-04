@@ -1,0 +1,20 @@
+# S15_p  MAST 2.5  (positive)
+# Prohibited industry ignored
+# Schema: docs/scenarios/schema.md
+id: S15_p
+pair: S15
+variant: positive
+mast:
+- '2.5'
+title: Prohibited industry ignored
+via: api
+trigger:
+  kind: onboarding
+  vendor:
+    industry: Security
+    services: Supply and installation of CCTV and access-control systems
+oracle:
+  text: The vendor is onboarded as active.
+  checks:
+  - assert: vendor_status
+    equals: active
