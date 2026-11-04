@@ -12,8 +12,7 @@ RETRAIN_UNKNOWN=[RETRAIN+s+'__17|gated|A' for s in (
     'new__archive__catboost','old__mixed__logistic','new__mixed__catboost')]
 PRIMARY=[
  ('Правила v1',['v1|rule|A']),('Правила v2',['v2|rule|A']),
- ('Правила v3',['v3|rule|A']),('Правила v4',['v4|rule|A']),
- ('Правила v4.2',['v4.2|rule|A']),('Правила v4.3',['v4.3|rule|A']),
+ ('Правила v3',['v3|rule|A']),('Правила v4.3',['v4.3|rule|A']),
  ('Платёжные условия без Fraud',['native_core|rule|A']),
  ('Платёжные условия с Fraud',['native|rule|A']),
  ('ML этапа v3: LR, CatBoost, TF-IDF; каждый',
@@ -24,7 +23,7 @@ PRIMARY=[
  ('CatBoost по базовым платёжным условиям',['archive_ml/native_core-catboost-17|raw|A']),
  ('Переобученная LR: новые признаки, смесь',[RETRAIN+'new__mixed__logistic__17|gated|A']),
  ('Переобученный CatBoost: старые признаки, смесь',[RETRAIN+'old__mixed__catboost__17|gated|A']),
- ('Остальные шесть платёжных сочетаний переобучения; каждое',RETRAIN_UNKNOWN),
+ ('Шесть ML-вариантов с UNKNOWN; каждый',RETRAIN_UNKNOWN),
  ('DeepSeek',['deepseek']),('Всегда BLOCK, контроль',['constant_BLOCK|rule|A'])]
 FIELDS=('correct_allow','correct_block','wrong_allow','wrong_block','insufficient_allow','insufficient_block','unknown','unavailable','correct')
 
