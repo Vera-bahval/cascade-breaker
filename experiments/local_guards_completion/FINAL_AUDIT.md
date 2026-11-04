@@ -274,3 +274,40 @@ annotation pass, and the tiny admissible full-target/CAL cohorts. Group
 intervals do not absorb annotation or policy-assumption uncertainty. No new
 inference, fit, benchmark, studied-model/API request or live payment execution
 was run by this final audit.
+
+## Editorial addendum: shorter report and explicit research conclusions
+
+**PASS.** This addendum reviews the later user-requested editorial revision.
+The 208-line report described in phase 3 is the historical reviewed snapshot;
+the revised main report has **186 lines**. Its SHA-256 is
+`3461342dddac8537ae5addc271f307a08c8def22ecb9725b7a72454e44cfb336`;
+the directory-local copy has SHA-256
+`62aeabd9bd7152e4739b56d1b7d10e288b524ea70c91d5ee87f6f0244bf7b294`.
+The sealed summary remains `0701794b8de73f6193ecc982567c5b1d2ba07d48dcd0b6f30d8e0caf09c0cfbd`.
+
+Read the report and renderer diff, then checked the new conclusion quantities
+against that summary: full-target correct counts 536/539/537 versus constant
+BLOCK 536; substantive counts 319/322/322 versus DeepSeek 329; original-source
+counts 89 versus 159 with 310 undefined; eight versus four saved-LLM calls;
+the rounded historical charges; 185 substantive false BLOCKs; the sensitivity's
+six unsafe ALLOWs and 221 deferrals; and the measured 1.36 ms versus approximately
+2051 ms medians. The higher old scenario-LR result remains visible in the main
+table and conclusions: 373 correct, 76 unsafe ALLOW and 61 false BLOCK.
+
+The compact tables remove a model/input-unavailability column only after
+checking that every retained row is zero. Omitted duplicate and mostly
+abstaining rows remain in the complete tables and are summarized in prose.
+`TABLES.md` differs only by **seven** LLM-inclusive column-header replacements,
+from “Правильно локально” to “Правильных ответов / n”; no table value changed.
+PNG and SVG plots remain byte-identical to the previously published snapshot.
+
+Without writing generated files, rebuilt both reports from the renderer and
+sealed inputs and confirmed exact equality, valid local links, and the refreshed
+public-render receipt hashes. The new conclusions answer the research goal
+while preserving the costs of ordinary-task interruption, the difference
+between decision latency and completed-task time, the tiny admissible class,
+and retrospective limits. They claim neither an architecture winner nor an
+established cause or invalidity of the TaxCalc obligation.
+
+No unresolved editorial finding remains. No inference, fitting, benchmark,
+label change, model change or API request was needed for this revision audit.

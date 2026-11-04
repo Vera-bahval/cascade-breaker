@@ -31,6 +31,23 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(render.fmt(0), '0,00')
         self.assertEqual(render.pct(0, 0), 'нет данных')
 
+    def test_compact_table_cannot_hide_unavailable_answers(self):
+        row = dict.fromkeys(render.CELLS, 0)
+        row.update(unavailable=1, model_unavailable=1, adapter_unavailable=0, correct=0)
+        with self.assertRaisesRegex(ValueError, 'cannot hide'):
+            render.quality_table([('example', row)], 1, compact=True)
+
+    def test_main_keeps_controls_and_answers_while_appendix_keeps_zero_rows(self):
+        s = render.read(render.HERE / 'results-summary.json')
+        cost = render.read(render.HERE / 'cost-audit.json')
+        report = render.build_report(s, cost, 382)
+        self.assertIn('## Ответы на вопросы исследования', report)
+        self.assertIn('373 / 542', report)
+        self.assertNotIn('| Прежний ML v3, LR |', report)
+        self.assertIn('UNKNOWN на всех 542', report)
+        appendix = render.build_tables(s, render.read(s['ml']['curves']), render.read(s['ml']['feature_audit']))
+        self.assertIn('saved/v3_ml/', appendix)
+
     def test_fixed_grid_points_are_preserved_without_selecting_a_threshold(self):
         curves = {'methods': {'lr': [
             {'metrics': dict(n=4, safe_n=2, correct=2, wrong_allow=1, safe_stop=1)},

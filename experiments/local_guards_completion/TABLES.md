@@ -4,7 +4,7 @@
 
 ## Содержательная допустимость
 
-| Метод | Верно ALLOW / BLOCK | Ошибка ALLOW / BLOCK | UNKNOWN | Нет модели / входа | При INSUFFICIENT ALLOW / BLOCK | Правильно локально |
+| Метод | Верно ALLOW / BLOCK | Ошибка ALLOW / BLOCK | UNKNOWN | Нет модели / входа | При INSUFFICIENT ALLOW / BLOCK | Правильных ответов / n |
 |---|---|---|---|---|---|---|
 | archive_profile/v3_archive | 165 / 161 | 158 / 26 | 0 | 0 / 0 | 14 / 18 | 326 / 542 (60,15%) |
 | archive_profile/v4.3_archive | 165 / 161 | 158 / 26 | 0 | 0 / 0 | 14 / 18 | 326 / 542 (60,15%) |
@@ -1184,7 +1184,7 @@
 
 ## Обязательные процедуры
 
-| Метод | Верно ALLOW / BLOCK | Ошибка ALLOW / BLOCK | UNKNOWN | Нет модели / входа | При INSUFFICIENT ALLOW / BLOCK | Правильно локально |
+| Метод | Верно ALLOW / BLOCK | Ошибка ALLOW / BLOCK | UNKNOWN | Нет модели / входа | При INSUFFICIENT ALLOW / BLOCK | Правильных ответов / n |
 |---|---|---|---|---|---|---|
 | archive_profile/v3_archive | 8 / 205 | 329 / 0 | 0 | 0 / 0 | 0 / 0 | 213 / 542 (39,30%) |
 | archive_profile/v4.3_archive | 8 / 205 | 329 / 0 | 0 | 0 / 0 | 0 / 0 | 213 / 542 (39,30%) |
@@ -2364,7 +2364,7 @@
 
 ## Полное действие
 
-| Метод | Верно ALLOW / BLOCK | Ошибка ALLOW / BLOCK | UNKNOWN | Нет модели / входа | При INSUFFICIENT ALLOW / BLOCK | Правильно локально |
+| Метод | Верно ALLOW / BLOCK | Ошибка ALLOW / BLOCK | UNKNOWN | Нет модели / входа | При INSUFFICIENT ALLOW / BLOCK | Правильных ответов / n |
 |---|---|---|---|---|---|---|
 | archive_profile/v3_archive | 6 / 205 | 331 / 0 | 0 | 0 / 0 | 0 / 0 | 211 / 542 (38,93%) |
 | archive_profile/v4.3_archive | 6 / 205 | 331 / 0 | 0 | 0 / 0 | 0 / 0 | 211 / 542 (38,93%) |
@@ -3544,7 +3544,7 @@
 
 ## Исходные ожидания сценариев, все векторы
 
-| Метод | Верно ALLOW / BLOCK | Ошибка ALLOW / BLOCK | UNKNOWN | Нет модели / входа | При INSUFFICIENT ALLOW / BLOCK | Правильно локально |
+| Метод | Верно ALLOW / BLOCK | Ошибка ALLOW / BLOCK | UNKNOWN | Нет модели / входа | При INSUFFICIENT ALLOW / BLOCK | Правильных ответов / n |
 |---|---|---|---|---|---|---|
 | archive_profile/v3_archive | 124 / 35 | 50 / 23 | 0 | 0 / 0 | 163 / 147 | 159 / 542 (29,34%) |
 | archive_profile/v4.3_archive | 124 / 35 | 50 / 23 | 0 | 0 / 0 | 163 / 147 | 159 / 542 (29,34%) |
@@ -4874,21 +4874,21 @@
 
 ## N14 при неизвестной доступности исключён: Содержательная допустимость
 
-| Метод | Верно ALLOW / BLOCK | Ошибка ALLOW / BLOCK | UNKNOWN | Нет модели / входа | При INSUFFICIENT ALLOW / BLOCK | Правильно локально |
+| Метод | Верно ALLOW / BLOCK | Ошибка ALLOW / BLOCK | UNKNOWN | Нет модели / входа | При INSUFFICIENT ALLOW / BLOCK | Правильных ответов / n |
 |---|---|---|---|---|---|---|
 | completion/current_unknown_unavailable | 44 / 163 | 6 / 83 | 221 | 0 / 0 | 7 / 18 | 207 / 542 (38,19%) |
 | completion/current_unknown_unavailable/expanded | 44 / 163 | 6 / 83 | 221 | 0 / 0 | 7 / 18 | 207 / 542 (38,19%) |
 
 ## N14 при неизвестной доступности исключён: Обязательные процедуры
 
-| Метод | Верно ALLOW / BLOCK | Ошибка ALLOW / BLOCK | UNKNOWN | Нет модели / входа | При INSUFFICIENT ALLOW / BLOCK | Правильно локально |
+| Метод | Верно ALLOW / BLOCK | Ошибка ALLOW / BLOCK | UNKNOWN | Нет модели / входа | При INSUFFICIENT ALLOW / BLOCK | Правильных ответов / n |
 |---|---|---|---|---|---|---|
 | completion/current_unknown_unavailable | 57 / 264 | 0 / 0 | 221 | 0 / 0 | 0 / 0 | 321 / 542 (59,23%) |
 | completion/current_unknown_unavailable/expanded | 57 / 264 | 0 / 0 | 221 | 0 / 0 | 0 / 0 | 321 / 542 (59,23%) |
 
 ## N14 при неизвестной доступности исключён: Полное действие
 
-| Метод | Верно ALLOW / BLOCK | Ошибка ALLOW / BLOCK | UNKNOWN | Нет модели / входа | При INSUFFICIENT ALLOW / BLOCK | Правильно локально |
+| Метод | Верно ALLOW / BLOCK | Ошибка ALLOW / BLOCK | UNKNOWN | Нет модели / входа | При INSUFFICIENT ALLOW / BLOCK | Правильных ответов / n |
 |---|---|---|---|---|---|---|
 | completion/current_unknown_unavailable | 44 / 264 | 6 / 0 | 221 | 0 / 0 | 7 / 0 | 308 / 542 (56,83%) |
 | completion/current_unknown_unavailable/expanded | 44 / 264 | 6 / 0 | 221 | 0 / 0 | 7 / 0 | 308 / 542 (56,83%) |
