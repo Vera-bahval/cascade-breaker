@@ -5,7 +5,7 @@ off at acceptable latency and false positive rate. The test bed is FinBot (OWASP
 
 This is research code, not a product.
 
-[No-LLM FinBot research: consolidated report](experiments/NO_LLM_REPORT.md): autonomous coverage and decision errors, rules versus local ML, staged execution controls, latency and concurrency tradeoffs. Version-specific methods and evidence are linked from the report.
+[No-LLM FinBot research: consolidated report](experiments/NO_LLM_REPORT.md): decision coverage and errors, rules versus local ML, retrospective cascades, latency and cost. [Review guide](REVIEW.md) maps the current result, source code, frozen evidence and limitations. Start there when reviewing this research PR.
 
 | Path | What |
 | --- | --- |
