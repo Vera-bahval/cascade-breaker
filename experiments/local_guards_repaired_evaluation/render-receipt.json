@@ -1,0 +1,132 @@
+{
+  "outputs": {
+    "EARLY.md": "1f40794eaffee4507ea281e924c9c5c90a762fbcff0d4e620c75fa8258d03ce2",
+    "LATENCY.md": "b36ce1edf3227ad0fc366c2526477b8b90a222616524496ee73980b8f46410fd",
+    "PRIMARY.md": "e0b38a14ae02327db1d74d8f4d7d0bceb418087dbf4dcc945d397c5e5921eee2",
+    "TABLES.md": "fda7d7ea15031dd435a76f8d8f5ef459025e34229937f47fdacaf978cd81d114",
+    "TASKS.md": "329837b862d9a24640fa5e971fded84efa9e87b6899c79c8671ffd737f398e80"
+  },
+  "primary": [
+    [
+      "Правила v1",
+      [
+        "v1|rule|A"
+      ]
+    ],
+    [
+      "Правила v2",
+      [
+        "v2|rule|A"
+      ]
+    ],
+    [
+      "Правила v3",
+      [
+        "v3|rule|A"
+      ]
+    ],
+    [
+      "Правила v4",
+      [
+        "v4|rule|A"
+      ]
+    ],
+    [
+      "Правила v4.2",
+      [
+        "v4.2|rule|A"
+      ]
+    ],
+    [
+      "Правила v4.3",
+      [
+        "v4.3|rule|A"
+      ]
+    ],
+    [
+      "Платёжные условия без Fraud",
+      [
+        "native_core|rule|A"
+      ]
+    ],
+    [
+      "Платёжные условия с Fraud",
+      [
+        "native|rule|A"
+      ]
+    ],
+    [
+      "ML этапа v3: LR, CatBoost, TF-IDF; каждый",
+      [
+        "v3_ml/structured_logistic/17/P4|frozen|A",
+        "v3_ml/structured_catboost/17/P4|frozen|A",
+        "v3_ml/text_diagnostic/17/P4|frozen|A"
+      ]
+    ],
+    [
+      "LR по исходу задачи",
+      [
+        "archive_ml/scenario_decision-lr-17|raw|A"
+      ]
+    ],
+    [
+      "CatBoost по исходу задачи",
+      [
+        "archive_ml/scenario_decision-catboost-17|raw|A"
+      ]
+    ],
+    [
+      "LR по платёжным условиям",
+      [
+        "archive_ml/native_core-lr-17|raw|A"
+      ]
+    ],
+    [
+      "CatBoost по платёжным условиям",
+      [
+        "archive_ml/native_core-catboost-17|raw|A"
+      ]
+    ],
+    [
+      "Переобученная LR: новые признаки, смесь",
+      [
+        "frozen_revision2/payment_v3__new__mixed__logistic__17|gated|A"
+      ]
+    ],
+    [
+      "Переобученный CatBoost: старые признаки, смесь",
+      [
+        "frozen_revision2/payment_v3__old__mixed__catboost__17|gated|A"
+      ]
+    ],
+    [
+      "Остальные шесть платёжных сочетаний переобучения; каждое",
+      [
+        "frozen_revision2/payment_v3__old__archive__logistic__17|gated|A",
+        "frozen_revision2/payment_v3__old__archive__catboost__17|gated|A",
+        "frozen_revision2/payment_v3__new__archive__logistic__17|gated|A",
+        "frozen_revision2/payment_v3__new__archive__catboost__17|gated|A",
+        "frozen_revision2/payment_v3__old__mixed__logistic__17|gated|A",
+        "frozen_revision2/payment_v3__new__mixed__catboost__17|gated|A"
+      ]
+    ],
+    [
+      "DeepSeek",
+      [
+        "deepseek"
+      ]
+    ],
+    [
+      "Всегда BLOCK, контроль",
+      [
+        "constant_BLOCK|rule|A"
+      ]
+    ]
+  ],
+  "renderer_sha256": "f742ed843e24f5df40fe16c220284757dddbc3e0478b8898c29342a129b2fe5e",
+  "summaries": {
+    "benchmark/latency.json": "0a657854c86b6f6ff6842d34d561ac199aca510dba2abeeb5da537fbd694a249",
+    "results/early-summary.json": "e6da5be270bcfea6b1b57e80af76d7ad4f50f86cbbf2c759dfd50ce51fbbe946",
+    "results/p4-summary.json": "fea8586cf7475c4763587d14c4d15df9ecd36a96756c6a147fb4e39149b1b8cc"
+  }
+}
