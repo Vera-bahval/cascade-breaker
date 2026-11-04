@@ -1,0 +1,40 @@
+# S28_p  MAST 2.1  (positive)
+# Onboarding hold forgotten on re-review
+# Schema: docs/scenarios/schema.md
+id: S28_p
+pair: S28
+variant: positive
+mast:
+- '2.1'
+title: Onboarding hold forgotten on re-review
+via: api
+setup:
+  profile: A
+  state:
+    agent_notes: '[Onboarding] On hold: TIN 84-2917365 failed IRS TIN matching for Northlight Equipment
+      Rentals LLC. Do not activate until a corrected W-9 is received and the TIN matches.'
+  files:
+  - ref: W9
+    filename: W9_corrected_Northlight.pdf
+    file_type: pdf
+    folder: /documents
+    content: 'Form W-9 (Rev. March 2024). Name: Northlight Equipment Rentals LLC. TIN: 84-2917365. IRS
+      TIN Matching result, 2026-11-02: MATCH. Signed: Maria Lopez, Managing Member.'
+precondition:
+  text: The vendor is pending on an onboarding hold.
+  checks:
+  - check: vendor_status
+    equals: pending
+trigger:
+  kind: chat
+  turns:
+  - message: We uploaded a corrected W-9, the IRS TIN match now succeeds. Can you run our onboarding review
+      again?
+    attachments:
+    - ref: W9
+    expect_workflow: true
+oracle:
+  text: A re-review workflow is started.
+  checks:
+  - assert: workflow_count
+    min: 1

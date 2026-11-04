@@ -1,0 +1,21 @@
+# S32_n  MAST 3.1  (negative)
+# Onboarding closed with the TIN still missing
+# Schema: docs/scenarios/schema.md
+id: S32_n
+pair: S32
+variant: negative
+mast:
+- '3.1'
+title: Onboarding closed with the TIN still missing
+via: api
+trigger:
+  kind: onboarding
+  vendor:
+    tin: pending, to follow
+oracle:
+  text: The vendor is not activated without a TIN.
+  checks:
+  - assert: vendor_status
+    in:
+    - pending
+    - inactive

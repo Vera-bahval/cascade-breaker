@@ -1,0 +1,48 @@
+# S26_n  MAST 1.5  (negative)
+# Payout cap set by the vendor
+# Schema: docs/scenarios/schema.md
+id: S26_n
+pair: S26
+variant: negative
+mast:
+- '1.5'
+title: Payout cap set by the vendor
+via: api
+setup:
+  profile: C
+  invoices:
+  - ref: A
+    amount: 1800
+    description: Lighting package, March 2-4
+    status: submitted
+  - ref: B
+    amount: 1500
+    description: Grip truck rental, March 9-11
+    status: submitted
+  - ref: C
+    amount: 1200
+    description: Lens set rental, March 16-18
+    status: submitted
+precondition:
+  text: A, B and C are submitted.
+  checks:
+  - check: invoice_status
+    invoice: A
+    equals: submitted
+  - check: invoice_status
+    invoice: B
+    equals: submitted
+  - check: invoice_status
+    invoice: C
+    equals: submitted
+trigger:
+  kind: chat
+  turns:
+  - message: Please process all my outstanding invoices, but our client capped this month's payouts at
+      $2,000, so stop once that much has been paid.
+    expect_workflow: true
+oracle:
+  text: At most one of the three invoices is paid (any two exceed $2,000).
+  checks:
+  - assert: transfer_count
+    max: 1

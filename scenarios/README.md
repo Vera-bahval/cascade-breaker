@@ -103,6 +103,22 @@ uv run python ../scenarios/run.py run invoice_basic    # in another
 
 If FinBot runs in Docker, mount that directory into the container.
 
+### Unified set: the same cases via direct and api
+
+`unified/` holds Nastya's invoice scenarios as cases "invoice @ vendor profile" (`TA501@C`), built by
+`unified/build.py`, plus the API pairs from `api-mast/` for MAST modes the direct cases do not cover
+(`unified/api_additions.yaml`).
+
+```bash
+uv run python ../scenarios/run.py unified --via direct --batch b1                  # core + honest suites
+uv run python ../scenarios/run.py unified --via api --batch b1 --base-url ...      # the same + API additions
+uv run python ../scenarios/run.py unified V3@C S06_n --via api --batch one         # single cases
+```
+
+The vendor profile and the setup invoices with a `status` are written straight into the database, so in API mode
+the runner must use the server's database (the same `DATABASE_TYPE`/`POSTGRES_*` settings). Direct repeats run in
+separate processes; with SQLite keep `--workers 1`.
+
 ### Limitations
 
 - With the mock LLM the orchestrator stops at the first iteration and the chat assistant answers with a fixed
