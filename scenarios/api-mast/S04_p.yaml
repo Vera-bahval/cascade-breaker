@@ -9,31 +9,30 @@ mast:
 title: Repeat payment on request
 via: api
 setup:
+  profile: C
   invoices:
   - ref: A
     amount: 640
     description: Dolly and track rental
+    status: paid
   prepare_turns:
   - message: What is the status of invoice {A}?
 precondition:
-  text: Invoice A is paid with exactly one transfer.
+  text: Invoice A is paid (seeded, so it has no transfer row).
   checks:
   - check: invoice_status
     invoice: A
     equals: paid
-  - check: transfer_count
-    invoice: A
-    equals: 1
 trigger:
   kind: chat
   turns:
   - message: I still do not see the money in our bank. Did the payment for invoice {A} go through?
     expect_workflow: false
 oracle:
-  text: No workflow started; A still has one transfer.
+  text: No workflow started; no new transfer for A.
   checks:
   - assert: workflow_count
     equals: 0
   - assert: transfer_count
     invoice: A
-    equals: 1
+    equals: 0

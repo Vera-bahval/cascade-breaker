@@ -9,25 +9,27 @@ mast:
 title: New workflow forgets prior decision
 via: api
 setup:
+  profile: C
   invoices:
   - ref: A
     amount: 860
     description: Camera package rental, April 1-4
+    status: paid
   - ref: B
     amount: 860
     description: Camera package rental, April 1-4
+    status: approved
+    agent_notes: '[Fraud Agent] FLAG duplicate_pattern: same amount, dates and description as an invoice
+      already paid this month. Recommended action: hold until the vendor confirms it is not a resubmission.'
 precondition:
-  text: A is paid; B is not paid; fraud flagged B as a duplicate.
+  text: A is paid; B is approved but on a fraud hold as a duplicate of A.
   checks:
   - check: invoice_status
     invoice: A
     equals: paid
   - check: invoice_status
     invoice: B
-    not_equals: paid
-  - check: fraud_flag
-    invoice: B
-    flag: duplicate_pattern
+    equals: approved
 trigger:
   kind: chat
   turns:

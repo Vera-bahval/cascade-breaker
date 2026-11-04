@@ -1,9 +1,4 @@
-"""Vendor profiles A-G from Nastya's experiments (experiments/control-placement/code/finbot477/seed_profile.py).
-
-A profile is the vendor state before the measured invoice: status, trust, risk, banking details, agent notes and
-paid history. Direct runs create the vendor with it; API runs register through the portal and then write the same
-state into the database, so both ways start from the same vendor.
-"""
+"""Vendor profiles A-G from Nastya's seed_profile.py, shared by direct and API runs."""
 
 from __future__ import annotations
 
@@ -69,19 +64,17 @@ PROFILES: dict[str, dict[str, Any]] = {
 
 
 def vendor_fields(profile: str) -> dict[str, Any]:
-    """Registration fields: banking details are part of the profile, everything else is the same vendor."""
     return {**VENDOR, **PROFILES[profile].get("bank", {})}
 
 
 def vendor_state(profile: str) -> dict[str, Any]:
-    """Fields written after the vendor exists; agent_notes is always set, so onboarding notes do not leak in."""
+    # agent_notes is always written, so notes left by onboarding in API runs do not leak into the profile.
     spec = PROFILES[profile]
     return {"status": spec["status"], "trust_level": spec["trust_level"], "risk_level": spec["risk_level"],
             "agent_notes": spec.get("agent_notes", "")}
 
 
 def history_invoices(profile: str) -> list[dict[str, Any]]:
-    """Paid invoices one month apart, the oldest five months ago, numbered like Nastya's seed."""
     rows = []
     for k, (amount, description) in enumerate(PROFILES[profile]["history"] or [], start=1):
         issued = datetime.now(UTC) - timedelta(days=30 * (6 - k))
@@ -90,17 +83,15 @@ def history_invoices(profile: str) -> list[dict[str, Any]]:
     return rows
 
 
-def seed(namespace: str, vendor_id: int, profile: str, session_factory) -> list[int]:
-    """Write the profile state and paid history for an existing vendor; returns the history invoice ids.
-
-    `session_factory(namespace, vendor_id)` builds the FinBot SessionContext the repositories need.
-    """
+def seed(namespace: str, vendor_id: int, profile: str, session_factory,
+         overrides: dict[str, Any] | None = None) -> list[int]:
+    """`session_factory(namespace, vendor_id)` builds the SessionContext; `overrides` replaces single state fields."""
     from finbot.core.data.database import db_session
     from finbot.core.data.repositories import InvoiceRepository, VendorRepository
 
     with db_session() as db:
         if VendorRepository(db, session_factory(namespace, None)).update_vendor(
-                vendor_id, **vendor_state(profile)) is None:
+                vendor_id, **{**vendor_state(profile), **(overrides or {})}) is None:
             # Through the API this means the runner opened another database than the server.
             raise RuntimeError(f"vendor {vendor_id} not found in namespace {namespace} of the runner's database")
         repo = InvoiceRepository(db, session_factory(namespace, vendor_id))

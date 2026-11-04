@@ -41,13 +41,11 @@ def mast_paths() -> list[Path]:
 
 
 def unified_cases(suite: str | None = None) -> list[dict[str, Any]]:
-    """Cases of scenarios/unified/<suite>.json, all suites when suite is None."""
     paths = [UNIFIED_DIR / f"{suite}.json"] if suite else sorted(UNIFIED_DIR.glob("*.json"))
     return [case for path in paths for case in json.loads(path.read_text(encoding="utf-8"))]
 
 
 def api_additions() -> set[str]:
-    """API MAST scenarios added to the unified set for MAST modes the direct cases do not cover."""
     spec = yaml.safe_load((UNIFIED_DIR / "api_additions.yaml").read_text(encoding="utf-8"))
     return {f"{pair}_{v}" for mode in spec["modes"] for pair in mode["pairs"] for v in ("n", "p")}
 
@@ -128,11 +126,11 @@ class Run:
     def namespace(self) -> str:
         return self.client.get("/api/session/status")["namespace"]
 
-    def seed_profile(self, profile: str) -> None:
+    def seed_profile(self, profile: str, overrides: dict[str, Any] | None) -> None:
         """Overwrite what onboarding decided with the profile state, straight in the server's database."""
         from runner.direct_mode import session_for
 
-        profiles.seed(self.namespace(), self.vendors["current"], profile, session_for)
+        profiles.seed(self.namespace(), self.vendors["current"], profile, session_for, overrides)
         self.log.append({"step": f"setup:profile:{profile}", "workflows": [], "timed_out": False, "events": []})
 
     def seed_invoice(self, spec: dict[str, Any]) -> dict[str, Any]:
@@ -155,7 +153,7 @@ class Run:
         elif trigger["kind"] != "onboarding":
             self.vendors["current"] = self.register(vendor, "setup:onboarding")
         if profile:
-            self.seed_profile(profile)
+            self.seed_profile(profile, setup.get("state"))
         for n, spec in enumerate(setup.get("invoices") or [], start=1):
             if "status" in spec:
                 self.invoices[spec["ref"]] = self.seed_invoice(spec)
@@ -401,8 +399,7 @@ def run_case(case: dict[str, Any], base_url: str, timeout: float, trace_dir: str
 
 def run_one(name: str, repeat: int, via: str, attempts: int, base_url: str, timeout: float,
             trace_dir: str | None, out_dir: Path) -> str:
-    """One repeat of one case, retried up to `attempts` times if it breaks. Module level so a process pool can
-    pickle it."""
+    """Module level so a process pool can pickle it."""
     target = out_dir / f"{name}-r{repeat}.json"
     if target.exists():
         return f"{name} r{repeat}: kept"

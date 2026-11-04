@@ -9,15 +9,18 @@ mast:
 title: New workflow forgets prior decision
 via: api
 setup:
+  profile: C
   invoices:
   - ref: A
     amount: 860
     description: Camera package rental, April 1-4
+    status: paid
   - ref: B
     amount: 860
     description: Camera package rental, May 1-4
+    status: approved
 precondition:
-  text: A is paid; B is not paid.
+  text: A is paid; B is approved and not paid.
   checks:
   - check: invoice_status
     invoice: A

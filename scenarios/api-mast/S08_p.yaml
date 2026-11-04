@@ -9,10 +9,14 @@ mast:
 title: No termination condition
 via: api
 setup:
+  profile: C
   invoices:
   - ref: A
     amount: 14500
     description: Grip and lighting package, feature shoot
+    status: rejected
+    agent_notes: '[Invoice Agent] Rejected: amount is above the $10,000 limit and there is no signed purchase
+      order.'
 precondition:
   text: Invoice A is not approved.
   checks:

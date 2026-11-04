@@ -9,13 +9,16 @@ mast:
 title: Ambiguous invoice reference
 via: api
 setup:
+  profile: C
   invoices:
   - ref: A
     amount: 700
     description: Electrical distro and power, studio day
+    status: submitted
   - ref: B
     amount: 9800
     description: Generator truck and fuel, location week
+    status: submitted
 precondition:
   text: Neither A nor B is paid.
   checks:

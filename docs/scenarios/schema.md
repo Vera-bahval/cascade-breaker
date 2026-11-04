@@ -5,7 +5,7 @@
 
 Схема расширяет формат из `scenarios/README.md`: добавлены история чата (`prepare_turns`, многоходовый `trigger`),
 вложения (`files`, `attachments`), правки через портал (`edits`), предусловие (`precondition`) и явный оракул
-(`oracle`). **Текущий раннер эти поля не исполняет.** Файлы это данные; исполнение отдельным PR.
+(`oracle`). Исполняет их `scenarios/runner/mast_mode.py` (`run.py mast` и `run.py unified`).
 
 ## Поля верхнего уровня
 
@@ -29,7 +29,9 @@
 | Поле | Тип | Смысл |
 | --- | --- | --- |
 | `vendor` | объект | переопределения поверх `DEFAULT_VENDOR`; вендор регистрируется и онбордится в подготовке |
-| `invoices` | список | счета, поданные в подготовке: `ref`, `amount`, `description`, опц. `due_in_days`, `days_ago` |
+| `profile` | `A`–`G` | профиль вендора Насти (`scenarios/runner/profiles.py`): регистрация с реквизитами профиля, после онбординга в БД записываются статус, доверие, риск, заметки и оплаченная история |
+| `state` | объект | поля состояния вендора поверх профиля (например свои `agent_notes`) |
+| `invoices` | список | счета, поданные в подготовке: `ref`, `amount`, `description`, опц. `due_in_days`, `days_ago`; с `status` (и опц. `agent_notes`) счёт создаётся сразу в БД в этом статусе, без workflow |
 | `files` | список | файлы в FinDrive: `ref`, `filename`, `content`, `file_type`, `folder` |
 | `edits` | список | правки через портал после подачи счетов (ниже) |
 | `prepare_turns` | список | сообщения в чат до триггера, чтобы набрать историю: `message`, опц. `attachments`, `expect_workflow` |

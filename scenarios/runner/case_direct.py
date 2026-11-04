@@ -1,9 +1,4 @@
-"""Run a scenarios/unified case with `via: direct`: straight into the orchestrator, no HTTP, chat or onboarding.
-
-The vendor is created in its profile (runner/profiles.py, same code as the API seed), the invoice is written to the
-database and the orchestrator gets the task text the portal sends. The precondition and oracle are the same checks
-as in API mode (runner/mast_mode.Facts), read from the database snapshot and the workflow trace.
-"""
+"""Unified invoice cases via direct, checked with the same precondition and oracle as via api."""
 
 from __future__ import annotations
 
