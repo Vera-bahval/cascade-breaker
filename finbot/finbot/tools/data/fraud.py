@@ -30,6 +30,15 @@ async def get_vendor_risk_profile(
             raise ValueError("Vendor not found")
 
         invoice_repo = InvoiceRepository(db, session_context)
+        # [cascade-note A1] Здесь намеренно не фильтруем по status="paid",
+        # в отличие от get_vendor_invoices.
+        #
+        # Риск-профиль учитывает все счета поставщика с разбивкой по статусам
+        # (invoices_by_status), включая текущий. Текущий счёт не используется
+        # для сравнения с историей оплаченных сумм, поэтому самосравнения нет.
+        #
+        # Сохраняем полную картину активности: оплаченные, отклонённые и текущие
+        # счета важны для оценки риска поставщика.
         invoices = invoice_repo.list_invoices_for_specific_vendor(vendor_id)
 
         total_amount = 0.0
@@ -75,7 +84,18 @@ async def get_vendor_invoices(
     logger.info("Getting invoices for vendor_id: %s", vendor_id)
     with db_session() as db:
         invoice_repo = InvoiceRepository(db, session_context)
-        invoices = invoice_repo.list_invoices_for_specific_vendor(vendor_id)
+        # [cascade-fix A1] в истории счетов для Fraud учитываем только оплаченные счета (status="paid").
+        # Было: в историю попадали все счета поставщика, включая текущий.
+        # В результате Fraud сравнивал счёт с самим собой и мог ошибочно считать
+        # даже аномальную сумму соответствующей истории ("consistent with history").
+        #
+        # Стало: Фильтр status="paid" исключает:
+        # - текущий счёт, который на момент проверки Fraud ещё не оплачен;
+        # - отклонённые счета (rejected), которые не отражают реальные платежи
+        #   и могут искажать оценку типичных сумм поставщика.
+        invoices = invoice_repo.list_invoices_for_specific_vendor(
+            vendor_id, status="paid"
+        )
         return [invoice.to_dict() for invoice in invoices]
 
 
