@@ -38,6 +38,7 @@ legacy-событий исключены; все публикуемые пред
 - [Главная таблица на общем входе](PRIMARY.md).
 - [Все методы и три режима](TABLES.md), [категории задач](TASKS.md).
 - [Ранние действия и первая остановка](EARLY.md).
+- [FPR, расходы API и последовательная задержка каскада](CASCADE.md), [машинные результаты](cascade-accounting.json).
 - [Одиночная задержка](LATENCY.md), [проверяемые примеры](EXAMPLES.md).
 - Машинные результаты:results/p4-summary.json, results/early-summary.json,
   results/p4-decisions.jsonl.gz, examples.json.
@@ -130,3 +131,10 @@ python -m experiments.local_guards_repaired_evaluation.benchmark --output /tmp/f
 
 Это повторный анализ ранее открытых архивов. Предыдущие320/800 состояний
 остаются тестами реализации и не входят в эти542 архивных состояния.
+
+Постфактум расчёт каскадов без новых предсказаний или измерений:
+
+```sh
+python -m unittest experiments.local_guards_repaired_evaluation.test_cascade_accounting -q
+python -m experiments.local_guards_repaired_evaluation.cascade_accounting
+```
