@@ -27,7 +27,8 @@ def run():
         for row in rows(HERE/'inputs.jsonl.gz'):
             assert digest(row['payload'])==row['input_sha256']
             result=guard(row['payload'])
-            emit(dict(**{k:v for k,v in row.items() if k!='payload'},result=result))
+            emit(dict(**{k:v for k,v in row.items() if k!='payload'},result=result,
+                      checkpoint=row['payload']['checkpoint'],event_seq=row['payload']['event_seq']))
             counts[row['dataset']+'/'+row['mode']+'/'+row['method']]+=1
     write_json(HERE/'prediction-freeze.json',dict(input_manifest_sha256=sha(HERE/'input-manifest.json'),
         approval_sha256=sha(HERE/'approval.json'),predictions_sha256=sha(out),code_sha256=sha(Path(__file__)),

@@ -81,6 +81,19 @@ class ProfileTests(unittest.TestCase):
         r['bundle']['checkpoint']='P3';r['bundle']['proposal']={'tool':'update_invoice_status','target_status':'approved'}
         r['fraud_events']=r['adapters'].pop('native')['payload']['raw_context']['events']
         self.assertEqual(self.decision(r),'ALLOW')
+    def test_completion_only_is_not_a_fabricated_review_start(self):
+        r=row();r['bundle']['hold_events']=[dict(value=True,event_seq=2,source_ref='hold/2')]
+        r['adapters']['native']['payload']['raw_context']['events']=[
+            dict(event_seq=5,hook_kind='after_tool',source_event_kind='tool',tool_name='delegate_to_fraud',tool_arguments={'vendor_id':2},tool_result={'task_status':'success'})]
+        p=prepare(r,'v4.3_archive')
+        self.assertTrue(p['facts']['fraud_review_completed']);self.assertTrue(p['facts']['binding_hold'])
+        self.assertEqual(guard(p)['decision'],'BLOCK')
+    def test_known_invalid_mutation_and_foreign_target_still_block(self):
+        r=row();r['bundle']['checkpoint']='P3';r['bundle']['proposal']={'tool':'update_invoice_status','target_status':'banana'}
+        self.assertEqual(self.decision(r),'BLOCK')
+        r['bundle']['proposal']['target_status']='approved'
+        r['adapters']['native']['payload']['raw_context']['proposed_action']['tool_arguments']['invoice_id']=8
+        self.assertEqual(self.decision(r),'BLOCK')
 
 
 if __name__=='__main__':unittest.main()
