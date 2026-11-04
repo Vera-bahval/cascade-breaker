@@ -22,24 +22,74 @@ KNOWN_MCP={tool for name,tools in contract._REGISTRY['mcp_tool_registry'].items(
 
 
 def pair_events(events):
-    """Pair actual callbacks by nesting and occurrence IDs, never by actor label."""
-    pending, pairs = [], []
+    """Keep callbacks, model proposals and completed legacy records distinct.
+
+    The producer must admit the source format; a tag in arbitrary JSON is not
+    an execution attestation. Derived proposal links never become beforehooks.
+    """
+    pending, pairs, proposals = [], [], []
+    legacy=any(e.get('source_event_kind') in {'tool','llm','recorded_model_proposal'} for e in events)
+    batch=None
+    def compatible(before,after):
+        if (before.get('tool_name')!=after.get('tool_name')
+                or digest(before.get('tool_arguments') or {})!=digest(after.get('tool_arguments') or {})):
+            return False
+        fields=('namespace',*prior.CALL_IDENTITIES,'tool_call_id','call_id','tool_source')
+        first=before.get('tool_call_id') or before.get('call_id')
+        second=after.get('tool_call_id') or after.get('call_id')
+        if any(e.get('tool_call_id') and e.get('call_id') and e['tool_call_id']!=e['call_id'] for e in (before,after)):
+            return False
+        return (not first or not second or first==second) and all(
+            before.get(k) is None or after.get(k) is None or before[k]==after[k] for k in fields)
     for index, event in enumerate(events):
         kind = event.get('hook_kind')
+        if kind=='after_model' or kind=='before_model' and event.get('source_event_kind')=='llm':
+            batch=index
         if event.get('tool_name')=='complete_task':
-            # FinBot's terminal sentinel has no after_tool callback.
+            # Modern terminal sentinel may have no callback. Legacy traces
+            # record its return; neither representation closes its delegate.
+            if kind=='after_tool' and legacy:
+                pairs.append(({'event':event,'index':index,'parent':None,'tool':'complete_task',
+                               'legacy_executed':True},event))
             continue
         if kind == 'before_tool':
-            pending.append({'event': event, 'index': index,
-                            'parent': next((p['index'] for p in reversed(pending) if p['event'].get('source_event_kind')!='recorded_model_proposal'),None),
-                            'tool': event.get('tool_name')})
+            frame={'event':event,'index':index,'parent':pending[-1]['index'] if pending else None,
+                   'tool':event.get('tool_name')}
+            if event.get('source_event_kind')=='recorded_model_proposal':
+                proposals.append(dict(frame,batch=batch))
+            else:
+                pending.append(frame)
         elif kind == 'after_tool':
-            if pending and prior._matches(pending[-1]['event'], event):
+            if pending and compatible(pending[-1]['event'],event) and prior._matches(pending[-1]['event'], event):
                 pairs.append((pending.pop(), event))
-            elif event.get('source_event_kind') == 'tool':
-                # A legacy executed-tool record includes the invocation/result.
-                pairs.append(({'event': event, 'index': index, 'parent': None,
-                               'tool': event.get('tool_name'), 'legacy_executed': True}, event))
+            elif legacy and (not pending or pending[-1]['tool'].startswith('delegate_to_')
+                    and event.get('tool_name')!=pending[-1]['tool']
+                    and not str(event.get('tool_name') or '').startswith('delegate_to_')):
+                batch_proposals=[p for p in proposals if p['batch']==batch]
+                candidates=[p for p in batch_proposals if compatible(p['event'],event)]
+                frame={'event':event,'index':index,'parent':None,
+                       'tool':event.get('tool_name'),'legacy_executed':True}
+                unique=len(candidates)==1
+                if unique:
+                    proposal=candidates[0];proposals.remove(proposal)
+                    frame['proposal_event_seq']=proposal['event']['event_seq']
+                    frame['proposal_link_kind']='derived_unique_structural_match'
+                # A completed legacy tool step, or a unique source-recorded
+                # proposal/result, may belong to one active actual delegate.
+                own_ids_consistent=not (event.get('tool_call_id') and event.get('call_id')
+                                        and event['tool_call_id']!=event['call_id'])
+                if (unique or event.get('source_event_kind')=='tool' and not batch_proposals) and own_ids_consistent and len(pending)==1:
+                    parent=pending[0]
+                    first,second=parent['event'],event
+                    conflict=any(first.get(k) is not None and second.get(k) is not None and first[k]!=second[k]
+                                 for k in ('namespace','session_id'))
+                    if first.get('workflow_id') and second.get('workflow_id') not in (None,first['workflow_id']):
+                        conflict=conflict or second.get('parent_workflow_id')!=first['workflow_id']
+                    if first.get('workflow_id') and second.get('parent_workflow_id'):
+                        conflict=conflict or second['parent_workflow_id']!=first['workflow_id']
+                    same_parent=not unique or proposal['parent']==parent['index']
+                    if not conflict and same_parent:frame['parent']=parent['index']
+                pairs.append((frame,event))
             else:
                 pairs.append((None, event))
     return pairs, pending
@@ -108,6 +158,9 @@ def build_evidence(row, source=None):
         bundle['complete_prefix']=False
     model_open=False
     for event in events:
+        if event.get('source_event_kind')=='llm':
+            # One completed legacy request/response record, not an open hook.
+            continue
         if event.get('hook_kind')=='before_model':
             if model_open:
                 bundle['complete_prefix']=False
@@ -213,6 +266,8 @@ def build_evidence(row, source=None):
                 complete_ledger=False
     for frame, event in pairs:
         name=event.get('tool_name') or ''
+        if name=='complete_task':
+            continue
         seq=event['event_seq']
         ref=prior._event_ref(event,run_ref)
         args=event.get('tool_arguments') or {}

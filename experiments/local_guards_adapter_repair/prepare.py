@@ -292,6 +292,7 @@ def run(output):
     if source_hashes!=initial_hashes:
         raise ValueError('preparation source changed during generation')
     write_json(output/'manifest.json',{'status':'PREPARED_AWAITING_INDEPENDENT_REVIEW',
+        'preparation_revision':2,
         'base':inventory['base'],'inventory_sha256':sha(HERE/'inventory.json'),
         'frozen_sources_sha256':sha(HERE/'frozen-sources.json'),'methods_sha256':sha(HERE/'methods.json'),'source_hashes':source_hashes,
         'counts':{'p4_states':542,'p4_mode_rows':p4_count,'early_episodes':754,

@@ -42,7 +42,7 @@ def actor_at(row, authority):
     roles={}
     for index,frame in sorted(frames.items()):
         parent=frame['parent']
-        role=authority['functions'].get('run_orchestrator_agent') if parent is None else roles.get(parent)
+        role=(None if frame.get('legacy_executed') else authority['functions'].get('run_orchestrator_agent')) if parent is None else roles.get(parent)
         roles[index]=role
         if parent is not None and frames[parent]['tool'] in authority['delegations']:
             if roles.get(parent)=='orchestrator':

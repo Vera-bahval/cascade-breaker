@@ -477,6 +477,140 @@ class PaymentReferenceTests(unittest.TestCase):
             tool_arguments={'invoice_id':1,'payment_reference':'tx'})
         self.assertNotIn('payment_reference_matches_transfer',build_evidence(row)['current'])
 
+
+class LegacyFormatRegressionTests(unittest.TestCase):
+    def test_unique_recorded_read_does_not_block_real_delegation_return(self):
+        from .evidence import pair_events
+        events=[{'hook_kind':'before_tool','event_seq':1,'tool_name':'delegate_to_invoice','tool_arguments':{'invoice_id':1}},
+            {'hook_kind':'after_model','event_seq':9},
+            {'hook_kind':'before_tool','event_seq':9,'source_event_kind':'recorded_model_proposal',
+             'tool_name':'get_invoice_details','tool_arguments':{'invoice_id':1}},
+            {'hook_kind':'after_tool','event_seq':10,'tool_name':'get_invoice_details','tool_source':'native',
+             'tool_arguments':{'invoice_id':1},'tool_result':{'id':1,'vendor_id':1,'status':'approved'}},
+            {'hook_kind':'after_tool','event_seq':11,'tool_name':'complete_task','tool_source':'native',
+             'tool_arguments':{},'tool_result':{'task_status':'success'}},
+            {'hook_kind':'after_tool','event_seq':12,'tool_name':'delegate_to_invoice','tool_source':'native',
+             'tool_arguments':{'invoice_id':1},'tool_result':{'task_status':'success'}}]
+        pairs,pending=pair_events(events)
+        read=next(f for f,e in pairs if e['event_seq']==10)
+        parent=next(f for f,e in pairs if e['event_seq']==12)
+        self.assertIsNotNone(read)
+        self.assertIsNotNone(parent)
+        self.assertEqual(read['parent'],parent['index'])
+        self.assertEqual(read['event']['event_seq'],10)  # Actual result, no invented beforehook.
+        self.assertFalse(pending)
+
+    def test_proposal_alone_does_not_claim_execution_or_mutation(self):
+        proposal={'hook_kind':'before_tool','event_seq':10,'source_event_kind':'recorded_model_proposal',
+                  'tool_name':'update_invoice_status','tool_arguments':{'invoice_id':1,'status':'paid'}}
+        bundle=build_evidence(example([proposal]))
+        self.assertEqual(bundle['current']['invoice_status']['value'],'approved')
+        self.assertTrue(bundle['current']['invoice_status']['current'])
+
+    def test_completed_legacy_model_records_do_not_open_callback_frames(self):
+        events=[{'hook_kind':'before_model','event_seq':2,'source_event_kind':'llm'},
+                {'hook_kind':'before_model','event_seq':4,'source_event_kind':'llm'},
+                {'hook_kind':'after_tool','event_seq':6,'source_event_kind':'tool','tool_source':'native',
+                 'tool_name':'get_invoice_details','tool_arguments':{'invoice_id':1},
+                 'tool_result':{'id':1,'vendor_id':1,'amount':'125','status':'approved'}}]
+        bundle=build_evidence(example(events))
+        self.assertTrue(bundle['complete_prefix'])
+        self.assertTrue(bundle['current']['invoice_amount']['current'])
+        self.assertEqual(bundle['current']['invoice_amount']['value'],'125')
+
+    def test_actual_native_orphan_is_not_reclassified_as_legacy(self):
+        from .evidence import pair_events
+        result=call('get_invoice_details',{'invoice_id':1},{'id':1},10)[-1]
+        self.assertIsNone(pair_events([result])[0][0][0])
+
+    def test_ambiguous_or_conflicting_proposals_give_no_parent_or_proposal_credit(self):
+        from .evidence import pair_events
+        root={'hook_kind':'before_tool','event_seq':1,'tool_name':'delegate_to_fraud','tool_arguments':{'vendor_id':1}}
+        proposal={'hook_kind':'before_tool','event_seq':9,'source_event_kind':'recorded_model_proposal',
+                  'tool_name':'get_invoice_details','tool_arguments':{'invoice_id':1}}
+        returned={'hook_kind':'after_tool','event_seq':10,'tool_name':'get_invoice_details','tool_source':'native',
+                  'tool_arguments':{'invoice_id':1},'tool_result':{'id':1}}
+        for proposals,result in (([proposal,copy.deepcopy(proposal)],returned),
+                                 ([dict(proposal,call_id='first')],dict(returned,call_id='other')),
+                                 ([dict(proposal,tool_call_id='first')],dict(returned,call_id='other')),
+                                 ([dict(proposal,workflow_id='first')],dict(returned,workflow_id='other')),
+                                 ([dict(proposal,namespace='first')],dict(returned,namespace='other')),
+                                 ([dict(proposal,session_id='first')],dict(returned,session_id='other'))):
+            frame=pair_events([root,{'hook_kind':'after_model','event_seq':9},*proposals,result])[0][0][0]
+            self.assertIsNotNone(frame)  # Actual source result remains observed.
+            self.assertIsNone(frame['parent'])
+            self.assertNotIn('proposal_event_seq',frame)
+
+    def test_conflicting_actual_callback_is_not_reclassified_as_standalone_legacy(self):
+        from .evidence import pair_events
+        events=call('delegate_to_fraud',{'vendor_id':1},{'task_status':'success'},10)
+        events[0]['call_id']='first';events[1]['call_id']='other'
+        # Presence of completed legacy model records does not excuse actual conflicts.
+        events.insert(0,{'hook_kind':'before_model','event_seq':2,'source_event_kind':'llm'})
+        self.assertIsNone(pair_events(events)[0][0][0])
+
+    def test_proposal_cannot_gain_a_parent_that_started_later(self):
+        from .evidence import pair_events
+        events=[{'hook_kind':'after_model','event_seq':3},
+            {'hook_kind':'before_tool','event_seq':3,'source_event_kind':'recorded_model_proposal',
+             'tool_name':'get_invoice_details','tool_arguments':{'invoice_id':1}},
+            {'hook_kind':'before_tool','event_seq':5,'tool_name':'delegate_to_fraud','tool_arguments':{'vendor_id':1}},
+            {'hook_kind':'after_tool','event_seq':6,'tool_name':'get_invoice_details','tool_source':'native',
+             'tool_arguments':{'invoice_id':1},'tool_result':{'id':1}}]
+        frame=pair_events(events)[0][0][0]
+        self.assertIsNotNone(frame)
+        self.assertIsNone(frame['parent'])
+
+    def test_actual_callback_namespace_conflict_is_not_accepted(self):
+        from .evidence import pair_events
+        events=call('get_invoice_details',{'invoice_id':1},{'id':1},10)
+        events[0]['namespace']='a';events[1]['namespace']='b'
+        self.assertIsNone(pair_events(events)[0][0][0])
+
+    def test_internally_conflicting_occurrence_aliases_do_not_confirm_a_pair(self):
+        from .evidence import pair_events
+        events=call('get_invoice_details',{'invoice_id':1},{'id':1},10)
+        for e in events:e.update(call_id='a',tool_call_id='b')
+        self.assertIsNone(pair_events(events)[0][0][0])
+
+    def test_explicit_legacy_result_does_not_override_a_conflicting_proposal_link(self):
+        from .evidence import pair_events
+        events=[{'hook_kind':'before_tool','event_seq':1,'tool_name':'delegate_to_fraud','tool_arguments':{'vendor_id':1}},
+            {'hook_kind':'after_model','event_seq':3},
+            {'hook_kind':'before_tool','event_seq':3,'source_event_kind':'recorded_model_proposal',
+             'tool_name':'get_invoice_details','tool_arguments':{'invoice_id':1},'call_id':'a'},
+            {'hook_kind':'after_tool','event_seq':4,'source_event_kind':'tool','tool_name':'get_invoice_details',
+             'tool_source':'native','tool_arguments':{'invoice_id':1},'tool_result':{'id':1},'call_id':'b'}]
+        frame=pair_events(events)[0][0][0]
+        self.assertIsNotNone(frame)
+        self.assertIsNone(frame['parent'])
+
+    def test_repeated_completed_reads_get_distinct_result_occurrence_ids(self):
+        events=[{'hook_kind':'after_tool','event_seq':i,'source_event_kind':'tool','tool_source':'native',
+                 'tool_name':'get_invoice_details','tool_arguments':{'invoice_id':1},
+                 'tool_result':{'id':1,'vendor_id':1,'amount':'100','status':'approved'}} for i in (10,20)]
+        records=[r for r in build_evidence(example(events))['records'] if r['fact']=='invoice_amount' and r['event_seq'] in (10,20)]
+        self.assertEqual(len({r['source_call_id'] for r in records}),2)
+
+    def test_unbound_legacy_delegation_does_not_acquire_root_authority(self):
+        from .authority import actor_at
+        event={'hook_kind':'after_tool','event_seq':10,'source_event_kind':'tool','tool_source':'native',
+               'tool_name':'delegate_to_fraud','tool_arguments':{'vendor_id':1},'tool_result':{'task_status':'success'}}
+        row=example([event]);row['checkpoint']='P2';row['event_seq']=11
+        row['anchor']={'return_event':event}
+        authority={'functions':{'run_orchestrator_agent':'orchestrator'},'delegations':{},'source_hashes':{'runner':'verified'}}
+        self.assertIsNone(actor_at(row,authority))
+
+    def test_real_legacy_read_status_is_not_discarded(self):
+        from .inventory import rows,HERE
+        row=next(r for r in rows(HERE/'inputs/p4-inputs.jsonl.gz')
+                 if r['mode']=='common' and r['prefix_id']=='1536c67c5cf20c447ef791869b1f')
+        bundle=build_evidence(row['adapters']['native']['payload'])
+        self.assertTrue(bundle['complete_prefix'])
+        self.assertTrue(bundle['current']['invoice_status']['current'])
+        self.assertEqual(bundle['current']['invoice_status']['value'],'approved')
+        self.assertTrue(adapt(bundle,'v1')['applicable'])
+
     def test_process_payment_reference_is_linked_to_observed_receipt(self):
         args={'invoice_id':1,'vendor_id':1,'amount':'100','vendor_account':'acct'}
         row=example(call('finstripe__create_transfer',args,{'invoice_id':1,'vendor_id':1,'status':'completed','transfer_id':'transfer-123'},40))
