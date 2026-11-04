@@ -15,11 +15,13 @@ from typing import Any
 
 import yaml
 
+from runner import profiles
 from runner.api_mode import read_traces, wait_for_workflows
 from runner.client import API, FinBotClient
 from runner.scenario import DEFAULT_VENDOR, invoice_fields
 
 MAST_DIR = Path(__file__).resolve().parent.parent / "api-mast"
+UNIFIED_DIR = Path(__file__).resolve().parent.parent / "unified"
 # The catalogue uses a routing number that passes the ABA checksum unless routing is the tested factor.
 MAST_VENDOR = {**DEFAULT_VENDOR, "bank_routing_number": "121000358"}
 TRUST_ORDER = {"low": 0, "standard": 1, "high": 2}
@@ -38,7 +40,25 @@ def mast_paths() -> list[Path]:
     return sorted(MAST_DIR.glob("S*.yaml"))
 
 
+def unified_cases(suite: str | None = None) -> list[dict[str, Any]]:
+    """Cases of scenarios/unified/<suite>.json, all suites when suite is None."""
+    paths = [UNIFIED_DIR / f"{suite}.json"] if suite else sorted(UNIFIED_DIR.glob("*.json"))
+    return [case for path in paths for case in json.loads(path.read_text(encoding="utf-8"))]
+
+
+def api_additions() -> set[str]:
+    """API MAST scenarios added to the unified set for MAST modes the direct cases do not cover."""
+    spec = yaml.safe_load((UNIFIED_DIR / "api_additions.yaml").read_text(encoding="utf-8"))
+    return {f"{pair}_{v}" for mode in spec["modes"] for pair in mode["pairs"] for v in ("n", "p")}
+
+
 def load_case(name: str) -> dict[str, Any]:
+    """An API MAST id (S01_n), a unified case id (TA501@C) or a path to a yaml file."""
+    if "@" in name:
+        found = [c for c in unified_cases() if c["id"] == name]
+        if not found:
+            raise FileNotFoundError(f"no unified case {name}")
+        return found[0]
     path = Path(name)
     if not path.exists():
         path = MAST_DIR / f"{name}.yaml"
@@ -57,7 +77,8 @@ class Run:
         self.files: dict[str, dict[str, Any]] = {}
         self.vendors: dict[str, int] = {}
         self.log: list[dict[str, Any]] = []
-        self.tag = f"{case['id']}-{int(time.time() * 1000) % 10**8}"
+        # The tag goes into invoice numbers the agents read, so keep it to letters, digits and dashes.
+        self.tag = f"{re.sub(r'[^A-Za-z0-9]+', '-', case['id'])}-{int(time.time() * 1000) % 10**8}"
 
     # -- actions ---------------------------------------------------------------------------------------------
 
@@ -104,15 +125,41 @@ class Run:
                 "error": reply["error"], "launched": launched, "workflows": done["workflows"],
                 "wall_s": round(time.perf_counter() - started, 2)}
 
+    def namespace(self) -> str:
+        return self.client.get("/api/session/status")["namespace"]
+
+    def seed_profile(self, profile: str) -> None:
+        """Overwrite what onboarding decided with the profile state, straight in the server's database."""
+        from runner.direct_mode import session_for
+
+        profiles.seed(self.namespace(), self.vendors["current"], profile, session_for)
+        self.log.append({"step": f"setup:profile:{profile}", "workflows": [], "timed_out": False, "events": []})
+
+    def seed_invoice(self, spec: dict[str, Any]) -> dict[str, Any]:
+        """A setup invoice with a status is written to the database, so no workflow decides it."""
+        from runner.direct_mode import create_invoice
+
+        fields = invoice_fields({k: v for k, v in spec.items() if k not in ("ref", "status", "agent_notes")},
+                                f"INV-{self.tag}-{spec['ref']}")
+        invoice_id = create_invoice(self.namespace(), self.vendors["current"], fields, spec["status"],
+                                    spec.get("agent_notes"))
+        return {"id": invoice_id, "invoice_number": fields["invoice_number"], "seeded": True}
+
     def setup(self) -> list[dict[str, Any]]:
         setup = self.case.get("setup") or {}
         trigger = self.case["trigger"]
-        vendor = {**MAST_VENDOR, **(setup.get("vendor") or {})}
+        profile = setup.get("profile")
+        vendor = {**(profiles.vendor_fields(profile) if profile else MAST_VENDOR), **(setup.get("vendor") or {})}
         if setup.get("prior_vendor_ref"):
             self.vendors[setup["prior_vendor_ref"]] = self.register(vendor, "setup:prior_vendor")
         elif trigger["kind"] != "onboarding":
             self.vendors["current"] = self.register(vendor, "setup:onboarding")
+        if profile:
+            self.seed_profile(profile)
         for n, spec in enumerate(setup.get("invoices") or [], start=1):
+            if "status" in spec:
+                self.invoices[spec["ref"]] = self.seed_invoice(spec)
+                continue
             mark = self.mark()
             fields = {k: v for k, v in spec.items() if k != "ref"}
             created = self.client.create_invoice(invoice_fields(fields, f"INV-{self.tag}-{spec['ref']}"))
@@ -352,32 +399,50 @@ def run_case(case: dict[str, Any], base_url: str, timeout: float, trace_dir: str
     return result
 
 
+def run_one(name: str, repeat: int, via: str, attempts: int, base_url: str, timeout: float,
+            trace_dir: str | None, out_dir: Path) -> str:
+    """One repeat of one case, retried up to `attempts` times if it breaks. Module level so a process pool can
+    pickle it."""
+    target = out_dir / f"{name}-r{repeat}.json"
+    if target.exists():
+        return f"{name} r{repeat}: kept"
+    case = load_case(name)
+    allowed = case.get("via", "api")
+    allowed = [allowed] if isinstance(allowed, str) else allowed
+    if via not in allowed:
+        return f"{name} r{repeat}: skipped, case runs only via {allowed}"
+    tries = []
+    for _ in range(attempts):
+        if via == "direct":
+            from runner import case_direct
+
+            result = case_direct.run_case(case)
+        else:
+            result = run_case(case, base_url, timeout, trace_dir)
+            result["via"] = "api"
+        tries.append({k: result.get(k) for k in ("precondition_ok", "error", "wall_s")})
+        if "error" not in result:
+            break
+    result["attempts"] = tries
+    target.write_text(json.dumps(result, ensure_ascii=False, default=str), encoding="utf-8")
+    verdict = result.get("error") or f"precondition_ok={result['precondition_ok']} oracle_ok={result['oracle_ok']}"
+    return f"{name} r{repeat}: {verdict} ({result['wall_s']} s, {len(tries)} prepare)"
+
+
 def run_batch(names: list[str], repeats: int, workers: int, attempts: int, base_url: str, timeout: float,
-              trace_dir: str | None, out_dir: Path) -> None:
-    """Every repeat of every case. A repeat that breaks is retried up to `attempts` times. A repeat whose
-    precondition fails still runs its trigger: preparing again until the agents land in the wanted state costs
-    more than the analysis gains, so it is recorded and filtered later."""
-    from concurrent.futures import ThreadPoolExecutor, as_completed
+              trace_dir: str | None, out_dir: Path, via: str = "api") -> None:
+    """Every repeat of every case. A repeat whose precondition fails still runs its trigger: preparing again until
+    the agents land in the wanted state costs more than the analysis gains, so it is recorded and filtered later.
+
+    API repeats share nothing but the server, so they run in threads. Direct repeats run FinBot in this process,
+    and its LLM client is bound to one event loop, so each runs in its own process."""
+    from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
 
     out_dir.mkdir(parents=True, exist_ok=True)
-
-    def one(name: str, repeat: int) -> str:
-        target = out_dir / f"{name}-r{repeat}.json"
-        if target.exists():
-            return f"{name} r{repeat}: kept"
-        case = load_case(name)
-        tries = []
-        for _ in range(attempts):
-            result = run_case(case, base_url, timeout, trace_dir)
-            tries.append({k: result.get(k) for k in ("precondition_ok", "error", "wall_s")})
-            if "error" not in result:
-                break
-        result["attempts"] = tries
-        target.write_text(json.dumps(result, ensure_ascii=False, default=str), encoding="utf-8")
-        verdict = result.get("error") or f"precondition_ok={result['precondition_ok']} oracle_ok={result['oracle_ok']}"
-        return f"{name} r{repeat}: {verdict} ({result['wall_s']} s, {len(tries)} prepare)"
-
     jobs = [(name, r) for r in range(1, repeats + 1) for name in names]
-    with ThreadPoolExecutor(max_workers=workers) as pool:
-        for future in as_completed([pool.submit(one, *job) for job in jobs]):
+    pool_type = ProcessPoolExecutor if via == "direct" else ThreadPoolExecutor
+    with pool_type(max_workers=workers) as pool:
+        futures = [pool.submit(run_one, name, r, via, attempts, base_url, timeout, trace_dir, out_dir)
+                   for name, r in jobs]
+        for future in as_completed(futures):
             print(future.result(), flush=True)

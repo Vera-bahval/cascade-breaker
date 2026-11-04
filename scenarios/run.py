@@ -74,6 +74,20 @@ def cmd_mast(args: argparse.Namespace) -> None:
                         args.trace_dir, out)
 
 
+def cmd_unified(args: argparse.Namespace) -> None:
+    from runner import mast_mode
+
+    if args.scenarios:
+        names = args.scenarios
+    else:
+        names = [c["id"] for suite in args.suite for c in mast_mode.unified_cases(suite)]
+        if args.via == "api":
+            names += [p.stem for p in mast_mode.mast_paths() if p.stem in mast_mode.api_additions()]
+    out = Path(__file__).resolve().parent / "results" / "unified" / args.via / args.batch
+    mast_mode.run_batch(names, args.repeats, args.workers, args.attempts, args.base_url, args.timeout,
+                        args.trace_dir, out, via=args.via)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="command", required=True)
@@ -98,6 +112,21 @@ def main() -> None:
     p.add_argument("--timeout", type=float, default=900.0)
     p.add_argument("--trace-dir", default=os.environ.get("PROBE_TRACE_DIR"))
     p.set_defaults(func=cmd_mast)
+    p = sub.add_parser("unified", help="run the unified cases in scenarios/unified/ via direct or api")
+    p.add_argument("scenarios", nargs="*", help="case ids such as TA501@C or S25_n (default: every case of --suite)")
+    p.add_argument("--via", choices=("direct", "api"), required=True)
+    p.add_argument("--suite", nargs="+", default=["core", "honest"],
+                   help="unified suites: core honest matrix profiles pairs sweep (default: core honest); "
+                        "via api also adds the API scenarios listed in unified/api_additions.yaml")
+    p.add_argument("--batch", required=True,
+                   help="results go to results/unified/<via>/<batch>/; existing files are kept")
+    p.add_argument("--repeats", type=int, default=1)
+    p.add_argument("--workers", type=int, default=4)
+    p.add_argument("--attempts", type=int, default=2, help="attempts for a repeat that breaks")
+    p.add_argument("--base-url", default=DEFAULT_BASE_URL)
+    p.add_argument("--timeout", type=float, default=900.0)
+    p.add_argument("--trace-dir", default=os.environ.get("PROBE_TRACE_DIR"))
+    p.set_defaults(func=cmd_unified)
     args = parser.parse_args()
     args.func(args)
 
