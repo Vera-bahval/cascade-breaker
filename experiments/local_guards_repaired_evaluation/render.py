@@ -23,7 +23,12 @@ PRIMARY=[
  ('CatBoost по базовым платёжным условиям',['archive_ml/native_core-catboost-17|raw|A']),
  ('Переобученная LR: новые признаки, смесь',[RETRAIN+'new__mixed__logistic__17|gated|A']),
  ('Переобученный CatBoost: старые признаки, смесь',[RETRAIN+'old__mixed__catboost__17|gated|A']),
- ('Шесть ML-вариантов с UNKNOWN; каждый',RETRAIN_UNKNOWN),
+ ('Переобученная LR: старые признаки, архив',[RETRAIN+'old__archive__logistic__17|gated|A']),
+ ('Переобученная LR: новые признаки, архив',[RETRAIN+'new__archive__logistic__17|gated|A']),
+ ('Переобученный CatBoost: старые признаки, архив',[RETRAIN+'old__archive__catboost__17|gated|A']),
+ ('Переобученный CatBoost: новые признаки, архив',[RETRAIN+'new__archive__catboost__17|gated|A']),
+ ('Переобученная LR: старые признаки, смесь',[RETRAIN+'old__mixed__logistic__17|gated|A']),
+ ('Переобученный CatBoost: новые признаки, смесь',[RETRAIN+'new__mixed__catboost__17|gated|A']),
  ('DeepSeek',['deepseek']),('Всегда BLOCK, контроль',['constant_BLOCK|rule|A'])]
 FIELDS=('correct_allow','correct_block','wrong_allow','wrong_block','insufficient_allow','insufficient_block','unknown','unavailable','correct')
 
