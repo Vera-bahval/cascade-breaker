@@ -79,6 +79,8 @@ def cmd_unified(args: argparse.Namespace) -> None:
 
     if args.scenarios:
         names = args.scenarios
+    elif args.suite == ["base"]:
+        names = mast_mode.base_scenarios()
     else:
         names = [c["id"] for suite in args.suite for c in mast_mode.unified_cases(suite)]
         if args.via == "api":
@@ -117,7 +119,8 @@ def main() -> None:
     p.add_argument("--via", choices=("direct", "api"), required=True)
     p.add_argument("--suite", nargs="+", default=["core", "honest"],
                    help="unified suites: core honest matrix profiles pairs sweep (default: core honest); "
-                        "via api also adds the API scenarios listed in unified/api_additions.yaml")
+                        "via api also adds the API scenarios listed in unified/api_additions.yaml. "
+                        "`base` alone runs one scenario per MAST mode and its partner (unified/base.yaml)")
     p.add_argument("--batch", required=True,
                    help="results go to results/unified/<via>/<batch>/; existing files are kept")
     p.add_argument("--repeats", type=int, default=1)

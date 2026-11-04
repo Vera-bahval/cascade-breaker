@@ -107,11 +107,12 @@ If FinBot runs in Docker, mount that directory into the container.
 
 `unified/` holds Nastya's invoice scenarios as cases "invoice @ vendor profile" (`TA501@C`), built by
 `unified/build.py`, plus the API pairs from `api-mast/` for MAST modes the direct cases do not cover
-(`unified/api_additions.yaml`).
+(`unified/api_additions.yaml`). `unified/base.yaml` picks one scenario per MAST mode for a quick check.
 
 ```bash
 uv run python ../scenarios/run.py unified --via direct --batch b1                  # core + honest suites
 uv run python ../scenarios/run.py unified --via api --batch b1 --base-url ...      # the same + API additions
+uv run python ../scenarios/run.py unified --via api --suite base --batch check     # one per MAST mode
 uv run python ../scenarios/run.py unified V3@C S06_n --via api --batch one         # single cases
 ```
 

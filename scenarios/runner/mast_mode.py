@@ -45,6 +45,12 @@ def unified_cases(suite: str | None = None) -> list[dict[str, Any]]:
     return [case for path in paths for case in json.loads(path.read_text(encoding="utf-8"))]
 
 
+def base_scenarios() -> list[str]:
+    spec = yaml.safe_load((UNIFIED_DIR / "base.yaml").read_text(encoding="utf-8"))
+    names = [name for mode in spec["modes"] for name in (mode["scenario"], mode["positive"])]
+    return list(dict.fromkeys(names))
+
+
 def api_additions() -> set[str]:
     spec = yaml.safe_load((UNIFIED_DIR / "api_additions.yaml").read_text(encoding="utf-8"))
     return {f"{pair}_{v}" for mode in spec["modes"] for pair in mode["pairs"] for v in ("n", "p")}
