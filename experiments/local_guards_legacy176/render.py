@@ -36,7 +36,7 @@ def run():
     content+=table(['Метод','Вход','ALLOW','BLOCK','UNKNOWN','Вход недоступен','Верный BLOCK /83','Ошибочный ALLOW /83','Ошибочный BLOCK /93','FPR BLOCK, %','Все STOP /93','Верные /176'],quality)
     content+='\n## Интервалы и парные различия\n\nПроцентные пункты; 95% percentile bootstrap, 2000 выборок 45 исходных базовых групп, seed 17. Нулевой наблюдаемый FPR даёт нулевой bootstrap-интервал, что не доказывает нулевой риск вне архива. Разность покрытия считается на парных решениях каждой группы.\n\n'
     content+=table(['Метод','Вход','Верное покрытие, 95%','FPR BLOCK, 95%','STOP safe, 95%','Разность с v2, 95%','Разность с v1, 95%'],intervals)
-    content+='\nПеречень каждого изменившегося решения относительно v2: [regressions.jsonl.gz](regressions.jsonl.gz). Матрицы всех переходов относительно v1/v2, включая улучшения, находятся в [quality.json](quality.json). Метки сохранены; UNKNOWN и недоступный вход не являются обнаружением.\n'
+    content+='\nВсе ухудшения локальных методов на FULL относительно v2: [regressions.jsonl.gz](regressions.jsonl.gz). Матрицы всех переходов относительно v1/v2, включая улучшения, сохранённые SecJev и PARTIAL, находятся в [quality.json](quality.json). Метки сохранены; UNKNOWN и недоступный вход не являются обнаружением.\n'
     (HERE/'TABLES.md').write_text(content)
     fmt=lambda v:'нет' if v is None else f'{v:.3f}'
     time_rows=[];paired=[]

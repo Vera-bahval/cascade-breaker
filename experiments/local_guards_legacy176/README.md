@@ -11,7 +11,7 @@
 - `source-prefixes.jsonl.gz`: только начальное состояние, использованные до среза схемы инструментов и префикс событий. Итоговая БД и ответы защитников не попадают в подготовку.
 - `prepared-inputs.jsonl.gz`:352 входа FULL/PARTIAL с происхождением фактов и входом каждого метода; [аудит передачи](audit_inputs.py). Снимок сервера не выдаётся за tool result.
 - `predictions.jsonl.gz`:3872 неизменённых ответа правил/контролей; `saved-controls.jsonl.gz`:сохранённые SecJev, без inference. Все связи проверены по episode/cut/canonical/payload/inference hashes.
-- `labels/scoring.jsonl.gz`:176 исходных меток, отдельно от подготовки. `quality.json`:качество и парные интервалы по45 базовым группам; `regressions.jsonl.gz`:все ухудшения относительно v2.
+- `labels/scoring.jsonl.gz`:176 исходных меток, отдельно от подготовки. `quality.json`:качество и парные интервалы по45 базовым группам; `regressions.jsonl.gz`:все ухудшения локальных методов на FULL относительно v2; переходы сохранённых SecJev и PARTIAL находятся в quality.json.
 - `timing-sources.jsonl.gz`:исходные таймеры отдельно от входов. `benchmark.jsonl.gz`:58 080 замеров,30 повторов каждого локального метода на176 входах. `full-time.json`:маршруты до P4 STOP или завершения и компоненты времени.
 - `input-manifest.json`, `source-manifest.json`, `saved-controls-manifest.json`, `benchmark-receipt.json`, `result-audit.json`, `release-manifest.json`:хеши и проверки. Исходные v4/v4.2 оставлены в технических результатах.
 
