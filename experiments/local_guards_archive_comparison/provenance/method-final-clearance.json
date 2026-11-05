@@ -1,0 +1,50 @@
+{
+  "status": "CLEARED_PRE_FIT_CODE_GATE",
+  "scope": "Final focused closure of C1/C2; initial method-review and method-clearance reports preserved",
+  "reviewed_source_sha256": {
+    "methods.py": "8e7aa49c198a23f8313fdc9ee2873ad099c1112aae2d4a7d85990888be73a81b",
+    "ml.py": "f8c09e6230fb648aea10d7cd3af9de8e7564a9fa18358bc5f472cb0c3200d218",
+    "tests/test_methods.py": "83df9476f315cefee587bbe59ee7b644283491140ffc2865aa159c955c334b60",
+    "tests/test_ml.py": "bb250680a39784f0337e1825eb0cc997522ca47b1b7d4f01de652a69fb10fd98"
+  },
+  "blocking_findings": [],
+  "closed_findings": {
+    "C1": "Guard operands receive schema scalar-type checks before comparisons; malformed enums map INVALID in features; malformed raw delegate statuses yield unknown completion without exception.",
+    "C2": "Unpaired proposals cannot weaken current HOLD. Explicitly failed/error later actual or proposal-paired calls preserve HOLD. Same-call completion and notes preserve HOLD. A genuinely started unfinished reassessment or paired later nonfailed return may leave applicability UNKNOWN, never silently ALLOW."
+  },
+  "verification": {
+    "reviewer_independent_focused_tests": 8,
+    "result": "PASS",
+    "suite_seconds": 0.004,
+    "command_tool_chunk": "d07e0a",
+    "checks": [
+      "malformed typed operands",
+      "malformed delegate status",
+      "unpaired later proposal",
+      "explicit failed/error later actual and proposal-paired follow-up",
+      "foreign dispatch/return cannot authenticate target proposal",
+      "paired later reassessment",
+      "same-call completion/notes preserve HOLD",
+      "malformed enum feature INVALID"
+    ],
+    "author_reported_full_suite": {
+      "tests": 40,
+      "result": "PASS",
+      "independently_rerun_here": false
+    },
+    "real_data_read_by_reviewer": false,
+    "labels_read_by_reviewer": false,
+    "selected_predictions_read_by_reviewer": false,
+    "real_fit_by_reviewer": false,
+    "source_edits_by_reviewer": false,
+    "scope_expanded": false
+  },
+  "prior_acceptance_retained": [
+    "M1 derived-delta finite handling",
+    "M2 explicit source-scored/unscored/mixed denominators",
+    "TRAIN-only weighted sparse LR scaler; CAL transform only",
+    "fixed native structural category/count/change features with no raw identity/text features",
+    "target-role and placement attribution"
+  ],
+  "acceptance_boundary": "Clears these reviewed method sources for coordinator-owned controlled real-input smoke and subsequent source/weight freeze. Does not certify real-archive compatibility, predictive quality, source-security performance, labels, or paid inference authorization. Root must retain executed-source and weight identity."
+}

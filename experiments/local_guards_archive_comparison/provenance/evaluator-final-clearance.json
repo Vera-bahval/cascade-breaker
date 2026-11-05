@@ -1,0 +1,28 @@
+{
+  "status": "CLEARED_EVALUATOR_CODE_GATE",
+  "blocking_findings": [],
+  "reviewed_sha256": {
+    "evaluation.py": "86409c43c830b41ab538191472f45315da37dbe3e2305d7717d2b2e12361215d",
+    "tests/test_evaluation.py": "acfd98a7127c46a94c625d5da74376646dabb60fdabe83386d495e3ec8e17a3a",
+    "ml.py": "4be593465378240c8885d317abca80455d2695e1c66184a18606120f3bcf00ca",
+    "tests/test_ml.py": "56f837203abc68da9ba39fdafcba92b135c156f21efbef280e11e08226fe85a8",
+    "methods.py": "8e7aa49c198a23f8313fdc9ee2873ad099c1112aae2d4a7d85990888be73a81b",
+    "provenance/old-control-source-availability.json": "642703d1f97742a68c2d1bfca4425f4644b9a89a67b3a77c5f4927dc057b2a20"
+  },
+  "closed_items": {
+    "E1": "Malformed raw task_status/status now returns legacy adapter unavailable with malformed_tool_return and no raw decision, rather than raising TypeError.",
+    "bounded_initial_state_bridge": "Only complete-prefix paired same-subject early getters fill missing initial-state fields before the native-write boundary. Any SystemUtils tool_name/tool_source event or proposal stops further recovery; earlier fields remain. A missing transaction collection remains absent.",
+    "ML_dependency_compatibility": "CatBoost alone receives the same vectorizer matrix via toarray in fit and predict; dense format/shape/bytes are recorded. LR remains sparse with its TRAIN-only weighted scaler. No source feature, target, algorithm parameter or CAL rule changed."
+  },
+  "verification": {
+    "independent_E1_counterexample": "PASS: legacy_binary_state returned (None,[malformed_tool_return]) after the fix.",
+    "independent_bridge_regression": "PASS: one focused test including both SystemUtils namespace and tool_source/proposal subcases; 0.002 seconds.",
+    "author_reported_evaluator_suite": "18 PASS, not independently repeated in full",
+    "author_reported_ML_suite": "41 PASS with actual tiny CatBoost compatibility regression; test source inspected, not rerun by reviewer",
+    "real_model_fit_or_corpus_prediction_by_reviewer": false,
+    "selected_inputs_gold_predictions_read": false,
+    "source_edits_by_reviewer": false
+  },
+  "read_boundary": "Reviewer read the explicitly authorized old-control-source-availability.json report. It contains excerpts/identities from the first ten TRAIN-input audit, so this review is not blind to those disclosed TRAIN excerpts. No raw archive, TRAIN package, CAL package, selected input, gold, result or prediction artifact was opened; no candidate changes were made.",
+  "acceptance": "Freeze-ready for the reviewed evaluator hash and current ML/method hashes. Does not certify model quality or real-data results; root retains release/freeze and exact executed-source/weights verification. Prior evaluator-clearance and method review reports remain preserved."
+}

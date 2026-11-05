@@ -1,0 +1,9 @@
+# Case reader
+
+`python3 inspect_case.py CASE.json --overview` prints the current observation's facts, context, proposal and evidence status. It is a direct projection and can be large.
+
+`python3 inspect_case.py CASE.json --events --offset 0 --count 20 --index 0 --char-limit 4000` traverses actual `raw_context.events` in source order, including all event metadata, arguments and results. `offset` and `count` select event indices; `index` is relative to that selection. Keep `offset` and `count` fixed while following `next_cursor` by passing its `index` and `char_offset`; after it becomes null, use `next_offset` for the next selection. `total_events` and `selection_count` expose the full and selected counts. Event JSON is not semantically filtered.
+
+`python3 inspect_case.py CASE.json --texts --index 0 --char-limit 4000` visits every string value in the entire input, deduplicated by exact value in first traversal order, with all RFC 6901 JSON pointers. Follow `next_cursor` until null. Object keys are path components, not string values. JSON embedded in a string remains intact as that string; no parsed replacement is made. This ensures exact original paths and content remain recoverable.
+
+For both paged modes, `fragment` contains at most the requested number of characters from a compact JSON serialization of **one** item. Concatenate consecutive fragments with the same `index`, then JSON-decode them for its complete object. `item_characters`, `total` and `next_cursor` make every split explicit. Escaping in the outer JSON is transport encoding; decode the outer response before concatenation. A `--char-limit` bounds the fragment, not the enclosing JSON's escaped byte length. No source files are modified. Inspect only a case package approved for blind review: the reader displays input mechanically and does not screen out forbidden information.

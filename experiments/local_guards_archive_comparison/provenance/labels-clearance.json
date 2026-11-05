@@ -1,0 +1,100 @@
+{
+  "status": "PASS_SCOPED_LABEL_CLEARANCE",
+  "reviewed_at_utc": "2026-11-01T19:21:14.052160+00:00",
+  "reviewed_sha256": {
+    "labels.py": "d7c6e7455c022ad5a883c7c73f36b821f300d9e354db99c2183b3b1718f56000",
+    "policy.json": "31727d8173217fe269f4188635bc68757e3b063db626c4dc78e230b2a0909775",
+    "schema.json": "369a30779bae94dbe24376e5f63ff388106c5cf17d46da42bbb9f4bc2335c492",
+    "tests/test_labels.py": "0f0b65ba44acc429a6eee6ff1e84e2dd85ee98695e91bb5b0bb25e9cbff34345",
+    "provenance/labels-review.json": "c9ebe5274400042cafe5c9b24ab551dadb362a8134f69776dd251c4dc6852fe0",
+    "labels/manifest.json": "d37baf73899a55e9969b9f69f4394fc427b8afbae0671ec6295220ef786f3bc0",
+    "labels/actions-unreviewed.jsonl.gz": "ce5ebd2f76dcb19c698544c84ab6f96f5963205e1c2918335ea0720e08981a72",
+    "labels/TRAIN-unreviewed.jsonl.gz": "315bfb32b5244f2439a736714bc381f37ad41f09d2512f646fe10be7286c8741",
+    "labels/CAL-unreviewed.jsonl.gz": "e572f571f98b8a622b3d0dca7d2344b6ae1d275da550c1d3a8bcaad4c4380311",
+    "data/split-metadata.jsonl.gz": "91e1df6573ce0b480dff57b7064629af47df3d6bf99af928dc080b61b65842af",
+    "views.py": "fcc6b6023464a3a22f6537e2395caa92538f9e8ac14fe51508fa47d2d248d475",
+    "views/manifest.json": "08e9ca4ba87c071cf9a64075369de737a9849c2928f3829c844f0de7fd24c869",
+    "views/historical.jsonl.gz": "d6ca53688c48a65f967413b24d772fd600d7446b8061f81fbbe1f4ba6758e4fa",
+    "views/instrumented.jsonl.gz": "c4e13a3dd64a832e90aba8673d17ecf6cf3eeaf1812e29ef92efcbb136e3cc5e"
+  },
+  "counts": {
+    "source_proposals": 3378,
+    "canonical_rows": 5410,
+    "development": {
+      "TRAIN": 1512,
+      "CAL": 556
+    },
+    "native_core": {
+      "ALLOW": 4599,
+      "BLOCK": 788,
+      "UNKNOWN": 23
+    },
+    "scenario_decision": {
+      "ALLOW": 1745,
+      "UNKNOWN": 2858,
+      "BLOCK": 807
+    },
+    "common_view_rows": {
+      "historical": 5410,
+      "instrumented": 5410
+    },
+    "common_view_label_changes": 0
+  },
+  "manifest_input_hashes_verified": true,
+  "source_annotations_exactly_preserved": true,
+  "selected_or_luna_development_leak": false,
+  "canonical_reference_recomputation_mismatches": [],
+  "common_view_mismatches": [],
+  "workflow_checks": [
+    {
+      "name": "paired_same_subject",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "foreign_invoice",
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "name": "foreign_vendor",
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "name": "failed_invoice",
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "name": "latest_invoice_after_fraud",
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "name": "incomplete_missing",
+      "expected": null,
+      "actual": null,
+      "passed": true
+    },
+    {
+      "name": "recorded_proposal_overlap",
+      "expected": null,
+      "actual": null,
+      "passed": true
+    }
+  ],
+  "repository_test_result": "python3 -m unittest experiments.local_guards_archive_comparison.tests.test_labels -v:3PASS",
+  "limitations": [
+    "Clearance is for the scoped reference-label and package fixes, not full native semantic safety.",
+    "All source-oracle unknowns and4source-version conflicts stay UNKNOWN; no missing targets were invented.",
+    "Original112/846fixed historical target is a separate reporting axis.",
+    "Common-view check verifies reference core verdict invariance, not every text/provenance semantic equality or predictor correctness.",
+    "No API/prediction/fitting execution or data/source edit was performed by this review."
+  ]
+}

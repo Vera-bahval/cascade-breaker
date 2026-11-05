@@ -1,0 +1,111 @@
+{
+  "stage": "independent pre-fit code review",
+  "status": "changes_requested_before_real_fit",
+  "critical_findings": 0,
+  "findings": [
+    {
+      "id": "M1",
+      "severity": "important",
+      "path": "ml.py",
+      "lines": [
+        60,
+        61
+      ],
+      "title": "Finite operands can produce a nonfinite amount_delta",
+      "evidence": "A narrow synthetic call using the authored fixture with proposal.amount=1e308 and facts.invoice_amount=-1e308 emitted amount_delta=inf; no fit was run. Both operands pass the finite-number check.",
+      "impact": "Violates the finite feature whitelist and can abort sklearn fitting/prediction on otherwise schema-valid input.",
+      "request": "Check the derived delta for finiteness and represent overflow explicitly as INVALID/missing, without sending inf to the vectorizer/estimator."
+    },
+    {
+      "id": "M2",
+      "severity": "important",
+      "path": "ml.py",
+      "lines": [
+        155,
+        185
+      ],
+      "title": "CAL does not separately expose source-unscored episodes",
+      "evidence": "A single source UNKNOWN episode predicted ALLOW yields episodes=1, unsafe_allow_episodes=0, errors=0, legitimate_episodes=0; there is no unscored/source-known denominator.",
+      "impact": "The fitting exclusion is correct, but CAL reports cannot distinguish zero observed unsafe ALLOW from absence of scored source evidence except indirectly through other fields. The requested separate source-unscored reporting is absent. Mixed known/unknown episode annotations also need an explicit eligibility convention.",
+      "request": "Add explicit scored/unscored episode and checkpoint counts for the scenario head; retain UNKNOWN rows as unscored, never as source-safe successes. Use the same declared eligibility convention in objective and report."
+    }
+  ],
+  "reviewed_files": [
+    {
+      "path": "briefs/task3-methods.md",
+      "sha256": "77aea2edddde0ebae12bef9d259793710b899d9a1c70870bd0586f1272674452"
+    },
+    {
+      "path": "briefs/INPUT_INTERFACE.md",
+      "sha256": "f7adbf2b61549afe4a44db84a658905782c83d214171d87e41911032d00e0055"
+    },
+    {
+      "path": "POLICY.md",
+      "sha256": "9a77aeed7e7642086321483fb60d5f8d9c1b965fee0aaabce9cc88617cc752c9"
+    },
+    {
+      "path": "policy.json",
+      "sha256": "31727d8173217fe269f4188635bc68757e3b063db626c4dc78e230b2a0909775"
+    },
+    {
+      "path": "schema.json",
+      "sha256": "369a30779bae94dbe24376e5f63ff388106c5cf17d46da42bbb9f4bc2335c492"
+    },
+    {
+      "path": "methods.py",
+      "sha256": "748dcf161d39872397a11148129f44bd8c465ff1b0d55fddb4fd4977ab00d194"
+    },
+    {
+      "path": "ml.py",
+      "sha256": "1dcaf74f59ed102507c7bcaf3abe5229f48701aa8fbd4a740856fdf4b35527ca"
+    },
+    {
+      "path": "tests/test_methods.py",
+      "sha256": "d0934dc245ea2b7149de5b687ffe6283417b5f8925b9308f56f5f1b660ce4e86"
+    },
+    {
+      "path": "tests/test_ml.py",
+      "sha256": "8846afcd9e0a28b6282eac7c8dc3b5848a1117cf725c571df85ada49eb120621"
+    },
+    {
+      "path": "provenance/method-report.md",
+      "sha256": "06b931715c33431006ee3ac5e03956a241d8023387a31f0a3c22e714a07055ed"
+    },
+    {
+      "path": "provenance/method-read-log.json",
+      "sha256": "1888b51d50a57136479ccad47799408c0d32bc8563ec602319f92986db8f0ec2"
+    }
+  ],
+  "initial_brief_sha256": "62e1483b64130f21a44a93dbad7ab9e518ec419f3ad89ee364daec360a1b6510",
+  "target_ruling": "Latest brief expressly designates scenario_decision primary security and native_core secondary diagnostic with own-target CAL. Reviewed after root added it before fitting. Initial target-mixing concern is resolved by this prospective role clarification, provided evaluator enforces it.",
+  "verification": {
+    "reported_author_tests": 22,
+    "author_suite_rerun": false,
+    "new_execution": "One no-fit in-memory counterexample command: finite delta overflow and source-UNKNOWN metric projection. PYTHONDONTWRITEBYTECODE=1.",
+    "real_data_reads": false,
+    "fits": false,
+    "benchmarks": false,
+    "raw_archives_read": false,
+    "labels_or_gold_read": false,
+    "git_or_api_calls": false,
+    "subagents": false
+  },
+  "cal_complexity": {
+    "max_unique_vectors_per_checkpoint": 81,
+    "max_joint_vectors_two_checkpoints": 6561,
+    "reason": "Only ALLOW and BLOCK thresholds can change the prediction vector; an UNKNOWN winner returns UNKNOWN regardless of its threshold. Candidate generation still enumerates up to 729 threshold tuples per checkpoint.",
+    "time_bound_per_model": "O(6561 * N log N) worst-case current repeated episode sorting, plus candidate generation",
+    "budget_acceptance": "No benchmark performed. Root should enforce a bounded smoke/fit process budget and report candidate counts before a full fit."
+  },
+  "freeze_acceptance": "Source/input/config/model hashes and copies are produced. Predictor(joblib path) itself verifies none and uses the importing live ml.py/methods.py. Root must execute the copied frozen modules or assert their hashes before scoring, and verify loaded weight hashes. This can be enforced by root without widening this worker scope.",
+  "limitations": [
+    "Review checked implementation against supplied policy/interface, not historical source authenticity.",
+    "No archive coverage or model quality inferred from synthetic checks.",
+    "Root owns label/view readiness and evaluator target/placement attribution."
+  ],
+  "minor_observations": [
+    "No-CAL-row INFEASIBLE return lacks target/placement, unlike normal calibrate outputs.",
+    "method-read-log.json records an older INPUT_INTERFACE.md hash than the current interface; refresh provenance before freeze.",
+    "guard evidence list includes all supplied source_refs for a supported field, rather than only accepted latest records; verdict uses latest records but explanation can be overinclusive."
+  ]
+}

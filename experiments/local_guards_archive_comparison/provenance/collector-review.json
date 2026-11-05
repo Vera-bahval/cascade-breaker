@@ -1,0 +1,115 @@
+{
+  "review_scope": "Task 2 raw collector, group split and common predictor view before method fitting; no labels adjudication or target method outputs",
+  "verdict": "CHANGES_REQUIRED_COMMON_VIEW; collector/split accepted within current-corpus limits",
+  "source_snapshot_sha256": {
+    "collector.py": "c3e0d0806ec659055e0142aea8e792a95b2cee9c6375fbd58d1d209b37fe02a9",
+    "split.py": "bf5727843ab1357caefeef4908246411173c4851a36d31c08424acd2b901afb6",
+    "views.py": "beddc2848561f935cd40bf7555497c8d224f4ba7435eeeddd43302e3bca49ca0",
+    "policy.json": "31727d8173217fe269f4188635bc68757e3b063db626c4dc78e230b2a0909775",
+    "schema.json": "369a30779bae94dbe24376e5f63ff388106c5cf17d46da42bbb9f4bc2335c492"
+  },
+  "findings": [
+    {
+      "id": "C1",
+      "severity": "important",
+      "status": "open_pending_root_fix",
+      "location": "views.py:35-60 (reviewed implementation prior to root correction)",
+      "title": "Identifier normalization bypasses serialized results and arbitrary string fields",
+      "evidence": {
+        "retained_original_invoice_number_rows": 4877,
+        "retained_labelbearing_legacy_invoice_number_rows": 39,
+        "serialized_result_candidate_rows": 4841,
+        "example_prefix": "5627dcd26dd3be24cd3c8bd23caa",
+        "example_episode": "old/cle-clean_00-9cd83a",
+        "path": "raw_context.events[32].model_output.tool_calls[0].arguments.query",
+        "retained": "CLN-00-cle-clean_00-9cd83a"
+      },
+      "impact": "Exposes archive case names and creates inconsistent invoice/account identities between structured facts and raw evidence. Methods using full raw context can recover label-bearing slugs that structural methods do not receive as business features.",
+      "requested_fix": "Losslessly parse actual serialized containers, normalize identified IDs recursively, and replace complete known identifier tokens in all string locations while preserving amounts and genuine source-text claims."
+    },
+    {
+      "id": "C2",
+      "severity": "important",
+      "status": "open_pending_root_fix",
+      "location": "views.py:14-24 STRING_IDS/TEXT_FIELDS",
+      "title": "Native vendor identity fields retain label-bearing run slugs",
+      "evidence": {
+        "legacy_rows_with_full_run_slug": 569,
+        "legacy_episodes_with_full_run_slug": 317,
+        "source": "/Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/data/archive/shadow-main.jsonl.gz#L175/steps/78",
+        "episode": "old/inj-base_pay_small-0cc6b9",
+        "company_name": "Cascade Probe Vendor inj-base_pay_small-0cc6b9",
+        "email": "cascade-probe-inj-base_pay_small-0cc6b9@example.com"
+      },
+      "impact": "The invoice and namespace aliases alone leave clean/base_hold/attack-related case identity in company/account-holder/email text; normalizing only complete known invoice tokens cannot remove this different native identifier.",
+      "requested_fix": "Add opaque, equality-preserving normalization for native vendor identity fields and their embedded occurrences; verify remaining run-slug exposure is zero without removing genuine business evidence."
+    }
+  ],
+  "nonblocking_risks": [
+    {
+      "location": "collector.py:339-359",
+      "detail": "Paired workflow/session validation gates Fraud completion, but nondelegation ingest still runs for an unpaired return. Direct scan of all registered tar hook episodes found zero such nondelegation returns in this corpus. A future/changed malformed archive could overwrite same-ID state from a foreign workflow. Do not claim this invariant for arbitrary inputs without a guard/test."
+    }
+  ],
+  "checks": {
+    "new_api_or_executor_calls": 0,
+    "tests_rerun": false,
+    "reason_no_rerun": "Parent reported successful 9 collector/split and 4 view tests; source/data inspections targeted concerns those tests did not cover.",
+    "direct_registered_tar_pairing_scan": "All registered tar hook episodes: zero unpaired nondelegation after_tool returns using tool/args/workflow/session pairing.",
+    "direct_native_sources": [
+      "PR477 fraud.py recommended_action return/signature and conditional reject semantics",
+      "PR477 invoice.py and payment.py return shapes / get_invoice_for_payment vendor bank fields"
+    ],
+    "direct_raw_examples": [
+      {
+        "member": "finbot477_nanobase_fpr_20261020_203813/TH601-r1.hooks.jsonl",
+        "sha256": "4c6eb530bbe34f5dd1ddafa78359dc7cd0312127ee232b254cbd6a8087edf7b1",
+        "lines": [
+          45,
+          47,
+          50,
+          51
+        ],
+        "conclusion": "Current invoice amount 1820 and proposal 1970.15 retained separately; account equality retained; future transfer result at line 51 excluded from the cut at line 50."
+      },
+      {
+        "member": "finbot477_nanobase_fpr_20261020_203813/TH639-r1.hooks.jsonl",
+        "sha256": "a3f3a78231d804b72f8b3276fabe2d900761c676bbebb9bab0e164dfe9384bcd",
+        "lines": [
+          30,
+          34
+        ],
+        "conclusion": "Native typed hold and successful delegation are separate observed facts; approved invoice status does not erase hold evidence."
+      },
+      {
+        "member": "finbot477_nanobase_funnel_20261020_181121/TH519-r1.hooks.jsonl",
+        "sha256": "de591143b2fa1b5fb1cc68cef552e0c75803919987911b2312f90108f01efad9",
+        "lines": [
+          102,
+          103
+        ],
+        "conclusion": "Latest same-invoice history amount 4200 precedes failed Fraud return; completion is false rather than success inferred from its summary."
+      },
+      {
+        "source": "shadow-main.jsonl.gz#L175",
+        "steps": [
+          76,
+          78,
+          80
+        ],
+        "conclusion": "Initial transactions are recorded empty; db_final is a separate field. Actual current amount/account remain 800/native-account while proposal is 920/different-account."
+      }
+    ],
+    "split": "58 representative +29 challenge groups of 289; whole groups; remaining 151 TRAIN/51 CAL; no recognized base/control ID aliases crossing groups in direct scenario-ID inspection; Luna excluded development packages.",
+    "boundary_types": "2,051 P4 before-tool hooks and 23 explicitly marked recorded-model proposals. Do not describe all as completed attempts; source event kind remains available.",
+    "same_information": "Collector variants change declared technical links only; current row/proposal/provenance handling inspected. Parent whole-artifact equality/schema checks accepted as reported rather than redundantly rerun.",
+    "not_claimed": [
+      "Independent per-row gold review",
+      "Blind archive generalization",
+      "Measured prevention",
+      "Original executor authorization recovered by offline instrumentation",
+      "Arbitrary malformed-input correctness",
+      "Post-fix common-view clearance"
+    ]
+  }
+}

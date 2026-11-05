@@ -1,0 +1,58 @@
+{
+  "status": "CHANGES_REQUESTED_ONE_BLOCKER",
+  "reviewed_files": [
+    {
+      "path": "evaluation.py",
+      "sha256": "98c7628dc10cca7c6569b30b811da148191486f855a504a0ef64fb14f39f640a"
+    },
+    {
+      "path": "tests/test_evaluation.py",
+      "sha256": "cb71c803b65ee7400750b7fd3c4c3b2f4456011341d96e47150d97d96e355cb1"
+    },
+    {
+      "path": "provenance/evaluation-implementation.md",
+      "sha256": "570aa4c586bff3517103a8602e42cc81b7168923237b5f5c41004e4bb1be96a8"
+    }
+  ],
+  "findings": [
+    {
+      "id": "E1",
+      "severity": "important",
+      "blocking": true,
+      "path": "evaluation.py",
+      "lines": [
+        268,
+        270
+      ],
+      "title": "Malformed raw legacy status aborts the whole prediction stream",
+      "reproduction": "A synthetic otherwise-available legacy input with raw tool_result={\"task_status\":[]} raises TypeError: unhashable type: list in legacy_binary_state. The failure occurs before loading the original Git constructor.",
+      "impact": "local_predictions calls each compatibility adapter without isolation, so this raw result aborts the whole gzip prediction generation and prevents its completion receipt, even though fresh methods already tolerate malformed statuses. Raw tool_result is unrestricted by the normalized observation schema.",
+      "request": "Type-check raw status values before membership tests. Return explicit legacy adapter-unavailable/UNKNOWN for malformed required return evidence, preserving the original binary controls and reporting the missing input. Add one focused regression; do not add business-policy gates."
+    }
+  ],
+  "accepted_audit": [
+    "Source UNKNOWN is unscored; native UNKNOWN remains an explicit target class; method UNKNOWN is never correct decisive coverage. All eligible states remain in the all-state denominator.",
+    "Episode scoring sorts local chronology, stops at the first BLOCK/UNKNOWN, retains late saved points separately, and does not credit an early BLOCK at a known ALLOW cut for a later unsafe cut.",
+    "Harm stops separate BLOCK from UNKNOWN. Historical 1352/112/846 masks are checked independently of source labels; full outcome-sidecar population is separate from method-eligible episode population.",
+    "Root confirmed first_harm_event_seq is corrected canonical actual-completion time; inherited shifted timing remains only in audit data. Evaluator consumes the correct canonical key and distinguishes hook-bound from proposal-bound attempts.",
+    "Source/native targets and raw/calibrated/gated ML variants remain separate.",
+    "Paired cluster intervals require identical matched case, episode, group, sequence, checkpoint and target populations; shared base-group draws retain pairing and denominator-null repeats are reported.",
+    "Frozen source and input hashes are checked before and after command execution. ML source copies/current modules and joblib weights are checked before deserialization, binding execution to the trained release.",
+    "v1/v2 call original binary violations via the pinned original constructor, separately from v3/v4.2 bridges. No extra currency/human receipt gates are applied to v1/v2. Missing reconstructable original inputs remain explicitly adapter-unavailable; initial amount/account are not replaced with current mutable state."
+  ],
+  "verification": {
+    "reported_author_tests": 17,
+    "full_suite_rerun": false,
+    "new_synthetic_execution": "One narrow legacy_binary_state counterexample, no original constructor executed. Imported evaluator and already-reviewed native methods only. PYTHONDONTWRITEBYTECODE=1.",
+    "real_selected_inputs_or_gold_read": false,
+    "real_predictions_read": false,
+    "candidate_or_source_edits": false,
+    "model_fit_or_prediction": false,
+    "old_control_source_content_read": false
+  },
+  "limits": [
+    "This is evaluator implementation review, not validation of actual sidecar masks or real archive labels. Root supplied canonical timing field contract without row disclosure.",
+    "Original control source bytes are checked by implementation; this reviewer did not reopen the old control source bodies or run their real-data behavior.",
+    "Adapter initial-state recovery is concurrently root-owned; any evaluator-source change invalidates this pinned approval until focused readback."
+  ]
+}

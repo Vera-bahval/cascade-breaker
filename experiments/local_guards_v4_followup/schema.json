@@ -1,0 +1,4910 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:finbot:local-guards-v4.2:observation",
+  "title": "Typed v4.2 observation with explicit evidence origins",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 4
+    },
+    "checkpoint": {
+      "enum": [
+        "P0",
+        "P1",
+        "P2",
+        "P3",
+        "P4",
+        "P5"
+      ]
+    },
+    "event_seq": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "proposal": {
+      "type": "object",
+      "properties": {
+        "tool": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "target_status": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "trust_level": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "risk_level": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "facts": {
+      "type": "object",
+      "properties": {
+        "fraud_review_completed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "binding_hold": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "human_cleared": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "amount_matches_invoice": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "recipient_matches_authorized": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "human_approved": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "session_valid": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "vendor_in_scope": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "invoice_in_scope": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "invoice_vendor_matches": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "attachments_in_scope": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "delegation_subject_matches": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "tool_scope_matches": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "payment_reference_matches_transfer": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "invoice_amount": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_currency": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_status": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "vendor_status": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "prior_completed_transfers": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "fraud_review_completed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "binding_hold": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "human_cleared": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "amount_matches_invoice": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "recipient_matches_authorized": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "human_approved": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "session_valid": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "vendor_in_scope": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "invoice_in_scope": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "invoice_vendor_matches": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "attachments_in_scope": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "delegation_subject_matches": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "tool_scope_matches": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "payment_reference_matches_transfer": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "invoice_amount": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "invoice_currency": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "invoice_status": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "vendor_status": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        },
+        "prior_completed_transfers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "native_tool",
+                  "initial_fixture",
+                  "independent_registry",
+                  "server_context",
+                  "workflow_store"
+                ]
+              },
+              "event_seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "subject_matches": {
+                "type": "boolean"
+              },
+              "operation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "session_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workflow_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "invoice_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vendor_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "call_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+              },
+              "snapshot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+              },
+              "parent_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegated_workflow_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "delegation_call_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_kind": {
+                "enum": [
+                  "server_snapshot",
+                  "tool_result",
+                  "declared_fixture",
+                  "independent_registry",
+                  null
+                ],
+                "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+              }
+            },
+            "required": [
+              "source",
+              "event_seq",
+              "subject_matches",
+              "operation"
+            ],
+            "additionalProperties": false,
+            "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+          }
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "context": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "record_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "user_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "namespace": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "workflow_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "parent_workflow_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "origin_portal": {
+              "enum": [
+                "vendor",
+                "admin",
+                null
+              ]
+            },
+            "technical_actor": {
+              "enum": [
+                "vendor_chat",
+                "admin_chat",
+                "orchestrator",
+                "onboarding",
+                "invoice",
+                "fraud",
+                "payments",
+                "communication",
+                null
+              ]
+            },
+            "current_vendor_id": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "vendor_id": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "invoice_id": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "attachment_file_ids": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "uniqueItems": true
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "call_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "invoice_version": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "vendor_version": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "account_ref": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "payment_reference": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "approval": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "record_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "invoice_id": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "vendor_id": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "amount": {
+                      "type": "string",
+                      "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+                    },
+                    "currency": {
+                      "type": "string",
+                      "pattern": "^[A-Z]{3}$"
+                    },
+                    "account_ref": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "invoice_version": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "vendor_version": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "approved_seq": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "record_id",
+                    "invoice_id",
+                    "vendor_id",
+                    "amount",
+                    "currency",
+                    "account_ref",
+                    "invoice_version",
+                    "vendor_version",
+                    "approved_seq"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "claim": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "record_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "key": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "owner_workflow_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "generation": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "state": {
+                      "enum": [
+                        "active",
+                        "released",
+                        "uncertain"
+                      ]
+                    },
+                    "acquired_seq": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "record_id",
+                    "key",
+                    "owner_workflow_id",
+                    "generation",
+                    "state",
+                    "acquired_seq"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "delegated_actor": {
+              "enum": [
+                "onboarding",
+                "invoice",
+                "fraud",
+                "payments",
+                "communication",
+                null
+              ]
+            },
+            "delegation_succeeded": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "delegation_call_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
+            },
+            "delegated_workflow_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "checkpoint",
+    "event_seq",
+    "proposal",
+    "facts",
+    "provenance"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "proof": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "enum": [
+            "native_tool",
+            "initial_fixture",
+            "independent_registry",
+            "server_context",
+            "workflow_store"
+          ]
+        },
+        "event_seq": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "subject_matches": {
+          "type": "boolean"
+        },
+        "operation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "record_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "type": [
+            "string",
+            "number",
+            "integer",
+            "boolean",
+            "null"
+          ]
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workflow_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "vendor_id": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_id": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_version": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "vendor_version": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "call_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_call_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "description": "Actual producing native invocation reference for tool_result; not the target proof.call_id and not cryptographic authentication."
+        },
+        "snapshot_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "description": "Actual direct native DB/server observation identifier before the cut; no source tool invocation is required."
+        },
+        "parent_workflow_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "delegated_workflow_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "delegation_call_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "evidence_kind": {
+          "enum": [
+            "server_snapshot",
+            "tool_result",
+            "declared_fixture",
+            "independent_registry",
+            null
+          ],
+          "description": "Explicit trusted-producer origin; absence stays unproven legacy evidence. Semantic source compatibility is specified in this proof description."
+        }
+      },
+      "required": [
+        "source",
+        "event_seq",
+        "subject_matches",
+        "operation"
+      ],
+      "additionalProperties": false,
+      "description": "Semantic origins: server_snapshot requires source server_context/native_tool and snapshot_id, only actual DB/server facts (not review/HOLD/human/currency); tool_result requires source native_tool and source_call_id (not human/currency); declared_fixture requires source initial_fixture, or server_context for invoice_currency/currency_contract_attest; independent_registry requires source independent_registry and is the only human authority. Missing/invalid origin is local unproven evidence; see POLICY.md."
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "record_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workflow_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "parent_workflow_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "origin_portal": {
+          "enum": [
+            "vendor",
+            "admin",
+            null
+          ]
+        },
+        "technical_actor": {
+          "enum": [
+            "vendor_chat",
+            "admin_chat",
+            "orchestrator",
+            "onboarding",
+            "invoice",
+            "fraud",
+            "payments",
+            "communication",
+            null
+          ]
+        },
+        "current_vendor_id": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "vendor_id": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_id": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attachment_file_ids": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "uniqueItems": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "call_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_version": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "vendor_version": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "account_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "payment_reference": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "approval": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "record_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "invoice_id": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "vendor_id": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "amount": {
+                  "type": "string",
+                  "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+                },
+                "currency": {
+                  "type": "string",
+                  "pattern": "^[A-Z]{3}$"
+                },
+                "account_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "invoice_version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "vendor_version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "approved_seq": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "record_id",
+                "invoice_id",
+                "vendor_id",
+                "amount",
+                "currency",
+                "account_ref",
+                "invoice_version",
+                "vendor_version",
+                "approved_seq"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "claim": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "record_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "key": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "owner_workflow_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "generation": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "state": {
+                  "enum": [
+                    "active",
+                    "released",
+                    "uncertain"
+                  ]
+                },
+                "acquired_seq": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "record_id",
+                "key",
+                "owner_workflow_id",
+                "generation",
+                "state",
+                "acquired_seq"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "delegated_actor": {
+          "enum": [
+            "onboarding",
+            "invoice",
+            "fraud",
+            "payments",
+            "communication",
+            null
+          ]
+        },
+        "delegation_succeeded": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "delegation_call_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "delegated_workflow_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "approval_binding": {
+      "type": "object",
+      "properties": {
+        "record_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "invoice_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "vendor_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "amount": {
+          "type": "string",
+          "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "account_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "invoice_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "vendor_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "approved_seq": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "record_id",
+        "invoice_id",
+        "vendor_id",
+        "amount",
+        "currency",
+        "account_ref",
+        "invoice_version",
+        "vendor_version",
+        "approved_seq"
+      ],
+      "additionalProperties": false
+    },
+    "workflow_claim": {
+      "type": "object",
+      "properties": {
+        "record_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner_workflow_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "state": {
+          "enum": [
+            "active",
+            "released",
+            "uncertain"
+          ]
+        },
+        "acquired_seq": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "record_id",
+        "key",
+        "owner_workflow_id",
+        "generation",
+        "state",
+        "acquired_seq"
+      ],
+      "additionalProperties": false
+    },
+    "decision": {
+      "type": "object",
+      "properties": {
+        "decision": {
+          "enum": [
+            "ALLOW",
+            "BLOCK",
+            "UNKNOWN"
+          ]
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "timing_ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "stop": {
+          "type": "boolean"
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "state": {
+                "enum": [
+                  "satisfied",
+                  "violated",
+                  "unknown",
+                  "not_applicable"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "state"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "decision",
+        "reasons",
+        "evidence",
+        "timing_ms",
+        "stop",
+        "requirements"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$comment": "Origin fields remain optional structurally so legacy proofs are explicitly UNKNOWN. Kind/source compatibility and newest invalid-origin semantics are enforced by guard.origin_valid and POLICY.md; JSON shape is not authentication."
+}
