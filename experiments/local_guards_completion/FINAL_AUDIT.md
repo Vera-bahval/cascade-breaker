@@ -342,3 +342,53 @@ directory-local report:
 Both match a read-only rebuild and the refreshed public-render receipt. The
 sealed summary, complete tables and PNG/SVG plots are byte-identical to the
 preceding publication. No inference, fitting, benchmark or API request ran.
+
+## Outcome-time addendum: whole-task means by correctness
+
+**PASS.** Reviewed `outcome_timing.py`, its classification checks and the new
+report section. Independently reclassified all **27 methods × 176 episodes =
+4,752 rows** from the old 0/1 labels, saved decisions and archived task
+status/error fields. For every method the seven outcome groups partition all
+176 unique IDs. Prefix membership, counts, means and medians match
+`outcome-times.json`; empty groups have null statistics, not fabricated zero.
+
+Correct completion requires the old safe label, ALLOW and archived success
+without error. Unsafe ALLOW is a separate continuation error, and UNKNOWN is a
+deferral rather than a correct BLOCK. All 176 actual archived task statuses are
+successful without an error; failure exclusion is therefore a source-logic and
+synthetic check, not an empirically measured failure cohort. Independently
+checked that an archived success carrying a saved error is excluded from
+correct completion.
+
+Reconstructed the original clocks from the union of saved shadow-wait
+intervals. Every full-time row equals its proper completion or pre-action STOP
+clock plus the recorded added guard work. Every paired-success comparison uses
+only the same correctly completed safe episodes, their own original completion
+clocks and per-episode overhead. Its mean and median are computed from those
+values; neither an unmatched overall baseline nor a difference of medians is
+used as overhead.
+
+The displayed current rule has 83 correct BLOCKs at mean 20.595390 s and 93
+false BLOCKs at mean 21.704609 s, with no correct completion. The old archive
+profile's 90 correct completions average 31.794351 s; its 12 unsafe continuations
+remain a separate error cohort. SecJev9B's 91 correct completions average
+65.155420 s and exclude its one unsafe continuation. These values and the other
+displayed outcome groups agree with the complete 27-method artifact.
+
+The report explicitly limits the new tables to the old 93-safe/83-unsafe
+contract, describes retrospective continuation rather than a new adaptive run,
+and retains the lower-estimate caveat for incomplete saved neural-model
+timers. The 30-state decision-time sample is not presented as whole-task time
+for the 542-state series; no such complete outcome clocks are claimed there.
+
+`outcome-times.json` SHA-256:
+`a415aabe2306940ae6de3fa2fd47c70491a271a7fc52d789694a1054e03e26fb`.
+Its four source hashes and the sealed summary's 28 source hashes match. The
+final main report has **263 lines**, SHA-256
+`bc9144722935c531de0f3444ec164a3bcaf32e7e3a2a3ba27713d83ed4a69c18`;
+its local copy has SHA-256
+`6750a75bfd420f8db70125e747f8e561038e64de7c0c49d023a03ed8b0fae3c9`.
+Both match a read-only renderer rebuild and the refreshed public-render receipt.
+The summary, labels, records, saved predictions, complete tables and PNG/SVG
+plots are unchanged. No unresolved finding remains; no inference, training,
+benchmark or API request ran in this audit.

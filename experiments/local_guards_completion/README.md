@@ -48,8 +48,11 @@ CatBoost, joblib и matplotlib. Версии зафиксированы в `code
 ```sh
 python -B -m unittest discover -s experiments/local_guards_completion -t .
 python -B -m experiments.local_guards_completion.evaluate
+python -B -m experiments.local_guards_completion.outcome_timing
 python -B -m experiments.local_guards_completion.render
 ```
+
+Расчёт `outcome_timing` группирует сохранённые времена 176 задач по правильности решения и успешности завершения, без новых исполнений.
 
 Оценщик читает сохранённые предсказания и проверяет их квитанции; он не вызывает
 модели. Рендерер обновляет общий отчёт, подробные таблицы и PNG/SVG-график. Старый

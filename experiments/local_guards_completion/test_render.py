@@ -40,7 +40,7 @@ class RenderTests(unittest.TestCase):
     def test_main_keeps_controls_and_answers_while_appendix_keeps_zero_rows(self):
         s = render.read(render.HERE / 'results-summary.json')
         cost = render.read(render.HERE / 'cost-audit.json')
-        report = render.build_report(s, cost, 382)
+        report = render.build_report(s, cost, 382, render.read(render.HERE / 'outcome-times.json'))
         self.assertIn('## Ответы на вопросы исследования', report)
         self.assertIn('373 / 542', report)
         self.assertNotIn('| Прежний ML v3, LR |', report)

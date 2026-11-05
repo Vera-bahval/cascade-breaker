@@ -16,7 +16,7 @@
 | Разметка | [Уточнения](experiments/local_guards_completion/REVIEW_CLARIFICATIONS.md), [метки](experiments/local_guards_completion/labels.jsonl), [заморозка](experiments/local_guards_completion/labels-freeze.json) | Два модельных разбора, разногласия и выборочная третья проверка; наследование N01–N08; допущения TaxCalc и трактовка HOLD. |
 | Извлечение фактов и правила | [source_links.py](experiments/local_guards_completion/source_links.py), [prepare.py](experiments/local_guards_completion/prepare.py), [rules.py](experiments/local_guards_completion/rules.py) | Только данные до действия; восстановлены связи, финансовые значения сохранены. Базовая и текущая проверки используют общую логику. |
 | ML | [ml.py](experiments/local_guards_completion/ml.py) | Непересечение групп FIT/CAL/test, обучение предобработки только на FIT, пороги без выбора на внешней тестовой части, всего шесть допустимых действий полной цели. |
-| Подсчёт и время | [evaluate.py](experiments/local_guards_completion/evaluate.py), [ml_benchmark.py](experiments/local_guards_completion/ml_benchmark.py) | UNKNOWN не является правильным локальным решением. Итог каскада считается отдельно; времена складываются по одному случаю до вычисления квантилей. |
+| Подсчёт и время | [evaluate.py](experiments/local_guards_completion/evaluate.py), [ml_benchmark.py](experiments/local_guards_completion/ml_benchmark.py), [время по исходам](experiments/local_guards_completion/outcome_timing.py) | UNKNOWN не является правильным локальным решением. Итог каскада считается отдельно; времена складываются по одному случаю до вычисления квантилей. |
 | Расходы и проверяемость | [Аудит расходов](experiments/local_guards_completion/COST_AUDIT.md), [итоговая проверка](experiments/local_guards_completion/FINAL_AUDIT.md) | $12.197960256 за 3100 сохранённых запросов; выбранные 542 ответа входят в эту сумму. Аудиты модельные и имеют указанные границы. |
 
 ## Изменения исполнения FinBot тоже входят в PR
@@ -37,13 +37,14 @@
 
 ## Проверки без новых запросов к LLM
 
-При подготовке PR прошли 72 теста текущего архивного анализа и 32 сценарных теста runtime с mock-моделью и временной SQLite. Это локальные проверки; CI для этого PR не заявлен.
+При подготовке PR прошли 74 теста текущего архивного анализа и 32 сценарных теста runtime с mock-моделью и временной SQLite. Это локальные проверки; CI для этого PR не заявлен.
 
 Из корня репозитория в окружении с зависимостями, указанными в completion README:
 
 ```sh
 python -B -m unittest discover -s experiments/local_guards_completion -t .
 python -B -m experiments.local_guards_completion.evaluate
+python -B -m experiments.local_guards_completion.outcome_timing
 python -B -m experiments.local_guards_completion.render
 python -B -m unittest experiments.local_guards_v4.tests.test_runtime
 ```
