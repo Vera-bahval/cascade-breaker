@@ -96,7 +96,7 @@ def main() -> None:
     sub.add_parser("list", help="show available scenarios").set_defaults(func=cmd_list)
     for name, func in (("prepare", cmd_prepare), ("run", cmd_run)):
         p = sub.add_parser(name)
-        p.add_argument("scenario", help="scenario id from cases/ or a path to a yaml or json file")
+        p.add_argument("scenario", help="scenario id from cases/ or a path to a json file")
         p.add_argument("--base-url", default=None if name == "run" else DEFAULT_BASE_URL,
                        help=f"FinBot address for via=api (default {DEFAULT_BASE_URL})")
         p.add_argument("--timeout", type=float, default=600.0,
@@ -119,8 +119,8 @@ def main() -> None:
     p.add_argument("--via", choices=("direct", "api"), required=True)
     p.add_argument("--suite", nargs="+", default=["core", "honest"],
                    help="unified suites: core honest matrix profiles pairs sweep (default: core honest); "
-                        "via api also adds the API scenarios listed in unified/api_additions.yaml. "
-                        "`base` alone runs one scenario per MAST mode and its partner (unified/base.yaml)")
+                        "via api also adds the API scenarios listed in unified/api_additions.json. "
+                        "`base` alone runs one scenario per MAST mode and its partner (unified/base.json)")
     p.add_argument("--batch", required=True,
                    help="results go to results/unified/<via>/<batch>/; existing files are kept")
     p.add_argument("--repeats", type=int, default=1)

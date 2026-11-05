@@ -18,7 +18,7 @@ from runner.profiles import PROFILES  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "experiments" / "control-placement" / "code" / "finbot477"
-OUT = Path(__file__).resolve().parent
+OUT = Path(__file__).resolve().parent / "suites"
 
 # suite -> (source file, profiles it was run on in Nastya's experiments, doc 01 "Наборы и прогоны")
 SUITES = {
@@ -112,7 +112,7 @@ def main() -> None:
         raise SystemExit(f"case ids repeat with different content: {sorted(duplicate_ids)[:10]}")
     for suite, cases in suites.items():
         path = OUT / f"{suite}.json"
-        path.write_text(json.dumps(cases, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        path.write_text(json.dumps(cases, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         stop = sum(c["expected"]["outcome"] == "stop" for c in cases)
         print(f"{suite:9} {len(cases):4} cases  stop {stop:4}  pay {len(cases) - stop:4}  -> {path.name}")
     print(f"total     {len(ids):4}")

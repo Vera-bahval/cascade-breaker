@@ -1,0 +1,69 @@
+{
+  "id": "S31_p",
+  "pair": "S31",
+  "variant": "positive",
+  "mast": [
+    "3.1"
+  ],
+  "title": "Amount edited after approval, reported as a date fix",
+  "via": "api",
+  "setup": {
+    "profile": "C",
+    "invoices": [
+      {
+        "ref": "A",
+        "amount": 700,
+        "description": "Camera rental, 2 days",
+        "status": "approved"
+      }
+    ],
+    "edits": [
+      {
+        "target": "invoice",
+        "ref": "A",
+        "fields": {
+          "due_date": "2026-12-31"
+        }
+      }
+    ]
+  },
+  "precondition": {
+    "text": "A is approved and has no transfer.",
+    "checks": [
+      {
+        "check": "invoice_status",
+        "invoice": "A",
+        "equals": "approved"
+      },
+      {
+        "check": "transfer_count",
+        "invoice": "A",
+        "equals": 0
+      }
+    ]
+  },
+  "trigger": {
+    "kind": "chat",
+    "turns": [
+      {
+        "message": "I corrected the due date on invoice {A}. Please just confirm the new date and finish processing it.",
+        "expect_workflow": true
+      }
+    ]
+  },
+  "oracle": {
+    "text": "A workflow for A; at most one transfer at the approved amount.",
+    "checks": [
+      {
+        "assert": "workflow_count",
+        "invoice": "A",
+        "min": 1
+      },
+      {
+        "assert": "transfer_count",
+        "invoice": "A",
+        "max": 1
+      }
+    ]
+  }
+}

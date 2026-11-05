@@ -9,11 +9,10 @@ from __future__ import annotations
 import json
 import re
 import time
+from functools import cache
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
-
-import yaml
 
 from runner import profiles
 from runner.api_mode import read_traces, wait_for_workflows
@@ -22,6 +21,7 @@ from runner.scenario import DEFAULT_VENDOR, invoice_fields
 
 MAST_DIR = Path(__file__).resolve().parent.parent / "api-mast"
 UNIFIED_DIR = Path(__file__).resolve().parent.parent / "unified"
+SUITES_DIR = UNIFIED_DIR / "suites"
 # The catalogue uses a routing number that passes the ABA checksum unless routing is the tested factor.
 MAST_VENDOR = {**DEFAULT_VENDOR, "bank_routing_number": "121000358"}
 TRUST_ORDER = {"low": 0, "standard": 1, "high": 2}
@@ -37,36 +37,44 @@ CHAT_WORKFLOW = re.compile(r"^agent\.[a-z_]+\.workflow_started$")
 
 
 def mast_paths() -> list[Path]:
-    return sorted(MAST_DIR.glob("S*.yaml"))
+    return sorted(MAST_DIR.glob("S*.json"))
+
+
+def read_json(path: Path) -> Any:
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def unified_cases(suite: str | None = None) -> list[dict[str, Any]]:
-    paths = [UNIFIED_DIR / f"{suite}.json"] if suite else sorted(UNIFIED_DIR.glob("*.json"))
-    return [case for path in paths for case in json.loads(path.read_text(encoding="utf-8"))]
+    paths = [SUITES_DIR / f"{suite}.json"] if suite else sorted(SUITES_DIR.glob("*.json"))
+    return [case for path in paths for case in read_json(path)]
+
+
+@cache
+def _unified_index() -> dict[str, dict[str, Any]]:
+    return {case["id"]: case for case in unified_cases()}
 
 
 def base_scenarios() -> list[str]:
-    spec = yaml.safe_load((UNIFIED_DIR / "base.yaml").read_text(encoding="utf-8"))
+    spec = read_json(UNIFIED_DIR / "base.json")
     names = [name for mode in spec["modes"] for name in (mode["scenario"], mode["positive"])]
     return list(dict.fromkeys(names))
 
 
 def api_additions() -> set[str]:
-    spec = yaml.safe_load((UNIFIED_DIR / "api_additions.yaml").read_text(encoding="utf-8"))
+    spec = read_json(UNIFIED_DIR / "api_additions.json")
     return {f"{pair}_{v}" for mode in spec["modes"] for pair in mode["pairs"] for v in ("n", "p")}
 
 
 def load_case(name: str) -> dict[str, Any]:
-    """An API MAST id (S01_n), a unified case id (TA501@C) or a path to a yaml file."""
+    """An API MAST id (S01_n), a unified case id (TA501@C) or a path to a json file."""
     if "@" in name:
-        found = [c for c in unified_cases() if c["id"] == name]
-        if not found:
+        if name not in _unified_index():
             raise FileNotFoundError(f"no unified case {name}")
-        return found[0]
+        return _unified_index()[name]
     path = Path(name)
     if not path.exists():
-        path = MAST_DIR / f"{name}.yaml"
-    return yaml.safe_load(path.read_text(encoding="utf-8"))
+        path = MAST_DIR / f"{name}.json"
+    return read_json(path)
 
 
 class Run:
@@ -170,7 +178,7 @@ class Run:
             self.invoices[spec["ref"]] = created["invoice"]
             self.wait(f"setup:invoice:{spec['ref']}", mark, expect=True)
         for spec in setup.get("files") or []:
-            body = {"filename": spec["filename"], "content": self.text(spec["content"]),
+            body = {"filename": spec["title"], "content": self.text(spec["text"]),
                     "folder": spec.get("folder", "/"), "file_type": spec.get("file_type", "pdf")}
             self.files[spec["ref"]] = self.client.post(f"{API}/findrive", body)["file"]
         for edit in setup.get("edits") or []:
