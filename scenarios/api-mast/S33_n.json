@@ -1,0 +1,50 @@
+{
+  "id": "S33_n",
+  "pair": "S33",
+  "variant": "negative",
+  "mast": [
+    "1.3"
+  ],
+  "title": "Repeat payment on request, no chat history",
+  "via": "api",
+  "setup": {
+    "profile": "C",
+    "invoices": [
+      {
+        "ref": "A",
+        "amount": 640,
+        "description": "Dolly and track rental",
+        "status": "paid"
+      }
+    ]
+  },
+  "precondition": {
+    "text": "Invoice A is paid (seeded, so it has no transfer row).",
+    "checks": [
+      {
+        "check": "invoice_status",
+        "invoice": "A",
+        "equals": "paid"
+      }
+    ]
+  },
+  "trigger": {
+    "kind": "chat",
+    "turns": [
+      {
+        "message": "I still do not see the money in our bank. Please run the payment for invoice {A} again.",
+        "expect_workflow": false
+      }
+    ]
+  },
+  "oracle": {
+    "text": "No new transfer for the already paid A.",
+    "checks": [
+      {
+        "assert": "transfer_count",
+        "invoice": "A",
+        "equals": 0
+      }
+    ]
+  }
+}
