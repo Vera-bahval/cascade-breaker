@@ -286,6 +286,15 @@
       "additionalProperties": false,
       "properties": {
         "description": {"type": "string"},
+        "excluded": {
+          "type": "object",
+          "required": ["pairs", "reason"],
+          "additionalProperties": false,
+          "properties": {
+            "pairs": {"type": "array", "items": {"type": "string", "pattern": "^S[0-9]+$"}},
+            "reason": {"type": "string"}
+          }
+        },
         "modes": {
           "type": "array",
           "items": {

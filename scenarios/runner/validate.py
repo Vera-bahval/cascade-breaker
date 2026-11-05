@@ -84,4 +84,10 @@ def check_all() -> list[str]:
                      else [f"{p}_{v}" for m in data["modes"] for p in m["pairs"] + m["cross_workflow"] for v in "np"])
             found = [f"{n} is not a scenario" for n in named if n not in ids]
         errors.extend(f"unified/{name}: {e}" for e in found)
+    additions = mast_mode.read_json(mast_mode.UNIFIED_DIR / "api_additions.json")
+    excluded = set((additions.get("excluded") or {}).get("pairs", []))
+    used = {p for m in additions["modes"] for p in m["pairs"]}
+    used |= {n.split("_")[0] for m in mast_mode.read_json(mast_mode.UNIFIED_DIR / "base.json")["modes"]
+             for n in (m["scenario"], m["positive"]) if "@" not in n}
+    errors.extend(f"unified: excluded pair {p} is still used" for p in sorted(excluded & used))
     return errors
