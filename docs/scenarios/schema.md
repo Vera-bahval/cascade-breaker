@@ -1,11 +1,17 @@
 # Схема файлов сценариев `scenarios/api-mast/`
 
-Каждый файл это один вариант одного сценария (`S01_n.yaml`, `S01_p.yaml`, ...), 48 файлов на 24 пары. Прозаическое
+Каждый файл это JSON с одним вариантом одного сценария (`S01_n.json`, `S01_p.json`, ...), 64 файла на 32 пары. Прозаическое
 описание всех сценариев в [`api-mast-scenarios.md`](api-mast-scenarios.md). Здесь описаны поля файла.
 
 Схема расширяет формат из `scenarios/README.md`: добавлены история чата (`prepare_turns`, многоходовый `trigger`),
 вложения (`files`, `attachments`), правки через портал (`edits`), предусловие (`precondition`) и явный оракул
-(`oracle`). Исполняет их `scenarios/runner/mast_mode.py` (`run.py mast` и `run.py unified`).
+(`oracle`). Исполняет их `scenarios/runner/mast_mode.py` (`run.py mast` и `run.py unified`). Те же поля у случаев
+объединённого набора в `scenarios/unified/suites/`.
+
+Машинная версия схемы: [`scenarios/schema.json`](../../scenarios/schema.json) (JSON Schema 2020-12). Перед каждым
+прогоном раннер проверяет по ней все файлы, а также то, что схема выразить не может: каждый упомянутый счёт и файл
+создаётся в подготовке или триггере, id не повторяются, списки `base.json` и `api_additions.json` ссылаются на
+существующие сценарии. Проверить вручную: `uv run python ../scenarios/run.py check`.
 
 ## Поля верхнего уровня
 
@@ -32,7 +38,7 @@
 | `profile` | `A`–`G` | профиль вендора Насти (`scenarios/runner/profiles.py`): регистрация с реквизитами профиля, после онбординга в БД записываются статус, доверие, риск, заметки и оплаченная история |
 | `state` | объект | поля состояния вендора поверх профиля (например свои `agent_notes`) |
 | `invoices` | список | счета, поданные в подготовке: `ref`, `amount`, `description`, опц. `due_in_days`, `days_ago`; с `status` (и опц. `agent_notes`) счёт создаётся сразу в БД в этом статусе, без workflow |
-| `files` | список | файлы в FinDrive: `ref`, `filename`, `content`, `file_type`, `folder` |
+| `files` | список | документы в FinDrive: `ref`, `title` (имя файла), `text` (содержимое), опц. `file_type`, `folder` |
 | `edits` | список | правки через портал после подачи счетов (ниже) |
 | `prepare_turns` | список | сообщения в чат до триггера, чтобы набрать историю: `message`, опц. `attachments`, `expect_workflow` |
 | `filler` | объект | `count`: сколько посторонних ходов вставить между `prepare_turns` и триггером (для теста окна истории) |

@@ -65,11 +65,25 @@ def cmd_run(args: argparse.Namespace) -> None:
     print(json.dumps(_summary(result), indent=2, default=str))
 
 
+def require_valid_scenarios() -> None:
+    from runner import validate
+
+    errors = validate.check_all()
+    if errors:
+        sys.exit("Scenario files are invalid, nothing was run:\n" + "\n".join(errors))
+
+
+def cmd_check(_args: argparse.Namespace) -> None:
+    require_valid_scenarios()
+    print("All scenario files are valid.")
+
+
 def cmd_mast(args: argparse.Namespace) -> None:
     from runner import mast_mode
 
     names = args.scenarios or [p.stem for p in mast_mode.mast_paths()]
     out = Path(__file__).resolve().parent / "results" / "api-mast" / args.batch
+    require_valid_scenarios()
     mast_mode.run_batch(names, args.repeats, args.workers, args.attempts, args.base_url, args.timeout,
                         args.trace_dir, out)
 
@@ -86,6 +100,7 @@ def cmd_unified(args: argparse.Namespace) -> None:
         if args.via == "api":
             names += [p.stem for p in mast_mode.mast_paths() if p.stem in mast_mode.api_additions()]
     out = Path(__file__).resolve().parent / "results" / "unified" / args.via / args.batch
+    require_valid_scenarios()
     mast_mode.run_batch(names, args.repeats, args.workers, args.attempts, args.base_url, args.timeout,
                         args.trace_dir, out, via=args.via)
 
@@ -94,6 +109,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("list", help="show available scenarios").set_defaults(func=cmd_list)
+    sub.add_parser("check", help="validate every scenario file against schema.json").set_defaults(func=cmd_check)
     for name, func in (("prepare", cmd_prepare), ("run", cmd_run)):
         p = sub.add_parser(name)
         p.add_argument("scenario", help="scenario id from cases/ or a path to a json file")

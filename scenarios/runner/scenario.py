@@ -88,6 +88,11 @@ def resolve_path(name: str) -> Path:
 def load(name: str) -> Scenario:
     path = resolve_path(name)
     raw = json.loads(path.read_text(encoding="utf-8")) or {}
+    from runner.validate import schema_errors
+
+    errors = schema_errors(raw, "simple_case")
+    if errors:
+        raise ValueError(f"{path.name}: " + "; ".join(errors))
     via = raw.get("via", "api")
     trigger = raw.get("trigger") or {}
     kind = trigger.get("kind")
