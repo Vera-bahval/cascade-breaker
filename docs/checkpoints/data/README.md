@@ -28,5 +28,19 @@ python3 scenarios/analyze_unified.py scenarios/results/unified/direct/baseline-d
     --out docs/checkpoints/data/baseline-ds1-report.md --csv docs/checkpoints/data/baseline-ds1-runs.csv
 ```
 
-The raw results with full traces (about 1 GB) are not in git; they live in `scenarios/results/unified/` on the
-machine that ran them.
+## Where everything is
+
+| What | Path |
+| --- | --- |
+| Merged scenarios (Nastya's, Vera's, chat versions) | `scenarios/unified/suites/` |
+| API scenario pairs | `scenarios/api-mast/` |
+| Base set, API pairs in the merged set, excluded pairs | `scenarios/unified/base.json`, `scenarios/unified/api_additions.json` |
+| Scenario schema and validation | `scenarios/schema.json`, `scenarios/runner/validate.py` |
+| Runner | `scenarios/run.py`, `scenarios/runner/` |
+| Analysis script | `scenarios/analyze_unified.py` |
+| Reports and per-run tables | `docs/checkpoints/data/` |
+| How to read a run file and trace a number back to runs | `docs/scenarios/results-guide.md` |
+| Raw runs with full traces | `scenarios/results/unified/<direct\|api>/<batch>/` |
+
+Everything is on branch `research/unified-scenarios`. The raw runs (about 1.3 GB) are not in git and live only on the
+machine that ran them; the per-run tables here keep every metric the reports use.
