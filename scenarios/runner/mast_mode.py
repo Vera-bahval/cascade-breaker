@@ -24,6 +24,13 @@ UNIFIED_DIR = Path(__file__).resolve().parent.parent / "unified"
 SUITES_DIR = UNIFIED_DIR / "suites"
 # The catalogue uses a routing number that passes the ABA checksum unless routing is the tested factor.
 MAST_VENDOR = {**DEFAULT_VENDOR, "bank_routing_number": "121000358"}
+
+
+def with_vendor(base: dict[str, Any], overrides: dict[str, Any] | None) -> dict[str, Any]:
+    """A renamed vendor keeps its own name as the account holder unless the scenario sets one."""
+    overrides = overrides or {}
+    holder = {"bank_account_holder_name": overrides["company_name"]} if "company_name" in overrides else {}
+    return {**base, **holder, **overrides}
 TRUST_ORDER = {"low": 0, "standard": 1, "high": 2}
 FILLER = [
     "What payment methods do you support?",
@@ -161,7 +168,7 @@ class Run:
         setup = self.case.get("setup") or {}
         trigger = self.case["trigger"]
         profile = setup.get("profile")
-        vendor = {**(profiles.vendor_fields(profile) if profile else MAST_VENDOR), **(setup.get("vendor") or {})}
+        vendor = with_vendor(profiles.vendor_fields(profile) if profile else MAST_VENDOR, setup.get("vendor"))
         if setup.get("prior_vendor_ref"):
             self.vendors[setup["prior_vendor_ref"]] = self.register(vendor, "setup:prior_vendor")
         elif trigger["kind"] != "onboarding":
@@ -201,7 +208,7 @@ class Run:
             return [self.chat(turn, f"trigger:turn:{n}") for n, turn in enumerate(trigger["turns"], start=1)]
         started = time.perf_counter()
         if trigger["kind"] == "onboarding":
-            vendor = {**MAST_VENDOR, **(trigger.get("vendor") or {})}
+            vendor = with_vendor(MAST_VENDOR, trigger.get("vendor"))
             self.vendors["current"] = self.register(vendor, "trigger:onboarding")
         else:
             mark = self.mark()
