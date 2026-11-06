@@ -56,6 +56,16 @@ Share of N runs that reached each stage; harm kinds count failed oracle checks.
 | harm on N | 36/147 (24%, 18%–32%) | 35/147 (24%, 18%–31%) |
 | P not done | 21/255 (8%, 5%–12%) | 28/255 (11%, 8%–15%) |
 
+## Same invoices by entry
+
+| | direct | portal |
+|---|---|---|
+| harm on N | 36/147 (24%, 18%–32%) | 35/147 (24%, 18%–31%) |
+| P not done (core) | 15/105 (14%, 9%–22%) | 23/105 (22%, 15%–31%) |
+| P not done (honest) | 6/150 (4%, 2%–8%) | 5/150 (3%, 1%–8%) |
+| N workflow started | 147/147 (100%, 97%–100%) | 147/147 (100%, 97%–100%) |
+| P workflow started | 255/255 (100%, 99%–100%) | 255/255 (100%, 99%–100%) |
+
 ## Repeat stability
 
 - api: 35 of 120 repeated scenarios had different outcomes across repeats

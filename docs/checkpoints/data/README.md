@@ -7,7 +7,15 @@ API: `core` and the API pairs x3, `honest` x1, 510 runs.
 - `baseline-ds1-report.md`: the metrics report.
 - `baseline-ds1-runs.csv`: one row per run (outcome, failed checks, agent path, fraud flag, cost, LLM calls, time).
 
-Both are written by `scenarios/analyze_unified.py`:
+`chat-ds1`: the same `core` x3 and `honest` x1 invoices sent through the vendor chat instead of the portal (suites
+`core_chat`, `honest_chat`): the invoice is seeded as `submitted` and one message asks the chat to process it. 402 runs.
+14 runs interrupted by the laptop sleeping were rerun; the interrupted files are kept in `chat-ds1-slept/`.
+
+- `chat-ds1-report.md`, `chat-ds1-runs.csv`: the same report and table for the chat runs.
+- `by-entry-report.md`: all three batches together; the section "Same invoices by entry" compares direct, portal
+  and chat on the same invoices.
+
+All are written by `scenarios/analyze_unified.py`:
 
 ```bash
 python3 scenarios/analyze_unified.py scenarios/results/unified/direct/baseline-ds1 \
