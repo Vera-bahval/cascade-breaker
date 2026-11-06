@@ -15,6 +15,11 @@ API: `core` and the API pairs x3, `honest` x1, 510 runs.
 - `by-entry-report.md`: all three batches together; the section "Same invoices by entry" compares direct, portal
   and chat on the same invoices.
 
+`extra-ds1`: API pairs left out of the baseline because Nastya's set already covered their MAST mode, run to cover
+invariants the baseline misses (S01, S02, S03, S15, S16, S17, S20, S21, S23), 3 repeats each, 54 runs.
+
+- `extra-ds1-report.md`, `extra-ds1-runs.csv`.
+
 All are written by `scenarios/analyze_unified.py`:
 
 ```bash
