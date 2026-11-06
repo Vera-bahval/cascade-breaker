@@ -97,7 +97,7 @@ def cmd_unified(args: argparse.Namespace) -> None:
         names = mast_mode.base_scenarios()
     else:
         names = [c["id"] for suite in args.suite for c in mast_mode.unified_cases(suite)]
-        if args.via == "api":
+        if args.via == "api" and "core" in args.suite:
             names += [p.stem for p in mast_mode.mast_paths() if p.stem in mast_mode.api_additions()]
     out = Path(__file__).resolve().parent / "results" / "unified" / args.via / args.batch
     require_valid_scenarios()
@@ -134,8 +134,8 @@ def main() -> None:
     p.add_argument("scenarios", nargs="*", help="case ids such as TA501@C or S25_n (default: every case of --suite)")
     p.add_argument("--via", choices=("direct", "api"), required=True)
     p.add_argument("--suite", nargs="+", default=["core", "honest"],
-                   help="unified suites: core honest matrix profiles pairs sweep (default: core honest); "
-                        "via api also adds the API scenarios listed in unified/api_additions.json. "
+                   help="unified suites: core honest matrix profiles pairs sweep core_chat honest_chat (default: core honest); "
+                        "with core, via api also adds the API scenarios listed in unified/api_additions.json. "
                         "`base` alone runs one scenario per MAST mode and its partner (unified/base.json)")
     p.add_argument("--batch", required=True,
                    help="results go to results/unified/<via>/<batch>/; existing files are kept")
