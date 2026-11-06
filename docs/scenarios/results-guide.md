@@ -2,22 +2,40 @@
 
 ## 1. Где лежит
 
-```
-scenarios/
-  unified/suites/*.json          определения случаев «счёт @ профиль»: core, honest, core_chat, honest_chat, ...
-  unified/base.json              базовый набор, по сценарию на режим MAST
-  unified/api_additions.json     API-пары для режимов, которых нет в direct, и исключённые пары
-  api-mast/S01_n.json ...        API-пары (чат, онбординг, портал), по файлу на вариант
-  results/unified/<via>/<batch>/<сценарий>-r<повтор>.json   один файл на прогон (не в git, ~1 ГБ)
-  traces/<batch>/wf_*.json       трассы workflow, которые пишет сервер при via=api (не в git)
-docs/checkpoints/data/
-  baseline-ds1-report.md         отчёт по батчу
-  baseline-ds1-runs.csv          одна строка на прогон
-```
+Всё на ветке `research/unified-scenarios`. FinBot на DeepSeek Flash (провайдер DeepInfra fp8, temperature 0, seed 7,
+reasoning off), без проверок.
 
-Батчи: `baseline-ds1` (бейзлайн, direct и api), `chat-ds1` (счета Насти через чат), `chat-ds1-slept` (8 прогонов,
-прерванных сном ноутбука, перезапускаются), `base-ds1` и `base-ds1-fix` (базовый набор на DeepSeek), остальные
-(`mock-*`, `deepseek-smoke`, `chat-smoke`) отладочные.
+### Запуски
+
+| Запуск | Что запускали | Прогонов | Отчёт | Таблица по прогонам |
+| --- | --- | --- | --- | --- |
+| `baseline-ds1`, direct | счета Насти и Веры x3 и 150 честных x1, сразу в оркестратор | 402 | [отчёт](../checkpoints/data/baseline-ds1-report.md) | [csv](../checkpoints/data/baseline-ds1-runs.csv) |
+| `baseline-ds1`, api | те же счета через портал и 18 API-пар x3 | 510 | [отчёт](../checkpoints/data/baseline-ds1-report.md) | [csv](../checkpoints/data/baseline-ds1-runs.csv) |
+| `chat-ds1` | те же счета через чат, одно сообщение | 402 | [отчёт](../checkpoints/data/chat-ds1-report.md) | [csv](../checkpoints/data/chat-ds1-runs.csv) |
+| `extra-ds1` | ещё 9 API-пар x3 на непокрытые инварианты | 54 | [отчёт](../checkpoints/data/extra-ds1-report.md) | [csv](../checkpoints/data/extra-ds1-runs.csv) |
+| `chat2-ds1` | через чат, вендор подтверждает, если чат спросил | 402 | идёт | идёт |
+
+Сравнение одних и тех же счетов по входу (direct, портал, чат):
+[by-entry-report.md](../checkpoints/data/by-entry-report.md). Отладочные запуски (`mock-*`, `*-smoke`, `base-ds1`)
+в отчёты не входят; `chat-ds1-slept` это 14 прогонов, прерванных сном ноутбука и перезапущенных.
+
+### Где что искать
+
+| Что | Где |
+| --- | --- |
+| Объединённые сценарии (Настя, Вера, версии для чата) | [scenarios/unified/suites/](../../scenarios/unified/suites/) |
+| API-пары (чат, онбординг, портал) | [scenarios/api-mast/](../../scenarios/api-mast/) |
+| Описание API-пар | [api-mast-scenarios.md](api-mast-scenarios.md) |
+| Базовый набор | [scenarios/unified/base.json](../../scenarios/unified/base.json) |
+| API-пары в объединённом наборе и исключённые | [scenarios/unified/api_additions.json](../../scenarios/unified/api_additions.json) |
+| Схема файлов сценариев | [scenarios/schema.json](../../scenarios/schema.json) |
+| Раннер | [scenarios/run.py](../../scenarios/run.py) |
+| Скрипт отчётов | [scenarios/analyze_unified.py](../../scenarios/analyze_unified.py) |
+| Сырые прогоны | `scenarios/results/unified/<direct\|api>/<запуск>/<сценарий>-r<повтор>.json` |
+| Трассы workflow при via=api | `scenarios/traces/<запуск>/wf_*.json` |
+
+Сырые прогоны и трассы (около 1,3 ГБ) не в git и лежат только на машине, где их запускали. Таблицы по прогонам хранят
+все метрики из отчётов.
 
 ## 2. Имена
 
