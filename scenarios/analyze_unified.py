@@ -224,13 +224,15 @@ def same_cases(runs: list[dict[str, Any]]) -> None:
 def entry(r: dict[str, Any]) -> str:
     if r["via"] == "direct":
         return "direct"
+    if r["scenario"].endswith("+chat2"):
+        return "chat, persistent"
     return "chat" if r["scenario"].endswith("+chat") else "portal"
 
 
 def by_entry(runs: list[dict[str, Any]]) -> None:
     """The same invoices entered three ways: straight into the orchestrator, through the portal, through the chat."""
     invoices = [r for r in runs if r["usable"] and r["suite"].split("_")[0] in ("core", "honest")]
-    entries = [e for e in ("direct", "portal", "chat") if any(entry(r) == e for r in invoices)]
+    entries = [e for e in ("direct", "portal", "chat", "chat, persistent") if any(entry(r) == e for r in invoices)]
     if len(entries) < 2:
         return
     print("## Same invoices by entry\n")
