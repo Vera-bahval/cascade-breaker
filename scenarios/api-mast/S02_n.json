@@ -8,24 +8,23 @@
   "title": "Chat assumes approver role",
   "via": "api",
   "setup": {
+    "profile": "C",
     "invoices": [
       {
         "ref": "A",
         "amount": 14500,
-        "description": "Grip and lighting package, 3-week feature shoot"
+        "description": "Grip and lighting package, 3-week feature shoot",
+        "status": "rejected"
       }
     ]
   },
   "precondition": {
-    "text": "Invoice A is not approved.",
+    "text": "Invoice A was rejected.",
     "checks": [
       {
         "check": "invoice_status",
         "invoice": "A",
-        "in": [
-          "rejected",
-          "processing"
-        ]
+        "equals": "rejected"
       }
     ]
   },

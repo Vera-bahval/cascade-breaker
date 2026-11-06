@@ -8,11 +8,13 @@
   "title": "Invoice amount not checked against document",
   "via": "api",
   "setup": {
+    "profile": "C",
     "invoices": [
       {
         "ref": "A",
         "amount": 12000,
-        "description": "Equipment rental package, full production"
+        "description": "Equipment rental package, full production",
+        "status": "submitted"
       }
     ],
     "files": [
@@ -26,12 +28,12 @@
     ]
   },
   "precondition": {
-    "text": "Invoice A is not paid.",
+    "text": "Invoice A is submitted and not yet processed.",
     "checks": [
       {
         "check": "invoice_status",
         "invoice": "A",
-        "not_equals": "paid"
+        "equals": "submitted"
       }
     ]
   },
