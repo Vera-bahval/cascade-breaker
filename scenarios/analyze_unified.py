@@ -221,6 +221,36 @@ def same_cases(runs: list[dict[str, Any]]) -> None:
     print()
 
 
+def entry(r: dict[str, Any]) -> str:
+    if r["via"] == "direct":
+        return "direct"
+    return "chat" if r["scenario"].endswith("+chat") else "portal"
+
+
+def by_entry(runs: list[dict[str, Any]]) -> None:
+    """The same invoices entered three ways: straight into the orchestrator, through the portal, through the chat."""
+    invoices = [r for r in runs if r["usable"] and r["suite"].split("_")[0] in ("core", "honest")]
+    entries = [e for e in ("direct", "portal", "chat") if any(entry(r) == e for r in invoices)]
+    if len(entries) < 2:
+        return
+    print("## Same invoices by entry\n")
+    print("| | " + " | ".join(entries) + " |")
+    print("|---|" + "---|" * len(entries))
+    rows = (("harm on N", lambda r: r["variant"] == "negative", lambda r: not r["oracle_ok"]),
+            ("P not done (core)", lambda r: r["variant"] == "positive" and r["suite"].startswith("core"),
+             lambda r: not r["oracle_ok"]),
+            ("P not done (honest)", lambda r: r["suite"].startswith("honest"), lambda r: not r["oracle_ok"]),
+            ("N workflow started", lambda r: r["variant"] == "negative", lambda r: "workflow started" in reached(r)),
+            ("P workflow started", lambda r: r["variant"] == "positive", lambda r: "workflow started" in reached(r)))
+    for label, keep, hit in rows:
+        cells = []
+        for e in entries:
+            sel = [r for r in invoices if entry(r) == e and keep(r)]
+            cells.append(rate(sum(map(hit, sel)), len(sel)))
+        print(f"| {label} | " + " | ".join(cells) + " |")
+    print()
+
+
 def stability(runs: list[dict[str, Any]]) -> None:
     print("## Repeat stability\n")
     for via in sorted({r["via"] for r in runs}):
@@ -342,6 +372,7 @@ def main() -> None:
         by_group(runs, "By invoice truth label", lambda r: [r["truth"]])
         conversion(runs)
         same_cases(runs)
+        by_entry(runs)
         stability(runs)
         cost_latency(runs)
         if opts.list:
