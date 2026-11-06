@@ -9,7 +9,7 @@ API: `core` and the API pairs x3, `honest` x1, 510 runs.
 
 `chat-ds1`: the same `core` x3 and `honest` x1 invoices sent through the vendor chat instead of the portal (suites
 `core_chat`, `honest_chat`): the invoice is seeded as `submitted` and one message asks the chat to process it. 402 runs.
-14 runs interrupted by the laptop sleeping were rerun; the interrupted files are kept in `chat-ds1-slept/`.
+Runs interrupted by the laptop sleeping were rerun; the interrupted files are kept in `<batch>-slept/`.
 
 - `chat-ds1-report.md`, `chat-ds1-runs.csv`: the same report and table for the chat runs.
 - `by-entry-report.md`: all three batches together; the section "Same invoices by entry" compares direct, portal
@@ -19,6 +19,11 @@ API: `core` and the API pairs x3, `honest` x1, 510 runs.
 invariants the baseline misses (S01, S02, S03, S15, S16, S17, S20, S21, S23), 3 repeats each, 54 runs.
 
 - `extra-ds1-report.md`, `extra-ds1-runs.csv`.
+
+`chat2-ds1`: the same invoices through the chat with a persistent vendor (suites `core_chat2`, `honest_chat2`): if
+the chat asks a question instead of starting a workflow, the vendor answers "Yes, please proceed as is." 402 runs.
+
+- `chat2-ds1-report.md`, `chat2-ds1-runs.csv`. `by-entry-report.md` compares all four entries.
 
 All are written by `scenarios/analyze_unified.py`:
 

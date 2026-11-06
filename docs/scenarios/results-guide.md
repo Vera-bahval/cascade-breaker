@@ -13,11 +13,11 @@ reasoning off), без проверок.
 | `baseline-ds1`, api | те же счета через портал и 18 API-пар x3 | 510 | [отчёт](../checkpoints/data/baseline-ds1-report.md) | [csv](../checkpoints/data/baseline-ds1-runs.csv) |
 | `chat-ds1` | те же счета через чат, одно сообщение | 402 | [отчёт](../checkpoints/data/chat-ds1-report.md) | [csv](../checkpoints/data/chat-ds1-runs.csv) |
 | `extra-ds1` | ещё 9 API-пар x3 на непокрытые инварианты | 54 | [отчёт](../checkpoints/data/extra-ds1-report.md) | [csv](../checkpoints/data/extra-ds1-runs.csv) |
-| `chat2-ds1` | через чат, вендор подтверждает, если чат спросил | 402 | идёт | идёт |
+| `chat2-ds1` | через чат, вендор подтверждает, если чат спросил | 402 | [отчёт](../checkpoints/data/chat2-ds1-report.md) | [csv](../checkpoints/data/chat2-ds1-runs.csv) |
 
-Сравнение одних и тех же счетов по входу (direct, портал, чат):
+Сравнение одних и тех же счетов по входу (direct, портал, чат, чат с подтверждением):
 [by-entry-report.md](../checkpoints/data/by-entry-report.md). Отладочные запуски (`mock-*`, `*-smoke`, `base-ds1`)
-в отчёты не входят; `chat-ds1-slept` это 14 прогонов, прерванных сном ноутбука и перезапущенных.
+в отчёты не входят; каталоги `*-slept` хранят прогоны, прерванные сном ноутбука; они перезапущены.
 
 ### Где что искать
 
