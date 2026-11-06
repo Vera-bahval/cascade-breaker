@@ -1,9 +1,11 @@
 """Agent Runner"""
 
 import asyncio
+import contextlib
 import logging
+import os
 import secrets
-from typing import Type
+from typing import Any, Type
 
 from finbot.agents.base import BaseAgent
 from finbot.agents.orchestrator import OrchestratorAgent
@@ -196,6 +198,65 @@ async def run_fraud_agent(
     )
 
 
+def _guard_db_snapshot(session_context: SessionContext, invoice_id: Any, vendor_id: Any) -> dict:
+    """DB snapshot in the shape the probe verifiers expect (current invoice, vendor,
+    transactions with vendor_id). Read live from the server's database per workflow."""
+    from finbot.core.data.database import db_session
+    from finbot.core.data.repositories import InvoiceRepository, VendorRepository
+    from finbot.mcp.servers.finstripe.models import PaymentTransaction
+
+    with db_session() as db:
+        vendor = VendorRepository(db, session_context).get_vendor(vendor_id) if vendor_id else None
+        inv = InvoiceRepository(db, session_context).get_invoice(invoice_id) if invoice_id else None
+        txns = (
+            db.query(PaymentTransaction)
+            .filter(PaymentTransaction.namespace == session_context.namespace,
+                    PaymentTransaction.vendor_id == vendor_id)
+            .all()
+            if vendor_id else []
+        )
+        return {
+            "invoice": inv.to_dict() if inv else {},
+            "vendor": vendor.to_dict() if vendor else {},
+            "transactions": [
+                {"transfer_id": t.transfer_id, "invoice_id": t.invoice_id, "amount": t.amount,
+                 "status": t.status, "vendor_id": vendor_id}
+                for t in txns
+            ],
+        }
+
+
+def _maybe_open_guard(workflow_id: str, task_data: dict, session_context: SessionContext):
+    """Open an enforcing guard runtime from PROBE_ENFORCE (e.g. "P4=V3"), covering api
+    and chat workflows. Returns a no-op when unset or when direct already opened one."""
+    from finbot.probe.guards import runtime as probe_guards
+
+    if probe_guards.active_runtime() is not None:
+        return contextlib.nullcontext()
+    spec = os.environ.get("PROBE_ENFORCE", "").strip()
+    if not spec:
+        return contextlib.nullcontext()
+    from finbot.probe.guards.invariants import InvariantVerifier, TextRuleVerifier
+    from finbot.probe.guards.llm import ConsistencyVerifier, MastAnnotator, SelfConsistencyVerifier
+
+    registry = {"V1": InvariantVerifier, "V2": TextRuleVerifier, "V3": ConsistencyVerifier,
+                "V4": SelfConsistencyVerifier, "V5": MastAnnotator}
+    enforce: dict[str, str] = {}
+    for pair in spec.split(","):
+        point, _, name = pair.partition("=")
+        point, name = point.strip(), name.strip()
+        if point and name:
+            enforce[point] = name
+    verifiers = [registry[n]() for n in set(enforce.values()) if n in registry]
+    if not verifiers:
+        return contextlib.nullcontext()
+    vid, iid = task_data.get("vendor_id"), task_data.get("invoice_id")
+    runtime = probe_guards.GuardRuntime(
+        mode="enforce", run_id=workflow_id, verifiers=verifiers,
+        snapshot=lambda: _guard_db_snapshot(session_context, iid, vid), enforce=enforce)
+    return probe_guards.open_runtime(runtime)
+
+
 async def run_orchestrator_agent(
     task_data: dict,
     session_context: SessionContext,
@@ -211,12 +272,13 @@ async def run_orchestrator_agent(
     """
     workflow_id = workflow_id or f"wf_{secrets.token_urlsafe(12)}"
     with probe_trace.record_to_dir(settings.PROBE_TRACE_DIR, workflow_id, task_data=task_data):
-        return await run_agent_with_retry(
-            agent_class=OrchestratorAgent,
-            session_context=session_context,
-            task_data=task_data,
-            workflow_id=workflow_id,
-        )
+        with _maybe_open_guard(workflow_id, task_data, session_context):
+            return await run_agent_with_retry(
+                agent_class=OrchestratorAgent,
+                session_context=session_context,
+                task_data=task_data,
+                workflow_id=workflow_id,
+            )
 
 
 async def run_communication_agent(

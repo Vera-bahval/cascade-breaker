@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
+import os
 import secrets
 import time
 from datetime import UTC, datetime, timedelta
@@ -110,24 +112,60 @@ def snapshot(namespace: str, vendor_id: int) -> dict[str, Any]:
         }
 
 
+def _guard_runtime_from_env(run_id: str, snapshot_fn: Any) -> Any:
+    """Build an enforcing guard runtime from the PROBE_ENFORCE env var, e.g.
+    "P4=V3" or "P4=V3,P2.invoice_agent=V3". Returns None when the variable is
+    unset, so an ordinary run (the baseline) is completely unchanged. The
+    verifier model is read from finbot/probe/roles.json (verifier.v3 etc.)."""
+    spec = os.environ.get("PROBE_ENFORCE", "").strip()
+    if not spec or snapshot_fn is None:
+        return None
+    from finbot.probe.guards import runtime as probe_guards
+    from finbot.probe.guards.invariants import InvariantVerifier, TextRuleVerifier
+    from finbot.probe.guards.llm import (
+        ConsistencyVerifier, MastAnnotator, SelfConsistencyVerifier)
+
+    registry = {"V1": InvariantVerifier, "V2": TextRuleVerifier, "V3": ConsistencyVerifier,
+                "V4": SelfConsistencyVerifier, "V5": MastAnnotator}
+    enforce: dict[str, str] = {}
+    for pair in spec.split(","):
+        point, _, name = pair.partition("=")
+        point, name = point.strip(), name.strip()
+        if point and name:
+            enforce[point] = name
+    verifiers = [registry[n]() for n in set(enforce.values()) if n in registry]
+    if not verifiers:
+        return None
+    return probe_guards.GuardRuntime(
+        mode="enforce", run_id=run_id, verifiers=verifiers,
+        snapshot=snapshot_fn, enforce=enforce)
+
+
 async def _orchestrate(namespace: str, vendor_id: int, task_data: dict[str, Any],
-                       injection: Any = None) -> dict[str, Any]:
+                       injection: Any = None, snapshot_fn: Any = None,
+                       use_guard: bool = False) -> dict[str, Any]:
     from finbot.agents.runner import run_orchestrator_agent
     from finbot.probe import injections as probe_injections
     from finbot.probe import trace as probe_trace
+    from finbot.probe.guards import runtime as probe_guards
 
     workflow_id = f"wf_scn_{secrets.token_urlsafe(9)}"
+    guard = _guard_runtime_from_env(workflow_id, snapshot_fn) if use_guard else None
     error, result = None, {}
     started = time.perf_counter()
     with probe_trace.open_recorder() as recorder, probe_injections.open_injection(injection):
-        try:
-            result = await run_orchestrator_agent(
-                task_data=task_data,
-                session_context=session_for(namespace, vendor_id),
-                workflow_id=workflow_id,
-            )
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            error = f"{type(e).__name__}: {str(e)[:500]}"
+        guard_cm = probe_guards.open_runtime(guard) if guard else contextlib.nullcontext()
+        with guard_cm:
+            try:
+                result = await run_orchestrator_agent(
+                    task_data=task_data,
+                    session_context=session_for(namespace, vendor_id),
+                    workflow_id=workflow_id,
+                )
+            except probe_guards.GuardStop:
+                pass  # a blocking verdict stops the workflow; recorded below, not an error
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                error = f"{type(e).__name__}: {str(e)[:500]}"
     return {
         "workflow_id": workflow_id,
         "task_data": task_data,
@@ -135,6 +173,7 @@ async def _orchestrate(namespace: str, vendor_id: int, task_data: dict[str, Any]
         "error": error,
         "orchestrator_status": result.get("task_status"),
         "orchestrator_summary": result.get("task_summary"),
+        "guard_stopped_by": guard.stopped_by if guard else None,
         "injection": injection.label() if injection else None,
         "injection_applied": bool(injection and injection.applied),
         "steps": recorder.steps,
@@ -197,7 +236,8 @@ async def _run(scenario: Scenario) -> dict[str, Any]:
         injection = probe_injections.InjectionSpec(spec["node"], spec["fault"], invoice_id or 0)
     before = snapshot(namespace, vendor_id)
     started_at = datetime.now(UTC).isoformat()
-    run = await _orchestrate(namespace, vendor_id, task_data, injection)
+    run = await _orchestrate(namespace, vendor_id, task_data, injection,
+                             snapshot_fn=lambda: snapshot(namespace, vendor_id), use_guard=True)
     result = {
         "scenario": scenario.id,
         "via": "direct",

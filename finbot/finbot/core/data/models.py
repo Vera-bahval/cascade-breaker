@@ -1023,6 +1023,7 @@ class LLMRequest(BaseModel):
     metadata: dict | None = None  # provider specific metadata
     previous_response_id: str | None = None  # stateful chaining where appropriate
     output_json_schema: dict[str, Any] | None = None  # required fields: name, schema
+    route_freely: bool = False  # when True, skip the provider pin so this call routes to any provider
 
 
 class LLMResponse(BaseModel):

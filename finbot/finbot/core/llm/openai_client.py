@@ -48,11 +48,15 @@ def _response_accounting(response: Any) -> dict[str, Any]:
     return accounting
 
 
-def openrouter_extra_body() -> dict[str, Any]:
-    """OpenRouter-specific request fields; empty unless configured."""
+def openrouter_extra_body(include_pin: bool = True) -> dict[str, Any]:
+    """OpenRouter-specific request fields; empty unless configured.
+
+    include_pin=False skips the provider pin so the call routes freely (used by
+    the probe verifier, whose model may live on a different provider than the
+    pinned agent model)."""
     extra: dict[str, Any] = {}
     pin = settings.LLM_PROVIDER_PIN
-    if isinstance(pin, str) and pin:
+    if include_pin and isinstance(pin, str) and pin:
         extra["provider"] = {"order": [pin], "allow_fallbacks": False}
     seed = settings.LLM_SEED
     if isinstance(seed, int) and not isinstance(seed, bool):
@@ -129,7 +133,7 @@ class OpenAIClient:
             if request.previous_response_id:
                 create_params["previous_response_id"] = request.previous_response_id
 
-            extra_body = openrouter_extra_body()
+            extra_body = openrouter_extra_body(include_pin=not request.route_freely)
             if extra_body:
                 create_params["extra_body"] = extra_body
 

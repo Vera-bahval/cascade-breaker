@@ -187,6 +187,7 @@ async def _ask_json(
             model=model,
             temperature=temperature,
             output_json_schema=schema,
+            route_freely=True,  # verifier model may be on a different provider than the pinned agents
         )
     )
     duration_ms = round((time.perf_counter() - started) * 1000)

@@ -20,6 +20,19 @@ def _facts_snapshot(raw: dict[str, Any]) -> dict[str, Any]:
     return {"vendors": {"current": raw["vendor"]}, "invoices": raw["invoices"], "transactions": raw["transactions"]}
 
 
+def _guard_snapshot(namespace: str, vendor_id: int, invoice_id: int) -> dict[str, Any]:
+    """Snapshot in the shape the probe verifiers expect: the current invoice
+    (singular), the vendor, and transactions carrying vendor_id."""
+    raw = snapshot(namespace, vendor_id)
+    invs = raw.get("invoices") or []
+    current = next((i for i in invs if i.get("id") == invoice_id), invs[-1] if invs else {})
+    return {
+        "invoice": current,
+        "vendor": raw.get("vendor") or {},
+        "transactions": [{**t, "vendor_id": vendor_id} for t in (raw.get("transactions") or [])],
+    }
+
+
 async def _run(case: dict[str, Any]) -> dict[str, Any]:
     from runner.mast_mode import Facts
 
@@ -41,7 +54,9 @@ async def _run(case: dict[str, Any]) -> dict[str, Any]:
     refs.invoices["T"] = {"id": invoice_id, "invoice_number": fields["invoice_number"]}
     task_data = {"vendor_id": vendor_id, "invoice_id": invoice_id, "description": INVOICE_TASK}
     setup_s = round(time.perf_counter() - started, 2)
-    run = await _orchestrate(namespace, vendor_id, task_data)
+    run = await _orchestrate(namespace, vendor_id, task_data,
+                             snapshot_fn=lambda: _guard_snapshot(namespace, vendor_id, invoice_id),
+                             use_guard=True)
     after = _facts_snapshot(snapshot(namespace, vendor_id))
     traces = {run["workflow_id"]: {"steps": run["steps"], "task_data": task_data}}
     facts = Facts(refs, after, [], traces, [])
@@ -52,6 +67,7 @@ async def _run(case: dict[str, Any]) -> dict[str, Any]:
         "setup_s": setup_s, "trigger_s": run["wall_s"], "namespace": namespace, "redis": redis,
         "workflows": [run["workflow_id"]], "orchestrator_status": run["orchestrator_status"],
         "orchestrator_summary": run["orchestrator_summary"], "run_error": run["error"],
+        "guard_stopped_by": run.get("guard_stopped_by"),
         "before": before, "after": after, "refs": {"invoices": refs.invoices, "vendors": {"current": vendor_id}},
         "traces": traces, "tool_defs": run["tool_defs"],
     }
