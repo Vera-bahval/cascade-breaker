@@ -136,8 +136,8 @@ def pct(values: list[float], q: float) -> float:
 
 def overview(runs: list[dict[str, Any]]) -> None:
     print("## Overview\n")
-    print("| via | runs | broken | precondition failed | retried | harm on N | P not done (core) | P not done (honest) |")
-    print("|---|---|---|---|---|---|---|---|")
+    print("| via | runs | broken | precondition failed | retried | timed out | harm on N | P not done (core) | P not done (honest) |")
+    print("|---|---|---|---|---|---|---|---|---|")
     for via in sorted({r["via"] for r in runs}):
         rs = [r for r in runs if r["via"] == via]
         ok = [r for r in rs if r["usable"]]
@@ -147,7 +147,7 @@ def overview(runs: list[dict[str, Any]]) -> None:
         reasons = Counter(r["broken"] for r in rs if r["broken"])
         print(f"| {via} | {len(rs)} | {sum(reasons.values())} {dict(reasons) if reasons else ''} "
               f"| {sum(not r['broken'] and not r.get('precondition_ok') for r in rs)} "
-              f"| {sum(len(r.get('attempts') or []) > 1 for r in rs)} "
+              f"| {sum(len(r.get('attempts') or []) > 1 for r in rs)} | {sum(bool(r.get('trigger_timeout')) for r in rs)} "
               f"| {rate(sum(not r['oracle_ok'] for r in neg), len(neg))} "
               f"| {rate(sum(not r['oracle_ok'] for r in core_p), len(core_p))} "
               f"| {rate(sum(not r['oracle_ok'] for r in honest), len(honest))} |")
@@ -259,10 +259,11 @@ def failures(runs: list[dict[str, Any]]) -> None:
         if r["usable"]:
             by[(r["via"], r["scenario"])].append(r)
     for (via, sid), rs in sorted(by.items()):
-        bad = [r for r in rs if not r["oracle_ok"] or len(r.get("attempts") or []) > 1]
+        bad = [r for r in rs if not r["oracle_ok"] or len(r.get("attempts") or []) > 1 or r.get("trigger_timeout")]
         if bad:
-            kinds = sorted({k for r in bad for k in failed_kinds(r)} | ({"retried"} if any(
-                len(r.get("attempts") or []) > 1 for r in bad) else set()))
+            kinds = sorted({k for r in bad for k in failed_kinds(r)}
+                           | ({"retried"} if any(len(r.get("attempts") or []) > 1 for r in bad) else set())
+                           | ({"timed out"} if any(r.get("trigger_timeout") for r in bad) else set()))
             print(f"| {via} | {sid} | {rs[0]['variant']} | {','.join(rs[0]['mast']) or '—'} | {rs[0]['truth']} "
                   f"| {sum(not r['oracle_ok'] for r in bad)}/{len(rs)} | {', '.join(kinds)} |")
     print()
