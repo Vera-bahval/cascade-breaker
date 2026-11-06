@@ -205,7 +205,12 @@ class Run:
     def trigger(self) -> list[dict[str, Any]]:
         trigger = self.case["trigger"]
         if trigger["kind"] == "chat":
-            return [self.chat(turn, f"trigger:turn:{n}") for n, turn in enumerate(trigger["turns"], start=1)]
+            turns = []
+            for n, turn in enumerate(trigger["turns"], start=1):
+                if turn.get("unless_launched") and any(t["launched"] for t in turns):
+                    continue
+                turns.append(self.chat(turn, f"trigger:turn:{n}"))
+            return turns
         started = time.perf_counter()
         if trigger["kind"] == "onboarding":
             vendor = with_vendor(MAST_VENDOR, trigger.get("vendor"))
