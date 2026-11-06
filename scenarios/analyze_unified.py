@@ -39,6 +39,8 @@ def broken(run: dict[str, Any]) -> str | None:
         return "run error"
     if "oracle_ok" not in run:
         return "no oracle"
+    if any(turn.get("error") for turn in run.get("turns") or []):
+        return "chat stream broke"
     for trace in (run.get("traces") or {}).values():
         for step in (trace or {}).get("steps", []):
             if step["kind"] == "summary" and "permanently failed" in (step.get("task_summary") or ""):
