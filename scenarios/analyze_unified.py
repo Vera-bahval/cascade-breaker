@@ -147,8 +147,8 @@ def overview(runs: list[dict[str, Any]]) -> None:
         rs = [r for r in runs if r["via"] == via]
         ok = [r for r in rs if r["usable"]]
         neg = [r for r in ok if r["variant"] == "negative"]
-        core_p = [r for r in ok if r["variant"] == "positive" and r["suite"] != "honest"]
-        honest = [r for r in ok if r["suite"] == "honest"]
+        core_p = [r for r in ok if r["variant"] == "positive" and not r["suite"].startswith("honest")]
+        honest = [r for r in ok if r["suite"].startswith("honest")]
         reasons = Counter(r["broken"] for r in rs if r["broken"])
         print(f"| {via} | {len(rs)} | {sum(reasons.values())} {dict(reasons) if reasons else ''} "
               f"| {sum(not r['broken'] and not r.get('precondition_ok') for r in rs)} "
