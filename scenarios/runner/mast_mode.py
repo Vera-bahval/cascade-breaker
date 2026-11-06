@@ -395,7 +395,12 @@ def run_case(case: dict[str, Any], base_url: str, timeout: float, trace_dir: str
         result["setup_s"] = round(time.perf_counter() - started, 2)
         log_mark = len(run.log)
         trigger_started = time.perf_counter()
-        turns = run.trigger()
+        try:
+            turns = run.trigger()
+        except TimeoutError as e:
+            # A cascade that never ends is what 1.3 and 1.5 provoke, so it is scored, not retried.
+            result["trigger_timeout"] = str(e)
+            turns = []
         result["trigger_s"] = round(time.perf_counter() - trigger_started, 2)
         events = [e for step in run.log[log_mark:] for e in step["events"]]
         workflows = sorted({wf for step in run.log[log_mark:] for wf in step["workflows"]})
@@ -438,8 +443,9 @@ def run_one(name: str, repeat: int, via: str, attempts: int, base_url: str, time
         else:
             result = run_case(case, base_url, timeout, trace_dir)
             result["via"] = "api"
-        tries.append({k: result.get(k) for k in ("precondition_ok", "error", "wall_s")})
-        if "error" not in result:
+        tries.append({k: result.get(k) for k in ("precondition_ok", "error", "trigger_timeout", "wall_s")})
+        # Only a repeat that broke during setup is run again; once the trigger has fired, the outcome is data.
+        if "error" not in result or "precondition" in result:
             break
     result["attempts"] = tries
     target.write_text(json.dumps(result, ensure_ascii=False, default=str), encoding="utf-8")
