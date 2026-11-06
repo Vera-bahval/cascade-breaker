@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import csv
 import json
 import random
 import statistics
@@ -57,6 +58,8 @@ def load(dirs: list[Path]) -> list[dict[str, Any]]:
             run["suite"] = source.get("suite", "api pairs")
             run["truth"] = source.get("truth", "api pair")
             run["broken"] = broken(run)
+            run["batch"] = d.name
+            run["repeat"] = int(path.stem.rsplit("-r", 1)[1])
             run["usable"] = not run["broken"] and run.get("precondition_ok")
             # The same run can sit in two batch dirs (a batch and its rerun); the later dir wins.
             runs[(run["via"], path.stem)] = run
@@ -269,13 +272,66 @@ def failures(runs: list[dict[str, Any]]) -> None:
     print()
 
 
+ENTRY = {"chat": "chat", "onboarding": "portal: register", "invoice": "portal: invoice"}
+AGENT = {"communication": "comm"}
+
+
+def agent_path(r: dict[str, Any]) -> str:
+    """Entry point and the agents the trigger's workflows delegated to, in order."""
+    traces = r.get("traces") or {}
+    path = ["orchestrator"] if r["via"] == "direct" else [ENTRY[r["kind"]]]
+    if not traces:
+        return " > ".join(path + ["(stop)"])
+    if r["via"] != "direct":
+        path.append("orchestrator")
+    steps = sorted((s for t in traces.values() for s in (t or {}).get("steps", []) if s["kind"] == "delegation"),
+                   key=lambda s: s.get("t_ms") or 0)
+    for step in steps:
+        agent = AGENT.get(step["target"], step["target"])
+        if path[-1] != agent:
+            path.append(agent)
+    return " > ".join(path)
+
+
+def fraud_actions(r: dict[str, Any]) -> str:
+    calls = tool_calls(r.get("traces") or {})
+    return ",".join(sorted({str(args(c).get("recommended_action")) for c in calls
+                            if c["name"] == "flag_invoice_for_review"})) or "none"
+
+
+def write_csv(runs: list[dict[str, Any]], path: Path) -> None:
+    """One row per run, small enough to commit: what the report needs without the traces."""
+    fields = ["via", "batch", "scenario", "repeat", "variant", "mast", "suite", "truth", "kind", "broken",
+              "precondition_ok", "oracle_ok", "failed", "agent_path", "stages", "fraud_flag", "transfers",
+              "trigger_timeout", "attempts", "cost_usd", "llm_calls", "trigger_s", "wall_s"]
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        out = csv.DictWriter(f, fieldnames=fields)
+        out.writeheader()
+        for r in sorted(runs, key=lambda r: (r["via"], r["scenario"], r["repeat"])):
+            names = [c["name"] for c in tool_calls(r.get("traces") or {})]
+            out.writerow({
+                "via": r["via"], "batch": r["batch"], "scenario": r["scenario"], "repeat": r["repeat"],
+                "variant": r["variant"], "mast": ",".join(r["mast"]), "suite": r["suite"], "truth": r["truth"],
+                "kind": r["kind"], "broken": r["broken"] or "", "precondition_ok": r.get("precondition_ok"),
+                "oracle_ok": r.get("oracle_ok"), "failed": ",".join(failed_kinds(r)) if "oracle" in r else "",
+                "agent_path": agent_path(r), "stages": ",".join(reached(r)), "fraud_flag": fraud_actions(r),
+                "transfers": sum(n.endswith("create_transfer") for n in names),
+                "trigger_timeout": bool(r.get("trigger_timeout")), "attempts": len(r.get("attempts") or []),
+                "cost_usd": round(cost(r.get("traces") or {}) + cost(r.get("setup_traces") or {}), 6),
+                "llm_calls": len(llm_steps(r)), "trigger_s": r.get("trigger_s"), "wall_s": r.get("wall_s"),
+            })
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("dirs", type=Path, nargs="+")
     parser.add_argument("--list", action="store_true", help="list every failing scenario")
     parser.add_argument("--out", type=Path, help="write the report to this file instead of stdout")
+    parser.add_argument("--csv", type=Path, help="also write one row per run to this file")
     opts = parser.parse_args()
     runs = load(opts.dirs)
+    if opts.csv:
+        write_csv(runs, opts.csv)
     with open(opts.out, "w", encoding="utf-8") if opts.out else contextlib.nullcontext(sys.stdout) as out, \
             contextlib.redirect_stdout(out):
         print(f"# Unified runs: {', '.join(str(d) for d in opts.dirs)}\n")
