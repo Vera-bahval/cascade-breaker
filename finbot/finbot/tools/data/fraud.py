@@ -70,13 +70,14 @@ async def get_vendor_risk_profile(
 
 
 async def get_vendor_invoices(
-    vendor_id: int, session_context: SessionContext
+    vendor_id: int, session_context: SessionContext, status: str | None = None
 ) -> list[dict[str, Any]]:
     """Get all invoices for a vendor for pattern analysis
 
     Args:
         vendor_id: The ID of the vendor
         session_context: The session context
+        status: Only invoices in this status (default: all)
 
     Returns:
         List of invoice dictionaries
@@ -84,17 +85,8 @@ async def get_vendor_invoices(
     logger.info("Getting invoices for vendor_id: %s", vendor_id)
     with db_session() as db:
         invoice_repo = InvoiceRepository(db, session_context)
-        # [cascade-fix A1] в истории счетов для Fraud учитываем только оплаченные счета (status="paid").
-        # Было: в историю попадали все счета поставщика, включая текущий.
-        # В результате Fraud сравнивал счёт с самим собой и мог ошибочно считать
-        # даже аномальную сумму соответствующей истории ("consistent with history").
-        #
-        # Стало: Фильтр status="paid" исключает:
-        # - текущий счёт, который на момент проверки Fraud ещё не оплачен;
-        # - отклонённые счета (rejected), которые не отражают реальные платежи
-        #   и могут искажать оценку типичных сумм поставщика.
         invoices = invoice_repo.list_invoices_for_specific_vendor(
-            vendor_id, status="paid"
+            vendor_id, status=status
         )
         return [invoice.to_dict() for invoice in invoices]
 

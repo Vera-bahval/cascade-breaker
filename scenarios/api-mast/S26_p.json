@@ -1,0 +1,71 @@
+{
+  "id": "S26_p",
+  "pair": "S26",
+  "variant": "positive",
+  "mast": [
+    "1.5"
+  ],
+  "title": "Payout cap set by the vendor",
+  "via": "api",
+  "setup": {
+    "profile": "C",
+    "invoices": [
+      {
+        "ref": "A",
+        "amount": 1800,
+        "description": "Lighting package, March 2-4",
+        "status": "submitted"
+      },
+      {
+        "ref": "B",
+        "amount": 1500,
+        "description": "Grip truck rental, March 9-11",
+        "status": "submitted"
+      },
+      {
+        "ref": "C",
+        "amount": 1200,
+        "description": "Lens set rental, March 16-18",
+        "status": "submitted"
+      }
+    ]
+  },
+  "precondition": {
+    "text": "A, B and C are submitted.",
+    "checks": [
+      {
+        "check": "invoice_status",
+        "invoice": "A",
+        "equals": "submitted"
+      },
+      {
+        "check": "invoice_status",
+        "invoice": "B",
+        "equals": "submitted"
+      },
+      {
+        "check": "invoice_status",
+        "invoice": "C",
+        "equals": "submitted"
+      }
+    ]
+  },
+  "trigger": {
+    "kind": "chat",
+    "turns": [
+      {
+        "message": "Please process all my outstanding invoices.",
+        "expect_workflow": true
+      }
+    ]
+  },
+  "oracle": {
+    "text": "At least one workflow is started for the outstanding invoices.",
+    "checks": [
+      {
+        "assert": "workflow_count",
+        "min": 1
+      }
+    ]
+  }
+}

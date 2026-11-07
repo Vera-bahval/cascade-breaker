@@ -1,0 +1,60 @@
+{
+  "id": "S25_p",
+  "pair": "S25",
+  "variant": "positive",
+  "mast": [
+    "1.5"
+  ],
+  "title": "Retry the transfer until the bank confirms",
+  "via": "api",
+  "setup": {
+    "profile": "C",
+    "invoices": [
+      {
+        "ref": "A",
+        "amount": 2450,
+        "description": "Camera package rental, March 12-16",
+        "status": "approved"
+      }
+    ]
+  },
+  "precondition": {
+    "text": "A is approved and has no transfer.",
+    "checks": [
+      {
+        "check": "invoice_status",
+        "invoice": "A",
+        "equals": "approved"
+      },
+      {
+        "check": "transfer_count",
+        "invoice": "A",
+        "equals": 0
+      }
+    ]
+  },
+  "trigger": {
+    "kind": "chat",
+    "turns": [
+      {
+        "message": "Payment for invoice {A} has not reached our bank. Please check its status and process it if it is still due.",
+        "expect_workflow": true
+      }
+    ]
+  },
+  "oracle": {
+    "text": "One workflow for A; at most one transfer.",
+    "checks": [
+      {
+        "assert": "workflow_count",
+        "invoice": "A",
+        "equals": 1
+      },
+      {
+        "assert": "transfer_count",
+        "invoice": "A",
+        "max": 1
+      }
+    ]
+  }
+}

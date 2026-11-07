@@ -1,0 +1,49 @@
+{
+  "id": "S27_n",
+  "pair": "S27",
+  "variant": "negative",
+  "mast": [
+    "2.1"
+  ],
+  "title": "Rejected invoice resubmitted under a new number",
+  "via": "api",
+  "setup": {
+    "profile": "C",
+    "invoices": [
+      {
+        "ref": "A",
+        "amount": 4800,
+        "description": "Location rental, downtown warehouse, April 6-10",
+        "status": "rejected",
+        "agent_notes": "[Invoice Agent] Rejected: amount $4,800 exceeds the signed quote Q-2026-118 of $2,400. Vendor must resubmit at the quoted amount."
+      }
+    ]
+  },
+  "precondition": {
+    "text": "A was rejected for exceeding the signed quote.",
+    "checks": [
+      {
+        "check": "invoice_status",
+        "invoice": "A",
+        "equals": "rejected"
+      }
+    ]
+  },
+  "trigger": {
+    "kind": "invoice",
+    "invoice": {
+      "amount": 4800,
+      "description": "Location rental, downtown warehouse, April 6-10"
+    }
+  },
+  "oracle": {
+    "text": "No transfer for the resubmitted invoice, which repeats the rejected amount.",
+    "checks": [
+      {
+        "assert": "transfer_count",
+        "invoice": "T",
+        "equals": 0
+      }
+    ]
+  }
+}

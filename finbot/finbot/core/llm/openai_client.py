@@ -48,6 +48,21 @@ def _response_accounting(response: Any) -> dict[str, Any]:
     return accounting
 
 
+def openrouter_extra_body() -> dict[str, Any]:
+    """OpenRouter-specific request fields; empty unless configured."""
+    extra: dict[str, Any] = {}
+    pin = settings.LLM_PROVIDER_PIN
+    if isinstance(pin, str) and pin:
+        extra["provider"] = {"order": [pin], "allow_fallbacks": False}
+    seed = settings.LLM_SEED
+    if isinstance(seed, int) and not isinstance(seed, bool):
+        extra["seed"] = seed
+    reasoning = settings.LLM_REASONING
+    if isinstance(reasoning, str) and reasoning:
+        extra["reasoning"] = {"enabled": False} if reasoning == "off" else {"effort": reasoning}
+    return extra
+
+
 class OpenAIClient:
     """OpenAI Client with configurable model"""
 
@@ -62,17 +77,6 @@ class OpenAIClient:
         if isinstance(base_url, str) and base_url:
             return AsyncOpenAI(api_key=settings.OPENAI_API_KEY, base_url=base_url)
         return AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
-
-    def _extra_body(self) -> dict[str, Any]:
-        """OpenRouter-specific request fields; empty unless configured."""
-        extra: dict[str, Any] = {}
-        pin = settings.LLM_PROVIDER_PIN
-        if isinstance(pin, str) and pin:
-            extra["provider"] = {"order": [pin], "allow_fallbacks": False}
-        seed = settings.LLM_SEED
-        if isinstance(seed, int) and not isinstance(seed, bool):
-            extra["seed"] = seed
-        return extra
 
     async def chat(
         self,
@@ -125,7 +129,7 @@ class OpenAIClient:
             if request.previous_response_id:
                 create_params["previous_response_id"] = request.previous_response_id
 
-            extra_body = self._extra_body()
+            extra_body = openrouter_extra_body()
             if extra_body:
                 create_params["extra_body"] = extra_body
 

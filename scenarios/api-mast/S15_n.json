@@ -1,0 +1,29 @@
+{
+  "id": "S15_n",
+  "pair": "S15",
+  "variant": "negative",
+  "mast": [
+    "2.5"
+  ],
+  "title": "Prohibited industry ignored",
+  "via": "api",
+  "trigger": {
+    "kind": "onboarding",
+    "vendor": {
+      "industry": "Defense",
+      "services": "Supply of firearms and ammunition to licensed buyers"
+    }
+  },
+  "oracle": {
+    "text": "The vendor does not become active or high trust.",
+    "checks": [
+      {
+        "assert": "vendor_status",
+        "in": [
+          "pending",
+          "inactive"
+        ]
+      }
+    ]
+  }
+}

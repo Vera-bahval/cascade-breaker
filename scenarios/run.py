@@ -65,13 +65,54 @@ def cmd_run(args: argparse.Namespace) -> None:
     print(json.dumps(_summary(result), indent=2, default=str))
 
 
+def require_valid_scenarios() -> None:
+    from runner import validate
+
+    errors = validate.check_all()
+    if errors:
+        sys.exit("Scenario files are invalid, nothing was run:\n" + "\n".join(errors))
+
+
+def cmd_check(_args: argparse.Namespace) -> None:
+    require_valid_scenarios()
+    print("All scenario files are valid.")
+
+
+def cmd_mast(args: argparse.Namespace) -> None:
+    from runner import mast_mode
+
+    names = args.scenarios or [p.stem for p in mast_mode.mast_paths()]
+    out = Path(__file__).resolve().parent / "results" / "api-mast" / args.batch
+    require_valid_scenarios()
+    mast_mode.run_batch(names, args.repeats, args.workers, args.attempts, args.base_url, args.timeout,
+                        args.trace_dir, out)
+
+
+def cmd_unified(args: argparse.Namespace) -> None:
+    from runner import mast_mode
+
+    if args.scenarios:
+        names = args.scenarios
+    elif args.suite == ["base"]:
+        names = mast_mode.base_scenarios()
+    else:
+        names = [c["id"] for suite in args.suite for c in mast_mode.unified_cases(suite)]
+        if args.via == "api" and "core" in args.suite:
+            names += [p.stem for p in mast_mode.mast_paths() if p.stem in mast_mode.api_additions()]
+    out = Path(__file__).resolve().parent / "results" / "unified" / args.via / args.batch
+    require_valid_scenarios()
+    mast_mode.run_batch(names, args.repeats, args.workers, args.attempts, args.base_url, args.timeout,
+                        args.trace_dir, out, via=args.via)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("list", help="show available scenarios").set_defaults(func=cmd_list)
+    sub.add_parser("check", help="validate every scenario file against schema.json").set_defaults(func=cmd_check)
     for name, func in (("prepare", cmd_prepare), ("run", cmd_run)):
         p = sub.add_parser(name)
-        p.add_argument("scenario", help="scenario id from cases/ or a path to a yaml or json file")
+        p.add_argument("scenario", help="scenario id from cases/ or a path to a json file")
         p.add_argument("--base-url", default=None if name == "run" else DEFAULT_BASE_URL,
                        help=f"FinBot address for via=api (default {DEFAULT_BASE_URL})")
         p.add_argument("--timeout", type=float, default=600.0,
@@ -79,6 +120,32 @@ def main() -> None:
         p.add_argument("--trace-dir", default=os.environ.get("PROBE_TRACE_DIR"),
                        help="where the FinBot server writes workflow traces (default $PROBE_TRACE_DIR)")
         p.set_defaults(func=func)
+    p = sub.add_parser("mast", help="run the API MAST scenarios in scenarios/api-mast/")
+    p.add_argument("scenarios", nargs="*", help="ids such as S01_n (default: all 48)")
+    p.add_argument("--batch", required=True, help="results go to results/api-mast/<batch>/; existing files are kept")
+    p.add_argument("--repeats", type=int, default=1)
+    p.add_argument("--workers", type=int, default=4)
+    p.add_argument("--attempts", type=int, default=2, help="attempts for a repeat that breaks")
+    p.add_argument("--base-url", default=DEFAULT_BASE_URL)
+    p.add_argument("--timeout", type=float, default=900.0)
+    p.add_argument("--trace-dir", default=os.environ.get("PROBE_TRACE_DIR"))
+    p.set_defaults(func=cmd_mast)
+    p = sub.add_parser("unified", help="run the unified cases in scenarios/unified/ via direct or api")
+    p.add_argument("scenarios", nargs="*", help="case ids such as TA501@C or S25_n (default: every case of --suite)")
+    p.add_argument("--via", choices=("direct", "api"), required=True)
+    p.add_argument("--suite", nargs="+", default=["core", "honest"],
+                   help="unified suites: core honest matrix profiles pairs sweep core_chat honest_chat (default: core honest); "
+                        "with core, via api also adds the API scenarios listed in unified/api_additions.json. "
+                        "`base` alone runs one scenario per MAST mode and its partner (unified/base.json)")
+    p.add_argument("--batch", required=True,
+                   help="results go to results/unified/<via>/<batch>/; existing files are kept")
+    p.add_argument("--repeats", type=int, default=1)
+    p.add_argument("--workers", type=int, default=4)
+    p.add_argument("--attempts", type=int, default=2, help="attempts for a repeat that breaks")
+    p.add_argument("--base-url", default=DEFAULT_BASE_URL)
+    p.add_argument("--timeout", type=float, default=900.0)
+    p.add_argument("--trace-dir", default=os.environ.get("PROBE_TRACE_DIR"))
+    p.set_defaults(func=cmd_unified)
     args = parser.parse_args()
     args.func(args)
 
