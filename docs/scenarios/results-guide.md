@@ -33,9 +33,12 @@ reasoning off), без проверок.
 | Скрипт отчётов | [scenarios/analyze_unified.py](../../scenarios/analyze_unified.py) |
 | Сырые прогоны | `scenarios/results/unified/<direct\|api>/<запуск>/<сценарий>-r<повтор>.json` |
 | Трассы workflow при via=api | `scenarios/traces/<запуск>/wf_*.json` |
+| Архив сырых прогонов и трасс | [scenarios/archive/runs-2026-11-08.tar.xz](../../scenarios/archive/runs-2026-11-08.tar.xz) |
 
-Сырые прогоны и трассы (около 1,3 ГБ) не в git и лежат только на машине, где их запускали. Таблицы по прогонам хранят
-все метрики из отчётов.
+Сырые прогоны и трассы (3,5 ГБ) в git не входят. Их копия на 8 ноября 2026 лежит в архиве (37 МБ, 4 961 файл):
+`scenarios/results/` и `scenarios/traces/` целиком, включая пробные запуски. Распаковать из `scenarios/`:
+`tar -xJf archive/runs-2026-11-08.tar.xz`; на Windows архив открывает 7-Zip. Таблицы по прогонам хранят все метрики
+из отчётов.
 
 ## 2. Имена
 
