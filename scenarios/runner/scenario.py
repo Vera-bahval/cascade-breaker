@@ -5,11 +5,10 @@ from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
-import yaml
+import json
 
 CASES_DIR = Path(__file__).resolve().parent.parent / "cases"
-# JSON is valid YAML, so generated scenarios load the same way as written ones.
-CASE_SUFFIXES = (".yaml", ".json")
+CASE_SUFFIXES = (".json",)
 
 VIA_KINDS = {
     "api": {"invoice", "chat", "onboarding"},
@@ -88,7 +87,12 @@ def resolve_path(name: str) -> Path:
 
 def load(name: str) -> Scenario:
     path = resolve_path(name)
-    raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    raw = json.loads(path.read_text(encoding="utf-8")) or {}
+    from runner.validate import schema_errors
+
+    errors = schema_errors(raw, "simple_case")
+    if errors:
+        raise ValueError(f"{path.name}: " + "; ".join(errors))
     via = raw.get("via", "api")
     trigger = raw.get("trigger") or {}
     kind = trigger.get("kind")

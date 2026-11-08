@@ -1,0 +1,91 @@
+{
+  "description": "API pairs for MAST modes no direct case targets (Nastya's doc 07: 1.4, 1.5, 2.1 not found; 2.2, 2.3, 3.1 folded into other modes). cross_workflow: the cascade itself spans workflows, not only the seeded state. 1.3 is added too: no direct case provokes it, and its chat-history pairs (S04, S05) are excluded.",
+  "modes": [
+    {
+      "mode": "1.3",
+      "name": "Step Repetition",
+      "pairs": [
+        "S33",
+        "S34"
+      ],
+      "cross_workflow": []
+    },
+    {
+      "mode": "1.4",
+      "name": "Loss of Conversation History",
+      "pairs": [
+        "S19"
+      ],
+      "cross_workflow": [
+        "S19"
+      ]
+    },
+    {
+      "mode": "1.5",
+      "name": "Unaware of Termination Conditions",
+      "pairs": [
+        "S08",
+        "S25",
+        "S26"
+      ],
+      "cross_workflow": []
+    },
+    {
+      "mode": "2.1",
+      "name": "Conversation Reset",
+      "pairs": [
+        "S09",
+        "S27",
+        "S28"
+      ],
+      "cross_workflow": [
+        "S09",
+        "S27",
+        "S28"
+      ]
+    },
+    {
+      "mode": "2.2",
+      "name": "Fail to Ask for Clarification",
+      "pairs": [
+        "S10",
+        "S11",
+        "S29"
+      ],
+      "cross_workflow": []
+    },
+    {
+      "mode": "2.3",
+      "name": "Task Derailment",
+      "pairs": [
+        "S12",
+        "S13",
+        "S30"
+      ],
+      "cross_workflow": []
+    },
+    {
+      "mode": "3.1",
+      "name": "Premature Termination",
+      "pairs": [
+        "S18",
+        "S31",
+        "S32"
+      ],
+      "cross_workflow": [
+        "S31"
+      ]
+    }
+  ],
+  "excluded": {
+    "pairs": [
+      "S04",
+      "S05",
+      "S06",
+      "S07",
+      "S14",
+      "S22"
+    ],
+    "reason": "The chat carries history from earlier workflows into the cascade (on nano even the setup turns started workflows). Left out until multi-workflow chat cascades are in scope."
+  }
+}

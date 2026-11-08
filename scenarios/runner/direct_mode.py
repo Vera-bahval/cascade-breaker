@@ -20,7 +20,7 @@ INVOICE_TASK = (
 )
 
 
-def _session(namespace: str, vendor_id: int | None = None):
+def session_for(namespace: str, vendor_id: int | None = None):
     from finbot.core.auth.session import SessionContext
 
     now = datetime.now(UTC)
@@ -53,32 +53,34 @@ async def _ensure_event_bus() -> bool:
         return False
 
 
-def _create_vendor(namespace: str, vendor: dict[str, Any], overrides: dict[str, Any]) -> int:
+def create_vendor(namespace: str, vendor: dict[str, Any], overrides: dict[str, Any]) -> int:
     from finbot.core.data.database import db_session
     from finbot.core.data.repositories import VendorRepository
 
     fields = dict(vendor)
     fields["contact_name"] = fields.pop("name")
     with db_session() as db:
-        repo = VendorRepository(db, _session(namespace))
+        repo = VendorRepository(db, session_for(namespace))
         created = repo.create_vendor(**fields)
         if overrides:
             repo.update_vendor(created.id, **overrides)
         return created.id
 
 
-def _create_invoice(namespace: str, vendor_id: int, fields: dict[str, Any],
-                    status: str | None = None) -> int:
+def create_invoice(namespace: str, vendor_id: int, fields: dict[str, Any],
+                   status: str | None = None, agent_notes: str | None = None) -> int:
     from finbot.core.data.database import db_session
     from finbot.core.data.repositories import InvoiceRepository
 
     row = dict(fields)
     if status:
         row["status"] = status
+    if agent_notes:
+        row["agent_notes"] = agent_notes
     for key in ("invoice_date", "due_date"):
         row[key] = datetime.fromisoformat(row[key]).replace(tzinfo=UTC)
     with db_session() as db:
-        return InvoiceRepository(db, _session(namespace, vendor_id)).create_invoice_for_current_vendor(**row).id
+        return InvoiceRepository(db, session_for(namespace, vendor_id)).create_invoice_for_current_vendor(**row).id
 
 
 def snapshot(namespace: str, vendor_id: int) -> dict[str, Any]:
@@ -86,7 +88,7 @@ def snapshot(namespace: str, vendor_id: int) -> dict[str, Any]:
     from finbot.core.data.repositories import InvoiceRepository, VendorRepository
     from finbot.mcp.servers.finstripe.models import PaymentTransaction
 
-    session = _session(namespace, vendor_id)
+    session = session_for(namespace, vendor_id)
     with db_session() as db:
         vendor = VendorRepository(db, session).get_vendor(vendor_id)
         invoices = InvoiceRepository(db, session).list_invoices_for_current_vendor()
@@ -121,7 +123,7 @@ async def _orchestrate(namespace: str, vendor_id: int, task_data: dict[str, Any]
         try:
             result = await run_orchestrator_agent(
                 task_data=task_data,
-                session_context=_session(namespace, vendor_id),
+                session_context=session_for(namespace, vendor_id),
                 workflow_id=workflow_id,
             )
         except Exception as e:  # pylint: disable=broad-exception-caught
@@ -144,13 +146,13 @@ async def _prepare(scenario: Scenario) -> dict[str, Any]:
     redis = await _ensure_event_bus()
     tag = secrets.token_hex(3)
     namespace = f"scn-{scenario.id}-{tag}"
-    vendor_id = _create_vendor(namespace, scenario.vendor, scenario.vendor_overrides)
+    vendor_id = create_vendor(namespace, scenario.vendor, scenario.vendor_overrides)
     onboarding = None
     if scenario.onboard:
         onboarding = await _orchestrate(
             namespace, vendor_id, {"vendor_id": vendor_id, "description": ONBOARDING_TASK})
     invoice_ids = [
-        _create_invoice(namespace, vendor_id, invoice_fields(spec, f"INV-{tag}-S{n}"),
+        create_invoice(namespace, vendor_id, invoice_fields(spec, f"INV-{tag}-S{n}"),
                         spec.get("status"))
         for n, spec in enumerate(scenario.setup_invoices, start=1)
     ]
@@ -181,7 +183,7 @@ async def _run(scenario: Scenario) -> dict[str, Any]:
     task_data: dict[str, Any] = {"vendor_id": vendor_id}
     invoice_id = None
     if trigger.get("invoice"):
-        invoice_id = _create_invoice(
+        invoice_id = create_invoice(
             namespace, vendor_id, invoice_fields(trigger["invoice"], f"INV-{state['tag']}"))
     elif trigger.get("use_setup_invoice"):
         invoice_id = state["setup_invoice_ids"][int(trigger["use_setup_invoice"]) - 1]

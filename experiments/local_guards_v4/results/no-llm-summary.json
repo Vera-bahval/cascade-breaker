@@ -1,0 +1,123 @@
+{
+  "v3": {
+    "rules": {
+      "cases": 320,
+      "decisive_answers": 255,
+      "correct_decisive": 255,
+      "correct_decisive_coverage": 0.796875,
+      "confusion": {
+        "ALLOW -> ALLOW": 160,
+        "BLOCK -> BLOCK": 95,
+        "UNKNOWN -> UNKNOWN": 65
+      }
+    },
+    "legacy_v1": {
+      "cases": 320,
+      "decisive_answers": 270,
+      "correct_decisive": 179,
+      "correct_decisive_coverage": 0.559375,
+      "confusion": {
+        "ALLOW -> ALLOW": 84,
+        "ALLOW -> BLOCK": 76,
+        "BLOCK -> BLOCK": 95,
+        "UNKNOWN -> BLOCK": 15,
+        "UNKNOWN -> UNKNOWN": 50
+      }
+    },
+    "legacy_v2": {
+      "cases": 320,
+      "decisive_answers": 270,
+      "correct_decisive": 179,
+      "correct_decisive_coverage": 0.559375,
+      "confusion": {
+        "ALLOW -> ALLOW": 84,
+        "ALLOW -> BLOCK": 76,
+        "BLOCK -> BLOCK": 95,
+        "UNKNOWN -> BLOCK": 15,
+        "UNKNOWN -> UNKNOWN": 50
+      }
+    },
+    "structured_logistic": {
+      "cases": 320,
+      "decisive_answers": 230,
+      "correct_decisive": 86,
+      "correct_decisive_coverage": 0.26875,
+      "confusion": {
+        "ALLOW -> ALLOW": 32,
+        "ALLOW -> BLOCK": 128,
+        "BLOCK -> ALLOW": 16,
+        "BLOCK -> BLOCK": 54,
+        "BLOCK -> UNKNOWN": 25,
+        "UNKNOWN -> UNKNOWN": 65
+      }
+    },
+    "structured_catboost": {
+      "cases": 320,
+      "decisive_answers": 230,
+      "correct_decisive": 97,
+      "correct_decisive_coverage": 0.303125,
+      "confusion": {
+        "ALLOW -> ALLOW": 36,
+        "ALLOW -> BLOCK": 124,
+        "BLOCK -> ALLOW": 9,
+        "BLOCK -> BLOCK": 61,
+        "BLOCK -> UNKNOWN": 25,
+        "UNKNOWN -> UNKNOWN": 65
+      }
+    },
+    "text_diagnostic": {
+      "cases": 320,
+      "decisive_answers": 230,
+      "correct_decisive": 160,
+      "correct_decisive_coverage": 0.5,
+      "confusion": {
+        "ALLOW -> ALLOW": 160,
+        "BLOCK -> ALLOW": 70,
+        "BLOCK -> UNKNOWN": 25,
+        "UNKNOWN -> UNKNOWN": 65
+      }
+    }
+  },
+  "v4": {
+    "A_with_P4": {
+      "cases": 400,
+      "decisive_answers": 310,
+      "correct_decisive": 256,
+      "correct_decisive_coverage": 0.64,
+      "confusion": {
+        "ALLOW -> ALLOW": 199,
+        "ALLOW -> UNKNOWN": 1,
+        "BLOCK -> ALLOW": 35,
+        "BLOCK -> BLOCK": 57,
+        "BLOCK -> UNKNOWN": 2,
+        "UNKNOWN -> ALLOW": 13,
+        "UNKNOWN -> BLOCK": 6,
+        "UNKNOWN -> UNKNOWN": 87
+      }
+    },
+    "A_plus_allB": {
+      "cases": 400,
+      "decisive_answers": 304,
+      "correct_decisive": 291,
+      "correct_decisive_coverage": 0.7275,
+      "confusion": {
+        "ALLOW -> ALLOW": 199,
+        "ALLOW -> UNKNOWN": 1,
+        "BLOCK -> BLOCK": 92,
+        "BLOCK -> UNKNOWN": 2,
+        "UNKNOWN -> ALLOW": 2,
+        "UNKNOWN -> BLOCK": 11,
+        "UNKNOWN -> UNKNOWN": 93
+      }
+    }
+  },
+  "definition": "gold equals prediction and prediction is ALLOW or BLOCK; UNKNOWN is not solved, even when it stops execution",
+  "inputs": {
+    "experiments/local_guards_v3/closed-test/gold-actions.jsonl": "ce8e248ce6943e12f53e79cedd7a0465263650a735ba2e999fcccc521ef256fb",
+    "experiments/local_guards_v3/results/closed-predictions.jsonl.gz": "5e5e6e3787516bff80d08c4125ab253cbce798bfdb3fe4d23c9fcbef2d108615",
+    "experiments/local_guards_v4/closed/gold-actions.jsonl.gz": "b6785390cd7eaf36e3dffec35da43e465da720da18ba661b124ec288b74e6c18",
+    "experiments/local_guards_v4/results/closed-predictions.jsonl.gz": "2750c24f4c49a715c78a538a6700602719103c23383353beaa9cc278a87a4295"
+  },
+  "source_sha256": "d2c7b361c6b116090ef8ac0e8fd6b414cb55567d3a92a33a0eb3b2a45d616600",
+  "new_inference_api_calls": 0
+}

@@ -1,0 +1,41 @@
+{
+  "status": "CLEARED_CASCADE_PRE_QUALITY_SCORING_GATE",
+  "blocking_findings": [],
+  "reviewed_sha256": {
+    "cascade.py": "2ccc5a102866ec12f8bb880d9485685ae21fa44645ccef4add84cc169c91abb3",
+    "tests/test_cascade.py": "d67716105a64674288e22594a3a9433d0557e93946d1b1a68fe48f35672109fa",
+    "results/cascade-freeze-manifest.json": "289b7b216e07e04000c6d78dfc4770e603e04d03d26bd8b38f25772805f88161",
+    "results/cascade-calibration.json": "2499392b28231bc4c7d9f6d9287a31a0426d2caa25eabdaa5c58e77ff62d2a7f"
+  },
+  "scope": "Separate CAL-only pre-LLM cascade extension; base candidates and standalone operating points unchanged",
+  "accepted_checks": [
+    "native_core BLOCK produces hard BLOCK; any non-ALLOW core state produces STOP_UNKNOWN; only core ALLOW reaches the soft confidence stage.",
+    "Soft raw UNKNOWN/invalid/low-confidence produces DEFER_LLM. DEFER is neither business STOP nor correct decisive resolution.",
+    "Any prior DEFER disqualifies whole-episode autonomy. Potential downstream opportunities remain separately labeled and do not assume LLM correctness.",
+    "Episode decisions respect event_seq and first hard BLOCK/STOP_UNKNOWN. Known wrong automatic decisions invalidate autonomy. Source UNKNOWN/mixed episodes cannot certify autonomy; known unsafe ALLOW is counted even in mixed episodes.",
+    "Objective gives each base group equal total mass with equal weight among its episodes. Repetitions cannot gain objective weight.",
+    "Constraints use zero observed unsafe automatic ALLOW and at most 5 percent stops among fully source-ALLOW episodes, including mandatory UNKNOWN stops. DEFER does not count as FPR.",
+    "Fixed grid exhaustively varies ALLOW and BLOCK thresholds by checkpoint with equivalent-output deduplication; all-defer is an explicit soft-stage control. No estimator fitting or LLM answers enter the module.",
+    "Only six source-head models appear in the released cascade calibration, each with p4 and joint operating points. Native diagnostic heads are excluded.",
+    "Configuration and operating points are frozen separately from the original 24 standalone operating points; original model manifest and weights match their referenced hashes."
+  ],
+  "verification": {
+    "referenced_hashes_verified": 22,
+    "config_code_calibration_manifest_hash_agreement": true,
+    "model_count": 6,
+    "operating_points_checked": 12,
+    "checks": "Threshold membership in fixed grid, eligible checkpoint keys, feasibility, source annotation row totals, episode category totals, false-stop denominator arithmetic, group-weighted coverage arithmetic, objective not below explicit control.",
+    "underlying_CAL_input_probability_model_artifacts": "hash-only; no row/probability/joblib deserialization",
+    "selected_inputs_gold_predictions_or_cloud_answers_read": false,
+    "estimator_refit": false,
+    "CAL_search_rerun": false,
+    "source_edits": false,
+    "synthetic_test_source_reviewed": 7,
+    "reported_tests_repeated": false
+  },
+  "limits": [
+    "Metrics inspected are CAL calibration metrics only, not selected-set quality. Their calculation was source-audited and consistency-checked, not independently recomputed from underlying CAL rows.",
+    "Freeze hashes establish current identity; root retains chronology evidence for protocol amendment after a usage-only pilot and before selected decision/gold disclosure. Reviewer did not inspect pilot answers.",
+    "Cascade feasibility does not reverse or relabel the earlier standalone INFEASIBLE operating points. A full cascade quality/cost claim requires actual routed downstream decisions and separate evaluation."
+  ]
+}

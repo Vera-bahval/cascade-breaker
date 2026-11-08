@@ -470,7 +470,20 @@ class FraudComplianceAgent(BaseAgent):
         """
         logger.info("Getting invoices for vendor_id: %s", vendor_id)
         try:
-            invoices = await get_vendor_invoices(vendor_id, self.session_context)
+            # [cascade-fix A1] в истории счетов для Fraud учитываем только оплаченные счета (status="paid").
+            # Было: в историю попадали все счета поставщика, включая текущий.
+            # В результате Fraud сравнивал счёт с самим собой и мог ошибочно считать
+            # даже аномальную сумму соответствующей истории ("consistent with history").
+            #
+            # Стало: Фильтр status="paid" исключает:
+            # - текущий счёт, который на момент проверки Fraud ещё не оплачен;
+            # - отклонённые счета (rejected), которые не отражают реальные платежи
+            #   и могут искажать оценку типичных сумм поставщика.
+            # Фильтр задаётся здесь, а не в get_vendor_invoices: ту же функцию вызывает чат вендора,
+            # и ему нужны все счета.
+            invoices = await get_vendor_invoices(
+                vendor_id, self.session_context, status="paid"
+            )
             return {
                 "vendor_id": vendor_id,
                 "total_invoices": len(invoices),

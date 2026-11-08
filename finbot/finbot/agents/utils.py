@@ -2,6 +2,7 @@
 
 import asyncio
 import functools
+import inspect
 import logging
 import time
 from datetime import date, datetime
@@ -10,6 +11,7 @@ from typing import Any, Callable, TypeVar, cast
 from uuid import UUID
 
 from finbot.core.messaging import event_bus
+from finbot.probe import v4
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +76,12 @@ def agent_tool(func: F) -> F:
     async def async_wrapper(self, *args: Any, **kwargs: Any) -> Any:
         """Async wrapper for tool calls"""
         tool_name = func.__name__
+        if (runtime := v4.active()) and not runtime.is_invoking(self, tool_name):
+            arguments = dict(inspect.signature(func).bind(self, *args, **kwargs).arguments)
+            arguments.pop("self", None)
+            return await runtime.invoke(
+                self, tool_name, arguments, lambda: async_wrapper(self, *args, **kwargs)
+            )
         agent_name = getattr(self, "agent_name", "unknown_agent")
         session_context = getattr(self, "session_context", None)
         workflow_id = getattr(self, "workflow_id", None)
@@ -105,10 +113,13 @@ def agent_tool(func: F) -> F:
         )
 
         try:
+            # Recheck after awaited event emission, immediately before effect.
+            v4.raise_if_stopped()
             # Execute the tool
             if asyncio.iscoroutinefunction(func):
                 result = await func(self, *args, **kwargs)
             else:
+                v4.raise_if_stopped()
                 result = func(self, *args, **kwargs)
 
             # Calculate duration
@@ -133,6 +144,8 @@ def agent_tool(func: F) -> F:
 
             return result
 
+        except v4.V4Stop:
+            raise
         except Exception as e:
             # Calculate duration
             duration_ms = (time.time() - start_time) * 1000
@@ -163,6 +176,16 @@ def agent_tool(func: F) -> F:
         """Sync wrapper that converts to async execution"""
         # For sync functions, we need to run the async wrapper in the event loop
         tool_name = func.__name__
+        if (runtime := v4.active()) and not runtime.is_invoking(self, tool_name):
+            arguments = dict(inspect.signature(func).bind(self, *args, **kwargs).arguments)
+            arguments.pop("self", None)
+            guarded = runtime.invoke(
+                self, tool_name, arguments, lambda: async_wrapper(self, *args, **kwargs)
+            )
+            try:
+                return asyncio.get_running_loop().create_task(guarded)
+            except RuntimeError:
+                return asyncio.run(guarded)
         agent_name = getattr(self, "agent_name", "unknown_agent")
         session_context = getattr(self, "session_context", None)
         workflow_id = getattr(self, "workflow_id", None)
@@ -197,6 +220,7 @@ def agent_tool(func: F) -> F:
 
             try:
                 # Execute the tool
+                v4.raise_if_stopped()
                 result = func(self, *args, **kwargs)
 
                 # Calculate duration
@@ -221,6 +245,8 @@ def agent_tool(func: F) -> F:
 
                 return result
 
+            except v4.V4Stop:
+                raise
             except Exception as e:
                 # Calculate duration
                 duration_ms = (time.time() - start_time) * 1000

@@ -1,0 +1,502 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "finbot-archive-native-observation-1",
+  "title": "Pre-cut archive observation; labels/outcomes excluded",
+  "type": "object",
+  "required": [
+    "prefix_id",
+    "episode_id",
+    "checkpoint",
+    "event_seq",
+    "observation",
+    "raw_context",
+    "evidence_status",
+    "mode"
+  ],
+  "properties": {
+    "prefix_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "episode_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "checkpoint": {
+      "enum": [
+        "P2_afterFraud",
+        "P4",
+        "P3_approval",
+        "P3_bookkeeping"
+      ]
+    },
+    "event_seq": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "mode": {
+      "enum": [
+        "raw_prefix",
+        "reconstructed_state"
+      ]
+    },
+    "evidence_status": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": [
+          "observed",
+          "derived",
+          "instrumented",
+          "unknown"
+        ]
+      }
+    },
+    "raw_context": {
+      "type": [
+        "object",
+        "array",
+        "string",
+        "null"
+      ],
+      "description": "Exact pre-cut model/hook input only, same for all compared methods. No outputs after cut, gold, split/group/attack names or outcome metadata."
+    },
+    "observation": {
+      "type": "object",
+      "required": [
+        "proposal",
+        "facts",
+        "provenance",
+        "context",
+        "untrusted_text"
+      ],
+      "properties": {
+        "proposal": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "amount": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "currency": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "payment_method": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "invoice_reference": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "vendor_account_token": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "target_status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "payment_reference": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "invoice_id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "vendor_id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "facts": {
+          "type": "object",
+          "properties": {
+            "invoice_amount": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "invoice_status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "invoice_number": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "vendor_status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "vendor_trust_level": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "vendor_risk_level": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "vendor_industry": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "vendor_account_token": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "fraud_recommendation": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "invoice_agent_decision": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "transfer_currency": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "invoice_vendor_id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "vendor_total_invoices": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "prior_completed_transfers_observed": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "vendor_bank_details_present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "fraud_delegate_completed": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "matching_successful_transfer": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "invoice_in_namespace": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "vendor_in_namespace": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "fraud_review_history": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "invoice_review_history": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "vendor_invoice_history": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "transfer_history": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "native_revision": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "native_policy_hash": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "actor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "namespace_token": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "workflow_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "parent_workflow_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source_binding": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subject_binding": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "task_recipe": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "delegated_actor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "call_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "invoice_id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "vendor_id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "current_vendor_id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "prefix_complete": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "source_refs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "source_ref",
+                "event_seq",
+                "status",
+                "kind",
+                "subject",
+                "field",
+                "value"
+              ],
+              "properties": {
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "event_seq": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "status": {
+                  "enum": [
+                    "observed",
+                    "derived",
+                    "instrumented",
+                    "unknown"
+                  ]
+                },
+                "kind": {
+                  "enum": [
+                    "historical",
+                    "deterministic_reconstruction",
+                    "declared_instrumentation",
+                    "unknown"
+                  ]
+                },
+                "subject": {
+                  "type": "object"
+                },
+                "field": {
+                  "type": "string"
+                },
+                "value": {},
+                "derived_from": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "source_call_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "note": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "untrusted_text": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "source_ref",
+              "text"
+            ],
+            "properties": {
+              "source_ref": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "role": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$comment": "IDs/source refs are join/provenance only, excluded ML features and instruction-bearing model view. Numeric decimal strings must be finite base-10 values; semantic validation is policy.json, JSON schema alone does not establish trust. History objects must have source_ref/event_seq and retained raw fields; no gold/derived verdict keys."
+}

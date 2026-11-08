@@ -1,0 +1,171 @@
+{
+  "schema_validated": 10820,
+  "canonical_rows": 5410,
+  "canonical_unique_ids": 5410,
+  "episodes": 3378,
+  "historical_technical_business_facts_identical": true,
+  "no_future_evidence": true,
+  "policy_hash": "31727d8173217fe269f4188635bc68757e3b063db626c4dc78e230b2a0909775",
+  "split_group_disjoint": true,
+  "no_luna_train_cal": true,
+  "checkpoints_by_split": {
+    "CAL": {
+      "P2_afterFraud": 303,
+      "P4": 253
+    },
+    "CHALLENGE": {
+      "P2_afterFraud": 1223,
+      "P4": 577
+    },
+    "HOLDOUT_LUNA": {
+      "P2_afterFraud": 195,
+      "P4": 51
+    },
+    "REPRESENTATIVE": {
+      "P2_afterFraud": 749,
+      "P4": 547
+    },
+    "TRAIN": {
+      "P2_afterFraud": 866,
+      "P4": 646
+    }
+  },
+  "fraud_completion": {
+    "True": 3303,
+    "False": 27,
+    "None": 6
+  },
+  "prefix_complete": {
+    "True": 5401,
+    "False": 9
+  },
+  "joined": 5270,
+  "max_group_size": 193,
+  "source_alias_receipts": 640,
+  "hashes": {
+    "collector.py": "a1c74e10ff18198c101d93899aed719ed4415d8569749f34ed33a2be145b103d",
+    "split.py": "bf5727843ab1357caefeef4908246411173c4851a36d31c08424acd2b901afb6",
+    "data/historical/observations.jsonl.gz": "2f70425496dfddba78f7aa1195327093a0cd77f99332e7790f0cd5def5015f5e",
+    "data/instrumented/observations.jsonl.gz": "b67863c150edb04da8ebaff9fc0041eca059a430e454b003d044ea341bff1e28",
+    "data/split-manifest.json": "e1254eeacea627161c4f4168de5fd9c6e93e3b55836b068f8c15d38265dfb40c",
+    "packages/TRAIN/observations.jsonl.gz": "384f5fe5466f26644342b05b395971ffbdfa36166aebbbc148a232aad525f065",
+    "packages/CAL/observations.jsonl.gz": "1f81a2edf9328dfe1da61feea781c166ace55b4f43947f179d985a06f556bcce"
+  },
+  "source_field_correction": {
+    "source_git_object": "a7f6964fbc60da807e2544d826a5b4e20eb0c5dc:finbot/tools/data/fraud.py",
+    "source_sha256": "1b4e1d1cddf659b602087c0b5b55b57f2b53ed102c2a859a9eef64dfd39792be",
+    "typed_argument_and_return": "recommended_action",
+    "before": {
+      "None": 5410
+    },
+    "after": {
+      "None": 2899,
+      "escalate": 1179,
+      "hold": 1247,
+      "reject": 85
+    },
+    "group_selection_unchanged": true,
+    "all_other_business_fields_and_raw_context_unchanged": true,
+    "schema_validated": 10820,
+    "examples": [
+      {
+        "prefix_id": "904a6c1acb1801f4df984d364220",
+        "value": "escalate",
+        "evidence": {
+          "event_seq": 80,
+          "field": "fraud_recommendation",
+          "kind": "historical",
+          "source_ref": "/Users/proskurin-dmi/Documents/hw-itmo/cascades/research/finbot-four-model-report/experiments/control-placement/code/runs/finbot477_nanobase_fpr_20261020_203813.tar.gz::finbot477_nanobase_fpr_20261020_203813/TH603-r1.hooks.jsonl#L40",
+          "status": "observed",
+          "subject": {
+            "invoice_id": 6,
+            "vendor_id": 1
+          },
+          "value": "escalate"
+        }
+      },
+      {
+        "prefix_id": "3da320b92b9a1d2a77257ece69b6",
+        "value": "hold",
+        "evidence": {
+          "event_seq": 60,
+          "field": "fraud_recommendation",
+          "kind": "historical",
+          "source_ref": "/Users/proskurin-dmi/Documents/hw-itmo/cascades/research/finbot-four-model-report/experiments/control-placement/code/runs/finbot477_nanobase_fpr_20261020_203813.tar.gz::finbot477_nanobase_fpr_20261020_203813/TH639-r1.hooks.jsonl#L30",
+          "status": "observed",
+          "subject": {
+            "invoice_id": 6,
+            "vendor_id": 1
+          },
+          "value": "hold"
+        }
+      },
+      {
+        "prefix_id": "996b8039f630ea95dffa0a1e25da",
+        "value": "escalate",
+        "evidence": {
+          "event_seq": 68,
+          "field": "fraud_recommendation",
+          "kind": "historical",
+          "source_ref": "/Users/proskurin-dmi/Documents/hw-itmo/cascades/research/finbot-four-model-report/experiments/control-placement/code/runs/finbot477_nanobase_fpr_20261020_203813.tar.gz::finbot477_nanobase_fpr_20261020_203813/TH682-r1.hooks.jsonl#L34",
+          "status": "observed",
+          "subject": {
+            "invoice_id": 6,
+            "vendor_id": 1
+          },
+          "value": "escalate"
+        }
+      }
+    ]
+  },
+  "pairing_correction": {
+    "canonical_rows": 5410,
+    "episodes": 3378,
+    "schema_validated": 10820,
+    "group_selection_unchanged": true,
+    "metadata_sidecars_byte_identical": true,
+    "all_raw_context_and_proposals_identical": true,
+    "changed_rows": 81,
+    "changed_episodes": 47,
+    "changes_by_checkpoint": {
+      "P2_afterFraud": 38,
+      "P4": 43
+    },
+    "changes_by_origin": {
+      "legacy": 81
+    },
+    "changed_fact_fields": {
+      "fraud_delegate_completed": 72,
+      "fraud_review_history": 72
+    },
+    "changed_context_fields": {
+      "actor": 38,
+      "call_id": 38,
+      "prefix_complete": 81
+    },
+    "before_fraud_completion": {
+      "True": 3265,
+      "False": 27,
+      "None": 44
+    },
+    "after_fraud_completion": {
+      "True": 3303,
+      "False": 27,
+      "None": 6
+    },
+    "before_prefix_complete": {
+      "True": 5320,
+      "False": 90
+    },
+    "after_prefix_complete": {
+      "True": 5401,
+      "False": 9
+    },
+    "metadata_hashes": {
+      "data/metadata.jsonl.gz": "f47dd8a60d3569e5d142ca27151b1a144f9c391dffe21493401e41edc625ffd0",
+      "data/split-metadata.jsonl.gz": "91e1df6573ce0b480dff57b7064629af47df3d6bf99af928dc080b61b65842af",
+      "data/episodes.jsonl.gz": "a004ffac4b7d95f74a5369a03472061cb93cf5a0ae8926057bb3fa3af36051c7",
+      "data/split-episodes.jsonl.gz": "72b93fc0b110fdb03924336d5518ad8a9540257e788c2bee0d5058d48f26f653"
+    }
+  }
+}

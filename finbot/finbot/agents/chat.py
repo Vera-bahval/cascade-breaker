@@ -24,10 +24,12 @@ from finbot.core.data.database import db_session
 from finbot.core.data.models import CTFEvent
 from finbot.core.data.repositories import ChatMessageRepository, VendorRepository
 from finbot.core.llm.mock_responses import MockResponsesClient
+from finbot.core.llm.openai_client import openrouter_extra_body
 from finbot.core.messaging import event_bus
 from finbot.guardrails.schemas import HookKind
 from finbot.guardrails.service import GuardrailHookService
 from finbot.mcp.provider import MCPToolProvider
+from finbot.probe import v4
 from finbot.tools import (
     get_all_vendors_summary,
     get_invoice_details,
@@ -184,8 +186,10 @@ class ChatAssistantBase:
             tool_arguments=arguments,
         )
 
-        callable_fn = self._tool_callables.get(name)
+        callable_fn = v4.wrap_callables(self, self._tool_callables).get(name)
         if not callable_fn:
+            if runtime := v4.active():
+                runtime.fail("unregistered_chat_tool")
             return json.dumps({"error": f"Unknown tool: {name}"})
         try:
             result = await callable_fn(**arguments)
@@ -193,6 +197,8 @@ class ChatAssistantBase:
                 result_str = result
             else:
                 result_str = json.dumps(result) if result is not None else "{}"
+        except v4.V4Stop:
+            raise
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Tool %s failed: %s", name, e)
             result_str = json.dumps({"error": f"Tool {name} failed: {str(e)}"})
@@ -243,12 +249,18 @@ class ChatAssistantBase:
         if attachment_file_ids:
             task_data["attachment_file_ids"] = attachment_file_ids
 
-        self.background_tasks.add_task(
-            run_orchestrator_agent,
-            task_data=task_data,
-            session_context=self.session_context,
-            workflow_id=child_workflow_id,
-        )
+        if runtime := v4.active():
+            child = runtime.pending_workflow()
+            self.background_tasks.add_task(
+                v4.execute_background, child, run_orchestrator_agent,
+                task_data=task_data, session_context=self.session_context,
+                workflow_id=child_workflow_id,
+            )
+        else:
+            self.background_tasks.add_task(
+                run_orchestrator_agent, task_data=task_data,
+                session_context=self.session_context, workflow_id=child_workflow_id,
+            )
 
         await event_bus.emit_agent_event(
             agent_name=self.agent_name,
@@ -308,6 +320,15 @@ class ChatAssistantBase:
         return f"Running {pretty}\u2026"
 
     async def stream_response(
+        self, user_message: str, attachments: list[dict] | None = None,
+    ) -> AsyncGenerator[str, None]:
+        task = {"vendor_id": self.session_context.current_vendor_id,
+                "attachment_file_ids": [a["file_id"] for a in (attachments or [])]}
+        with v4.agent_entry(self, task):
+            async for chunk in self._stream_response(user_message, attachments):
+                yield chunk
+
+    async def _stream_response(
         self,
         user_message: str,
         attachments: list[dict] | None = None,
@@ -366,6 +387,9 @@ class ChatAssistantBase:
             )
             if not no_temperature:
                 stream_params["temperature"] = settings.LLM_DEFAULT_TEMPERATURE
+            extra_body = openrouter_extra_body()
+            if extra_body:
+                stream_params["extra_body"] = extra_body
 
             await self._guardrail_service.invoke(
                 HookKind.before_model,
@@ -373,6 +397,7 @@ class ChatAssistantBase:
                 user_message=user_message,
             )
 
+            v4.raise_if_stopped()
             stream = await self._client.responses.create(**stream_params)
 
             pending_tool_calls: list[dict] = []

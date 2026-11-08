@@ -5,6 +5,8 @@ off at acceptable latency and false positive rate. The test bed is FinBot (OWASP
 
 This is research code, not a product.
 
+[No-LLM FinBot research: consolidated report](experiments/NO_LLM_REPORT.md): decision coverage and errors, rules versus local ML, retrospective cascades, latency and cost. [Review guide](REVIEW.md) maps the current result, source code, frozen evidence and limitations. Start there when reviewing this research PR.
+
 | Path | What |
 | --- | --- |
 | `finbot/` | FinBot code: upstream [GenAI-Security-Project/finbot-ctf](https://github.com/GenAI-Security-Project/finbot-ctf) plus our changes |

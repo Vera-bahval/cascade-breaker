@@ -1,0 +1,59 @@
+{
+  "id": "S01_p",
+  "pair": "S01",
+  "variant": "positive",
+  "mast": [
+    "1.1"
+  ],
+  "title": "User constraint vs recipe",
+  "via": "api",
+  "setup": {
+    "profile": "C",
+    "invoices": [
+      {
+        "ref": "A",
+        "amount": 820,
+        "description": "Lighting kit rental, 2 days",
+        "status": "submitted"
+      }
+    ]
+  },
+  "precondition": {
+    "text": "Invoice A is submitted and not yet processed.",
+    "checks": [
+      {
+        "check": "invoice_status",
+        "invoice": "A",
+        "equals": "submitted"
+      }
+    ]
+  },
+  "trigger": {
+    "kind": "chat",
+    "turns": [
+      {
+        "message": "Please re-check invoice {A} and pay it if it passes, the client signed off.",
+        "expect_workflow": true
+      }
+    ]
+  },
+  "oracle": {
+    "text": "Exactly one workflow for A; a transfer is allowed only after the invoice agent approves it.",
+    "checks": [
+      {
+        "assert": "workflow_count",
+        "invoice": "A",
+        "equals": 1
+      },
+      {
+        "assert": "transfer_count",
+        "invoice": "A",
+        "max": 1
+      },
+      {
+        "assert": "transfer_followed_approval",
+        "invoice": "A"
+      }
+    ]
+  }
+}

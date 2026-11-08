@@ -1,0 +1,61 @@
+# Ревью архивного исследования FinBot
+
+Начните с [основного отчёта](experiments/NO_LLM_REPORT.md). Его разделы «Практический результат», «Недоработки FinBot» и «Ответы на вопросы исследования» описывают результат и ограничения. [Полные таблицы](experiments/local_guards_completion/TABLES.md) нужны для проверки отдельных строк.
+
+## Что предлагает PR
+
+Исследование проверяет, какую часть решений дополнительного LLM-защитника можно принимать локально. Штатные агенты FinBot сохраняются. Сравнение включает правила, сохранённые модели и ответы LLM, дополнительную модельную разметку 542 действий и десять новых групповых OOF-обучений LR/CatBoost.
+
+Основной результат ограничивает самостоятельное применение текущей проверки: по содержательной цели она запрещает 185 из 191 допустимого действия. Маршрут с локальным BLOCK сокращает число запросов DeepSeek с 542 до восьми, сохраняя эти остановки. Высокий результат по полному эталону во многом определяется TaxCalc. Ни замена защитника в работающем FinBot, ни обобщение на новый закрытый набор не подтверждены.
+
+## Маршрут проверки
+
+| Область | Что читать | На что обратить внимание |
+|---|---|---|
+| Постановка | [Протокол](experiments/local_guards_completion/PROTOCOL.md), [исходные цели](experiments/local_guards_completion/SOURCE_TARGETS.md) | Исходная цель сценария, процедура и содержательная допустимость оцениваются отдельно. У 310 сценариев исходный абсолютный эталон не определён. |
+| Разметка | [Уточнения](experiments/local_guards_completion/REVIEW_CLARIFICATIONS.md), [метки](experiments/local_guards_completion/labels.jsonl), [заморозка](experiments/local_guards_completion/labels-freeze.json) | Два модельных разбора, разногласия и выборочная третья проверка; наследование N01–N08; допущения TaxCalc и трактовка HOLD. |
+| Извлечение фактов и правила | [source_links.py](experiments/local_guards_completion/source_links.py), [prepare.py](experiments/local_guards_completion/prepare.py), [rules.py](experiments/local_guards_completion/rules.py) | Только данные до действия; восстановлены связи, финансовые значения сохранены. Базовая и текущая проверки используют общую логику. |
+| ML | [ml.py](experiments/local_guards_completion/ml.py) | Непересечение групп FIT/CAL/test, обучение предобработки только на FIT, пороги без выбора на внешней тестовой части, всего шесть допустимых действий полной цели. |
+| Подсчёт и время | [evaluate.py](experiments/local_guards_completion/evaluate.py), [ml_benchmark.py](experiments/local_guards_completion/ml_benchmark.py), [время по исходам](experiments/local_guards_completion/outcome_timing.py) | UNKNOWN не является правильным локальным решением. Итог каскада считается отдельно; времена складываются по одному случаю до вычисления квантилей. |
+| Расходы и проверяемость | [Аудит расходов](experiments/local_guards_completion/COST_AUDIT.md), [итоговая проверка](experiments/local_guards_completion/FINAL_AUDIT.md) | $12.197960256 за 3100 сохранённых запросов; выбранные 542 ответа входят в эту сумму. Аудиты модельные и имеют указанные границы. |
+
+## Изменения исполнения FinBot тоже входят в PR
+
+Полный PR относительно `main` содержит прежний экспериментальный мост [finbot/probe/v4.py](finbot/finbot/probe/v4.py) и изменения в [base.py](finbot/finbot/agents/base.py), [chat.py](finbot/finbot/agents/chat.py), [runner.py](finbot/finbot/agents/runner.py), [utils.py](finbot/finbot/agents/utils.py), [contextual_client.py](finbot/finbot/core/llm/contextual_client.py), [provider.py](finbot/finbot/mcp/provider.py). Профиль включается через `FINBOT_V4_PROFILE`. Это отдельный исследовательский runtime; новая архивная проверка из `local_guards_completion` не подключена вместо него.
+
+При ревью исполнения важны распространение STOP через обработчики ошибок, фоновые задачи и изоляция контекста. [Сценарные тесты](experiments/local_guards_v4/tests/test_runtime.py) используют локальные подстановки моделей. Они не доказывают качество живого адаптивного каскада.
+
+## Как устроены материалы
+
+В PR накоплены данные нескольких этапов, более девяти тысяч файлов. `.gitattributes` помечает генерируемые данные и таблицы для сворачивания в GitHub. Код и основной отчёт остаются видимыми; любой материал можно раскрыть.
+
+- Актуальная сводка: `experiments/NO_LLM_REPORT.md`; воспроизведение текущих таблиц: [local_guards_completion/README.md](experiments/local_guards_completion/README.md).
+- Предыдущие правила, ML и разметка: соседние каталоги `local_guards_*`. Они нужны как контроли и источники. Их отчёты описывают собственные версии и знаменатели.
+- `PLAN`, `PROGRESS`, рабочие отчёты и старые APPROVE описывают историю этапов. Они не задают текущие задания и не удостоверяют последний текст автоматически. Актуальный путь проверки указан выше.
+
+Сохранённые предсказания и манифесты не удалены ради уменьшения diff: на них опирается проверка таблиц. Приватная передача чата и локальные рабочие заметки в PR не входят.
+
+## Проверки без новых запросов к LLM
+
+При подготовке PR прошли 74 теста текущего архивного анализа и 32 сценарных теста runtime с mock-моделью и временной SQLite. Это локальные проверки; CI для этого PR не заявлен.
+
+Из корня репозитория в окружении с зависимостями, указанными в completion README:
+
+```sh
+python -B -m unittest discover -s experiments/local_guards_completion -t .
+python -B -m experiments.local_guards_completion.evaluate
+python -B -m experiments.local_guards_completion.outcome_timing
+python -B -m experiments.local_guards_completion.render
+python -B -m unittest experiments.local_guards_v4.tests.test_runtime
+```
+
+Оценщик и генератор работают с сохранёнными ответами. Квитанции содержат абсолютные пути исходного checkout: перенос на другую машину требует явно учитывать это ограничение. Команды нового обучения, воспроизведения исполнителя и замеров для чтения отчёта не нужны. Исходные большие архивы нужны для повторного извлечения событий, но не для проверки опубликованных таблиц.
+
+Для просмотра исходников отдельно от данных используйте локальный diff:
+
+```sh
+git diff origin/main...HEAD -- '*.py'
+git diff origin/main...HEAD -- experiments/NO_LLM_REPORT.md REVIEW.md
+```
+
+Ревью должно проверить обоснованность критериев и выводов, а также изменения исполнения. Число успешных тестов не заменяет эти проверки.

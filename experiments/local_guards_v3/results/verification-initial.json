@@ -1,0 +1,20 @@
+{
+  "baseline": {
+    "command": "LLM_PROVIDER=mock DATABASE_URL=sqlite:////private/tmp/finbot-guards-v3-baseline.db PYTHONPATH=. <finbot-python> -m pytest tests/unit/probe -q -p no:tests.plugins.google_sheets_reporter.pytest_google_sheets",
+    "passed": 42,
+    "warning": "Existing Authlib deprecation; optional Google Sheets reporter unavailable and explicitly disabled.",
+    "initial_invocation_failures": [
+      "Wrong cwd for FinBot static assets, corrected by using finbot directory.",
+      "Optional gspread plugin missing, disabled for offline tests."
+    ]
+  },
+  "native_integration": {
+    "test_command": "<ml-python> -m pytest experiments/local_guards_v3/tests/test_integration_replay.py -q",
+    "passed": 1,
+    "controlled_cases": 5,
+    "external_connections": 0
+  },
+  "new_model_inference_API_calls": 0,
+  "development_agent_tokens": null,
+  "development_cost_usd": null
+}
