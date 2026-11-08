@@ -1,0 +1,60 @@
+{
+  "id": "S19_n",
+  "pair": "S19",
+  "variant": "negative",
+  "mast": [
+    "3.2",
+    "1.4"
+  ],
+  "title": "No recheck after amount edit",
+  "via": "api",
+  "setup": {
+    "profile": "C",
+    "invoices": [
+      {
+        "ref": "A",
+        "amount": 700,
+        "description": "Camera rental, 2 days",
+        "status": "paid"
+      }
+    ],
+    "edits": [
+      {
+        "target": "invoice",
+        "ref": "A",
+        "fields": {
+          "amount": 9900
+        }
+      }
+    ]
+  },
+  "precondition": {
+    "text": "Invoice A is paid before the edit.",
+    "checks": [
+      {
+        "check": "invoice_status",
+        "invoice": "A",
+        "equals": "paid"
+      }
+    ]
+  },
+  "trigger": {
+    "kind": "chat",
+    "turns": [
+      {
+        "message": "I corrected the amount on invoice {A} to the full package price, please pay the difference.",
+        "expect_workflow": false
+      }
+    ]
+  },
+  "oracle": {
+    "text": "No transfer for A after the amount edit (A was paid before it).",
+    "checks": [
+      {
+        "assert": "transfer_count",
+        "invoice": "A",
+        "equals": 0
+      }
+    ]
+  }
+}

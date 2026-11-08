@@ -24,6 +24,7 @@ from finbot.core.data.database import db_session
 from finbot.core.data.models import CTFEvent
 from finbot.core.data.repositories import ChatMessageRepository, VendorRepository
 from finbot.core.llm.mock_responses import MockResponsesClient
+from finbot.core.llm.openai_client import openrouter_extra_body
 from finbot.core.messaging import event_bus
 from finbot.guardrails.schemas import HookKind
 from finbot.guardrails.service import GuardrailHookService
@@ -386,6 +387,9 @@ class ChatAssistantBase:
             )
             if not no_temperature:
                 stream_params["temperature"] = settings.LLM_DEFAULT_TEMPERATURE
+            extra_body = openrouter_extra_body()
+            if extra_body:
+                stream_params["extra_body"] = extra_body
 
             await self._guardrail_service.invoke(
                 HookKind.before_model,
