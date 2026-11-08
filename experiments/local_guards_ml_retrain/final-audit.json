@@ -1,0 +1,296 @@
+{
+  "audit_version": 1,
+  "audited_at": "2026-11-01T20:07:52.430055+00:00",
+  "base": "81fb02600d1c0944a2d236b9c4405383941c2cd4",
+  "head": "3979a7a22d9df4cc678172e39c177d5c38df1329",
+  "scope": "experiments/local_guards_ml_retrain only; whole-study read-only final audit with two audit-file writes",
+  "spec_verdict": "PASS_WITH_REQUIRED_REPORTING_CORRECTION",
+  "code_quality_verdict": "PASS_FOR_FROZEN_RESEARCH_IMPLEMENTATION",
+  "research_validity_verdict": "SUPPORTED_NEGATIVE_AND_LIMITED_CONCLUSIONS; REPORTING_CORRECTION_REQUIRED",
+  "production_or_goal_parity_verdict": "NOT_ESTABLISHED",
+  "findings": [
+    {
+      "id": "R1",
+      "severity": "P2",
+      "title": "Separate development8000 from actual TRAIN membership",
+      "locations": [
+        {
+          "file": "REPORT.md",
+          "start": 82,
+          "end": 84
+        },
+        {
+          "file": "REPORT.md",
+          "start": 8,
+          "end": 10
+        },
+        {
+          "file": "APPENDIX.md",
+          "start": 42,
+          "end": 47
+        }
+      ],
+      "evidence": [
+        "analysis.py:311-320 computes the302 overlap against all data/observations.jsonl.gz, without TRAIN filtering.",
+        "data/manifest.json and prepared/manifest.json record6000 synthetic TRAIN states and2000 CAL states.",
+        "Independent bounded join of analysis.baseline_key with data/metadata.jsonl.gz: new payment overlap TRAIN296; CAL275; both269; TRAIN-only27; CAL-only6; neither158. All212 gold ALLOW rows overlap TRAIN."
+      ],
+      "impact": "The short report incorrectly calls all302 overlaps training examples, and training-size wording suggests8000 fitted synthetic cases. This confuses fitting exposure with calibration exposure. Point results and negative conclusion do not change.",
+      "requested_change": "Say development8000 (6000TRAIN plus2000CAL), and302 development overlaps, or explicitly report296TRAIN and6CAL-only. Keep all212 safe payment rows overlappingTRAIN. Apply the same TRAIN/CAL distinction to the design paragraph and Appendix. Do not change data, methods, labels or predictions."
+    },
+    {
+      "id": "R2",
+      "severity": "P3",
+      "title": "State the current reproduction commands are path- and environment-bound",
+      "locations": [
+        {
+          "file": "README.md",
+          "start": 9,
+          "end": 40
+        },
+        {
+          "file": "analysis.py",
+          "start": 206,
+          "end": 214
+        },
+        {
+          "file": "archive_intervals.py",
+          "start": 61,
+          "end": 64
+        },
+        {
+          "file": "experiment_revision2.py",
+          "start": 240,
+          "end": 246
+        }
+      ],
+      "evidence": [
+        "analysis.prediction_groups dereferences receipt.freeze_path as an absolute path.",
+        "archive_intervals uses absolute prediction paths from saved score inputs.",
+        "Freeze verification opens absolute source paths; README names the author-specific .venv-finbot executable."
+      ],
+      "impact": "A reader cannot reproduce the advertised commands merely by cloning the repository elsewhere, despite having all bytes. No relocated or different-platform execution has been demonstrated.",
+      "requested_change": "Add an explicit README limitation: commands were validated in the recorded macOS checkout/environment and currently require its absolute path layout and dependencies; model/native reruns also require matching FinBot fixture/runtime. Do not rewrite frozen manifests to imply portability. A portable postprocessing resolver may be future work, outside this audit."
+    }
+  ],
+  "checks": [
+    {
+      "id": "identity",
+      "status": "PASS",
+      "details": {
+        "base": "81fb02600d1c0944a2d236b9c4405383941c2cd4",
+        "head": "3979a7a22d9df4cc678172e39c177d5c38df1329",
+        "changed_paths_outside_experiment": 0,
+        "protected_path_groups_unchanged": 5,
+        "protected_file_hashes_verified": 8
+      }
+    },
+    {
+      "id": "release_manifest",
+      "status": "PASS",
+      "details": {
+        "sha256": "877694452a892d12c3eeb0cacfdf164f9f5751925c2a81b6373ffa7d5333b498",
+        "files_verified": 7463,
+        "bytes_verified": 1423430910,
+        "missing_or_mismatched": 0,
+        "deferred_untracked_gzip_files": 576,
+        "all_deferred_files_present_and_manifest_bound": true
+      }
+    },
+    {
+      "id": "freezes",
+      "status": "PASS",
+      "details": {
+        "original_models": 72,
+        "original_source_hashes": 11,
+        "original_member_hashes": 361,
+        "revision2_models": 72,
+        "revision2_source_hashes": 17,
+        "revision2_member_hashes": 434,
+        "mismatches": 0,
+        "reused_models": 48,
+        "refitted_models": 24,
+        "matrix_equivalence_arms": 12,
+        "identical_arms": 8,
+        "pickle_or_fit_executed_by_reviewer": false
+      }
+    },
+    {
+      "id": "minimal_versioned_change",
+      "status": "PASS",
+      "details": "AST comparison: features changes only proof_relations and _mandatory_proof_gate; model adds bind_reused_model while reusing original FeatureBatch/UnavailableModel; experiment changes fit/main/sources and adds matrix/fingerprint helpers. Original frozen files hash-match."
+    },
+    {
+      "id": "design_and_learning",
+      "status": "PASS_WITH_LIMITS",
+      "details": "Source review confirms four arms, three contracts, LR/CatBoost same structural dictionaries, fixed parameters/seeds, TRAIN-only vectorizer/scaler/classifier fitting, source/base-group balanced classifier weights normalized to mean1, Luna excluded, shared CAL, no target verdict/ID/outcome features, absent classes0. CAL is a finite quantile grid plus0.5/sentinel, not an exhaustive feasibility proof. Full-contract allUNKNOWN and known post-gold HOLD alias remain frozen negative evidence."
+    },
+    {
+      "id": "independent_data_protocol",
+      "status": "PASS_WITH_DECLARED_DEVIATIONS",
+      "details": {
+        "developer_read_log_input_hashes_verified": 7,
+        "closed2_author_read_log_input_hashes_verified": 11,
+        "hash_mismatches": 0,
+        "independence_evidence": "Policy-only author source/read logs and separately recorded reviewer adjudication; no technical filesystem isolation. Reviewer observation-only overreads83099 and55492 are disclosed, not erased. Full second adjudication not rerun."
+      }
+    },
+    {
+      "id": "predictions_before_gold",
+      "status": "PASS_FOR_RECORDED_PROTOCOL",
+      "details": {
+        "prediction_commit": "b7afad7c7e2982fa95512d13bb2077e3c85c7b2a",
+        "ancestor_of_audited_head": true,
+        "commitment_and_three_receipts_match_git_commit": true,
+        "commitment_time": "2026-11-01T18:51:53.480731+00:00",
+        "gold_release_time": "2026-11-01T18:52:11.889982+00:00",
+        "no_claim": "Git/read-log evidence does not prove absence of every unlogged historical read."
+      }
+    },
+    {
+      "id": "primary_table_raw_receipt_arithmetic",
+      "status": "PASS",
+      "details": {
+        "payment_seed17_gated_rows_verified": 9,
+        "eligible_per_method": 460,
+        "cat_old_mixed": {
+          "correct": 269,
+          "false_allow": 1,
+          "safe_stops": 12,
+          "safe": 212,
+          "unknown": 164,
+          "gate_avoided_false_allow": 9
+        },
+        "lr_new_mixed": {
+          "correct": 110,
+          "false_allow": 17,
+          "safe_stops": 138,
+          "safe": 212,
+          "unknown": 328,
+          "gate_avoided_false_allow": 52
+        },
+        "rule_payment": {
+          "correct": 347,
+          "false_allow": 0,
+          "safe_stops": 0,
+          "safe": 212,
+          "unknown": 113
+        },
+        "other_six_ml_methods": "all460UNKNOWN;0correct;0falseALLOW;212safeSTOP"
+      }
+    },
+    {
+      "id": "denominators_and_order",
+      "status": "PASS_WITH_LIMITS",
+      "details": "Scorer source preserves all applicable action confusion; invalid event times receive no reachability/firstSTOP/prevention. Archive3378 registry/5no-prefix/1309unknown outcomes and CAL2727/2no-prefix remain distinct from eligible/reached denominators. New1200 includes20P5 reporting-only rows,1180general and460payment eligible;15/3 unordered actions. Full CAL satisfies remains null for8unordered episodes, with separate observed-zero-action-FA bound."
+    },
+    {
+      "id": "overlap_split_verification",
+      "status": "FAIL_REPORT_WORDING_ONLY",
+      "details": {
+        "normalizer": "analysis.py::baseline_key, SHA256 of full analysis.py6db72654689603a821ef1e0bee2b4ef5671be997b82ed0ed5daaed77a293f73e",
+        "development_payment_rows": {
+          "TRAIN": 2964,
+          "CAL": 864
+        },
+        "development_payment_unique": {
+          "TRAIN": 278,
+          "CAL": 176,
+          "union": 315
+        },
+        "new_test_rows": {
+          "both_train_cal": 269,
+          "train_only": 27,
+          "cal_only": 6,
+          "neither": 158,
+          "train_total": 296,
+          "development_total": 302
+        },
+        "safe_new_test_rows_overlapping_train": 212,
+        "example_cal_only": "r2c-0649",
+        "method": "Bounded parsing only development8000 and closed1200; no source oracle, model, feature extraction or prediction execution."
+      }
+    },
+    {
+      "id": "uncertainty",
+      "status": "PASS_WITH_LIMITS",
+      "details": "Read corrected global-group bootstrap implementation and saved51mode output:17payment modes with298clusters,34general modes with308; all output point-summary equality assertions recordedtrue. Source-prefixed old intervals withheld. New-test component bootstrap31total/30preventive, onepayment component => interval unavailable. No bootstrap recomputation performed."
+    },
+    {
+      "id": "timing",
+      "status": "PASS_WITH_LIMITS",
+      "details": {
+        "single_methods": 147,
+        "native_entries_including_diagnostics": 151,
+        "cold_models": 72,
+        "native_primary_modes_raw_recomputed": 6,
+        "repetitions_each": 5,
+        "native_completed_p50_ms": {
+          "profile_off": 59.792875,
+          "rule_payment_v3": 114.59825,
+          "payment_lr_new_mixed_gated": 111.440875,
+          "payment_cat_old_mixed_gated": 128.799417
+        },
+        "general_rules": "Both5STOP/0completed and0transfers in checked primary rows.",
+        "qualification": "Raw saved times/effects recomputed only; no new timing or native call. Shared P2 enrichment preserves current call identity. Whole Runtime.check includes collector/store/journal; collector-only latency is not separately established. No stableMLspeedup, adaptiveLLM savings or production-cost conclusion."
+      }
+    },
+    {
+      "id": "test_evidence",
+      "status": "REVIEWED_NOT_RERUN",
+      "details": "Reviewed targeted test source and existing independent engine/evaluation/replay re-review evidence:13engine,14measurement/registry,9execution-policy plus1numeric compatibility; author31-test evidence. No fresh suite, fit, inference, broad archive parsing or timing run."
+    },
+    {
+      "id": "scientific_conclusions",
+      "status": "SUPPORTED_WITH_LIMITS",
+      "details": "The frozen implementations do not satisfy the intended autonomous safety/coverage goal. Added data have limited diagnostic/operating-point value; new features lack stable gain. Rules also have source-binding/other implementation disagreements. HOLD vector alias is a representation defect, not an inherentML limit. Reporting neither claims parity nor interprets allUNKNOWN stopping as solved coverage."
+    }
+  ],
+  "declined_to_judge": [
+    {
+      "topic": "Production authorization, atomicity, ABA and writer completeness",
+      "reason": "Scripted local fixtures and sidecar snapshots cannot prove those properties; current report states this."
+    },
+    {
+      "topic": "Adaptive realLLM effectiveness, money saved or stable end-to-end speed advantage",
+      "reason": "No new model/API calls; ScriptClient is predetermined, repeats5, earlySTOP populations differ."
+    },
+    {
+      "topic": "IID unseen-attack generalization or payment confidence interval",
+      "reason": "Synthetic known mechanisms, development overlap and one conservative payment dependency component."
+    },
+    {
+      "topic": "Unlogged historical reads or categorical absence of every historical external call",
+      "reason": "Only source, receipts, Git chronology and read-log attestations are available; common filesystem was not an isolation boundary."
+    },
+    {
+      "topic": "A second exhaustive independent1200-label adjudication or full corpus semantic audit",
+      "reason": "Existing fresh independent author/reviewer audit is retained evidence; no concrete unresolved label defect justified rerunning it. Reviewed source and selected examples/counts."
+    },
+    {
+      "topic": "Every historical archive source/seed/diagnostic confidence interval",
+      "reason": "Known source-prefixed intervals are explicitly withheld;51primary corrected outputs are the accepted scope."
+    },
+    {
+      "topic": "Portable relocated/different-platform reproduction",
+      "reason": "Absolute paths, local environment and native fixtures are unresolved portability constraints; R2 requests honest documentation."
+    },
+    {
+      "topic": "Final Git publication and later integration of the other authorized thread",
+      "reason": "576already-audited gzip files are still untracked by declared disk-limit procedure. Parent must stage only identical bytes, refresh manifest for report changes, check final exactHEAD andMLtreeidentity."
+    }
+  ],
+  "executed_by_reviewer": {
+    "tests": 0,
+    "fits": 0,
+    "model_inferences": 0,
+    "timing_runs": 0,
+    "api_calls": 0,
+    "subagents": 0,
+    "mutations": [
+      "final-audit.md",
+      "final-audit.json"
+    ]
+  },
+  "memory_context": "Native MEMORY.md4664-4686 used only to locate prior formal-contract/native-atomicity cautions; current scientific evidence was re-read and verified from this checkout."
+}

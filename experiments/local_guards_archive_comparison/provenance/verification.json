@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-11-02",
+  "implementation_commit": "99b93c091868109abb076ed74f79c41016157fee",
+  "commands": [
+    {
+      "command": "python -m unittest discover -s experiments/local_guards_archive_comparison/tests -v",
+      "exit_code": 0,
+      "tests": 133,
+      "seconds": 3.372
+    },
+    {
+      "command": "python -m experiments.local_guards_archive_comparison.verify --local-predictions --receipt /private/tmp/finbot-archive-reproduction-20261102.json",
+      "cwd": "/private/tmp/finbot-archive-reproduce-20261102",
+      "exit_code": 0,
+      "new_api_calls": 0,
+      "records_reproduced": 887240,
+      "mismatches": 0
+    }
+  ],
+  "relocated_receipt_sha256": "6dea029f35500f4aeb542aa4782df39da9015b6b3a3548c9847e77eb0d261db7",
+  "ML_owner_revision": "fc181fe0212846ec7c0f0ef71358d2c9ed13a40b",
+  "ML_tree": "8b9cc128a71ddc6d31a285d1e24bd7b495f2ea49",
+  "source_hashes": {
+    "methods.py": "8e7aa49c198a23f8313fdc9ee2873ad099c1112aae2d4a7d85990888be73a81b",
+    "ml.py": "4be593465378240c8885d317abca80455d2695e1c66184a18606120f3bcf00ca",
+    "evaluation.py": "86409c43c830b41ab538191472f45315da37dbe3e2305d7717d2b2e12361215d",
+    "cascade.py": "2ccc5a102866ec12f8bb880d9485685ae21fa44645ccef4add84cc169c91abb3",
+    "cascade_evaluation.py": "30b15a1f8861941993d461bf7eec070998c1b99400cf151872c378bf40a75e1f",
+    "verify.py": "e5afb26b8aad2cd068dc8cb709f2e34162b7b6cf12f9432cd892dc504e807cd7"
+  },
+  "baseline_allowed_changes": [
+    "experiments/NO_LLM_REPORT.md"
+  ],
+  "whitespace_check": "git diff --check excluding literal provenance/*-diff.txt patch evidence (context-space lines are preserved byte-for-byte)",
+  "scope": "API-free scripted replay validates effect enforcement, not adaptive model behavior or real bank transfers. Full native semantic annotation is exploratory model-assisted, not human gold."
+}

@@ -1,0 +1,74 @@
+{
+  "dataset": "independent-policy-only-revision2",
+  "rows": 1200,
+  "families": {
+    "session_object_scope": 120,
+    "tool_authority": 120,
+    "delegation_proof": 120,
+    "state_transitions": 120,
+    "hold_review": 120,
+    "payment_obligations": 120,
+    "invoice_afterapproval_edits": 120,
+    "account_changes": 120,
+    "workflow_duplicates": 120,
+    "missing_corrupt_evidence": 120
+  },
+  "episodes": 1200,
+  "basegroups": 60,
+  "group_semantics": "All recipe counterfactuals share family+meaningful base variant; every state is an independent episode. No sequential trajectory is asserted.",
+  "files": {
+    "observations.jsonl.gz": {
+      "sha256": "0817d671b3b2e34add067a416335071af6fcedd1a9c75091e43598798057cea7",
+      "uncompressed_sha256": "523d1843776bb88f3cf7fd5defb066c9fbb8ac41488d900a68dd7e6e163b3b14",
+      "rows": 1200
+    },
+    "metadata.jsonl.gz": {
+      "sha256": "8fba84f1d8333379656653b800772ede1d6ead7c224f71ea341849571949f7b6",
+      "uncompressed_sha256": "754bc6f4cff7289725433bf09b45c1345b817e52159edcc0a3b0958469d5ce6e",
+      "rows": 1200
+    },
+    "gold.jsonl.gz": {
+      "sha256": "bae5a5c6910deeace35c3d8ad68ebe222a0372a995d5afb97d7dfb42fe7b1087",
+      "uncompressed_sha256": "0239f8e4f6aa749666f76b60344b90f56f52c876f1122e4a01384474037649f4",
+      "rows": 1200
+    },
+    "schema-validation.jsonl.gz": {
+      "sha256": "0abe70f5bf3b84232cf4b820823ea0d2f5bc3e69b7bbe6cc4f6ea50c17569cd7",
+      "uncompressed_sha256": "99c4a2a3695752dbfc941bd2320faffcfecf80503112998e2485fa2dbf48f987",
+      "rows": 1200
+    }
+  },
+  "source": {
+    "file": "closed_author_revision2.py",
+    "sha256": "ac080238f9d4704775cdb4e1c31e18dffde8f1e5052168808611600aea32cd72"
+  },
+  "freeze_receipt_sha256": "c3289efda53ad12657db312dff8d7f694fad2dee14496613330c698e9067aba2",
+  "read_log_sha256": "dfba0c57dd321d1a5f2fcc3b476554aa44a8b61c4260679ebe284b2baf419bcc",
+  "labels": {
+    "payment_v3": {
+      "None": 740,
+      "ALLOW": 210,
+      "BLOCK": 135,
+      "UNKNOWN": 115
+    },
+    "A": {
+      "ALLOW": 404,
+      "BLOCK": 343,
+      "UNKNOWN": 453
+    },
+    "B": {
+      "ALLOW": 232,
+      "BLOCK": 479,
+      "UNKNOWN": 489
+    }
+  },
+  "provenance": "No implementation, learned feature, model, training, calibration, oracle, historical test, result or other-thread access; no API, subagent, commit or install. Declared synthetic adapter/registry/complete ledger assumptions only.",
+  "payment_baseline": "Separate v3-shaped envelope manually projected from independent accepted payment evidence, excluding v4-only controls. Explicit recipe overrides mark policy-unavailable payment facts null. Envelope-only v4 corruption does not poison separately authored v3 payment baseline; malformed actual transfer proposal amount is shared.",
+  "limitations": [
+    "Pure synthetic trusted producer, not adapter authentication or external-writer atomicity proof.",
+    "P5 A/B use no preventive requirements: ALLOW denotes no enforcement stop, never measured preventive success.",
+    "Native callable technical authority is not business-merit judgment.",
+    "Source/current-call relation tested per clarification; equality is not required.",
+    "Missing generation-current registry field cannot independently demonstrate an obsolete positive generation; only supplied validated snapshot is asserted."
+  ]
+}

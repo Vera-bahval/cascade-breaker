@@ -17,6 +17,7 @@ from finbot.core.messaging import event_bus
 from finbot.guardrails.schemas import HookKind
 from finbot.guardrails.service import GuardrailHookService
 from finbot.mcp.provider import MCPToolProvider
+from finbot.probe import v4
 from finbot.probe import trace as probe_trace
 from finbot.probe.guards import runtime as probe_guards
 
@@ -187,6 +188,8 @@ class BaseAgent(ABC):
                                             task_result=function_output
                                         )
                                         return function_output
+                                except v4.V4Stop:
+                                    raise
                                 except Exception as e:  # pylint: disable=broad-exception-caught
                                     logger.error(
                                         "Tool call %s failed: %s", tool_call["name"], e
@@ -216,6 +219,8 @@ class BaseAgent(ABC):
                                         function_output,
                                     )
                             else:
+                                if runtime := v4.active():
+                                    runtime.fail("unregistered_native_tool")
                                 # Emit invalid tool call event
                                 await event_bus.emit_agent_event(
                                     agent_name=self.agent_name,
@@ -321,7 +326,11 @@ class BaseAgent(ABC):
                         workflow_id=self.workflow_id,
                         summary=f"Agent iteration {iteration + 1}/{max_iterations} complete ({len(response.tool_calls) if response.tool_calls else 0} tool calls)",
                     )
+                except v4.V4Stop:
+                    raise
                 except Exception as e:  # pylint: disable=broad-exception-caught
+                    if runtime := v4.active():
+                        runtime.fail("native_agent_iteration_error")
                     logger.error("Agent loop iteration %d failed: %s", iteration, e)
 
                     task_result = await callables["complete_task"](
@@ -469,7 +478,7 @@ class BaseAgent(ABC):
         control_flow_callables = {
             "complete_task": self._complete_task,
         }
-        return {**callables, **control_flow_callables}
+        return v4.wrap_callables(self, {**callables, **control_flow_callables})
 
     def _get_callables(self) -> dict[str, Callable[..., Any]]:
         """Get the callables for the invoice agent

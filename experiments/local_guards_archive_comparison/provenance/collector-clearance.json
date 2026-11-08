@@ -1,0 +1,82 @@
+{
+  "verdict": "PASS",
+  "scope": "Focused clearance of common-view findings C1/C2 and status corruption C3; collector source-pairing guard readback. Does not replace independent labels or other release gates.",
+  "supersedes": "collector-review.md/json common-view CHANGES_REQUIRED verdict for the exact hashes bound here",
+  "hashes": {
+    "views.py": "34d2db3964406c0ecc96424f154721900bb46b0758d96bf10698c33a076dcdce",
+    "views/historical.jsonl.gz": "c077ca45ba288ee36546994c9b7d811b5973af88bb04e4c0755e58ed053c13ac",
+    "views/instrumented.jsonl.gz": "09f4bd3d898e32cee6bd219405952fb0d9328e08fe92728063b3f17f5bb3ca95",
+    "collector.py": "a1c74e10ff18198c101d93899aed719ed4415d8569749f34ed33a2be145b103d",
+    "data/pairing-correction.json": "8f378237590020adc22989c4112581f14242b01185bfcdeb901449c9fd62acb7"
+  },
+  "closed_findings": [
+    {
+      "id": "C1",
+      "status": "resolved",
+      "basis": "Literal-safe serialized containers are parsed for identity normalization; arbitrary query/content fields receive replacements. Underscore-adjacent invoice filename embeddings are now normalized. Reported original query cases and all three formerly leaking filename prefix IDs pass in both modes."
+    },
+    {
+      "id": "C2",
+      "status": "resolved",
+      "basis": "Company/account-holder identity, contact and email fields receive opaque aliases; complete legacy run slugs are recognized in embedded native strings. All-row leak scan found zero remaining full legacy run slugs or original vendor identity strings; focused final readback confirms the reported legacy cases."
+    },
+    {
+      "id": "C3",
+      "status": "resolved",
+      "basis": "Evidence status mapping is excluded from alias collection and copied unchanged on rewrite; observed/derived/instrumented/unknown no longer enter identity aliases. Focused final actual rows preserve their exact canonical status mappings and source-provenance value meaning."
+    }
+  ],
+  "independent_checks": {
+    "final_focused_view_tests": {
+      "command": "python3 -m unittest experiments.local_guards_archive_comparison.tests.test_views -v",
+      "passed": 11
+    },
+    "all_row_scan": {
+      "rows": 10820,
+      "scope": "After C1/C2 serialized/vendor fixes, before the final status and underscore-boundary amendments",
+      "full_legacy_run_slug_hits": 0,
+      "original_vendor_identity_hits": 0,
+      "monetary_or_numeric_scalar_changes": 0,
+      "residual_invoice_filename_rows": 6,
+      "residual_filenames": [
+        "Invoice_INV-2026-1134.pdf",
+        "INV-2026-1000_review.pdf"
+      ],
+      "status_corruption_found": "All rows; corrected as C3. Monetary-key scan initially counted changed status strings, not actual amount changes.",
+      "note": "Final all-row expensive leak scan intentionally not repeated; bounded final readback covers every residual filename prefix plus C3 and original reported cases."
+    },
+    "final_focused_prefixes_each_mode": [
+      "59cff680a4a55fe690b1eae191db",
+      "6a070b0e75a37cb31019b3c65d2d",
+      "618d77787e19ed630c1c855488c8",
+      "5627dcd26dd3be24cd3c8bd23caa",
+      "130e92fc47bab734749b799dab89",
+      "d8847a554ab06f5c40939bd3058a"
+    ],
+    "final_focused_assertions": [
+      "Original invoice tokens and old run slugs absent",
+      "Exact evidence_status mapping retained with valid enums",
+      "Invoice amount/status and typed fraud recommendation unchanged",
+      "Amount/account/invoice/recommendation provenance value agrees with fact value",
+      "Proposed amount unchanged"
+    ],
+    "actual_pack_roundtrips_before_final_status_boundary_amendments": [
+      "d8847a554ab06f5c40939bd3058a",
+      "5627dcd26dd3be24cd3c8bd23caa",
+      "130e92fc47bab734749b799dab89"
+    ],
+    "pack_unit_test": "Lossless duplicate-string path-reference roundtrip including null and reference-like source data passes in final 11-test suite.",
+    "source_meaning_examples": [
+      "TH601 current 1820 versus proposed 1970.15 remains a contradiction with equal recipient",
+      "Legacy current 800 versus proposed 920 and unequal recipient remains unchanged"
+    ],
+    "pairing_correction": "collector.py now calls native state ingestion only if paired. Legacy batch pairing still uses exact tool/args, actor, available call/workflow/session identity and unique-batch conditions. No new raw business fact is introduced by view normalization."
+  },
+  "release_gates_not_substituted": [
+    "Author final all-10820 input-schema and pack-roundtrip receipt at provenance/view-validation.json",
+    "Independent gold/action review",
+    "Final method/release freeze and absence of new selected-case predictions"
+  ],
+  "numeric_ids": "Native numeric IDs remain join-only and must be excluded from ML features; this clearance does not certify downstream method feature construction.",
+  "actions": "No API, executor, source edit, label edit, method read, prediction or commit. Wrote only collector-clearance.md/json."
+}

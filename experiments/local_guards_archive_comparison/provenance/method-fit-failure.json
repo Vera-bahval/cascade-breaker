@@ -1,0 +1,33 @@
+{
+  "release_token": "ARCHIVE-FIT-RELEASE-20261101-V1",
+  "stage": "fit_exception_stopped_without_source_change",
+  "exception_type": "AssertionError",
+  "message": "Type of indices in CSR sparse arrays must be int32",
+  "elapsed_seconds": 4.140946540981531,
+  "source_sha256": {
+    "methods.py": "8e7aa49c198a23f8313fdc9ee2873ad099c1112aae2d4a7d85990888be73a81b",
+    "ml.py": "f8c09e6230fb648aea10d7cd3af9de8e7564a9fa18358bc5f472cb0c3200d218"
+  },
+  "environment": {
+    "python": "3.13.15 (main, Aug 14 2026, 15:24:40) [Clang 22.1.3 ]",
+    "executable": "/Users/proskurin-dmi/Documents/hw-itmo/cascades/experiments/local_guards/.venv-finbot/bin/python",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "versions": {
+      "scikit-learn": "1.9.1",
+      "catboost": "1.2.10",
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "joblib": "1.6.0"
+    }
+  },
+  "partial_artifact_names": [
+    "scenario_decision-lr-17.joblib",
+    "scenario_decision-lr-29.joblib",
+    "scenario_decision-lr-43.joblib"
+  ],
+  "partial_model_count": 3,
+  "freeze_manifest_exists": false,
+  "acceptance": "Partial failed release; no selected inference, no completed twelve-model freeze, no source edits/retry after exception. Await root ruling for dependency compatibility repair.",
+  "preserved_partial_directory": "experiments/local_guards_archive_comparison/results/ml-release-failed-csr-int32",
+  "authorized_amendment": "CatBoost-only CSR.toarray() fit/predict; no feature/estimator/CAL changes; retry awaits root/reviewer source identity acknowledgement"
+}

@@ -1,0 +1,54 @@
+{
+  "status": "PASS_COMPACT_CANONICAL_OUTCOME_RECEIPTS",
+  "generated_at_utc": "2026-11-01T19:31:50.703248+00:00",
+  "output": {
+    "path": "/Users/proskurin-dmi/Documents/hw-itmo/cascades/research/finbot-archive-comparison/experiments/local_guards_archive_comparison/labels/canonical-outcomes.jsonl.gz",
+    "sha256": "3a28b1a2f8d695e656cd07df235fe19be8c66327eb1553a4ea04f07711b8a5a5",
+    "rows": 3378
+  },
+  "input_sha256": {
+    "/Users/proskurin-dmi/Documents/hw-itmo/cascades/research/finbot-archive-comparison/experiments/local_guards_archive_comparison/provenance/outcome-additional-clearance.json": "029a0ac53d40ceddff2e2fc336c4c600a474e1d9c8a274c7d22361386dbfb248",
+    "/Users/proskurin-dmi/Documents/hw-itmo/cascades/research/finbot-archive-comparison/experiments/local_guards_archive_comparison/provenance/outcome-clearance.json": "721e13d4177e1087e2c4bc03f4d1e2eca49b1d9e61f7f7b1b2b32f11ad614271",
+    "/Users/proskurin-dmi/Documents/hw-itmo/cascades/research/finbot-archive-comparison/experiments/local_guards_archive_comparison/data/archive-outcomes-unverified.jsonl.gz": "30f8a82b812a05ba75860dee57beac84df7abd13bde4b00df84fa77c3cf46edf",
+    "/Users/proskurin-dmi/Documents/hw-itmo/cascades/research/finbot-archive-comparison/experiments/local_guards_archive_comparison/data/metadata.jsonl.gz": "f47dd8a60d3569e5d142ca27151b1a144f9c391dffe21493401e41edc625ffd0"
+  },
+  "schema": {
+    "episode_id": "string join only",
+    "observed_native_attempt": "boolean or null; observed captured native invocation/return, not provider dispatch",
+    "completed_transfer": "boolean or null; successful actual native completed return, not model/guard/paid-status inference",
+    "first_native_attempt_event_seq": "integer or null; exact canonical native before_tool hook/callback coordinate; proposal-only actual start remains null",
+    "first_attempt_evidence_kind": [
+      "before_tool_hook",
+      "paired_p4_proposal_bound",
+      "return_only_unbounded",
+      null
+    ],
+    "continuation_harm": "boolean or null; inherited original-source semantic target unchanged",
+    "first_harm_event_seq": "integer or null; first successful raw native completion when continuation_harm is true",
+    "historical_original_main": "boolean fixed frozen v3 episode identity mask",
+    "historical_harm": "boolean fixed original_main continuation_harm true mask",
+    "historical_legitimate": "boolean fixed original_main frozen-v3 source_intent legit mask"
+  },
+  "counts": {
+    "rows": 3378,
+    "observed_native_attempt_true": 2074,
+    "completed_transfer_true": 2067,
+    "continuation_harm_unknown": 1309,
+    "historical_original_main": 1352,
+    "historical_harm": 112,
+    "historical_legitimate": 846,
+    "first_attempt_evidence_kind": {
+      "before_tool_hook": 2051,
+      "None": 1304,
+      "paired_p4_proposal_bound": 23
+    }
+  },
+  "limitations": [
+    "P4 native hook/callback is a pre-effect guard gate; stopping at that gate is the declared theoretical before-invocation intervention, not measured prevention.",
+    "paired_p4_proposal_bound proves an earlier recorded proposed call, but actual invocation start time is unresolved and first_native_attempt_event_seq stays null. Exact proposal bounds remain in full audit canonical_gate_boundaries_all_archive.",
+    "Native execution return timestamps are after execution and never substitute for attempt start.",
+    "observed_native_attempt false means no native invocation in captured evidence, not a claim about events outside truncated logs.",
+    "Inherited first_harm/first_attempt coordinates were not used directly; actual raw completion and gate receipts supply canonical time.",
+    "Inherited semantic/source harm UNKNOWNs, fixed historical masks, and original payloads are preserved. No new native semantic harm label was introduced."
+  ]
+}
