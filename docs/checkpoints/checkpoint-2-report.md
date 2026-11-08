@@ -227,26 +227,27 @@ Postgres и Redis (у нас в Docker на портах 5433 и 6380). Чере
 
 | Эксперимент | Ветка или коммит | Каталог | Команды | Время и стоимость |
 | --- | --- | --- | --- | --- |
-| Бейзлайн напрямую | `research/unified-scenarios` | `finbot/` | `uv run python ../scenarios/run.py unified --via direct --suite core --batch B --repeats 3 --workers 4`, затем то же с `--suite honest --repeats 1` | 1,5 ч, $1,3 |
-| Бейзлайн через API | `research/unified-scenarios` | `finbot/` | те же две команды с `--via api --workers 6 --base-url http://localhost:8002` | 3 ч, $2,6 |
-| Через чат | `research/unified-scenarios` | `finbot/` | те же с `--suite core_chat` и `--suite honest_chat` (для подтверждения вендором `core_chat2`, `honest_chat2`) | 3 ч, около $2 |
+| Бейзлайн напрямую | `main` | `finbot/` | `uv run python ../scenarios/run.py unified --via direct --suite core --batch B --repeats 3 --workers 4`, затем то же с `--suite honest --repeats 1` | 1,5 ч, $1,3 |
+| Бейзлайн через API | `main` | `finbot/` | те же две команды с `--via api --workers 6 --base-url http://localhost:8002` | 3 ч, $2,6 |
+| Через чат | `main` | `finbot/` | те же с `--suite core_chat` и `--suite honest_chat` (для подтверждения вендором `core_chat2`, `honest_chat2`) | 3 ч, около $2 |
 | Проверка в P4 | `research/control-placement-guard` | `finbot/` | перед командами бейзлайна задать `PROBE_ENFORCE=P4=V3` (для API тот же `PROBE_ENFORCE` у сервера); профили: `--suite matrix profiles pairs --repeats 1` | не указано |
 | Уровни контроля | `main` | `experiments/control-placement/` | раздел «Как воспроизвести» в docs/01; пересчёт без API: `orchestrator_stats.py`, `matrix_analysis.py`, `pairs_analysis.py` | без API |
 | Дешёвые проверки | `research/cheap-guards-results-2026-10-18` | корень репозитория | `python3 tools/verify_research_snapshot.py` | без API |
-| Без LLM | коммит `1e30ab8` (PR #7) | корень репозитория | `python -B -m unittest discover -s experiments/local_guards_completion -t .` | без API |
+| Без LLM | `main` (PR #7) | корень репозитория | `python -B -m unittest discover -s experiments/local_guards_completion -t .` | без API |
 | Четыре модели | `main` | корень репозитория | `python3 experiments/control-placement/four-model-comparison/build_report.py` | без API |
 
 Отчёт по прогонам строит `scenarios/analyze_unified.py`. Где лежат отчёты, таблицы по прогонам и сырые данные,
-описано в [results-guide.md](https://github.com/Vera-bahval/cascade-breaker/blob/research/unified-scenarios/docs/scenarios/results-guide.md).
+описано в [results-guide.md](../scenarios/results-guide.md).
 
 ## Данные прогонов
 
 Все 1 770 прогонов бейзлайна записаны целиком. Сырые файлы лежат в `scenarios/results/unified/` (2,5 ГБ, файл на
 прогон) и `scenarios/traces/` (0,85 ГБ, трассы workflow при входе через API). Сами каталоги в git не входят, их
 копия на 8 ноября лежит в архиве
-[scenarios/archive/runs-2026-11-08.tar.xz](https://github.com/Vera-bahval/cascade-breaker/blob/research/unified-scenarios/scenarios/archive/runs-2026-11-08.tar.xz)
-(37 МБ; распаковать из `scenarios/`: `tar -xJf archive/runs-2026-11-08.tar.xz`, на Windows через 7-Zip). В git лежат отчёты и таблицы по прогонам (`docs/checkpoints/data/*-report.md`, `*-runs.csv`), формат
-файлов описан в разделе 3 results-guide.md.
+[scenarios/archive/runs-2026-11-08.tar.xz](../../scenarios/archive/runs-2026-11-08.tar.xz) (37 МБ; распаковать из
+`scenarios/`: `tar -xJf archive/runs-2026-11-08.tar.xz`, на Windows через 7-Zip). В git лежат отчёты и таблицы по
+прогонам ([docs/checkpoints/data](data/), `*-report.md` и `*-runs.csv`), формат файлов описан в разделе 3
+[results-guide.md](../scenarios/results-guide.md).
 
 | Что | Записано |
 | --- | --- |
@@ -263,11 +264,10 @@ Postgres и Redis (у нас в Docker на портах 5433 и 6380). Чере
 
 Сырые прогоны Насти с проверкой в P4 лежат на её машине, в git есть отчёт и таблицы по ним.
 
-Данные к отчёту: бейзлайн и чат в
-[research/unified-scenarios](https://github.com/Vera-bahval/cascade-breaker/tree/research/unified-scenarios/docs/checkpoints/data),
-проверка в P4 в [research/control-placement-guard](https://github.com/Vera-bahval/cascade-breaker/blob/research/control-placement-guard/docs/checkpoints/guard-p4-v3-results.md),
-исследования Димы в [PR #7](https://github.com/Vera-bahval/cascade-breaker/pull/7) и
-[research/cheap-guards-results-2026-10-18](https://github.com/Vera-bahval/cascade-breaker/tree/research/cheap-guards-results-2026-10-18).
+Данные к отчёту: бейзлайн и чат в [docs/checkpoints/data](data/), проверка в P4 в ветке
+[research/control-placement-guard](https://github.com/Vera-bahval/cascade-breaker/blob/research/control-placement-guard/docs/checkpoints/guard-p4-v3-results.md),
+исследование Димы без LLM в [experiments/NO_LLM_REPORT.md](../../experiments/NO_LLM_REPORT.md), дешёвые проверки в
+ветке [research/cheap-guards-results-2026-10-18](https://github.com/Vera-bahval/cascade-breaker/tree/research/cheap-guards-results-2026-10-18).
 
 ## Ограничения
 
