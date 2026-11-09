@@ -293,7 +293,7 @@ DeepSeek единственный совмещает малое число по�
 | Дешёвые проверки | `research/cheap-guards-results-2026-10-18` | корень репозитория | `python3 tools/verify_research_snapshot.py` | без API |
 | Четыре модели | `main` | корень репозитория | `python3 experiments/control-placement/four-model-comparison/build_report.py` | без API |
 
-Отчёт по прогонам строит `scenarios/analyze_unified.py`. Данные живой проверки в P4: [отчёт в ветке research/control-placement-guard](https://github.com/Vera-bahval/cascade-breaker/blob/research/control-placement-guard/docs/checkpoints/guard-p4-v3-results.md). Исследование без LLM: [experiments/NO_LLM_REPORT.md](../../experiments/NO_LLM_REPORT.md).
+Отчёт по прогонам строит `scenarios/analyze_unified.py`. Данные живой проверки в P4 лежат в ветке `research/control-placement-guard`, файл `docs/checkpoints/guard-p4-v3-results.md`. Исследование без LLM: [experiments/NO_LLM_REPORT.md](../../experiments/NO_LLM_REPORT.md).
 
 ## 9. Вклад участников
 
