@@ -284,11 +284,82 @@ def render_panels(rows: list[dict]) -> str:
     return "\n".join(out)
 
 
+def staircase(rows: list[dict], cost, allowed) -> list[dict]:
+    """Best harm stopped for a growing budget: each step is a set that beats every cheaper allowed set."""
+    best, steps = -1, []
+    for r in sorted((r for r in rows if allowed(r)), key=lambda r: (cost(r), -r["stopped"])):
+        if r["stopped"] > best:
+            best = r["stopped"]
+            steps.append(r)
+    return steps
+
+
+def render_budget(rows: list[dict], cap: float) -> str:
+    """Share of harmful payments stopped against the added time and the cost of the checks."""
+    total = rows[0]["harm_total"]
+    panels = [("Добавленное время на прогон, с", lambda r: r["seconds"], 12, 2, "{:g}"),
+              ("Стоимость проверок, $ на 1000 прогонов", lambda r: 1000 * r["cost"], 1.5, 0.25, "{:g}")]
+    pw, ph, ml, gap, mt, mb = 400, 320, 56, 40, 76, 52
+    w = ml + len(panels) * pw + gap + 12
+    h = mt + ph + mb
+    ymax = 30
+    py = lambda v: mt + ph - ph * v / ymax
+    share = lambda r: 100 * r["stopped"] / total
+    ok_cap = lambda r: r["false"] / r["legit_total"] <= cap
+    out = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" '
+           'font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12">',
+           f'<rect width="{w}" height="{h}" fill="#fcfcfb"/>',
+           f'<text x="{ml}" y="22" font-size="14" font-weight="600" fill="#0b0b0b">'
+           'Какую долю вредных платежей удаётся предотвратить за заданную задержку и стоимость</text>',
+           f'<line x1="{ml}" x2="{ml+26}" y1="42" y2="42" stroke="#2a78d6" stroke-width="2"/>'
+           f'<text x="{ml+32}" y="46" fill="#52514e">лучший набор при доле ложных остановок не выше {cap:.0%}</text>',
+           f'<line x1="{ml}" x2="{ml+26}" y1="60" y2="60" stroke="#eb6834" stroke-width="2" stroke-dasharray="5 4"/>'
+           f'<text x="{ml+32}" y="64" fill="#52514e">лучший набор без ограничения на ложные остановки</text>']
+    for k, (label, cost, xmax, xstep, fmt) in enumerate(panels):
+        x0 = ml + k * (pw + gap)
+        px = lambda v, x0=x0, xmax=xmax: x0 + pw * min(v, xmax) / xmax
+        for v in range(0, ymax + 1, 5):
+            out.append(f'<line x1="{x0}" x2="{x0+pw}" y1="{py(v):.1f}" y2="{py(v):.1f}" stroke="#e4e3df"/>')
+            if k == 0:
+                out.append(f'<text x="{x0-8}" y="{py(v)+4:.1f}" text-anchor="end" fill="#52514e">{v}</text>')
+        v = 0.0
+        while v <= xmax + 1e-9:
+            out.append(f'<text x="{px(v):.1f}" y="{mt+ph+18}" text-anchor="middle" fill="#52514e">{fmt.format(v)}</text>')
+            v += xstep
+        out.append(f'<text x="{x0+pw/2:.0f}" y="{h-14}" text-anchor="middle" fill="#52514e">{label}</text>')
+        if k == 0:
+            out.append(f'<text transform="translate(14 {mt+ph/2:.0f}) rotate(-90)" text-anchor="middle" fill="#52514e">'
+                       f'Предотвращено вредных платежей, % (от {total})</text>')
+        capped = staircase(rows, cost, ok_cap)
+        capped_names = {r["name"] for r in capped}
+        for color, dash, steps in (("#eb6834", ' stroke-dasharray="5 4"', staircase(rows, cost, lambda r: True)),
+                                   ("#2a78d6", "", capped)):
+            pts = []
+            for i, r in enumerate(steps):
+                pts.append((px(cost(r)), py(share(r))))
+                nxt = px(cost(steps[i + 1])) if i + 1 < len(steps) else px(xmax)
+                pts.append((nxt, py(share(r))))
+            out.append(f'<polyline fill="none" stroke="{color}" stroke-width="2"{dash} points="' +
+                       " ".join(f"{x:.1f},{y:.1f}" for x, y in pts) + '"/>')
+            for r in steps:
+                if color == "#eb6834" and r["name"] in capped_names:
+                    continue  # the same set is already drawn on the blue curve
+                out.append(f'<circle cx="{px(cost(r)):.1f}" cy="{py(share(r)):.1f}" r="4.5" fill="{color}" '
+                           'stroke="#fcfcfb" stroke-width="1.5"/>')
+                if r["stopped"] > 0:
+                    out.append(f'<text x="{px(cost(r))+7:.1f}" y="{py(share(r))-8:.1f}" '
+                               f'fill="#0b0b0b" font-size="11">{r["name"]}</text>')
+        out.append(f'<line x1="{x0}" x2="{x0+pw}" y1="{py(0):.1f}" y2="{py(0):.1f}" stroke="#52514e"/>')
+    out.append("</svg>")
+    return "\n".join(out)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("table", type=Path)
     parser.add_argument("--md", type=Path)
     parser.add_argument("--svg", type=Path)
+    parser.add_argument("--budget", type=Path, help="share of harm stopped against time and cost")
     parser.add_argument("--panels", type=Path, help="three-panel figure: calls, false stops, added time")
     parser.add_argument("--fpr-cap", type=float, default=0.05)
     parser.add_argument("--draws", type=int, default=500)
@@ -299,6 +370,8 @@ def main() -> None:
         args.md.write_text(render_md(study, rows, args.fpr_cap, args.draws))
     if args.svg:
         args.svg.write_text(render_svg(rows, pareto(rows)))
+    if args.budget:
+        args.budget.write_text(render_budget(rows, args.fpr_cap))
     if args.panels:
         args.panels.write_text(render_panels(rows))
     print(f"runs {len(study.runs)}  harmful {len(study.harm)}  legitimate {len(study.legit)}  sets {len(study.sets)}")
