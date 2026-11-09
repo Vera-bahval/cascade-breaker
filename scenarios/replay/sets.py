@@ -231,11 +231,65 @@ def render_svg(rows: list[dict], front: list[dict]) -> str:
     return "\n".join(out)
 
 
+def render_panels(rows: list[dict]) -> str:
+    """Three panels with the same vertical axis: harm stopped against calls, false stops and added time."""
+    panels = [
+        ("calls", "Вызовов LLM на прогон", lambda r: r["calls"], 10),
+        ("false", "Законных прогонов остановлено зря, %", lambda r: 100 * r["false"] / r["legit_total"], 8),
+        ("seconds", "Добавленное время на прогон, с", lambda r: r["seconds"], 20),
+    ]
+    pw, ph, ml, gap, mt, mb = 330, 330, 52, 24, 56, 52
+    w = ml + len(panels) * (pw + gap) + 8
+    h = mt + ph + mb
+    ytop = 12
+    py = lambda y: mt + ph - ph * y / ytop
+    out = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" '
+           'font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12">',
+           f'<rect width="{w}" height="{h}" fill="#fcfcfb"/>',
+           f'<text x="{ml}" y="22" font-size="14" font-weight="600" fill="#0b0b0b">'
+           'Остановлено вредных платежей из 36 для каждого из 127 наборов точек</text>',
+           f'<circle cx="{ml+6}" cy="40" r="4" fill="#b9b8b2"/><text x="{ml+16}" y="44" fill="#52514e">набор точек</text>',
+           f'<circle cx="{ml+110}" cy="40" r="5" fill="#2a78d6"/><text x="{ml+121}" y="44" fill="#52514e">'
+           'лучшие наборы для этой оси (ни один другой не останавливает больше при меньшем значении по оси x)</text>']
+    for k, (_, label, fx, xmax) in enumerate(panels):
+        x0 = ml + k * (pw + gap)
+        px = lambda x, x0=x0, xmax=xmax: x0 + pw * min(x, xmax) / xmax
+        for y in range(0, ytop + 1, 2):
+            out.append(f'<line x1="{x0}" x2="{x0+pw}" y1="{py(y):.1f}" y2="{py(y):.1f}" stroke="#e4e3df" stroke-width="1"/>')
+            if k == 0:
+                out.append(f'<text x="{x0-8}" y="{py(y)+4:.1f}" text-anchor="end" fill="#52514e">{y}</text>')
+        step = 2 if xmax <= 10 else 5
+        for x in range(0, xmax + 1, step):
+            out.append(f'<text x="{px(x):.1f}" y="{mt+ph+18}" text-anchor="middle" fill="#52514e">{x}</text>')
+        out.append(f'<line x1="{x0}" x2="{x0+pw}" y1="{py(0):.1f}" y2="{py(0):.1f}" stroke="#52514e"/>')
+        out.append(f'<text x="{x0+pw/2:.0f}" y="{h-14}" text-anchor="middle" fill="#52514e">{label}</text>')
+        front = [r for r in rows if not any(
+            o is not r and o["stopped"] >= r["stopped"] and fx(o) <= fx(r) and (o["stopped"] > r["stopped"] or fx(o) < fx(r))
+            for o in rows)]
+        front_ids = {id(r) for r in front}
+        for r in rows:
+            if id(r) not in front_ids:
+                out.append(f'<circle cx="{px(fx(r)):.1f}" cy="{py(r["stopped"]):.1f}" r="3.5" fill="#b9b8b2" '
+                           'stroke="#fcfcfb" stroke-width="1.5"/>')
+        pts = sorted(front, key=lambda r: (fx(r), -r["stopped"]))
+        out.append('<polyline fill="none" stroke="#2a78d6" stroke-width="2" points="' +
+                   " ".join(f"{px(fx(r)):.1f},{py(r['stopped']):.1f}" for r in pts) + '"/>')
+        for r in pts:
+            out.append(f'<circle cx="{px(fx(r)):.1f}" cy="{py(r["stopped"]):.1f}" r="4.5" fill="#2a78d6" '
+                       'stroke="#fcfcfb" stroke-width="1.5"/>')
+        if k == 0:
+            out.append(f'<text transform="translate(14 {mt+ph/2:.0f}) rotate(-90)" text-anchor="middle" fill="#52514e">'
+                       'Остановлено вредных платежей</text>')
+    out.append("</svg>")
+    return "\n".join(out)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("table", type=Path)
     parser.add_argument("--md", type=Path)
     parser.add_argument("--svg", type=Path)
+    parser.add_argument("--panels", type=Path, help="three-panel figure: calls, false stops, added time")
     parser.add_argument("--fpr-cap", type=float, default=0.05)
     parser.add_argument("--draws", type=int, default=500)
     args = parser.parse_args()
@@ -245,6 +299,8 @@ def main() -> None:
         args.md.write_text(render_md(study, rows, args.fpr_cap, args.draws))
     if args.svg:
         args.svg.write_text(render_svg(rows, pareto(rows)))
+    if args.panels:
+        args.panels.write_text(render_panels(rows))
     print(f"runs {len(study.runs)}  harmful {len(study.harm)}  legitimate {len(study.legit)}  sets {len(study.sets)}")
 
 
