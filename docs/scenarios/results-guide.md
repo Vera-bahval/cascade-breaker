@@ -9,14 +9,14 @@ reasoning off), без проверок.
 
 | Запуск | Что запускали | Прогонов | Отчёт | Таблица по прогонам |
 | --- | --- | --- | --- | --- |
-| `baseline-ds1`, direct | счета Насти и Веры x3 и 150 честных x1, сразу в оркестратор | 402 | [отчёт](../checkpoints/data/baseline-ds1-report.md) | [csv](../checkpoints/data/baseline-ds1-runs.csv) |
-| `baseline-ds1`, api | те же счета через портал и 18 API-пар x3 | 510 | [отчёт](../checkpoints/data/baseline-ds1-report.md) | [csv](../checkpoints/data/baseline-ds1-runs.csv) |
-| `chat-ds1` | те же счета через чат, одно сообщение | 402 | [отчёт](../checkpoints/data/chat-ds1-report.md) | [csv](../checkpoints/data/chat-ds1-runs.csv) |
-| `extra-ds1` | ещё 9 API-пар x3 на непокрытые инварианты | 54 | [отчёт](../checkpoints/data/extra-ds1-report.md) | [csv](../checkpoints/data/extra-ds1-runs.csv) |
-| `chat2-ds1` | через чат, вендор подтверждает, если чат спросил | 402 | [отчёт](../checkpoints/data/chat2-ds1-report.md) | [csv](../checkpoints/data/chat2-ds1-runs.csv) |
+| `baseline-ds1`, direct | счета Насти и Веры x3 и 150 честных x1, сразу в оркестратор | 402 | [отчёт](../results/baseline-ds1-report.md) | [csv](../results/baseline-ds1-runs.csv) |
+| `baseline-ds1`, api | те же счета через портал и 18 API-пар x3 | 510 | [отчёт](../results/baseline-ds1-report.md) | [csv](../results/baseline-ds1-runs.csv) |
+| `chat-ds1` | те же счета через чат, одно сообщение | 402 | [отчёт](../results/chat-ds1-report.md) | [csv](../results/chat-ds1-runs.csv) |
+| `extra-ds1` | ещё 9 API-пар x3 на непокрытые инварианты | 54 | [отчёт](../results/extra-ds1-report.md) | [csv](../results/extra-ds1-runs.csv) |
+| `chat2-ds1` | через чат, вендор подтверждает, если чат спросил | 402 | [отчёт](../results/chat2-ds1-report.md) | [csv](../results/chat2-ds1-runs.csv) |
 
 Сравнение одних и тех же счетов по входу (direct, портал, чат, чат с подтверждением):
-[by-entry-report.md](../checkpoints/data/by-entry-report.md). Отладочные запуски (`mock-*`, `*-smoke`, `base-ds1`)
+[by-entry-report.md](../results/by-entry-report.md). Отладочные запуски (`mock-*`, `*-smoke`, `base-ds1`)
 в отчёты не входят; каталоги `*-slept` хранят прогоны, прерванные сном ноутбука; они перезапущены.
 
 ### Где что искать
@@ -134,7 +134,7 @@ reasoning off), без проверок.
 
 ```python
 import csv
-rows = [r for r in csv.DictReader(open("docs/checkpoints/data/baseline-ds1-runs.csv"))
+rows = [r for r in csv.DictReader(open("docs/results/baseline-ds1-runs.csv"))
         if r["via"] == "direct" and r["variant"] == "negative" and "1.2" in r["mast"].split(",")
         and not r["broken"] and r["precondition_ok"] == "True"]
 print(sum(r["oracle_ok"] == "False" for r in rows), len(rows))          # 28 105
@@ -166,7 +166,7 @@ print(sorted({r["scenario"] for r in rows if r["oracle_ok"] == "False"}))
 ```bash
 python3 scenarios/analyze_unified.py scenarios/results/unified/direct/baseline-ds1 \
     scenarios/results/unified/api/baseline-ds1 --list \
-    --out docs/checkpoints/data/baseline-ds1-report.md --csv docs/checkpoints/data/baseline-ds1-runs.csv
+    --out docs/results/baseline-ds1-report.md --csv docs/results/baseline-ds1-runs.csv
 ```
 
 Если передать два каталога с одним прогоном (батч и его перезапуск), берётся файл из каталога, указанного позже.

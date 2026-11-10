@@ -30,7 +30,7 @@ All are written by `scenarios/analyze_unified.py`:
 ```bash
 python3 scenarios/analyze_unified.py scenarios/results/unified/direct/baseline-ds1 \
     scenarios/results/unified/api/baseline-ds1 --list \
-    --out docs/checkpoints/data/baseline-ds1-report.md --csv docs/checkpoints/data/baseline-ds1-runs.csv
+    --out docs/results/baseline-ds1-report.md --csv docs/results/baseline-ds1-runs.csv
 ```
 
 The raw results with full traces (about 1 GB) are not in git; they live in `scenarios/results/unified/` on the

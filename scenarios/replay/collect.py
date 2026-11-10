@@ -7,7 +7,7 @@ points from that table without any further LLM calls.
 
     cd finbot
     uv run python ../scenarios/replay/collect.py direct/baseline-ds1 \
-        --out ../docs/checkpoints/data/guard-replay-direct-v3.json
+        --out ../docs/results/guard-replay-direct-v3.json
 
 The verifier is V3 (finbot/probe/guards/llm.py): one LLM call at temperature 0 with the payment
 policy and a short guidance for the point. Without --verifier v3 every verdict is "allow", which
