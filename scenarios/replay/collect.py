@@ -7,10 +7,10 @@ points from that table without any further LLM calls.
 
     cd finbot
     uv run python ../scenarios/replay/collect.py direct/baseline-ds1 \
-        --out ../docs/results/guard-replay-direct-v3.json
+        --out ../docs/results/llm-guard-replay-direct.json
 
-The verifier is V3 (finbot/probe/guards/llm.py): one LLM call at temperature 0 with the payment
-policy and a short guidance for the point. Without --verifier v3 every verdict is "allow", which
+The guard is the LLM consistency check (finbot/probe/guards/llm.py): one LLM call at temperature 0 with the payment
+policy and a short guidance for the point. Without --verifier llm every verdict is "allow", which
 checks that the replay rebuilds the baseline. Verdicts are cached next to --out, so an
 interrupted run resumes where it stopped.
 """
@@ -135,7 +135,7 @@ def control_points(run: dict):
 _client = None
 
 
-async def ask_v3(point: dict) -> dict:
+async def ask_llm_guard(point: dict) -> dict:
     global _client
     from finbot.config import settings
     from finbot.probe.guards.base import GuardContext
@@ -174,7 +174,7 @@ async def verdict_for(kind: str, key: str, point: dict, cache: dict, cache_file:
     async with gate:
         for attempt in range(5):
             try:
-                result = await ask_v3(point)
+                result = await ask_llm_guard(point)
                 break
             except Exception:  # rate limits and timeouts: back off and retry
                 if attempt == 4:
@@ -201,7 +201,7 @@ def harm_step(run: dict) -> int | None:
 async def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("batch", nargs="+", help="run folders under scenarios/results/unified, e.g. direct/baseline-ds1")
-    parser.add_argument("--verifier", default="none", choices=["none", "v3"])
+    parser.add_argument("--verifier", default="none", choices=["none", "llm"])
     parser.add_argument("--limit", type=int, help="first N runs of each batch")
     parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--out", required=True, type=Path)

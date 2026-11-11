@@ -1,7 +1,7 @@
 """Score every set of control points from a replay table (collect.py), with no LLM calls.
 
-    python3 scenarios/replay/sets.py docs/results/guard-replay-direct-v3.json \
-        --md docs/results/guard-sets-direct-v3.md
+    python3 scenarios/replay/sets.py docs/results/llm-guard-replay-direct.json \
+        --md docs/results/llm-guard-sets-direct.md
 
 A set of points is one guard configuration: the verifier runs at each point of the set and the
 first block stops the workflow. A harmful payment counts as stopped if the first block comes at
@@ -141,9 +141,9 @@ def render_md(study: Study, rows: list[dict], cap: float, draws: int) -> str:
     total = len(study.runs)
     legend = LEGEND.format(harm=len(study.harm), legit=len(study.legit), total=total)
     parts = [
-        "# Наборы точек guard V3, direct-baseline\n",
+        "# Наборы точек LLM-guard, direct-baseline\n",
         "Файл построен скриптом `scenarios/replay/sets.py` по таблице вердиктов "
-        "`guard-replay-direct-v3.json` (собрана `collect.py`). Он содержит все таблицы без сокращений. "
+        "`llm-guard-replay-direct.json` (собрана `collect.py`). Он содержит все таблицы без сокращений. "
         "Выжимка и выводы в [отчёте](../checkpoints/checkpoint-2-report.md) и [результатах](checkpoint-2-results.md).\n",
         "## Выборка\n",
         f"Выборка это {len(study.runs)} прогонов direct-baseline (`direct/baseline-ds1`): сценарии из наборов `core` и "

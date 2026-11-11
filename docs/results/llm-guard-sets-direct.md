@@ -1,6 +1,6 @@
-# Наборы точек guard V3, direct-baseline
+# Наборы точек LLM-guard, direct-baseline
 
-Файл построен скриптом `scenarios/replay/sets.py` по таблице вердиктов `guard-replay-direct-v3.json` (собрана `collect.py`). Он содержит все таблицы без сокращений. Выжимка и выводы в [отчёте](../checkpoints/checkpoint-2-report.md) и [результатах](checkpoint-2-results.md).
+Файл построен скриптом `scenarios/replay/sets.py` по таблице вердиктов `llm-guard-replay-direct.json` (собрана `collect.py`). Он содержит все таблицы без сокращений. Выжимка и выводы в [отчёте](../checkpoints/checkpoint-2-report.md) и [результатах](checkpoint-2-results.md).
 
 ## Выборка
 
