@@ -37,6 +37,8 @@ async def run(case_id, legacy, study=None):
                       LLM_DEFAULT_MODEL="deepseek-flash", LLM_DEFAULT_TEMPERATURE="0", PROBE_ENFORCE="",
                       DATABASE_URL=f"sqlite:///{dest / 'finbot.db'}", REDIS_URL="redis://127.0.0.1:1",
                       PROBE_TRACE_DIR=str(dest/"traces") if study else "")
+    if study:
+        os.environ["LLM_TIMEOUT"]="135"
     from finbot.main import app  # register all models
     from finbot.core.data.database import create_tables, db_session
     from finbot.core.data.repositories import MCPServerConfigRepository
@@ -65,8 +67,20 @@ async def run(case_id, legacy, study=None):
     cap = (29.85 if phase in ("test","transfer") else 4.8) if study else .50
     ledger = Ledger(parent / "executor.sqlite", cap=cap)
     transport = RecordedTransport(dest / "calls.jsonl.gz", ledger, {"phase": phase, "case_id": case_id}, token=token())
+    if study:
+        class StudyUpstream(httpx.AsyncHTTPTransport):
+            async def handle_async_request(self, request):
+                if request.url.host != "api.eliza.yandex.net" or request.url.path != "/deepseek/chat/completions":
+                    raise ValueError("Unexpected study upstream")
+                request.headers["X-Request-Timeout"]="120s"
+                if not (dest/"wire-options.json").exists():
+                    (dest/"wire-options.json").write_text(json.dumps(
+                        {"provider_timeout":"120s","client_timeout":135,"retries":1}))
+                return await super().handle_async_request(request)
+        await transport.upstream.aclose()
+        transport.upstream=StudyUpstream(retries=0)
     sdk = AsyncOpenAI(api_key="transport-managed", base_url=BASE_URL, max_retries=0,
-                      http_client=httpx.AsyncClient(transport=transport, timeout=125 if study else 65))
+                      http_client=httpx.AsyncClient(transport=transport, timeout=135 if study else 65))
     get_llm_client().client._client = sdk
     if study:
         try:

@@ -29,11 +29,18 @@ def repair():
         raise ValueError("Executor still has in-flight reservations")
     if counts.get("unknown"):
         stamp=str(time.time_ns())
-        pair=[LIVE/f"meter-{stamp}-{i}.json" for i in (1,2)]
-        readback(pair[0])
-        time.sleep(50)
-        readback(pair[1])
-        reconcile(pair)
+        previous=LIVE/f"meter-{stamp}-0.json"
+        readback(previous)
+        for i in range(1,6):
+            time.sleep(50)
+            current=LIVE/f"meter-{stamp}-{i}.json"
+            readback(current)
+            try:
+                reconcile([previous,current])
+                break
+            except ValueError as exc:
+                if str(exc)!="Provider meter does not exactly explain known charges" or i==5:raise
+                previous=current
     preflight=LIVE/"preflight-denied-no-wire"
     preflight.mkdir(exist_ok=True)
     repaired=0
