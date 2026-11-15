@@ -65,9 +65,13 @@ def repair():
 
 
 def main():
+    args=list(sys.argv[1:])
     for _ in range(16):
-        result=subprocess.run([sys.executable,"-m","experiments.payment_controls.study.batch",*sys.argv[1:]],cwd=ROOT)
+        result=subprocess.run([sys.executable,"-m","experiments.payment_controls.study.batch",*args],cwd=ROOT)
         if result.returncode==0:return
+        if accounting_status().get("unknown",0)>1 and "--workers" in args:
+            idx=args.index("--workers")+1
+            args[idx]=str(min(int(args[idx]),3))
         repair()
     raise RuntimeError("Repeated executor instability; inspect study before further expenditure")
 
