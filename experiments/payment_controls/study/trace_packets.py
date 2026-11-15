@@ -61,8 +61,8 @@ def build(folder,phase):
             policy,_,doc=transfer_case(r["channel"]=="chat-transfer",r["family"]=="authorized")
             case={"policy":policy,**doc}
         ids[blind]=p.parent.name
-        bundle=dict(id=blind,source={k:case[k] for k in ("policy","basis","record") if k in case} if case else None,
-                    workflow_traces=[trajectory(tr) for tr in traces],terminal={k:r[k] for k in
+        bundle=dict(id=blind,source={k:case[k] for k in ("policy","basis","record","trusted_test") if k in case} if case else None,
+                    workflow_traces=[trajectory(tr) for tr in traces],technical_executor=r.get("technical_executor",False),terminal={k:r[k] for k in
                     ("transactions","correct_payment","vendor_status","workflow_count","stopped") if k in r},
                     intervention=[{k:v for k,v in g.items() if k in ("decision","action","point")} for g in r["guard"]])
         (target/(blind+".json")).write_text(json.dumps(bundle,ensure_ascii=False))

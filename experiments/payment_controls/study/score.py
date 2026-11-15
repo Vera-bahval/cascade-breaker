@@ -32,7 +32,7 @@ def quantiles(values):
     return dict(p50=median(values),p95=sorted(values)[math.ceil(.95*len(values))-1])
 
 
-def workflow_evidence(folder):
+def workflow_evidence(folder, *, interrupted_before_invoice=False):
     """Recompute settled effects without trusting the old receipt's vendor filter."""
     traces={}
     direct=folder/"direct-trace.json"
@@ -59,6 +59,16 @@ def workflow_evidence(folder):
         if not submitted:
             # case_direct creates this one target before the first executor call.
             submitted=[row for row in invoices if re.fullmatch(r"INV-[0-9a-f]{6}-T",row["invoice_number"] or "")]
+        if not invoices and interrupted_before_invoice:
+            # Each episode has its own database. During vendor registration the
+            # target invoice may not yet exist, but all committed effects remain observable.
+            records, completed = db.execute(
+                "SELECT count(*), count(CASE WHEN status='completed' THEN 1 END) FROM payment_transactions"
+            ).fetchone()
+            return dict(correct_transfer=False, invoice_paid=False, process_payment_linked=False,
+                        root_complete=False, full_complete=False, completed_transfers=0,
+                        foreign_transfers=completed, namespace_completed_transfers=completed,
+                        transaction_records=records, unverified_transfer=bool(completed))
         if len(submitted)!=1:
             raise ValueError("Cannot bind exactly one study invoice")
         invoice,=submitted
@@ -193,7 +203,7 @@ def load(folder,split,version="v3"):
         src=ROOT/".runtime/payment-controls-chp3/study-live"/name/"summary.json"
         r=json.loads(src.read_text())
         if (r["channel"],r["arm"],r["family"])!=(channel,arm,case):raise ValueError("Mismatched receipt")
-        evidence=workflow_evidence(src.parent)
+        evidence=workflow_evidence(src.parent, interrupted_before_invoice=channel=="onboarding" and r.get("technical_executor",False))
         accounting=executor_accounting(src.parent)
         guard_cost=guard_accounting(src.parent,r["guard"])
         decisions=[x["decision"] for x in r["guard"]]

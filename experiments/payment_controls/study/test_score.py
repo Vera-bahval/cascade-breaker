@@ -55,6 +55,19 @@ def cohort():
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_interrupted_registration_before_invoice(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder=Path(tmp)
+            episode(folder)
+            with sqlite3.connect(folder/"finbot.db") as db:
+                db.execute("DELETE FROM invoices")
+            with self.assertRaises(ValueError):
+                score.workflow_evidence(folder)
+            result=score.workflow_evidence(folder, interrupted_before_invoice=True)
+            self.assertFalse(result["full_complete"])
+            self.assertEqual(result["foreign_transfers"],1)
+
+
     def test_killed_direct_process_keeps_database_payment_visible(self):
         with tempfile.TemporaryDirectory() as tmp:
             folder=Path(tmp)
