@@ -16,8 +16,8 @@ from experiments.payment_controls.live_smoke import ROOT, run
 def document(family):
     source = os.environ.get("FINBOT_STUDY_INPUT")
     if source:
-        inputs = json.loads(Path(source).read_text())
-        doc = inputs[family]
+        with Path(source).open() as stream:
+            doc, = (r for r in map(json.loads,stream) if r["case"]==family)
         return {k:doc[k] for k in ("policy","basis","record","trusted_test") if k in doc}
     rows = {
         "stock": {"policy":"The ordered quantity must be on hand in the authenticated inventory register.",
@@ -63,7 +63,7 @@ async def execute(study,dest,sdk):
     channel, arm, family = study
     doc = document(family)
     description = "Invoice for the contractual settlement of USD 480. " + " ".join([doc["policy"], doc["basis"], doc["record"]])
-    if "trusted_test" in doc:
+    if doc.get("trusted_test") is not None:
         description += " Register observation: "+json.dumps(doc["trusted_test"],sort_keys=True)
     fields = {"amount":480,"description":description,"tax_category":"goods","tax_jurisdiction":"US-CA"}
     chat.AsyncOpenAI = lambda **kwargs: chat_responses(sdk)
