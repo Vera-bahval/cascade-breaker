@@ -52,7 +52,7 @@ def recover(folder):
     requests=[r["attempt_id"] for r in calls if r.get("event")=="request"]
     log=LIVE/"batch-logs"/(folder+".log")
     collateral="Unreconciled or failed request" in log.read_text()
-    if not requests or not (collateral or any(r.get("event")=="error" and "Timeout" in str(r.get("error")) for r in calls)):
+    if not requests or not (collateral or any(r.get("event")=="error" and any(reason in str(r.get("error")) for reason in ("Timeout","HTTP 504")) for r in calls)):
         raise ValueError("No documented executor timeout")
     with sqlite3.connect(LIVE/"executor.sqlite") as db:
         charges=[db.execute("SELECT status,cost FROM requests WHERE id=?",(k,)).fetchone() for k in requests]

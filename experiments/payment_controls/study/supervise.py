@@ -41,7 +41,7 @@ def repair():
         episode=LIVE/log.stem
         if not episode.exists() or (episode/"summary.json").is_file():continue
         text=log.read_text()
-        if "Unreconciled or failed request" not in text and "ReadTimeout" not in text:
+        if not any(reason in text for reason in ("Unreconciled or failed request","ReadTimeout","HTTP 504")):
             raise RuntimeError(f"Investigate {log.stem}")
         if (episode/"calls.jsonl.gz").exists():
             recover(episode.name)
