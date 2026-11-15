@@ -9,6 +9,7 @@ from collections import defaultdict
 from pathlib import Path
 from statistics import mean
 
+from .batch import method_fingerprint
 from .score import load, summarize, ROOT
 
 
@@ -60,7 +61,7 @@ def launch(folder):
     writer.writeheader()
     writer.writerows(schedule)
     schedule_bytes=out.getvalue().encode()
-    frozen=dict(eligible=eligible,cases=len(schedule),candidate=selected["candidate_id"],primary=point,
+    frozen=dict(method_sha256=method_fingerprint(),eligible=eligible,cases=len(schedule),candidate=selected["candidate_id"],primary=point,
                 prior=prior,projected_with_headroom=projected,schedule_sha256=digest(schedule_bytes),
                 inputs_sha256=digest((folder/"inputs.test.jsonl").read_bytes()),calibration_cases=len(cal)//7)
     bind(folder/"launch.json",(json.dumps(frozen,indent=2)+"\n").encode())
