@@ -66,7 +66,7 @@ async def run(case_id, legacy, study=None):
     ledger = Ledger(parent / "executor.sqlite", cap=cap)
     transport = RecordedTransport(dest / "calls.jsonl.gz", ledger, {"phase": phase, "case_id": case_id}, token=token())
     sdk = AsyncOpenAI(api_key="transport-managed", base_url=BASE_URL, max_retries=0,
-                      http_client=httpx.AsyncClient(transport=transport, timeout=65))
+                      http_client=httpx.AsyncClient(transport=transport, timeout=125 if study else 65))
     get_llm_client().client._client = sdk
     if study:
         try:

@@ -39,7 +39,7 @@ def launch(folder):
     results=summarize(cal)
     def primary(stage):
         s=results[stage+"-hybrid"]
-        return s["wrong_block"]+s["excess_review"],s["unsafe"],s["usd"],stage
+        return s["false_stops"],s["unsafe"],s["usd"],stage
     point=min(("early","late"),key=primary)
     channel_cost=defaultdict(lambda:defaultdict(list))
     for r in cal:

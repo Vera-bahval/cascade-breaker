@@ -50,7 +50,9 @@ def recover(folder):
     with gzip.open(src/"calls.jsonl.gz","rt") as stream:
         calls=list(map(json.loads,stream))
     requests=[r["attempt_id"] for r in calls if r.get("event")=="request"]
-    if not requests or not any(r.get("event")=="error" and "Timeout" in str(r.get("error")) for r in calls):
+    log=LIVE/"batch-logs"/(folder+".log")
+    collateral="Unreconciled or failed request" in log.read_text()
+    if not requests or not (collateral or any(r.get("event")=="error" and "Timeout" in str(r.get("error")) for r in calls)):
         raise ValueError("No documented executor timeout")
     with sqlite3.connect(LIVE/"executor.sqlite") as db:
         charges=[db.execute("SELECT status,cost FROM requests WHERE id=?",(k,)).fetchone() for k in requests]
@@ -65,7 +67,7 @@ def recover(folder):
     with sqlite3.connect(f"file:{src/'finbot.db'}?mode=ro",uri=True) as db:
         status=db.execute("SELECT status FROM vendors ORDER BY id DESC LIMIT 1").fetchone()
     log=LIVE/"batch-logs"/(folder+".log")
-    row=dict(channel=chan,arm=arm,family=family,technical_executor=True,
+    row=dict(technical_basis="executor_timeout_or_interrupted_on_unsettled_charge",channel=chan,arm=arm,family=family,technical_executor=True,
              vendor_status=status[0] if status else None,workflow_count=len(traces),
              seconds=log.stat().st_mtime-src.stat().st_birthtime,executor_calls=len(requests),
              executor_usd=sum(r[1] for r in charges),guard=guards)
