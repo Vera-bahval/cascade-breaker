@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Literal, Protocol
 
-GuardDecision = Literal["allow", "block"]
+GuardDecision = Literal["allow", "block", "review"]
 
 # Point families. P0-P4 sit on the critical path before the payment;
 # P5 sees the final answer and can only detect.

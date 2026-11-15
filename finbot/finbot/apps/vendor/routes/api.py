@@ -78,6 +78,9 @@ class AttachmentRef(BaseModel):
 class InvoiceCreateRequest(BaseModel):
     """Invoice creation request"""
 
+    tax_category: str = "goods"
+    tax_jurisdiction: str = ""
+
     invoice_number: str
     amount: float
     description: str

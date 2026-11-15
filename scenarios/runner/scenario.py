@@ -15,7 +15,7 @@ VIA_KINDS = {
     "direct": {"orchestrator"},
 }
 
-INVOICE_KEYS = {"amount", "description", "due_in_days", "days_ago", "invoice_number"}
+INVOICE_KEYS = {"tax_category", "tax_jurisdiction", "amount", "description", "due_in_days", "days_ago", "invoice_number"}
 # Only a direct run can set a status; through the portal the agents decide it.
 SETUP_INVOICE_KEYS = INVOICE_KEYS | {"status"}
 INVOICE_STATUSES = {"submitted", "processing", "approved", "rejected", "paid"}
@@ -57,6 +57,7 @@ def invoice_fields(spec: dict[str, Any], number: str) -> dict[str, Any]:
     issued = date.today() - timedelta(days=int(spec.get("days_ago", 0)))
     due = issued + timedelta(days=int(spec.get("due_in_days", 30)))
     return {
+        **{key: spec[key] for key in ("tax_category", "tax_jurisdiction") if key in spec},
         "invoice_number": spec.get("invoice_number") or number,
         "amount": float(spec["amount"]),
         "description": spec["description"],

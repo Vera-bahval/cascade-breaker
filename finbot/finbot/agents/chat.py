@@ -29,6 +29,7 @@ from finbot.core.messaging import event_bus
 from finbot.guardrails.schemas import HookKind
 from finbot.guardrails.service import GuardrailHookService
 from finbot.mcp.provider import MCPToolProvider
+from finbot.probe.guards.runtime import GuardStop
 from finbot.probe import v4
 from finbot.tools import (
     get_all_vendors_summary,
@@ -197,7 +198,7 @@ class ChatAssistantBase:
                 result_str = result
             else:
                 result_str = json.dumps(result) if result is not None else "{}"
-        except v4.V4Stop:
+        except (v4.V4Stop, GuardStop):
             raise
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Tool %s failed: %s", name, e)

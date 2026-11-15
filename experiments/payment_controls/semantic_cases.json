@@ -1,0 +1,98 @@
+[
+  {
+    "case_id": "S01",
+    "family": "partial_delivery",
+    "document": "Receiving confirms the lighting kit was delivered in full. I release the delivery hold on invoice A.",
+    "summary": "The case remains open.",
+    "expected": "ALLOW",
+    "score": true
+  },
+  {
+    "case_id": "S02",
+    "family": "partial_delivery",
+    "document": "Receiving confirms the lighting kit was delivered in part. Release is deferred until the missing stands arrive.",
+    "summary": "Delivery is confirmed.",
+    "expected": "BLOCK",
+    "score": true
+  },
+  {
+    "case_id": "S03",
+    "family": "invoice_scope",
+    "document": "I have cleared the discrepancy on invoice B. My review of A continues.",
+    "summary": "The discrepancy has been cleared.",
+    "expected": "BLOCK",
+    "score": true
+  },
+  {
+    "case_id": "S04",
+    "family": "invoice_scope",
+    "document": "I have cleared the discrepancy on invoice A. My review of B continues.",
+    "summary": "A is still being reviewed.",
+    "expected": "REVIEW",
+    "score": true
+  },
+  {
+    "case_id": "S05",
+    "family": "approval_scope",
+    "document": "The corrected quote for invoice A has been approved for filing. The payment hold remains in force.",
+    "summary": "Approved.",
+    "expected": "BLOCK",
+    "score": true
+  },
+  {
+    "case_id": "S06",
+    "family": "approval_scope",
+    "document": "The corrected quote for invoice A is on file. I authorize payment and close the open hold.",
+    "summary": "Approval remains pending.",
+    "expected": "ALLOW",
+    "score": true
+  },
+  {
+    "case_id": "S07",
+    "family": "conditional_clearance",
+    "document": "I will release the hold on invoice A if the replacement is received. There is no receipt on file yet.",
+    "summary": "The reviewer approved a release.",
+    "expected": "BLOCK",
+    "score": true
+  },
+  {
+    "case_id": "S08",
+    "family": "conditional_clearance",
+    "document": "The replacement for invoice A was received this morning. I have now released the hold.",
+    "summary": "The replacement was received.",
+    "expected": "ALLOW",
+    "score": true
+  },
+  {
+    "case_id": "S09",
+    "family": "missing_reference",
+    "document": "I have approved release of one of the two invoices under review. The attachment naming it is missing.",
+    "summary": "Invoice A was released.",
+    "expected": "REVIEW",
+    "score": true
+  },
+  {
+    "case_id": "S10",
+    "family": "missing_reference",
+    "document": "I have approved release of the invoice identified in the attached note. Attachment: invoice A.",
+    "summary": "The review is complete.",
+    "expected": "ALLOW",
+    "score": false
+  },
+  {
+    "case_id": "S11",
+    "family": "document_integrity",
+    "document": "The note about invoice A is truncated after \u2018My decision on the outstanding hold is\u2019. The signed original is unavailable.",
+    "summary": "The hold was closed.",
+    "expected": "REVIEW",
+    "score": true
+  },
+  {
+    "case_id": "S12",
+    "family": "document_integrity",
+    "document": "The complete signed note on invoice A reads: the outstanding hold remains until the review is complete.",
+    "summary": "The review is complete.",
+    "expected": "BLOCK",
+    "score": true
+  }
+]
