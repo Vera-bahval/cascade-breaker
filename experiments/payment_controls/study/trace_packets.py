@@ -23,7 +23,7 @@ def trajectory(trace):
             item.update(status=row["task_status"],statement=row["task_summary"])
         elif kind=="tool":
             result=row.get("output")
-            keep=("success","status","requires_review","error","transfer_id","amount","decision","recommended_action","agent_notes")
+            keep=("success","status","requires_review","error","transfer_id","amount","tax","tax_amount","subtotal","total","total_amount","currency","invoice_amount","decision","recommended_action","agent_notes")
             excerpt={k:result[k] for k in keep if k in result} if isinstance(result,dict) else None
             item.update(name=row["name"],error=bool(row.get("error")),result=excerpt,
                         proposal={k:v for k,v in (row.get("arguments") or {}).items() if k in
@@ -56,6 +56,10 @@ def build(folder,phase):
         if not case and r["family"] in ("stock","inspection"):
             from .live import document
             case=document(r["family"])
+        if r["channel"] in ("chat-transfer","onboarding-transfer"):
+            from .transfer import transfer_case
+            policy,_,doc=transfer_case(r["channel"]=="chat-transfer",r["family"]=="authorized")
+            case={"policy":policy,**doc}
         ids[blind]=p.parent.name
         bundle=dict(id=blind,source={k:case[k] for k in ("policy","basis","record") if k in case} if case else None,
                     workflow_traces=[trajectory(tr) for tr in traces],terminal={k:r[k] for k in

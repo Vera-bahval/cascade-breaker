@@ -1,8 +1,10 @@
 """Execute a frozen family schedule in isolated processes; collect summary without gold."""
 import argparse
 import csv
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
+import hashlib
 import json
+from contextlib import closing
 import os
 from pathlib import Path
 import random
@@ -34,6 +36,9 @@ def main():
     folder=args.corpus.resolve()
     if args.split=="test":
         release=json.loads((folder/"launch.json").read_text())
+        for filename, field in (("schedule.test.csv","schedule_sha256"),("inputs.test.jsonl","inputs_sha256")):
+            if hashlib.sha256((folder/filename).read_bytes()).hexdigest()!=release[field]:
+                raise ValueError("Blinded test inputs changed after freeze")
         if not release["eligible"] or release["cases"]!=len(jobs(folder,args.split))//7:
             raise ValueError("Blind release and budget sizing required before test")
     queue=jobs(folder,args.split)
@@ -59,14 +64,26 @@ def main():
                         receipt = db.execute("SELECT status,cost FROM requests WHERE id=?", (row["id"],)).fetchone()
                         if receipt is None or receipt[0]!="complete" or receipt[1] is None:
                             raise RuntimeError(f"Unreconciled official Jev request in {name}")
+        if result.returncode == 0:
+            with closing(sqlite3.connect(runtime/name/"finbot.db")) as db:
+                if db.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone()[0] or db.execute("PRAGMA quick_check").fetchone()!=("ok",):
+                    raise RuntimeError(f"Could not checkpoint {name}")
         if result.returncode:
             raise RuntimeError(f"Incomplete episode {name}. Check ledger before resumption")
         return "complete"
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
-        # Bound in-flight work at an accounting failure.
-        for offset in range(0,len(queue),args.workers):
-            list(pool.map(execute,queue[offset:offset+args.workers]))
-            print(min(len(queue),offset+args.workers),"/",len(queue),flush=True)
+        todo=iter(queue)
+        pending={pool.submit(execute,job) for _,job in zip(range(args.workers),todo)}
+        completed=0
+        while pending:
+            finished,pending=wait(pending,return_when=FIRST_COMPLETED)
+            for task in finished:
+                task.result()
+                completed+=1
+            for _,job in zip(finished,todo):
+                pending.add(pool.submit(execute,job))
+            if completed%20==0 or not pending:print(completed,"/",len(queue),flush=True)
+
 
 
 if __name__=="__main__":
