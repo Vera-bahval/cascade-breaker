@@ -20,7 +20,7 @@ def method_fingerprint():
     digest=hashlib.sha256()
     sources=[*sorted((ROOT/"finbot/finbot").rglob("*.py")), *sorted((ROOT/"scenarios/runner").glob("*.py"))]
     sources.extend(ROOT/"experiments/payment_controls"/name for name in (
-        "live_smoke.py","probe_models.py","study/live.py","study/enforce.py","study/development.py"))
+        "live_smoke.py","probe_models.py","study/live.py","study/enforce.py","study/development.py","study/scene.py"))
     for path in sources:
         digest.update(path.relative_to(ROOT).as_posix().encode()+b"\0"+hashlib.sha256(path.read_bytes()).digest())
     return digest.hexdigest()
@@ -57,6 +57,11 @@ def main():
     fingerprint=None
     if args.split=="test":
         release=json.loads((folder/"launch.json").read_text())
+        retirement=folder/"test_status.json"
+        if retirement.exists():
+            status=json.loads(retirement.read_text())
+            if status["candidate"]==release["candidate"] and status["state"]=="retired_before_closed_unblinding":
+                raise ValueError("This corpus was retired after calibration review; its full-scene gold is unsupported")
         fingerprint=release["method_sha256"]
         if fingerprint!=method_fingerprint():raise ValueError("Frozen method changed")
         for filename, field in (("schedule.test.csv","schedule_sha256"),("inputs.test.jsonl","inputs_sha256")):
