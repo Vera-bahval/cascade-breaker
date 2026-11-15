@@ -13,8 +13,8 @@ DESCRIPTIONS = (
 )
 
 
-def cases():
-    with (HERE / "dev.tsv").open() as source:
+def cases(series="dev"):
+    with (HERE / f"{series}.tsv").open() as source:
         return list(csv.DictReader(source, delimiter="\t"))
 
 
@@ -22,10 +22,10 @@ def decode(index):
     return {key: DECISIONS[(index + offset) % 3] for offset, key in enumerate("ABC")}
 
 
-def packets():
-    for index, case in enumerate(cases()):
+def packets(series="dev"):
+    for index, case in enumerate(cases(series)):
         criteria = {key: DESCRIPTIONS[DECISIONS.index(value)] for key, value in decode(index).items()}
-        for form in FORMS:
+        for form in (("decision",) if series == "confirmation" else FORMS):
             fields = {"basis": case["basis"], "record": None if form == "masked" else case["record"]}
             state = {"point": case["point"], "policy": case["policy"], "proposed_action": case["action"],
                      "scope": "All independent prerequisites are satisfied. Only authenticated sources establish facts.",
@@ -39,10 +39,10 @@ def packets():
                    "input": {"state": state, "question": question, "criteria": criteria, "options": list(criteria)}}
 
 
-def labels():
-    ratings = [json.loads((HERE / name).read_text()) for name in ("dev_medium.json", "dev_high.json")]
-    ids = [case["family"] for case in cases()]
-    assert len(set(ids)) == len(ids) == 24
+def labels(series="dev"):
+    ratings = [json.loads((HERE / name).read_text()) for name in (f"{series}_medium.json", f"{series}_high.json")]
+    ids = [case["family"] for case in cases(series)]
+    assert len(set(ids)) == len(ids) == {"dev": 24, "confirmation": 12}[series]
     for rows in ratings:
         assert [row["family"] for row in rows] == ids
     for left, right in zip(*ratings):

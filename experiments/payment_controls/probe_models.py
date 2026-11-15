@@ -46,15 +46,17 @@ def bind(folder, name, value):
             json.dump(value, record, sort_keys=True)
 
 
-def probe(provider, question_control=False, development=False):
+def probe(provider, question_control=False, development=False, confirmation=False):
     folder = Path(__file__).resolve().parents[2] / ".runtime" / "payment-controls-chp3" / provider
     folder.mkdir(mode=0o700, parents=True, exist_ok=True)
-    if development:
+    if development or confirmation:
         from experiments.payment_controls.study.development import labels, packets as development_packets
-        labels()
-        rows = list(development_packets())
-        index_path = "development_observations.json"
-        bind(folder, "development_inputs.json", [eliza.query_identity(r["input"]) for r in rows])
+        series = "confirmation" if confirmation else "dev"
+        labels(series)
+        rows = list(development_packets(series))
+        prefix = "confirmation" if confirmation else "development"
+        index_path = prefix + "_observations.json"
+        bind(folder, prefix + "_inputs.json", [eliza.query_identity(r["input"]) for r in rows])
     elif question_control:
         from experiments.payment_controls.question_control import controls
         rows = list(controls())
@@ -65,7 +67,7 @@ def probe(provider, question_control=False, development=False):
         index_path = "observations.json"
         bind(folder, "inputs.json", [r["input_sha256"] for r in rows])
     ledger = eliza.Ledger(folder / "ledger.sqlite", 2.0 if provider == "jev" else 5.0)
-    if development:
+    if development or confirmation:
         # The executor and live Jev pilot are in separate ledgers.
         # Reserve their share of the development cap before admitting this series.
         ledger.cap -= 0.05
@@ -169,5 +171,6 @@ if __name__ == "__main__":
     series = parser.add_mutually_exclusive_group()
     series.add_argument("--question-control", action="store_true")
     series.add_argument("--development", action="store_true")
+    series.add_argument("--confirmation", action="store_true")
     args = parser.parse_args()
-    probe(args.provider, args.question_control, args.development)
+    probe(args.provider, args.question_control, args.development, args.confirmation)
