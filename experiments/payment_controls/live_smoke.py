@@ -13,7 +13,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 
 
-async def run(case_id, legacy):
+async def run(case_id, legacy, study=None):
     # Use the existing recorded Eliza client, with its no-retry reservations and native Responses adapter.
     pinned = {"native_adapter.py": "ab74e71b8391863faf27dec967bbaed4322ee2a8ff3e45d089e9015aed910c24",
               "transport.py": "85f921d438bf8821620cba805e59dee1c30618c609d0b5d2ccb0fc8520fcd65e"}
@@ -26,7 +26,7 @@ async def run(case_id, legacy):
     from transport import BASE_URL, Ledger, RecordedTransport
     from experiments.local_guards_archive_comparison.eliza import metadata, token
 
-    parent = ROOT / ".runtime/payment-controls-chp3/live"
+    parent = ROOT / ".runtime/payment-controls-chp3" / ("study-live" if study else "live")
     parent.mkdir(mode=0o700, parents=True, exist_ok=True)
     dest = parent / case_id
     dest.mkdir(mode=0o700, exist_ok=True)
@@ -35,7 +35,8 @@ async def run(case_id, legacy):
     os.chdir(ROOT / "finbot")
     os.environ.update(LLM_PROVIDER="openai", OPENAI_BASE_URL=BASE_URL, OPENAI_API_KEY="transport-managed",
                       LLM_DEFAULT_MODEL="deepseek-flash", LLM_DEFAULT_TEMPERATURE="0", PROBE_ENFORCE="",
-                      DATABASE_URL=f"sqlite:///{dest / 'finbot.db'}", REDIS_URL="redis://127.0.0.1:1")
+                      DATABASE_URL=f"sqlite:///{dest / 'finbot.db'}", REDIS_URL="redis://127.0.0.1:1",
+                      PROBE_TRACE_DIR=str(dest/"traces") if study else "")
     from finbot.main import app  # register all models
     from finbot.core.data.database import create_tables, db_session
     from finbot.core.data.repositories import MCPServerConfigRepository
@@ -58,11 +59,26 @@ async def run(case_id, legacy):
     if (model.get("disabled") or model["prices"]["input_tokens"] > 0.30e-6
             or model["prices"]["output_tokens"] > 1.2e-6 or min(meta["remaining"].values()) < .50):
         raise ValueError("Insufficient quota or model/price change")
-    ledger = Ledger(parent / "executor.sqlite", cap=.50)
-    transport = RecordedTransport(dest / "calls.jsonl.gz", ledger, {"phase": "pilot", "case_id": case_id}, token=token())
+    phase = os.environ.get("FINBOT_STUDY_PHASE","development") if study else "pilot"
+    if phase not in ("development","test","transfer","pilot"):
+        raise ValueError("Unknown study phase")
+    cap = (29.85 if phase in ("test","transfer") else 4.8) if study else .50
+    ledger = Ledger(parent / "executor.sqlite", cap=cap)
+    transport = RecordedTransport(dest / "calls.jsonl.gz", ledger, {"phase": phase, "case_id": case_id}, token=token())
     sdk = AsyncOpenAI(api_key="transport-managed", base_url=BASE_URL, max_retries=0,
                       http_client=httpx.AsyncClient(transport=transport, timeout=65))
     get_llm_client().client._client = sdk
+    if study:
+        try:
+            from experiments.payment_controls.study.live import execute
+            if study[0] in ("chat-transfer","onboarding-transfer"):
+                from experiments.payment_controls.study.transfer import transport_check
+                await transport_check(study, dest, sdk)
+            else:
+                await execute(study, dest, sdk)
+        finally:
+            await sdk.close()
+        return
     payable = case_id in ("normal-tax", "release-note")
     with_jev = case_id in ("release-note", "active-note")
     if with_jev:
