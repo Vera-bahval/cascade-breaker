@@ -106,6 +106,9 @@ class StudyVerifier:
         identity = query_identity([self.folder.name,run_id,self.calls,body])
         key = os.environ["TYPESAFE_API_KEY"]
         async with jev_slot(self.ledger), httpx.AsyncClient(timeout=60,trust_env=False,follow_redirects=False) as client:
+            # Bind the reservation to its episode even when validation or the network fails.
+            with (self.folder/"jev-requests.jsonl").open("a") as stream:
+                stream.write(json.dumps({"id":identity})+"\n")
             self.ledger.reserve(identity,65536*PRICE)
             reply = await client.post("https://api.typesafe.ai/v1/systemone",json=body,
                                       headers={"Authorization":"Bearer "+key})

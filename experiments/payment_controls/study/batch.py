@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import random
+import sqlite3
 import subprocess
 import sys
 
@@ -50,6 +51,14 @@ def main():
         with (logs/(name+".log")).open("xb") as log:
             result=subprocess.run([sys.executable,"-m","experiments.payment_controls.study.live",*job],
                                   cwd=ROOT,env=env,stdout=log,stderr=log)
+        if result.returncode == 0:
+            entries = runtime/name/"jev-requests.jsonl"
+            if entries.exists():
+                with entries.open() as stream, sqlite3.connect(runtime/"jev.sqlite") as db:
+                    for row in map(json.loads,stream):
+                        receipt = db.execute("SELECT status,cost FROM requests WHERE id=?", (row["id"],)).fetchone()
+                        if receipt is None or receipt[0]!="complete" or receipt[1] is None:
+                            raise RuntimeError(f"Unreconciled official Jev request in {name}")
         if result.returncode:
             raise RuntimeError(f"Incomplete episode {name}. Check ledger before resumption")
         return "complete"

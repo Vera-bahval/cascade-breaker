@@ -325,7 +325,7 @@ def main():
                      checkpoint2_payment_exact_journal_overlap_754=sum(bool(row["exact_journal_links_754"]) for row in paid_rows),
                      weak_model_scenario_turn_collisions=[dict(key=list(key), annotation_ids=value) for key, value in sorted(weak.items()) if len(value) > 1],
                      warning="Same scenario names are candidates, not the same source episode; calls and hook line coordinates are different streams"),
-        claim_300=dict(status="UNVERIFIED_NO_SOURCE_BOUND_ERROR_REGISTER", provenance="User reports an Excalidraw board claim; board content not imported or treated as evidence",
+        claim_300=dict(status="UNVERIFIED_NO_SOURCE_BOUND_ERROR_REGISTER", provenance="Excalidraw source-transcript.md line 1019 asks to examine 300 errors. It does not identify the underlying records.",
                        arithmetic="128+27+121=276 records in incompatible units, not 300 errors; these do not yield independent error events",
                        cannot_infer=["300 errors", "300 independent benign trials", "300 cascades", "a closed holdout"]),
         review_scope=dict(all_754_raw_journals_hash_verified=True, all_128_anchors_verified=True,
@@ -380,7 +380,7 @@ def main():
 
 ## «300 ошибок»
 
-Источник утверждения — сообщённая пользователем доска Excalidraw, без подтверждённого реестра и привязки к записям. Статус UNVERIFIED. 128+27+121=276 записей разных единиц; это не число ошибок, каскадов или независимых benign-испытаний. Архив не создаёт закрытый holdout и не подтверждает FPR на 300 независимых случаях.
+Источник утверждения — пункт на доске Excalidraw (локальный source-transcript.md, строка 1019), без подтверждённого реестра и привязки к записям. Статус UNVERIFIED. 128+27+121=276 записей разных единиц; это не число ошибок, каскадов или независимых benign-испытаний. Архив не создаёт закрытый holdout и не подтверждает FPR на 300 независимых случаях.
 
 ## Воспроизведение и границы
 
