@@ -13,7 +13,7 @@ import httpx
 from experiments.local_guards_archive_comparison import eliza
 from experiments.payment_controls.pilot import packets
 
-MODEL = "jev-1.14.0"
+MODEL = "jev-latest"
 PRICE = 0.042 / 1_000_000
 INPUT_MAX = 0.30 / 1_000_000
 OUTPUT_MAX = 1.20 / 1_000_000
@@ -26,7 +26,7 @@ MEANING = {
 
 
 def request_body(provider, packet):
-    choices = {key: MEANING[key] for key in packet["options"]}
+    choices = packet.get("criteria") or {key: MEANING[key] for key in packet["options"]}
     question = {"instructions": packet["question"], "criteria": choices}
     if provider == "jev":
         return {"model": MODEL, "state": packet["state"], "questions": {"check": {"type": "choice", **question}}}
@@ -46,10 +46,18 @@ def bind(folder, name, value):
             json.dump(value, record, sort_keys=True)
 
 
-def probe(provider):
+def probe(provider, question_control=False):
     folder = Path(__file__).resolve().parents[2] / ".runtime" / "payment-controls-chp3" / provider
     folder.mkdir(mode=0o700, parents=True, exist_ok=True)
-    bind(folder, "inputs.json", [r["input_sha256"] for r in packets()])
+    if question_control:
+        from experiments.payment_controls.question_control import controls
+        rows = list(controls())
+        index_path = "question_control_observations.json"
+        bind(folder, "question_control_inputs.json", [eliza.query_identity(r["input"]) for r in rows])
+    else:
+        rows = list(packets())
+        index_path = "observations.json"
+        bind(folder, "inputs.json", [r["input_sha256"] for r in rows])
     ledger = eliza.Ledger(folder / "ledger.sqlite", 2.0 if provider == "jev" else 5.0)
     if provider == "jev":
         secret = os.getenv("TYPESAFE_API_KEY") or subprocess.check_output(
@@ -70,8 +78,13 @@ def probe(provider):
     headers = {"Authorization": auth}
     if provider == "eliza":
         headers.update({"X-Retries": "1", "X-Request-Timeout": "60s"})
-    with httpx.Client(headers=headers, timeout=75, follow_redirects=False) as client:
-        for row in packets():
+    with httpx.Client(headers=headers, timeout=75, follow_redirects=False, trust_env=False) as client:
+        if provider == "jev":
+            listing = client.get("https://api.typesafe.ai/v1/models")
+            listing.raise_for_status()
+            published, = (item for item in listing.json()["models"] if item.get("name") == MODEL)
+            bind(folder, "registry.json", {"model": MODEL, "release_date": published["release_date"], "usd_per_input_token": PRICE})
+        for row in rows:
             packet = row["input"]
             body = request_body(provider, packet)
             identity = eliza.query_identity({"url": url, "body": body})
@@ -107,8 +120,9 @@ def probe(provider):
                     raise ValueError("Invalid Jev token usage")
                 charge = tokens * PRICE
                 ledger.complete(identity, charge)
-                if value["model"] != MODEL:
-                    raise ValueError("TypeSafe model changed")
+                if not value.get("model"):
+                    raise ValueError("TypeSafe did not identify the served model")
+                bind(folder, "served_model.json", value["model"])
                 answer = value["answers"]["check"]
                 choice = answer["choice"]
                 probs = answer["probabilities"]
@@ -134,13 +148,14 @@ def probe(provider):
             pending.replace(receipt)
     mappings = [{"case_id": r["case_id"], "summary": r["summary"], "form": r["form"],
                  "receipt": eliza.query_identity({"url": url, "body": request_body(provider, r["input"])})}
-                for r in packets()]
-    (folder / "observations.json").write_text(json.dumps(mappings, indent=2))
+                for r in rows]
+    (folder / index_path).write_text(json.dumps(mappings, indent=2))
     print(ledger.summary())
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("provider", choices=["jev", "eliza"])
+    parser.add_argument("--question-control", action="store_true")
     args = parser.parse_args()
-    probe(args.provider)
+    probe(args.provider, args.question_control)
