@@ -1,0 +1,60 @@
+{
+  "rows": 6,
+  "unique_source_actions": 6,
+  "unique_source_episodes": 6,
+  "strict_matched_pairs": 1,
+  "gold_counts": {
+    "BLOCK": 4,
+    "ALLOW": 2
+  },
+  "rule_counts": {
+    "DEFER": 4,
+    "BLOCK": 2
+  },
+  "source_hashes": {
+    "records.jsonl.gz": "a83deccfe695abc1037fbc8552f6bde066938a1cf5a8aede258216fa4582dfcf",
+    "labels.jsonl": "cf60d845f15be71e07f618ffd9f4cf365be286a94762d2d4616e779e5749d75a",
+    "records-manifest.json": "e644ac9bdee7720bc5efae50899d4c1a5d0f98e308818956f07aef2717bafd7c",
+    "labels-freeze.json": "283e381e1c55451f20efaff9dc6d76e07ef2f32863434f4f6d0d64786a0d2336"
+  },
+  "code_sha256": "a3eef425c9dd9007cd9610acebe2ec0837b5b26d7d113ed2b25298a2041cac8d",
+  "native_method_sha256": "dbcf5faa8f4569bef7924974d10446158515ee57500642011bee578026719d9d",
+  "legacy_v1_sha256": "19e87513f604656ad2eca7467504fce5de8ee7bb84d34a60048a2dacb9ddbf9e",
+  "guards_receive_no_later_events": true,
+  "paid_calls": 0,
+  "api_cost_usd": 0.0,
+  "local_compute_cost_usd": null,
+  "gaps": [
+    {
+      "mechanism": "duplicate",
+      "status": "NO_ADMITTED_REAL_PAIR",
+      "detail": "No observed positive prior-transfer count in1822 non-old P4 records; incomplete histories cannot establish absence of all duplicates."
+    },
+    {
+      "mechanism": "beneficiary_mismatch",
+      "status": "NO_ADMITTED_REAL_PAIR",
+      "detail": "No mismatch in1822 non-old P4 records. The two reviewed mismatch cases were explicit injected old scenarios and are excluded."
+    },
+    {
+      "mechanism": "handoff_or_information_loss",
+      "status": "NO_ADMITTED_WRONG_P2B_PAIR",
+      "detail": "Receiving a correctly linked negative Fraud finding is permissible; a later bad transfer does not retrospectively make that P2b action wrong."
+    },
+    {
+      "mechanism": "wrong_amount_or_status",
+      "status": "REAL_BAD_ACTIONS_WITHOUT_EXACT_MATCHED_CLEAN",
+      "detail": "R03 andR04 are recorded proposals, not synthetic variants. R06 is an independent clean control, not their counterfactual twin."
+    },
+    {
+      "mechanism": "tax",
+      "status": "HISTORICAL_ONLY_UNPAIRED",
+      "detail": "R05 contains actual failed TaxCalc before transfer. Current automatic FinStripe tax verification cannot be projected backward; R06 is a separate successful historical control."
+    }
+  ],
+  "limitations": [
+    "Disclosed, purposive diagnostic sample; no prevalence, FPR, generalization or marginal Jev benefit estimate",
+    "Historical labels are model-assisted source review, not independent human gold",
+    "Complete current rules cannot be identically replayed with missing DB/config/notes operands; partial invariant BLOCK is reported separately",
+    "Known financial source assertions normalized; raw attacking text, source identifiers and future outcomes are excluded from packet"
+  ]
+}
