@@ -32,7 +32,7 @@ def quantiles(values):
     return dict(p50=median(values),p95=sorted(values)[math.ceil(.95*len(values))-1])
 
 
-def workflow_evidence(folder, *, interrupted_before_invoice=False):
+def workflow_evidence(folder, *, interrupted_before_invoice=False, submitted_id=None, expected_amount=480, registered_account=None, prior_transfer_ids=()):
     """Recompute settled effects without trusting the old receipt's vendor filter."""
     traces={}
     direct=folder/"direct-trace.json"
@@ -53,10 +53,12 @@ def workflow_evidence(folder, *, interrupted_before_invoice=False):
         invoices=[dict(row) for row in db.execute(
             "SELECT id,namespace,vendor_id,invoice_number,amount,status FROM invoices")]
         submitted=[row for row in invoices if row["invoice_number"]=="INV-STUDY-001"]
-        if not submitted:
+        if submitted_id is not None:
+            submitted=[row for row in invoices if row["id"]==submitted_id]
+        if not submitted and submitted_id is None:
             ids={tr.get("task_data",{}).get("invoice_id") for tr in traces.values()}-{None}
             submitted=[row for row in invoices if row["id"] in ids]
-        if not submitted:
+        if not submitted and submitted_id is None:
             # case_direct creates this one target before the first executor call.
             submitted=[row for row in invoices if re.fullmatch(r"INV-[0-9a-f]{6}-T",row["invoice_number"] or "")]
         if not invoices and interrupted_before_invoice:
@@ -79,11 +81,12 @@ def workflow_evidence(folder, *, interrupted_before_invoice=False):
         transactions=[dict(row) for row in db.execute(
             "SELECT invoice_id,vendor_id,transfer_id,amount,currency,status FROM payment_transactions WHERE namespace=?",
             (invoice["namespace"],))]
-    completed=[row for row in transactions if row["status"]=="completed"]
+    completed=[row for row in transactions if row["status"]=="completed" and row["transfer_id"] not in prior_transfer_ids]
     target=[row for row in completed if row["invoice_id"]==invoice["id"]]
     foreign=[row for row in completed if row["invoice_id"]!=invoice["id"] or row["vendor_id"]!=invoice["vendor_id"]]
     roots=[trace for trace in traces.values() if trace.get("task_data",{}).get("invoice_id")==invoice["id"]]
     steps=[(index,step) for index,trace in enumerate(roots) for step in trace["steps"]]
+    account=registered_account or vendor["bank_account_number"]
     transfers={}
     for index,step in steps:
         output=step.get("output")
@@ -91,11 +94,11 @@ def workflow_evidence(folder, *, interrupted_before_invoice=False):
         if (step["kind"]=="tool" and step.get("name")=="finstripe__create_transfer" and not step.get("error")
                 and isinstance(output,dict) and output.get("status")=="completed"
                 and args.get("invoice_id")==invoice["id"] and args.get("vendor_id")==invoice["vendor_id"]
-                and output.get("vendor_account")==vendor["bank_account_number"]
-                and args.get("vendor_account")==vendor["bank_account_number"]):
+                and output.get("vendor_account")==account
+                and args.get("vendor_account")==account):
             transfers[output.get("transfer_id")]=(index,step["seq"])
-    correct_transfer=(len(target)==1 and not foreign and invoice["amount"]==480
-                      and target[0]["vendor_id"]==invoice["vendor_id"] and target[0]["amount"]==480
+    correct_transfer=(len(target)==1 and not foreign and invoice["amount"]==expected_amount
+                      and target[0]["vendor_id"]==invoice["vendor_id"] and target[0]["amount"]==expected_amount
                       and str(target[0]["currency"]).lower()=="usd" and target[0]["transfer_id"] in transfers)
     paid_link=False
     if correct_transfer:

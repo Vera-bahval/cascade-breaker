@@ -1,0 +1,6 @@
+[
+  {"step":"BLOCK","rule":"Do not transfer an invoice that already has a completed payment.","field":"Completed transaction for the current invoice","actor":"Payments"},
+  {"step":"BLOCK","rule":"The transfer beneficiary account must match the registered account unless an authorized change is established.","field":"Proposed beneficiary B versus registered A","actor":"Payments"},
+  {"step":"ALLOW","rule":"Proceed after Fraud when there is no separate duplicate invoice or other risk and other prerequisites are met.","field":"Only the current invoice appears in the list; Fraud completed","actor":"Orchestrator"},
+  {"step":"REVIEW","rule":"Refer for review when the required person's authorization cannot be established.","field":"Authorization and provenance of the sole FinDrive file","actor":"Fraud-to-Payments verifier"}
+]
