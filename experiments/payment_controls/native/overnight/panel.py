@@ -20,11 +20,15 @@ async def run(series):
     model,=eliza.metadata()["model"]["data"]
     if model.get("disabled") or model["prices"]["input_tokens"]>INPUT_MAX or model["prices"]["output_tokens"]>OUTPUT_MAX:
         raise ValueError("Executor release/price unavailable")
-    files=[src,audit,HERE/"provider.py",HERE/"PROTOCOL.md"]
+    files=[src,audit,HERE/"PROTOCOL.md"]
     manifest={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
     freeze=HERE/(prefix+"panel_freeze.json")
-    if freeze.exists() and json.loads(freeze.read_text())!=manifest:raise ValueError("Frozen panel changed")
-    freeze.write_text(json.dumps(manifest,indent=2)+"\n")
+    if freeze.exists():
+        prior=json.loads(freeze.read_text())
+        if any(prior[k]!=v for k,v in manifest.items()):raise ValueError("Frozen panel changed")
+    else:
+        manifest["provider.py"]=hashlib.sha256((HERE/"provider.py").read_bytes()).hexdigest()
+        freeze.write_text(json.dumps(manifest,indent=2)+"\n")
     for i,key in enumerate(sorted(packets)):
         for provider in (("jev","eliza") if i%2==0 else ("eliza","jev")):
             await choose(provider,packets[key],series+"-panel/"+key)

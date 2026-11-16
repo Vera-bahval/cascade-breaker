@@ -59,13 +59,25 @@ async def run(case_id, legacy, study=None):
     meta = metadata()
     model, = meta["model"]["data"]
     if (model.get("disabled") or model["prices"]["input_tokens"] > 0.30e-6
-            or model["prices"]["output_tokens"] > 1.2e-6 or min(meta["remaining"].values()) < .50):
-        raise ValueError("Insufficient quota or model/price change")
+            or model["prices"]["output_tokens"] > 1.2e-6):
+        raise ValueError("Model/price change")
+    overnight = os.environ.get("FINBOT_OVERNIGHT_PREFLIGHT") == "1"
+    quota_available = None
+    if overnight:
+        from experiments.payment_controls.native.overnight.preflight import available
+        quota_available = available(meta, ROOT / ".runtime/payment-controls-chp3/overnight/eliza")
+    elif min(meta["remaining"].values()) < .50:
+        raise ValueError("Insufficient quota")
     phase = os.environ.get("FINBOT_STUDY_PHASE","development") if study else "pilot"
     if phase not in ("development","test","transfer","pilot"):
         raise ValueError("Unknown study phase")
     cap = (29.85 if phase in ("test","transfer") else 4.8) if study else .50
     ledger = Ledger(parent / "executor.sqlite", cap=cap)
+    if overnight:
+        state = ledger.state()
+        ledger.cap = min(cap, state["spent_usd"] + quota_available)
+        if ledger.cap <= state["spent_usd"] + state["reserved_usd"]:
+            raise ValueError("No quota available after existing reservations")
     transport = RecordedTransport(dest / "calls.jsonl.gz", ledger, {"phase": phase, "case_id": case_id}, token=token())
     if study:
         class StudyUpstream(httpx.AsyncHTTPTransport):

@@ -31,6 +31,16 @@ def collect(f, dest, arm, model_receipts):
         if prior:
             assert db.execute("select count(*) from payment_transactions where transfer_id=? and invoice_id=? and status='completed' and amount=?",
                               (prior["transfer_id"],iid,f["invoice"]["amount"])).fetchone()[0]==1
+    latencies=[]
+    for t in tr:
+        prior_ms=None
+        for step in t["steps"]:
+            if step["kind"]=="llm" and step["agent"]=="orchestrator_agent" and any(
+                    c["name"]=="delegate_to_fraud" for c in (step.get("output") or {}).get("tool_calls",[])):
+                prior_ms=step["t_ms"]
+            if step["kind"]=="pre_fraud_route" and prior_ms is not None:
+                latencies.append(round(step["t_ms"]-prior_ms,2))
+                prior_ms=None
     native_turns=sum(s["kind"]=="llm" and s.get("agent")=="fraud_agent" for s in steps)
     jev_usd=sum(x["usd"] for x in models)
     return dict(case=f["id"],arm=arm,root_complete=evidence["root_complete"],paid_complete=evidence["full_complete"],
@@ -38,7 +48,7 @@ def collect(f, dest, arm, model_receipts):
                 foreign_transfers=evidence["foreign_transfers"],unverified=evidence["unverified_transfer"],
                 final_invoice_status=final_status,notifications=len(notify),recorded_flag="[Fraud Agent] FLAG:" in (notes or ""),
                 native_fraud_llm_turns=native_turns,route_checks=len(decisions),
-                routes="|".join(x["action"] for x in decisions),
+                route_latency_ms=json.dumps(latencies),routes="|".join(x["action"] for x in decisions),
                 technical=bool(summary.get("technical_executor")) or any(any("error:" in r for r in x["reasons"]) for x in decisions),
                 jev_calls=len(models),executor_calls=acc["executor_attempts"],executor_usd=acc["executor_usd"],
                 jev_usd=jev_usd,full_usd=acc["executor_usd"]+jev_usd,seconds=summary["seconds"])

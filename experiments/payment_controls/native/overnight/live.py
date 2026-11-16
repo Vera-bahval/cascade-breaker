@@ -17,6 +17,7 @@ async def main(args):
         raise ValueError('structured contrast is only available for the OFF arm')
     fixture_path = Path(args.fixtures).resolve(strict=True)
     os.environ['FINBOT_NATIVE_FIXTURES'] = str(fixture_path)
+    os.environ['FINBOT_OVERNIGHT_PREFLIGHT'] = '1'
     os.environ['FINBOT_STUDY_PHASE'] = 'development'
     os.environ['FINBOT_STUDY_VERSION'] = 'overnight-route-v1'
     case_id = '-'.join((args.channel, args.arm, args.case, 'structured-v1' if args.structured else 'overnight-route-v1'))

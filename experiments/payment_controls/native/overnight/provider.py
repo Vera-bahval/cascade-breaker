@@ -111,9 +111,14 @@ async def choose(provider, packet, owner):
         else:
             charge=result["cost"];ledger.complete(identity,charge)
             inner=result["response"];model=inner["model"];usage=inner["usage"]
-            if result["attempt_count"]!=1 or model!=eliza.MODEL:
-                raise ValueError("Unexpected executor response")
-            choice=inner["choices"][0]["message"]["content"].strip()
+            if result.get("attempt_count")!=1 or model!=eliza.MODEL:
+                (folder/(identity+".diagnostic")).write_text(json.dumps(dict(
+                    owner=owner,model=model,attempt_count=result.get("attempt_count"),cost=charge,
+                    decision=inner.get("choices",[{}])[0].get("message",{}).get("content","")[:150],
+                    usage=usage,expected=eliza.MODEL))+"\n")
+                choice="TECHNICAL"
+            else:
+                choice=inner["choices"][0]["message"]["content"].strip()
         decision=CHOICES.get(choice,"DEFER")
         row=dict(owner=owner,provider=provider,hash=identity,packet_sha=eliza.query_identity(packet),model=model,
                  valid=choice in CHOICES,choice=choice,decision=decision,usd=charge,seconds=time.monotonic()-start,
