@@ -1,5 +1,7 @@
 # Native diagnostic pool: scope and admission
 
+This document records the pre-run admission decision. The subsequent native executions, reached-step adjudication and measured effects are in [the results](README.md).
+
 This release contains ten new pre-execution native FinBot input states and one
 targeted repeat of an already paid invoice. No provider was invoked by the
 curator. These packets prescribe conditional handling; they contain no observed

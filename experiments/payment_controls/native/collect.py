@@ -55,6 +55,11 @@ def collect(partial=False):
                     reached.append(dict(id=digest,point=item["packet"]["state"]["point"],decision=item["decision"],reason=item["reason"]))
             direct=folder/"direct-trace.json"
             traces=list(json.loads(direct.read_text()).values()) if direct.exists() else [json.loads(x.read_text()) for x in (folder/"traces").glob("*.json")]
+            with sqlite3.connect((folder/"finbot.db").resolve().as_uri()+"?mode=ro",uri=True) as db:
+                status,=db.execute("SELECT status FROM invoices WHERE id=?",(r["submitted_id"],)).fetchone()
+            flags=[s["seq"] for tr in traces for s in tr["steps"]
+                   if s.get("kind")=="tool" and s.get("name")=="flag_invoice_for_review" and not s.get("error")
+                   and (s.get("arguments") or {}).get("invoice_id")==r["submitted_id"]]
             blind=hashlib.sha256(("native-trajectory/"+folder.name).encode()).hexdigest()[:16]
             intake=folder/"native-intake.jsonl"
             blind_traces[blind]={"source":case["invoice"],"vendor_profile":case["profile"],
@@ -80,7 +85,7 @@ def collect(partial=False):
                     observed[sha]=actual
             rows.append(dict(trace_id=blind,case=family,arm=arm,channel=case["channel"],seconds=r["seconds"],executor_usd=acc["executor_usd"],
                              executor_calls=r["executor_calls"],guard_usd=gacc["guard_usd"],technical=bool(r.get("technical_executor")) or any(str(g.get("reason")).startswith("verifier_error") for g in guard),
-                             guard_ms=[g["latency_ms"] for g in guard if g["reason"]!="outside_study"],reached=reached,**evidence))
+                             guard_ms=[g["latency_ms"] for g in guard if g["reason"]!="outside_study"],reached=reached,final_invoice_status=status,flag_steps=flags,prior_settlement_verified=bool(prior),**evidence))
     private=RUNTIME.parent/"native-tools"
     (private/"live-traces-blind.json").write_text(json.dumps(blind_traces))
     (private/"reached-blind.json").write_text(json.dumps(prefixes,indent=2))

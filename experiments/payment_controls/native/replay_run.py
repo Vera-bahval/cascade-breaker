@@ -35,7 +35,7 @@ async def main():
                             jev_seconds=elapsed,jev_usd=res.cost_usd,hybrid_model_calls=int(defer),
                             hybrid_model_usd=res.cost_usd if defer else 0))
     with out.open("x") as f:
-        w=csv.DictWriter(f,fieldnames=results[0]);w.writeheader();w.writerows(results)
+        w=csv.DictWriter(f,fieldnames=results[0],lineterminator="\n");w.writeheader();w.writerows(results)
 
 
 if __name__=="__main__":asyncio.run(main())
