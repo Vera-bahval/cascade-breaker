@@ -1,5 +1,6 @@
 """Export measured outcomes and anonymized reached-step packets for independent adjudication."""
 import csv
+import gzip
 import hashlib
 import json
 from pathlib import Path
@@ -14,6 +15,8 @@ def collect():
     sys.path.insert(0,str(ROOT/"scenarios"))
     from runner.profiles import vendor_fields
     from experiments.payment_controls.study.enforce import ARMS
+    from experiments.payment_controls.study.trace_packets import trajectory
+    blind_traces={}
     prefixes={}
     rows=[]
     observed={}
@@ -40,6 +43,12 @@ def collect():
                     reached.append(dict(id=digest,point=item["packet"]["state"]["point"],decision=item["decision"],reason=item["reason"]))
             direct=folder/"direct-trace.json"
             traces=list(json.loads(direct.read_text()).values()) if direct.exists() else [json.loads(x.read_text()) for x in (folder/"traces").glob("*.json")]
+            blind=hashlib.sha256(("native-trajectory/"+folder.name).encode()).hexdigest()[:16]
+            intake=folder/"native-intake.jsonl"
+            blind_traces[blind]={"source":case["invoice"],"vendor_profile":case["profile"],
+                               "visible_prefixes":[prefixes[x["id"]] for x in reached],
+                               "intake":list(map(json.loads,intake.open())) if intake.exists() else [],
+                               "trajectory":[trajectory(t) for t in traces],"terminal":evidence}
             for trace in traces:
                 for step in trace["steps"]:
                     if step["kind"]!="llm":continue
@@ -47,10 +56,21 @@ def collect():
                     view={"agent":step["agent"],"system":system,"tools":step.get("tools",[]),"served_model":step.get("served_model")}
                     sha=hashlib.sha256(json.dumps(view,sort_keys=True,default=str).encode()).hexdigest()
                     observed[sha]=view
-            rows.append(dict(case=family,arm=arm,channel=case["channel"],seconds=r["seconds"],executor_usd=acc["executor_usd"],
+            # The stateless transport records the request actually submitted, including
+            # complete schemas even for direct runs with an in-process trace recorder.
+            with gzip.open(folder/"calls.jsonl.gz","rt") as journal:
+                for call in map(json.loads,journal):
+                    if call["event"]!="request":continue
+                    request=call["request"]
+                    actual={"system":[m for m in request["messages"] if m.get("role")=="system"],
+                            "tools":request.get("tools",[]),"model":request["model"],"layer":"on_wire"}
+                    sha=hashlib.sha256(json.dumps(actual,sort_keys=True).encode()).hexdigest()
+                    observed[sha]=actual
+            rows.append(dict(trace_id=blind,case=family,arm=arm,channel=case["channel"],seconds=r["seconds"],executor_usd=acc["executor_usd"],
                              executor_calls=r["executor_calls"],guard_usd=sum(g["cost_usd"] for g in guard),
                              guard_ms=[g["latency_ms"] for g in guard if g["reason"]!="outside_study"],reached=reached,**evidence))
     private=RUNTIME.parent/"native-tools"
+    (private/"live-traces-blind.json").write_text(json.dumps(blind_traces))
     (private/"reached-blind.json").write_text(json.dumps(prefixes,indent=2))
     (private/"observed-model-inputs.json").write_text(json.dumps(observed,default=str))
     (HERE/"diagnostic_results.json").write_text(json.dumps(rows,indent=2)+"\n")
