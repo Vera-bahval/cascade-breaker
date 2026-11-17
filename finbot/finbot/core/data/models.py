@@ -365,6 +365,8 @@ class Invoice(Base):
     status = Column[Literal["submitted", "processing", "approved", "rejected", "paid"]](
         String(50), default="submitted"
     )
+    tax_category = Column(String(32), nullable=False, server_default="goods")
+    tax_jurisdiction = Column(String(32), nullable=False, server_default="")
     # agent_notes are notes from the agent that processed the invoice
     # Notes are contributed by both AI agents and Human agents
     agent_notes = Column[str](Text, nullable=True)
@@ -409,6 +411,8 @@ class Invoice(Base):
             "status": self.status,
             "agent_notes": self.agent_notes,
             "attachments": attachments,
+            "tax_category": self.tax_category,
+            "tax_jurisdiction": self.tax_jurisdiction,
             "created_at": self.created_at.isoformat().replace("+00:00", "Z"),
             "updated_at": self.updated_at.isoformat().replace("+00:00", "Z"),
         }

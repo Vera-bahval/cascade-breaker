@@ -17,6 +17,7 @@ from finbot.core.messaging import event_bus
 from finbot.guardrails.schemas import HookKind
 from finbot.guardrails.service import GuardrailHookService
 from finbot.mcp.provider import MCPToolProvider
+from finbot.probe.guards.runtime import GuardStop
 from finbot.probe import v4
 from finbot.probe import trace as probe_trace
 from finbot.probe.guards import runtime as probe_guards
@@ -188,7 +189,7 @@ class BaseAgent(ABC):
                                             task_result=function_output
                                         )
                                         return function_output
-                                except v4.V4Stop:
+                                except (v4.V4Stop, GuardStop):
                                     raise
                                 except Exception as e:  # pylint: disable=broad-exception-caught
                                     logger.error(
@@ -326,7 +327,7 @@ class BaseAgent(ABC):
                         workflow_id=self.workflow_id,
                         summary=f"Agent iteration {iteration + 1}/{max_iterations} complete ({len(response.tool_calls) if response.tool_calls else 0} tool calls)",
                     )
-                except v4.V4Stop:
+                except (v4.V4Stop, GuardStop):
                     raise
                 except Exception as e:  # pylint: disable=broad-exception-caught
                     if runtime := v4.active():

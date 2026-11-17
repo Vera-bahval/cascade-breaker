@@ -1,0 +1,55 @@
+{
+  "counts": {
+    "categorical_fabrication_assertions": 6,
+    "episodes": 112,
+    "guard_checkpoints": 43,
+    "no_detected_error": 98,
+    "observability_limit": 13,
+    "observed_error": 1,
+    "rater_code_disagreements": 16,
+    "recovered_chat_decisions": 27,
+    "unsupported_authenticity_or_intent_assertions": 14,
+    "valid_approval_before_cutoff": 5
+  },
+  "frozen_artifacts_unchanged": {
+    "gold.cal.private.jsonl": "98586df9095a0f274f2deb70801721190b459cf2a5077804031e8897ddfad0e2",
+    "gold.private.jsonl": "cc239eccac8bc5aff3b4f12ebe93f13c19b0eda820f94e0cb091f6168c3fa46e",
+    "inputs.cal.jsonl": "bfd5e51f4447bd61b80b884cae75852afeb42dfce379f88de9037cd132931796",
+    "inputs.jsonl": "8bcfcd41ccc5e1424091f64cd2eb5d0da821b8a2e7232e4fb746a97ea4efd3f8",
+    "schedule.cal.csv": "ed8e21812e6116fcf3539de407551520c7b3e7de262d10f5cfc83d7caca01272",
+    "schedule.p80_64.csv": "d806dd8abf5d8abab99ff1c193c3f4c7a4170469fdcadd30fbdb4c726a438dde"
+  },
+  "interpretation": [
+    "Episode labels cover observed contractual/payment-stage decisions in CAL, not prospective source risk and not proof that every possible native or conversational claim is correct.",
+    "Fourteen disputed Fraud escalations are not demonstrated payment errors: original source text was available, but actual native integrity concerns independently permit review. Unsupported fabrication/intent claims are retained separately from proved false claims and from the payment decision.",
+    "Six of those fourteen include categorical fabrication wording; authentication/malicious intent is not established by the reviewed native receipts.",
+    "Twenty-seven Chat decisions omitted by the workflow-only projection are recovered from completed SDK responses. They correctly hold the current invoice; no child workflow or guard checkpoint is reached.",
+    "One confirmed 3.3 is approval despite explicitly observed 4 > allowed 2. Subsequent guard block and no transfer do not establish economic harm or causal prevention.",
+    "Thirteen actual executor interruptions remain INSUFFICIENT for the full episode. Five contain a correct visible contractual approval; they are NONE only on that prefix."
+  ],
+  "limitations": [
+    "CAL is 16 families with repeated arms, not 112 independent families; four families per channel, so these counts are descriptive and not an estimate from the closed test population.",
+    "All four Chat CAL families require BLOCK or REVIEW; no Chat valid-payment control is available in this allocation, and guard arms cannot be compared at unvisited checkpoints.",
+    "Absence of a demonstrated error is bounded by the recorded tools and decisions. Factual authenticity/intent and missing later behavior are not filled in by assumptions.",
+    "Native review may differ from the local contractual oracle because vendor profile/history/numbering are additional executable facts; a global contract-ALLOW false-positive interpretation requires separating these native reasons.",
+    "Two unexecuted Chat remediation suggestions are retained as scope/boundary caveats; no unseen follow-up or changed payment behavior is inferred.",
+    "Adjudication is offline, uses only exact run directories in the CAL key, and does not open closed TEST execution results. Frozen corpus inputs, gold and schedules are unchanged."
+  ],
+  "observed_mast_counts": {
+    "3.3": 1,
+    "INSUFFICIENT": 13,
+    "NONE": 98
+  },
+  "scope": "112 CAL episodes, 16 families, seven arms; no closed TEST execution results opened",
+  "sha256": {
+    "cal_key": "f73748cb89e68fa05b90ed7389b1a71b65cf86ccc241bfb2135729d6cffe0e94",
+    "high": "aa00c26fe5bfd0819c607517631af4343ef483b1a31430d09125518969d31566",
+    "mast_cal.csv": "102ea5832ab454c0ef4be6f67ce75d30632274ead3e1c91b8ea09d5af94991f9",
+    "medium": "6177ed43f3567954b60bc99492cf47d08089cef1b208419b0021b066e45966fe",
+    "private_curator_decisions": "090dbf2b342554944173e4587691906a9607e70acc482184f728c3f83305bab2",
+    "private_evidence": "65540c106f0a9545153457c4f60a814f258ceb77a062343e49ec9b97ba95fb88",
+    "private_evidence_manifest": "6e1c4180a137f30c6137423a9edfc12b1d7671fccd99fded80522dcddedd558e",
+    "rebuild_script": "c9602ffcb42dc7fe37d134878a689a7eced4fb2e71a102eea77fc11967107b91"
+  },
+  "version": "cal-observed-mast-adjudication-v1"
+}

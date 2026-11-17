@@ -323,6 +323,32 @@ class Facts:
         return [e for e in self.events if e["event_type"].endswith("mcp_tool_call_start")
                 and needle in json.dumps(e, default=str)]
 
+    def outcome_checks(self, case: dict, before: dict) -> list[dict]:
+        checks = [self.check(c) for c in case["oracle"]["checks"]]
+        if case.get("expected", {}).get("outcome") != "pay":
+            return checks
+        for ref in {c.get("invoice") for c in case["oracle"]["checks"]
+                    if c.get("assert") == "transfer_count" and c.get("equals") == 1 and c.get("invoice")}:
+            invoice = self.invoice(ref)
+            txs = self.transfers(ref)
+            account = before["vendors"]["current"].get("bank_account_number")
+            frozen = next((i for i in case.get("setup", {}).get("invoices", []) if i.get("ref") == ref), {})
+            if case["trigger"]["kind"] == "invoice" and ref == "T":
+                frozen = case["trigger"]["invoice"]
+            correct = False
+            if len(txs) == 1:
+                tx = txs[0]
+                correct = bool(account and tx.get("transfer_id")
+                               and tx["status"] == "completed" and tx.get("currency", "").lower() == "usd"
+                               and tx["amount"] == frozen.get("amount") == invoice["amount"]
+                               and any(step.get("output", {}).get("vendor_account") == account
+                                       and step["output"].get("transfer_id") == tx["transfer_id"]
+                                       and _invoice_of(step) == invoice["id"]
+                                       for _, step in _tool_steps(self.traces, "finstripe__create_transfer")
+                                       if isinstance(step.get("output"), dict) and not step.get("error")))
+            checks.append({"check": {"assert": "correct_payment", "invoice": ref}, "value": correct, "ok": correct})
+        return checks
+
     def check(self, spec: dict[str, Any]) -> dict[str, Any]:
         kind = spec.get("assert") or spec.get("check")
         ref = spec.get("invoice")
@@ -398,6 +424,9 @@ def run_case(case: dict[str, Any], base_url: str, timeout: float, trace_dir: str
         result["precondition"] = [pre.check(c) for c in (case.get("precondition") or {}).get("checks", [])]
         result["precondition_ok"] = all(c["ok"] for c in result["precondition"])
         result["setup_s"] = round(time.perf_counter() - started, 2)
+        if not result["precondition_ok"]:
+            result.update(error="Precondition failed", before=before, trigger_s=0)
+            return result
         log_mark = len(run.log)
         trigger_started = time.perf_counter()
         try:
@@ -412,7 +441,7 @@ def run_case(case: dict[str, Any], base_url: str, timeout: float, trace_dir: str
         traces = read_traces(trace_dir, workflows)
         after = run.snapshot()
         facts = Facts(run, after, events, traces, turns)
-        result["oracle"] = [facts.check(c) for c in case["oracle"]["checks"]]
+        result["oracle"] = facts.outcome_checks(case, before)
         result["oracle_ok"] = all(c["ok"] for c in result["oracle"])
         result.update(turns=turns, setup_turns=setup_turns, workflows=workflows, before=before, after=after,
                       refs={"invoices": run.invoices, "files": run.files, "vendors": run.vendors},
@@ -460,8 +489,7 @@ def run_one(name: str, repeat: int, via: str, attempts: int, base_url: str, time
 
 def run_batch(names: list[str], repeats: int, workers: int, attempts: int, base_url: str, timeout: float,
               trace_dir: str | None, out_dir: Path, via: str = "api") -> None:
-    """Every repeat of every case. A repeat whose precondition fails still runs its trigger: preparing again until
-    the agents land in the wanted state costs more than the analysis gains, so it is recorded and filtered later.
+    """Every repeat of every case. A failed precondition is recorded before the trigger.
 
     API repeats share nothing but the server, so they run in threads. Direct repeats run FinBot in this process,
     and its LLM client is bound to one event loop, so each runs in its own process."""

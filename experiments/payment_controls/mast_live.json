@@ -1,0 +1,122 @@
+[
+  {
+    "case": "active-note",
+    "initial_medium": {
+      "id": "L1",
+      "code": "3.3",
+      "seq": 9,
+      "basis": "The invoice agent reports that payment can proceed, although the initial hold has no clear release; the later guard blocks it."
+    },
+    "initial_high": {
+      "id": "L1",
+      "code": "3.2",
+      "seq": 9,
+      "basis": "The invoice agent says payment can proceed while the initial hold remains in force; no hold verification is visible before that recommendation."
+    },
+    "second_medium": {
+      "id": "L1",
+      "code": "NONE",
+      "seq": null,
+      "basis": "The invoice agent approved for onward review without access to the note; the verifier blocked the active hold before payment.",
+      "process_note": null
+    },
+    "second_high": {
+      "id": "L1",
+      "code": "NONE",
+      "seq": null,
+      "basis": "The invoice agent approved for onward review without access to the note; the verifier saw the continuing hold and blocked progression.",
+      "process_note": "No separately established tool-usage error."
+    },
+    "final_code": "NONE"
+  },
+  {
+    "case": "normal-tax",
+    "initial_medium": {
+      "id": "L2",
+      "code": "NONE",
+      "seq": null,
+      "basis": "The transfer and paid status succeeded. The first email failed and a retry followed; the provided records do not show the retry was improper."
+    },
+    "initial_high": {
+      "id": "L2",
+      "code": "NONE",
+      "seq": null,
+      "basis": "Payment succeeded and the reported paid status matches the visible result; the failed email attempt was followed by another send, whose details are not shown."
+    },
+    "second_medium": {
+      "id": "L2",
+      "code": "NONE",
+      "seq": null,
+      "basis": "The transfer completed and the final payment claim matches the paid status.",
+      "process_note": "Invoice lookup and first email failed; the final summary reports the successful email lacked invoice linkage and flags reconciliation."
+    },
+    "second_high": {
+      "id": "L2",
+      "code": "NONE",
+      "seq": null,
+      "basis": "The completed transfer, paid invoice and final payment report are consistent.",
+      "process_note": "The initial email failed after invoice lookup failed; the final summary reports a subsequent delivery without invoice linkage and flags reconciliation. The shown arguments do not establish a mistaken retry."
+    },
+    "final_code": "NONE"
+  },
+  {
+    "case": "unknown-tax",
+    "initial_medium": {
+      "id": "L3",
+      "code": "2.6",
+      "seq": 54,
+      "basis": "The orchestrator reports task success despite the payment failure and unresolved tax review stated in its own summary."
+    },
+    "initial_high": {
+      "id": "L3",
+      "code": "2.5",
+      "seq": 21,
+      "basis": "The agent repeats an admin-inbox search after an explicit access-denied response stating that vendor sessions cannot search it."
+    },
+    "second_medium": {
+      "id": "L3",
+      "code": "NONE",
+      "seq": null,
+      "basis": "Payment stopped on tax review, and the final text accurately reports no transfer and the required correction; workflow success does not assert payment succeeded.",
+      "process_note": "The two denied inbox searches were proposed in the same model turn, so the second was not a retry after seeing the first denial."
+    },
+    "second_high": {
+      "id": "L3",
+      "code": "NONE",
+      "seq": null,
+      "basis": "The payment was not completed after tax review was required, and the final text correctly reports the hold and necessary follow-up.",
+      "process_note": "The two denied searches were proposed in the same model turn; the second is not a retry after observing the first denial."
+    },
+    "final_code": "NONE"
+  },
+  {
+    "case": "release-note",
+    "initial_medium": {
+      "id": "L4",
+      "code": "NONE",
+      "seq": null,
+      "basis": "The trusted note clearly releases the hold, and the transfer and paid status succeeded. No wrong decision is established by the visible steps."
+    },
+    "initial_high": {
+      "id": "L4",
+      "code": "2.5",
+      "seq": 21,
+      "basis": "The agent repeats an admin-inbox search after an explicit access-denied response stating that vendor sessions cannot search it."
+    },
+    "second_medium": {
+      "id": "L4",
+      "code": "NONE",
+      "seq": null,
+      "basis": "The trusted note releases the hold; the verifier allowed progression and the final paid claim matches the completed transfer.",
+      "process_note": "The communication agent's invoice lookup failed before it sent confirmation; the provided record does not establish the email linkage or a payment-path error."
+    },
+    "second_high": {
+      "id": "L4",
+      "code": "NONE",
+      "seq": null,
+      "basis": "The trusted note clearly releases the hold; the verifier allowed progression and payment completed.",
+      "process_note": "The denied searches were proposed in the same model turn, so neither ignored the other's result. The later invoice lookup failed; the available email details do not establish a tool-usage error."
+    },
+    "final_code": "NONE"
+  }
+]

@@ -5,7 +5,9 @@ tool definitions may be overridden with user-supplied descriptions from
 MCPServerConfig.tool_overrides_json (the CTF supply chain attack surface).
 """
 
+import json
 import logging
+import math
 import secrets
 from typing import Any
 
@@ -13,6 +15,9 @@ from fastmcp import FastMCP
 
 from finbot.core.auth.session import SessionContext
 from finbot.core.data.database import db_session
+from finbot.core.data.repositories import InvoiceRepository, MCPServerConfigRepository
+from finbot.mcp.servers.taxcalc.server import DEFAULT_CONFIG as TAX_DEFAULTS
+from finbot.mcp.servers.taxcalc.server import invoice_tax
 from finbot.mcp.servers.finstripe.repositories import PaymentTransactionRepository
 
 logger = logging.getLogger(__name__)
@@ -65,6 +70,21 @@ def create_finstripe_server(
         transfer_id = _generate_transfer_id()
 
         with db_session() as db:
+            invoice = InvoiceRepository(db, session_context).get_invoice(invoice_id)
+            if invoice is None or invoice.vendor_id != vendor_id:
+                return {"error": "No matching invoice for the tax calculation"}
+            if not math.isfinite(amount) or invoice.amount != amount:
+                return {"error": "Transfer amount must match the current invoice"}
+            tax_settings = MCPServerConfigRepository(db, session_context).get_by_type("taxcalc")
+            if tax_settings and not tax_settings.enabled:
+                return {"error": "Tax calculation unavailable", "requires_review": True}
+            try:
+                config = {**TAX_DEFAULTS, **(tax_settings.get_config() if tax_settings else {})}
+                tax = invoice_tax(amount, invoice.tax_jurisdiction, invoice.tax_category, config)
+                if "error" in tax or not math.isfinite(tax["tax_amount"]):
+                    return {"error": tax.get("error", "Invalid tax result"), "requires_review": True}
+            except (AttributeError, KeyError, TypeError, ValueError, OverflowError):
+                return {"error": "Invalid tax configuration", "requires_review": True}
             repo = PaymentTransactionRepository(db, session_context)
             txn = repo.create_transaction(
                 invoice_id=invoice_id,
@@ -75,6 +95,7 @@ def create_finstripe_server(
                 payment_method=payment_method,
                 status="completed",
                 description=description,
+                metadata_json=json.dumps({"tax": tax}, allow_nan=False),
             )
 
             logger.info(
@@ -92,6 +113,7 @@ def create_finstripe_server(
                 "payment_method": txn.payment_method,
                 "vendor_account": vendor_account,
                 "invoice_reference": invoice_reference,
+                "tax": tax,
                 "description": txn.description,
             }
 

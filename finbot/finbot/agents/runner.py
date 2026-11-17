@@ -15,6 +15,8 @@ from finbot.agents.specialized.payments import PaymentsAgent
 from finbot.core.auth.session import SessionContext
 from finbot.config import settings
 from finbot.core.messaging import event_bus
+from finbot.probe.guards.runtime import GuardStop, active_runtime
+from finbot.probe.guards.workflow import workflow_guard
 from finbot.probe import v4
 from finbot.probe import trace as probe_trace
 
@@ -59,7 +61,7 @@ async def run_agent_with_retry(
 
             return result
 
-        except v4.V4Stop:
+        except (v4.V4Stop, GuardStop):
             raise
         except Exception as e:  # pylint: disable=broad-exception-caught
             if runtime := v4.active():
@@ -218,13 +220,28 @@ async def run_orchestrator_agent(
         Synthesized result from all delegated agents
     """
     workflow_id = workflow_id or f"wf_{secrets.token_urlsafe(12)}"
-    with probe_trace.record_to_dir(settings.PROBE_TRACE_DIR, workflow_id, task_data=task_data):
-        return await run_agent_with_retry(
-            agent_class=OrchestratorAgent,
-            session_context=session_context,
-            task_data=task_data,
-            workflow_id=workflow_id,
-        )
+    with (probe_trace.record_to_dir(settings.PROBE_TRACE_DIR, workflow_id, task_data=task_data),
+          workflow_guard(workflow_id, session_context, task_data)):
+        runtime = active_runtime()
+        try:
+            if runtime and task_data.get("invoice_id"):
+                await runtime.check_workflow_input()
+            return await run_agent_with_retry(
+                agent_class=OrchestratorAgent,
+                session_context=session_context,
+                task_data=task_data,
+                workflow_id=workflow_id,
+            )
+        except GuardStop:
+            if not runtime or not runtime.stopped_by:
+                raise
+            stop = dict(runtime.stopped_by)
+            await event_bus.emit_agent_event(
+                agent_name="orchestrator_agent", event_type="guard_stop", event_subtype="lifecycle",
+                event_data=stop, session_context=session_context, workflow_id=workflow_id,
+                summary=f"Workflow stopped at {stop['point']}",
+            )
+            return {"task_status": "stopped", "task_summary": f"Stopped at {stop['point']}", "guard_stop": stop}
 
 
 async def run_communication_agent(
