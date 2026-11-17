@@ -49,3 +49,8 @@ class PreflightTest(unittest.TestCase):
         for i in range(15):
             p=self.folder/(str(i)+'.json'); row=json.loads(p.read_text()); row['valid']=False; p.write_text(json.dumps(row)); t=self.now.timestamp(); os.utime(p,(t,t))
         with self.assertRaises(ValueError): available(self.meta,self.folder,now=self.now)
+
+    def test_subsequent_panel_keeps_seed_denominator(self):
+        with sqlite3.connect(self.folder/"ledger.sqlite") as db:
+            db.execute("insert into requests values (?,?,?)",("new-panel",.001,"complete"))
+        self.assertAlmostEqual(available(self.meta,self.folder,now=self.now),1.59)

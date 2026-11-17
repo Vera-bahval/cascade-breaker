@@ -51,7 +51,7 @@ def collect(f, dest, arm, model_receipts):
                 route_latency_ms=json.dumps(latencies),routes="|".join(x["action"] for x in decisions),
                 technical=bool(summary.get("technical_executor")) or any(any("error:" in r for r in x["reasons"]) for x in decisions),
                 jev_calls=len(models),executor_calls=acc["executor_attempts"],executor_usd=acc["executor_usd"],
-                jev_usd=jev_usd,full_usd=acc["executor_usd"]+jev_usd,seconds=summary["seconds"])
+                cost_unsettled_reserve=0.0,jev_usd=jev_usd,full_usd=acc["executor_usd"]+jev_usd,seconds=summary["seconds"])
 
 
 def main():
@@ -62,7 +62,11 @@ def main():
     for cid in selected:
         for arm in ARMS:
             dest=folder(cases[cid],arm)
-            if (dest/"summary.json").is_file():rows.append(collect(cases[cid],dest,arm,models))
+            if (dest/"summary.json").is_file():
+                rows.append(collect(cases[cid],dest,arm,models))
+            elif dest.is_dir() and (dest/"calls.jsonl.gz").exists():
+                from .interrupted import read_attempt
+                rows.append(read_attempt(cases[cid],dest))
     with (HERE/"live_results.csv").open("w",newline="") as stream:
         w=csv.DictWriter(stream,fieldnames=rows[0],lineterminator="\n")
         w.writeheader();w.writerows(rows)

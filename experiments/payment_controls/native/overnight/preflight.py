@@ -44,6 +44,7 @@ def available(meta, receipt_folder, *, now=None):
     with sqlite3.connect((folder/'ledger.sqlite').resolve().as_uri()+'?mode=ro',uri=True) as db:
         ledger={row[0]:row for row in db.execute('select id,cost,status from requests')}
     seed=[]
+    seed_charges={}
     for p in folder.glob('*.json'):
         row=json.loads(p.read_text())
         if not str(row.get('owner','')).startswith('seed-panel/'):
@@ -52,6 +53,10 @@ def available(meta, receipt_folder, *, now=None):
         if (at.date().isoformat()!=evidence['utc_day'] or
             at.astimezone(ZoneInfo('Europe/Moscow')).date().isoformat()!=evidence['moscow_day']):
             continue
+        identity=row.get('hash') or p.stem
+        if identity not in ledger or identity in seed_charges or ledger[identity][2]!='complete' or not math.isclose(ledger[identity][1],row['usd'],abs_tol=1e-12):
+            raise ValueError('Invalid seed ledger binding')
+        seed_charges[identity]=ledger[identity][1]
         if row.get('valid') is not True:
             continue
         cost=row.get('usd'); entry=ledger.get(row.get('hash'))
@@ -61,8 +66,7 @@ def available(meta, receipt_folder, *, now=None):
             entry is None or entry[2]!='complete' or not math.isclose(entry[1],cost,abs_tol=1e-12)):
             raise ValueError('invalid or unreconciled paid seed receipt')
         seed.append(cost)
-    if len(seed)<2 or len(ledger)!=evidence['seed_requests'] or any(
-        row[2]!='complete' or type(row[1]) not in (int,float) or row[1]<=0 for row in ledger.values()
-    ) or not math.isclose(sum(row[1] for row in ledger.values()),evidence['seed_cost'],abs_tol=1e-9):
+    if len(seed)<2 or len(seed_charges)!=evidence['seed_requests'] or not math.isclose(
+        sum(seed_charges.values()),evidence['seed_cost'],abs_tol=1e-9):
         raise ValueError('paid same-day seed evidence incomplete')
     return monthly - .5
