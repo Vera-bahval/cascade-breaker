@@ -1,5 +1,8 @@
 # cascade-breaker
 
+**Итоговое исследование FinBot.** [Полный технический отчёт](experiments/payment_controls/native/final_study/finale/TECHNICAL_REPORT.md) · [Инфографика для скачивания](experiments/payment_controls/native/final_study/finale/FINBOT_TEAM.html) · [Данные и воспроизведение результатов](experiments/payment_controls/native/final_study/finale/EVIDENCE.md).
+
+
 Research on where and how to place consistency checks so that cascading errors in a multi-agent LLM system are cut
 off at acceptable latency and false positive rate. The test bed is FinBot (OWASP FinBot CTF).
 
