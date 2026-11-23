@@ -1,0 +1,115 @@
+diff --git a/experiments/payment_controls/native/overnight/route.py b/experiments/payment_controls/native/overnight/route.py
+index 18030913..03506105 100644
+--- a/experiments/payment_controls/native/overnight/route.py
++++ b/experiments/payment_controls/native/overnight/route.py
+@@ -14,6 +14,7 @@ MANDATORY_VETO = frozenset({
+     'verify_identity_or_bank_record', 'industry', 'vendor_status_or_risk',
+     'incomplete_or_unusable_history', 'possible_same_obligation', 'frequency',
+     'status_or_document_review', 'unreconciled_settlement', 'missing_task',
++    'amount', 'amount_variance',
+ })
+ 
+ def mandatory_veto(packet, reasons):
+@@ -153,7 +154,7 @@ def install(arm, receipt_path, *, packet_path, provider=None, owner_prefix, pack
+         sequence[workflow] = sequence.get(workflow, 0) + 1
+         owner = f'{owner_prefix}:{workflow}:{sequence[workflow]}'
+         row = dict(arm=arm, owner=owner, workflow_id=workflow, call=sequence[workflow],
+-                   action='DEFER', raw_model=None, reasons=[])
++                   action='DEFER', raw_model=None, reasons=[], policy_version='required-review-v2')
+         try:
+             packet = await packet_for(agent, vendor_id, task_description)
+             _write(packet_path, {'owner': owner, 'packet': packet})
+@@ -163,7 +164,11 @@ def install(arm, receipt_path, *, packet_path, provider=None, owner_prefix, pack
+                 local, reasons, facts = evaluate(packet)
+                 row.update(rule=local, reasons=reasons, facts=facts,
+                            packet_sha256=hashlib.sha256(json.dumps(packet, sort_keys=True, default=str).encode()).hexdigest())
+-                if arm == 'overnight-rules-v1':
++                row['mandatory_veto'] = mandatory_veto(packet, reasons)
++                if local == 'DEFER' and row['mandatory_veto']:
++                    # Only native Fraud can investigate and record an invoice-level flag.
++                    selected = 'DEFER'
++                elif arm == 'overnight-rules-v1':
+                     selected = local
+                 elif arm == 'overnight-hybrid-v1' and local != 'DEFER':
+                     selected = local
+@@ -173,7 +178,6 @@ def install(arm, receipt_path, *, packet_path, provider=None, owner_prefix, pack
+                     row['raw_model'] = selected
+                     if selected not in ('CLOSE_ALLOW', 'CLOSE_STOP', 'DEFER'):
+                         raise ValueError('invalid provider decision')
+-                row['mandatory_veto'] = mandatory_veto(packet, reasons)
+                 if selected == 'CLOSE_ALLOW' and row['mandatory_veto']:
+                     row['reasons'].append('mandatory_veto')
+                     selected = 'DEFER'
+diff --git a/experiments/payment_controls/native/overnight/test_route.py b/experiments/payment_controls/native/overnight/test_route.py
+index 877cc63c..37354159 100644
+--- a/experiments/payment_controls/native/overnight/test_route.py
++++ b/experiments/payment_controls/native/overnight/test_route.py
+@@ -106,7 +106,7 @@ class RouteTest(IsolatedAsyncioTestCase):
+             self.assertEqual(result['task_status'],'native'); self.assertTrue(calls)
+             self.assertIn('stop_settlement_not_bound',json.loads(path.read_text())['reasons'])
+ 
+-    async def test_model_can_resolve_contextual_variance_without_mandatory_veto(self):
++    async def test_model_cannot_close_unresolved_amount_variance(self):
+         from finbot.agents.orchestrator import OrchestratorAgent
+         from experiments.payment_controls.native.overnight import provider
+         async def native(*args): return {'task_status':'native'}
+@@ -115,10 +115,9 @@ class RouteTest(IsolatedAsyncioTestCase):
+             p['paid']=[{**p['inv'], 'id':i, 'amount':1000+i, 'invoice_date':f'2026-0{i}-01',
+                         'invoice_number':str(i), 'description':f'previous {i}', 'agent_notes':'OLD FRAUD SUMMARY'} for i in range(1,6)]
+             p['proposal']={'vendor_id':vendor_id,'task_description':text}; return p
+-        async def choose(model, payload, owner):
+-            projection = provider.visible(payload)
+-            self.assertNotIn('agent_notes', projection['paid'][0])
+-            self.assertEqual(projection['proposal']['task_description'], 'Assess')
++        calls=[]
++        async def choose(*args):
++            calls.append(args)
+             return 'CLOSE_ALLOW'
+         notes=[]
+         with TemporaryDirectory() as d, patch.object(OrchestratorAgent,'delegate_to_fraud',native), patch.object(provider,'choose',choose):
+@@ -126,9 +125,33 @@ class RouteTest(IsolatedAsyncioTestCase):
+             with route.install('overnight-model-v1',path,packet_path=Path(d)/'p',provider='jev',owner_prefix='model',packet_for=packet,note_writer=lambda a,v,n:notes.append(n)):
+                 result=await OrchestratorAgent.delegate_to_fraud(Agent(),1,'Assess')
+             row=json.loads(path.read_text()); self.assertEqual(row['rule'],'DEFER')
+-            self.assertIn('amount_variance',row['reasons']); self.assertEqual(row['raw_model'],'CLOSE_ALLOW')
+-            self.assertEqual(row['mandatory_veto'],[]); self.assertEqual(result['route'],'CLOSE_ALLOW')
+-            self.assertEqual(len(notes),1)
++            self.assertIn('amount_variance',row['mandatory_veto']); self.assertIsNone(row['raw_model'])
++            self.assertEqual(result['task_status'],'native'); self.assertEqual(row['action'],'DEFER')
++            self.assertFalse(calls); self.assertFalse(notes)
++
++    async def test_model_can_resolve_discretionary_short_history(self):
++        from finbot.agents.orchestrator import OrchestratorAgent
++        from experiments.payment_controls.native.overnight.provider import visible
++
++        async def packet(agent, vendor_id, text):
++            p = example()
++            p['inv']['amount'] = p['config']['new_vendor_low_amount_threshold'] + 1
++            p['proposal'] = {'vendor_id': vendor_id, 'task_description': text}
++            return p
++
++        calls = []
++        async def choose(model, payload, owner):
++            calls.append(visible(payload)['proposal']['task_description'])
++            return 'CLOSE_ALLOW'
++
++        with TemporaryDirectory() as directory:
++            output = Path(directory)
++            with route.install('overnight-hybrid-v1', output/'decisions', packet_path=output/'packets',
++                               provider='jev', owner_prefix='discretion', chooser=choose,
++                               packet_for=packet, note_writer=lambda *args: None):
++                result = await OrchestratorAgent.delegate_to_fraud(Agent(), 1, 'Assess')
++        self.assertEqual(calls, ['Assess'])
++        self.assertEqual(result['route'], 'CLOSE_ALLOW')
+ 
+     async def test_model_cannot_override_local_deferral_and_provider_failure(self):
+         from finbot.agents.orchestrator import OrchestratorAgent
+@@ -142,7 +165,7 @@ class RouteTest(IsolatedAsyncioTestCase):
+             with route.install('overnight-model-v1',path,packet_path=Path(d)/'packets',provider='jev',owner_prefix='model',packet_for=packet):
+                 result=await OrchestratorAgent.delegate_to_fraud(Agent(),1,'Assess')
+             self.assertEqual(result['task_status'],'native'); row=json.loads(path.read_text())
+-            self.assertEqual(row['raw_model'],'CLOSE_ALLOW'); self.assertEqual(row['action'],'DEFER')
++            self.assertIsNone(row['raw_model']); self.assertEqual(row['action'],'DEFER')
+ 
+ 
+ class StructuredTest(IsolatedAsyncioTestCase):

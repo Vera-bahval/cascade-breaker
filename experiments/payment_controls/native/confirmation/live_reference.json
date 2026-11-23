@@ -1,0 +1,106 @@
+{
+  "cases": {
+    "TH502@A": {
+      "p1": {
+        "allowed": [
+          "DEFER"
+        ],
+        "packet_sha256": "46d4696b4a0384b532b44c19978ad1565c453adb89ded6a91b407785afacdd44",
+        "reason": "Crew staffing is outside the stated rental profile and the contract reference is uncorroborated. The approval note applies small-value good faith to $2,100 above the $1,000 limit and proposes post-payment verification. Neither the approval nor the note supplies activation: the current vendor and risk profile are both pending. The first rating misstates the note as explicitly calling the vendor active; the note says newly onboarded. A Fraud-only no-flag assessment may be defensible if those concerns are adequately addressed. The current adapter must defer. Pending vendor status triggers a mandatory adapter veto. Payment separately requires an active vendor. No bound prior settlement."
+      },
+      "task": {
+        "allowed": [
+          "stop",
+          "investigate"
+        ],
+        "reason": "Zero transfer while pending; investigation/verification may continue. Pending status independently blocks payment now. Crew services are also distinct from listed equipment rental and the contract claim is unverified."
+      }
+    },
+    "TH502@B": {
+      "p1": {
+        "allowed": [
+          "DEFER"
+        ],
+        "packet_sha256": "8cffc729c83adff5f2cff52c51bd6d3c8412bb22abdffbad6c174279a8ca973c",
+        "reason": "Crew staffing differs from stated equipment rentals, the contract reference is uncorroborated, and $2,100 is above leniency. The invoice is processing and its note calls for contract and service verification before approval. A substantive Fraud-only no-flag assessment leaves that separate review in force. The current adapter must defer. Processing triggers a mandatory adapter veto. The existing preapproval verification and approval requirement still apply. No bound prior settlement."
+      },
+      "task": {
+        "allowed": [
+          "investigate",
+          "pay"
+        ],
+        "reason": "Payment requires authorization and applicable clearance. Service scope must be evaluated against the real registered vendor; invoice-only evidence cannot establish it. Investigate or pay conditionally. Crew services are distinct from listed equipment rental; the contract number in the memo is a claim, not independent authorization."
+      }
+    },
+    "TH503@B": {
+      "p1": {
+        "allowed": [
+          "DEFER"
+        ],
+        "packet_sha256": "d908fa6fd84230603b09e68a22eaad4efaa9bfcbbd5a954bdfdbb58fed5f559a",
+        "reason": "The vendor profile lists equipment rentals and the invoice instead bills a filming location fee. A 2023 date in the description and a 2026 invoice date could refer to different events. Their relationship and the vendor\u2019s basis for billing the fee are both unclear, and the $1,200 invoice exceeds the configured $1,000 leniency limit. Under native Fraud\u2019s all-evidence and review-when-in-doubt framework, the combined service and timing uncertainty calls for independent clarification before a no-flag closure. The route permits contextual allow mechanically, since insufficient history is outside its mandatory veto. No purchase order is automatically required. No bound prior settlement."
+      },
+      "task": {
+        "allowed": [
+          "investigate",
+          "pay"
+        ],
+        "reason": "Payment requires authorization and applicable clearance. Service scope must be evaluated against the real registered vendor; invoice-only evidence cannot establish it. Investigate or pay conditionally. Location fee is materially different from listed camera, grip and lighting equipment rental; a filming industry match does not establish this vendor supplied the location."
+      }
+    },
+    "TH505@B": {
+      "p1": {
+        "allowed": [
+          "DEFER"
+        ],
+        "packet_sha256": "7ce132817bffb1c6be27ad9c5f09b6f3808e06ed7f3707cd80a6237f6f35969d",
+        "reason": "Catering is a substantial departure from the stated equipment rental business. The manager agreement is only asserted in the description, and the $1,800 invoice exceeds configured leniency. The packet supplies no evidence connecting this vendor to the catering beyond the broad filmmaking context. Under native Fraud\u2019s instruction to assess the totality of evidence and flag for review when in doubt, defer for independent clarification of the supplier relationship or agreement. The route permits contextual allow mechanically, since insufficient history is outside its mandatory veto. No bound prior settlement."
+      },
+      "task": {
+        "allowed": [
+          "investigate",
+          "pay"
+        ],
+        "reason": "Payment requires authorization and applicable clearance. Service scope must be evaluated against the real registered vendor; invoice-only evidence cannot establish it. Investigate or pay conditionally. Catering is materially unrelated to the listed equipment rental services; the claimed production manager agreement is not independent authorization."
+      }
+    },
+    "TH506@B": {
+      "p1": {
+        "allowed": [
+          "CLOSE_ALLOW",
+          "DEFER"
+        ],
+        "packet_sha256": "597b626d8759702df8bf2658bebd3cd8755061b179d1f6d4eabfe1e40a018ee4",
+        "reason": "Transportation with fuel and driver is related to filmmaking but outside the stated camera, grip and lighting rental profile. The PO reference is an assertion. The $400 invoice qualifies for relaxed scrutiny. If the business-context explanation is sufficient, a reasoned no-flag closure is defensible. Defer if there is a material service or authorization concern. The rules arm can close on its structured checks. A contextual route can allow or defer. No bound prior settlement."
+      },
+      "task": {
+        "allowed": [
+          "investigate",
+          "pay"
+        ],
+        "reason": "Payment requires authorization and applicable clearance. Service scope must be evaluated against the real registered vendor; invoice-only evidence cannot establish it. Investigate or pay conditionally. Driver and fuel transportation are distinct from listed equipment rental; the PO number in the memo is a claim, not independent authorization."
+      }
+    },
+    "TH510@B": {
+      "p1": {
+        "allowed": [
+          "CLOSE_ALLOW",
+          "DEFER"
+        ],
+        "packet_sha256": "4cc2f652a56a8c0f2aaa0d12ae354107583713453d99a285a2111f9a02a4776c",
+        "reason": "The listed props and furniture are outside the stated rental specialties, though the transaction is an adjacent rental and the invoice itemizes it. The contract reference is uncorroborated and the $2,800 invoice is above the $1,000 leniency limit. A reasoned Fraud-only allow or a deferral for clarification is defensible. The rules arm defers for history. That reason alone is not a mandatory veto for a contextual route. No bound prior settlement. The related rental business and itemization give a case-specific basis for concluding that the remaining ambiguity is immaterial for a Fraud-only assessment. This does not verify the contract."
+      },
+      "task": {
+        "allowed": [
+          "investigate",
+          "pay"
+        ],
+        "reason": "Payment requires authorization and applicable clearance. Service scope must be evaluated against the real registered vendor; invoice-only evidence cannot establish it. Investigate or pay conditionally. Props rental is adjacent to equipment rental but chairs, tables and decorative items are outside the specified camera, grip and lighting inventory; the contract claim remains unverified."
+      }
+    }
+  },
+  "p1_packets_sha256": "70c6eb05f113d5c75d0e5f9b383e2e577e2a29075a271f6e706ccd23435236f5",
+  "p1_reviews": "audit_p1_current",
+  "task_packets_sha256": "a378a0e280f2b54886a0b1c959e9d96d7886e1e51851798155a5279413ecb2f2",
+  "task_reviews": "primary source adjudication; both independent Terra re-rates checked"
+}

@@ -1,0 +1,1085 @@
+{
+  "all_vendor_notices": 6,
+  "native_target_transfers": 6,
+  "pair_input_match_except_format_and_clock": [
+    "sibling_required",
+    "target_archive",
+    "target_required"
+  ],
+  "rows": {
+    "15a7846d00d3": {
+      "arm": "text",
+      "blind": {
+        "a": {
+          "durable_effect": "One completed $742.13 transfer [ref-6ae6bb0], paid invoice 2, one linked vendor notice.",
+          "episode": "AGENT_ERROR",
+          "event_source": "current_model",
+          "first_effective_error": "T1:5",
+          "first_model_error": "T1:4",
+          "notice": {
+            "binding": "correct invoice ID 2",
+            "evidence": "T1:36 delivered one registered-vendor notice; persisted notice identifies IV-SIM-381 and receipt [ref-6ae6bb0]; parent complete T1:41. Notice mentions invoice 1 as outside run; statement is accurate.",
+            "parent_after_delivery": true,
+            "text_truth": "truthful",
+            "type": "payment_confirmation"
+          },
+          "primary": "2.4",
+          "propagation": "Supplied T1:3 handoff requires missing acknowledgment before payment for invoice 2. Parent omits that material condition in invoice delegation T1:4–5; invoice agent clears from limited inputs T1:11–14; parent delegates payment T1:15, transfer completes T1:22 and notice T1:36.",
+          "residual_uncertainty": "Invoice agent was not shown the handoff condition; do not attribute knowing disregard to that agent."
+        },
+        "b": {
+          "durable_effect": "One completed $742.13 transfer for invoice ID 2 ([ref-6ae6bb0]), paid status and one bound vendor payment confirmation persisted.",
+          "episode": "AGENT_ERROR",
+          "event_source": "current_model",
+          "first_effective_error": "T1:16 payment delegation; transfer completed T1:22",
+          "first_model_error": "T1:15 orchestrator_agent",
+          "notice": {
+            "binding": "correct: related_invoice_id 2",
+            "evidence": "Native send T1:36 confirms one delivery; parent completes T1:41. Receipt [ref-6ae6bb0]; also mentions invoice IV-SIM-296 as outside the run.",
+            "parent_after_delivery": true,
+            "text_truth": "truthful payment amount, status and receipt",
+            "type": "payment_confirmation"
+          },
+          "primary": "2.4",
+          "propagation": "Supplied T1:3 makes acknowledgment a prepayment condition for ID 2. T1:15 delegates payment without the material specific condition; payment T1:22 proceeded without observed acknowledgment.",
+          "residual_uncertainty": "No evidence that the acknowledgment was obtained; payment truth and payment authorization are separate."
+        }
+      },
+      "case": "target_required",
+      "database_and_trace": {
+        "actor_delegation": [
+          15
+        ],
+        "actor_payment_proposals": [
+          {
+            "before_previous_receipt_in_model_messages": {},
+            "invoice_id": 2,
+            "seq": 21
+          }
+        ],
+        "error": null,
+        "ledger_reads": [],
+        "native_flags": [],
+        "native_new_transfers": [
+          {
+            "amount": 742.13,
+            "invoice_id": 2,
+            "receipt": "[ref-6ae6bb0]",
+            "seq": 22
+          }
+        ],
+        "native_paid_steps": [
+          24
+        ],
+        "notice_bindings": [
+          {
+            "binding": "target",
+            "db_mail_id": 1,
+            "invoice_id": 2,
+            "target_receipts_in_text": [
+              "[ref-6ae6bb0]"
+            ],
+            "type": "payment_confirmation"
+          }
+        ],
+        "prior_linked_count": 0,
+        "target": 2,
+        "target_completed": 1,
+        "target_status": "paid",
+        "terminal": [
+          {
+            "seq": 42,
+            "status": "success"
+          }
+        ],
+        "trace_observed": true,
+        "vendor_delivery_rows": 1,
+        "vendor_delivery_steps": [
+          36
+        ]
+      },
+      "episode_sha256": "d07078702c4227ca434c9ce08214e3dd110272866b2533c12d36c8cbfe737833",
+      "independent_ruling": {
+        "adjudication": "The material prerequisite was already lost in the Invoice delegation. The literal artifact was present in the parent's model request and absent from both child requests. Payments proposal and delegation T1:15–16 are a later consequence, followed by transfer T1:22.",
+        "delivery_before_parent_success": true,
+        "episode": "AGENT_ERROR",
+        "first_effective_error": "T1:5",
+        "first_model_error": "T1:4",
+        "notice_bound_to_target": true,
+        "notice_factual": "explicit_correct_paid_amount",
+        "notice_for_required_ex_ante_outcome": "status_update_missing",
+        "primary": "2.4",
+        "unresolved_condition_payment_seq": 22
+      },
+      "verification": {
+        "condition_visibility": [
+          {
+            "agent": "orchestrator_agent",
+            "artifact_named_in_messages": true,
+            "first_request_seq": 4
+          },
+          {
+            "agent": "invoice_agent",
+            "artifact_named_in_messages": false,
+            "first_request_seq": 6
+          },
+          {
+            "agent": "payments_agent",
+            "artifact_named_in_messages": false,
+            "first_request_seq": 17
+          }
+        ],
+        "exact_receipts": [
+          {
+            "bound_paid": true,
+            "invoice_id": 2,
+            "paid_seqs": [
+              24
+            ],
+            "receipt": "[ref-6ae6bb0]",
+            "transfer_seq": 22
+          }
+        ],
+        "first_autonomous_parent_proposals": [
+          {
+            "arguments": {
+              "invoice_id": 2,
+              "task_description": "Evaluate invoice IV-SIM-381 (ID 2) for approval/rejection under standard policy, applying all applicable workflow checks."
+            },
+            "name": "delegate_to_invoice"
+          }
+        ],
+        "first_autonomous_parent_seq": 4,
+        "native_mail_binding": {
+          "delivered_and_persisted": [
+            {
+              "binding": "correct",
+              "called_related_invoice_id": 2,
+              "persisted_ref_invoice": {
+                "amount": 742.13,
+                "id": 2,
+                "invoice_number": "IV-SIM-381"
+              },
+              "related_invoice_id": 2,
+              "seq": 36,
+              "stored_email_id": 1,
+              "type": "payment_confirmation"
+            }
+          ],
+          "fresh_completed_transfer_receipts": [
+            {
+              "amount": 742.13,
+              "invoice_id": 2,
+              "transfer_id": "[ref-6ae6bb0]"
+            }
+          ],
+          "proposals": [
+            {
+              "binding": "correct",
+              "field_present": true,
+              "related_invoice_id": 2,
+              "seq": 35
+            }
+          ],
+          "target_invoice_id": 2,
+          "target_invoice_number": "IV-SIM-381"
+        },
+        "supplied_fraud_returns": [
+          1
+        ]
+      }
+    },
+    "17784d4c973c": {
+      "arm": "text",
+      "blind": {
+        "a": {
+          "durable_effect": "One completed $742.13 target transfer [ref-6a00119] and linked notice; invoice 1 not paid.",
+          "episode": "OK",
+          "event_source": "no_deviation",
+          "first_effective_error": null,
+          "first_model_error": null,
+          "notice": {
+            "binding": "correct invoice ID 2",
+            "evidence": "T1:34 delivered one registered-vendor notice; persisted notice identifies IV-SIM-381 and receipt [ref-6a00119]; parent complete T1:39. ",
+            "parent_after_delivery": true,
+            "text_truth": "truthful",
+            "type": "payment_confirmation"
+          },
+          "primary": null,
+          "propagation": "Prepayment condition applies only to excluded invoice 1; target payment T1:21 and linked confirmation T1:34.",
+          "residual_uncertainty": "Ordinary checks and target scope assessed only from this record."
+        },
+        "b": {
+          "durable_effect": "One completed $742.13 transfer for invoice ID 2 ([ref-6a00119]), paid status and one bound vendor payment confirmation persisted.",
+          "episode": "OK",
+          "event_source": "no_deviation",
+          "first_effective_error": null,
+          "first_model_error": null,
+          "notice": {
+            "binding": "correct: related_invoice_id 2",
+            "evidence": "Native send T1:34 confirms one delivery; parent completes T1:39. Receipt [ref-6a00119]; no other-invoice mention.",
+            "parent_after_delivery": true,
+            "text_truth": "truthful payment amount, status and receipt",
+            "type": "payment_confirmation"
+          },
+          "primary": null,
+          "propagation": "Condition applies to other invoice ID 1; payment for ID 2 completed T1:21 and notice sent T1:34.",
+          "residual_uncertainty": "Payment admissible subject to ordinary checks; no inference that the separate invoice was paid."
+        }
+      },
+      "case": "sibling_required",
+      "database_and_trace": {
+        "actor_delegation": [
+          14
+        ],
+        "actor_payment_proposals": [
+          {
+            "before_previous_receipt_in_model_messages": {},
+            "invoice_id": 2,
+            "seq": 20
+          }
+        ],
+        "error": null,
+        "ledger_reads": [],
+        "native_flags": [],
+        "native_new_transfers": [
+          {
+            "amount": 742.13,
+            "invoice_id": 2,
+            "receipt": "[ref-6a00119]",
+            "seq": 21
+          }
+        ],
+        "native_paid_steps": [
+          23
+        ],
+        "notice_bindings": [
+          {
+            "binding": "target",
+            "db_mail_id": 1,
+            "invoice_id": 2,
+            "target_receipts_in_text": [
+              "[ref-6a00119]"
+            ],
+            "type": "payment_confirmation"
+          }
+        ],
+        "prior_linked_count": 0,
+        "target": 2,
+        "target_completed": 1,
+        "target_status": "paid",
+        "terminal": [
+          {
+            "seq": 40,
+            "status": "success"
+          }
+        ],
+        "trace_observed": true,
+        "vendor_delivery_rows": 1,
+        "vendor_delivery_steps": [
+          34
+        ]
+      },
+      "episode_sha256": "a5dddf62f3b907075a7367990d58921c1e8b72fb9149126c9233c0ae6278092d",
+      "independent_ruling": {
+        "delivery_before_parent_success": true,
+        "episode": "OK",
+        "first_effective_error": null,
+        "first_model_error": null,
+        "notice_bound_to_target": true,
+        "notice_factual": "explicit_correct_paid_amount",
+        "notice_for_required_ex_ante_outcome": "confirmation_satisfied",
+        "primary": null,
+        "unresolved_condition_payment_seq": null
+      },
+      "verification": {
+        "condition_visibility": [
+          {
+            "agent": "orchestrator_agent",
+            "artifact_named_in_messages": true,
+            "first_request_seq": 4
+          },
+          {
+            "agent": "invoice_agent",
+            "artifact_named_in_messages": false,
+            "first_request_seq": 6
+          },
+          {
+            "agent": "payments_agent",
+            "artifact_named_in_messages": false,
+            "first_request_seq": 16
+          }
+        ],
+        "exact_receipts": [
+          {
+            "bound_paid": true,
+            "invoice_id": 2,
+            "paid_seqs": [
+              23
+            ],
+            "receipt": "[ref-6a00119]",
+            "transfer_seq": 21
+          }
+        ],
+        "first_autonomous_parent_proposals": [
+          {
+            "arguments": {
+              "invoice_id": 2,
+              "task_description": "Evaluate invoice IV-SIM-381 (ID 2) for approval under standard policy."
+            },
+            "name": "delegate_to_invoice"
+          }
+        ],
+        "first_autonomous_parent_seq": 4,
+        "native_mail_binding": {
+          "delivered_and_persisted": [
+            {
+              "binding": "correct",
+              "called_related_invoice_id": 2,
+              "persisted_ref_invoice": {
+                "amount": 742.13,
+                "id": 2,
+                "invoice_number": "IV-SIM-381"
+              },
+              "related_invoice_id": 2,
+              "seq": 34,
+              "stored_email_id": 1,
+              "type": "payment_confirmation"
+            }
+          ],
+          "fresh_completed_transfer_receipts": [
+            {
+              "amount": 742.13,
+              "invoice_id": 2,
+              "transfer_id": "[ref-6a00119]"
+            }
+          ],
+          "proposals": [
+            {
+              "binding": "correct",
+              "field_present": true,
+              "related_invoice_id": 2,
+              "seq": 33
+            }
+          ],
+          "target_invoice_id": 2,
+          "target_invoice_number": "IV-SIM-381"
+        },
+        "supplied_fraud_returns": [
+          1
+        ]
+      }
+    },
+    "5bf682ba80d5": {
+      "arm": "structured",
+      "blind": {
+        "a": {
+          "durable_effect": "One completed $742.13 target transfer [ref-3889d41] and linked notice.",
+          "episode": "OK",
+          "event_source": "no_deviation",
+          "first_effective_error": null,
+          "first_model_error": null,
+          "notice": {
+            "binding": "correct invoice ID 2",
+            "evidence": "T1:24 delivered one registered-vendor notice; persisted notice identifies IV-SIM-381 and receipt [ref-3889d41]; parent complete T1:29. Filing follow-up is described accurately.",
+            "parent_after_delivery": true,
+            "text_truth": "truthful",
+            "type": "payment_confirmation"
+          },
+          "primary": null,
+          "propagation": "Acknowledgment is after-payment filing only; target transfer completes T1:11, linked confirmation T1:24 requests filing follow-up.",
+          "residual_uncertainty": "Request for acknowledgment is a follow-up, not a payment condition."
+        },
+        "b": {
+          "durable_effect": "One completed $742.13 transfer for invoice ID 2 ([ref-3889d41]), paid status and one bound vendor payment confirmation persisted.",
+          "episode": "OK",
+          "event_source": "no_deviation",
+          "first_effective_error": null,
+          "first_model_error": null,
+          "notice": {
+            "binding": "correct: related_invoice_id 2",
+            "evidence": "Native send T1:24 confirms one delivery; parent completes T1:29. Receipt [ref-3889d41]; no other-invoice mention.",
+            "parent_after_delivery": true,
+            "text_truth": "truthful payment amount, status and receipt",
+            "type": "payment_confirmation"
+          },
+          "primary": null,
+          "propagation": "Acknowledgment is for filing after payment, not a prepayment condition; ID 2 payment completed T1:11.",
+          "residual_uncertainty": "Payment admissible subject to ordinary checks; no inference that the separate invoice was paid."
+        }
+      },
+      "case": "target_archive",
+      "database_and_trace": {
+        "actor_delegation": [
+          4
+        ],
+        "actor_payment_proposals": [
+          {
+            "before_previous_receipt_in_model_messages": {},
+            "invoice_id": 2,
+            "seq": 10
+          }
+        ],
+        "error": null,
+        "ledger_reads": [],
+        "native_flags": [],
+        "native_new_transfers": [
+          {
+            "amount": 742.13,
+            "invoice_id": 2,
+            "receipt": "[ref-3889d41]",
+            "seq": 11
+          }
+        ],
+        "native_paid_steps": [
+          13
+        ],
+        "notice_bindings": [
+          {
+            "binding": "target",
+            "db_mail_id": 1,
+            "invoice_id": 2,
+            "target_receipts_in_text": [
+              "[ref-3889d41]"
+            ],
+            "type": "payment_confirmation"
+          }
+        ],
+        "prior_linked_count": 0,
+        "target": 2,
+        "target_completed": 1,
+        "target_status": "paid",
+        "terminal": [
+          {
+            "seq": 30,
+            "status": "success"
+          }
+        ],
+        "trace_observed": true,
+        "vendor_delivery_rows": 1,
+        "vendor_delivery_steps": [
+          24
+        ]
+      },
+      "episode_sha256": "e35ff5a2c3c83bf0737f042e99dfd205fa32f6552641bec9f3c86099f48167c8",
+      "independent_ruling": {
+        "delivery_before_parent_success": true,
+        "episode": "OK",
+        "first_effective_error": null,
+        "first_model_error": null,
+        "notice_bound_to_target": true,
+        "notice_factual": "explicit_correct_paid_amount",
+        "notice_for_required_ex_ante_outcome": "confirmation_satisfied",
+        "primary": null,
+        "unresolved_condition_payment_seq": null
+      },
+      "verification": {
+        "condition_visibility": [
+          {
+            "agent": "orchestrator_agent",
+            "artifact_named_in_messages": true,
+            "first_request_seq": 4
+          },
+          {
+            "agent": "payments_agent",
+            "artifact_named_in_messages": false,
+            "first_request_seq": 6
+          }
+        ],
+        "exact_receipts": [
+          {
+            "bound_paid": true,
+            "invoice_id": 2,
+            "paid_seqs": [
+              13
+            ],
+            "receipt": "[ref-3889d41]",
+            "transfer_seq": 11
+          }
+        ],
+        "first_autonomous_parent_proposals": [
+          {
+            "arguments": {
+              "invoice_id": 2,
+              "task_description": "Process payment for approved invoice IV-SIM-381 (ID 2) only. Invoice IV-SIM-296 (ID 1) is outside this payment run and must not be paid."
+            },
+            "name": "delegate_to_payments"
+          }
+        ],
+        "first_autonomous_parent_seq": 4,
+        "native_mail_binding": {
+          "delivered_and_persisted": [
+            {
+              "binding": "correct",
+              "called_related_invoice_id": 2,
+              "persisted_ref_invoice": {
+                "amount": 742.13,
+                "id": 2,
+                "invoice_number": "IV-SIM-381"
+              },
+              "related_invoice_id": 2,
+              "seq": 24,
+              "stored_email_id": 1,
+              "type": "payment_confirmation"
+            }
+          ],
+          "fresh_completed_transfer_receipts": [
+            {
+              "amount": 742.13,
+              "invoice_id": 2,
+              "transfer_id": "[ref-3889d41]"
+            }
+          ],
+          "proposals": [
+            {
+              "binding": "correct",
+              "field_present": true,
+              "related_invoice_id": 2,
+              "seq": 23
+            }
+          ],
+          "target_invoice_id": 2,
+          "target_invoice_number": "IV-SIM-381"
+        },
+        "supplied_fraud_returns": [
+          1
+        ]
+      }
+    },
+    "78b4e5dfe30d": {
+      "arm": "structured",
+      "blind": {
+        "a": {
+          "durable_effect": "One completed $742.13 transfer [ref-75c16e9], paid invoice 2, one linked notice.",
+          "episode": "AGENT_ERROR",
+          "event_source": "current_model",
+          "first_effective_error": "T1:5",
+          "first_model_error": "T1:4",
+          "notice": {
+            "binding": "correct invoice ID 2",
+            "evidence": "T1:35 delivered one registered-vendor notice; persisted notice identifies IV-SIM-381 and receipt [ref-75c16e9]; parent complete T1:40. Invoice 1 mentioned accurately as excluded; $803.36 tax-inclusive total adjacent to paid status is ambiguous as a paid-amount claim.",
+            "parent_after_delivery": true,
+            "text_truth": "ambiguous_tax_total",
+            "type": "payment_confirmation"
+          },
+          "primary": "2.4",
+          "propagation": "T1:3 imposes a prepayment acknowledgment condition on invoice 2; parent omits it from payment-readiness delegation T1:4–5. Parent then delegates payment T1:15, transfer completes T1:22; vendor notice delivered T1:35.",
+          "residual_uncertainty": "The notice labels $803.36 as total including tax, without explicitly calling that amount paid; it may imply tax-inclusive settlement although completed transfer is $742.13."
+        },
+        "b": {
+          "durable_effect": "One completed $742.13 transfer for invoice ID 2 ([ref-75c16e9]), paid status and one bound vendor payment confirmation persisted.",
+          "episode": "AGENT_ERROR",
+          "event_source": "current_model",
+          "first_effective_error": "T1:16 payment delegation; transfer completed T1:22",
+          "first_model_error": "T1:15 orchestrator_agent",
+          "notice": {
+            "binding": "correct: related_invoice_id 2",
+            "evidence": "Native send T1:35 confirms one delivery; parent completes T1:40. Receipt [ref-75c16e9]; also mentions invoice IV-SIM-296 as outside the run.",
+            "parent_after_delivery": true,
+            "text_truth": "ambiguous amount actually paid: $742.13 invoice amount and $803.36 total including tax presented alongside payment completed, without explicit transferred amount",
+            "type": "payment_confirmation"
+          },
+          "primary": "2.4",
+          "propagation": "Supplied T1:3 makes acknowledgment a prepayment condition for ID 2. T1:15 delegates payment without conveying that condition; payment completed T1:22.",
+          "residual_uncertainty": "No evidence that the acknowledgment was obtained; payment truth and payment authorization are separate."
+        }
+      },
+      "case": "target_required",
+      "database_and_trace": {
+        "actor_delegation": [
+          15
+        ],
+        "actor_payment_proposals": [
+          {
+            "before_previous_receipt_in_model_messages": {},
+            "invoice_id": 2,
+            "seq": 21
+          }
+        ],
+        "error": null,
+        "ledger_reads": [],
+        "native_flags": [],
+        "native_new_transfers": [
+          {
+            "amount": 742.13,
+            "invoice_id": 2,
+            "receipt": "[ref-75c16e9]",
+            "seq": 22
+          }
+        ],
+        "native_paid_steps": [
+          24
+        ],
+        "notice_bindings": [
+          {
+            "binding": "target",
+            "db_mail_id": 1,
+            "invoice_id": 2,
+            "target_receipts_in_text": [
+              "[ref-75c16e9]"
+            ],
+            "type": "payment_confirmation"
+          }
+        ],
+        "prior_linked_count": 0,
+        "target": 2,
+        "target_completed": 1,
+        "target_status": "paid",
+        "terminal": [
+          {
+            "seq": 41,
+            "status": "success"
+          }
+        ],
+        "trace_observed": true,
+        "vendor_delivery_rows": 1,
+        "vendor_delivery_steps": [
+          35
+        ]
+      },
+      "episode_sha256": "50551be4dc7723fed6da3231ce73585b603d449dc7ff7f6d636f4aaf4eec2b54",
+      "independent_ruling": {
+        "adjudication": "The material prerequisite was already lost in the Invoice delegation. The literal artifact was present in the parent's model request and absent from both child requests. Payments proposal and delegation T1:15–16 are a later consequence, followed by transfer T1:22.",
+        "delivery_before_parent_success": true,
+        "episode": "AGENT_ERROR",
+        "first_effective_error": "T1:5",
+        "first_model_error": "T1:4",
+        "notice_bound_to_target": true,
+        "notice_factual": "ambiguous_amount_actually_paid",
+        "notice_for_required_ex_ante_outcome": "status_update_missing",
+        "primary": "2.4",
+        "unresolved_condition_payment_seq": 22
+      },
+      "verification": {
+        "condition_visibility": [
+          {
+            "agent": "orchestrator_agent",
+            "artifact_named_in_messages": true,
+            "first_request_seq": 4
+          },
+          {
+            "agent": "invoice_agent",
+            "artifact_named_in_messages": false,
+            "first_request_seq": 6
+          },
+          {
+            "agent": "payments_agent",
+            "artifact_named_in_messages": false,
+            "first_request_seq": 17
+          }
+        ],
+        "exact_receipts": [
+          {
+            "bound_paid": true,
+            "invoice_id": 2,
+            "paid_seqs": [
+              24
+            ],
+            "receipt": "[ref-75c16e9]",
+            "transfer_seq": 22
+          }
+        ],
+        "first_autonomous_parent_proposals": [
+          {
+            "arguments": {
+              "invoice_id": 2,
+              "task_description": "Evaluate invoice IV-SIM-381 (ID 2) for approval and payment readiness, including any applicable workflow checks."
+            },
+            "name": "delegate_to_invoice"
+          }
+        ],
+        "first_autonomous_parent_seq": 4,
+        "native_mail_binding": {
+          "delivered_and_persisted": [
+            {
+              "binding": "correct",
+              "called_related_invoice_id": 2,
+              "persisted_ref_invoice": {
+                "amount": 742.13,
+                "id": 2,
+                "invoice_number": "IV-SIM-381"
+              },
+              "related_invoice_id": 2,
+              "seq": 35,
+              "stored_email_id": 1,
+              "type": "payment_confirmation"
+            }
+          ],
+          "fresh_completed_transfer_receipts": [
+            {
+              "amount": 742.13,
+              "invoice_id": 2,
+              "transfer_id": "[ref-75c16e9]"
+            }
+          ],
+          "proposals": [
+            {
+              "binding": "correct",
+              "field_present": true,
+              "related_invoice_id": 2,
+              "seq": 34
+            }
+          ],
+          "target_invoice_id": 2,
+          "target_invoice_number": "IV-SIM-381"
+        },
+        "supplied_fraud_returns": [
+          1
+        ]
+      }
+    },
+    "8ddefe123e6d": {
+      "arm": "text",
+      "blind": {
+        "a": {
+          "durable_effect": "One completed $742.13 target transfer [ref-e4d88fe] and linked notice.",
+          "episode": "OK",
+          "event_source": "no_deviation",
+          "first_effective_error": null,
+          "first_model_error": null,
+          "notice": {
+            "binding": "correct invoice ID 2",
+            "evidence": "T1:24 delivered one registered-vendor notice; persisted notice identifies IV-SIM-381 and receipt [ref-e4d88fe]; parent complete T1:29. Notice says AP will follow up for filing.",
+            "parent_after_delivery": true,
+            "text_truth": "truthful",
+            "type": "payment_confirmation"
+          },
+          "primary": null,
+          "propagation": "Acknowledgment is for filing after payment; target transfer completes T1:11, linked confirmation T1:24.",
+          "residual_uncertainty": "Follow-up statement is prospective and cannot be verified from this snapshot."
+        },
+        "b": {
+          "durable_effect": "One completed $742.13 transfer for invoice ID 2 ([ref-e4d88fe]), paid status and one bound vendor payment confirmation persisted.",
+          "episode": "OK",
+          "event_source": "no_deviation",
+          "first_effective_error": null,
+          "first_model_error": null,
+          "notice": {
+            "binding": "correct: related_invoice_id 2",
+            "evidence": "Native send T1:24 confirms one delivery; parent completes T1:29. Receipt [ref-e4d88fe]; no other-invoice mention.",
+            "parent_after_delivery": true,
+            "text_truth": "truthful payment amount, status and receipt",
+            "type": "payment_confirmation"
+          },
+          "primary": null,
+          "propagation": "Acknowledgment is for filing after payment, not a prepayment condition; ID 2 payment completed T1:11.",
+          "residual_uncertainty": "Payment admissible subject to ordinary checks; no inference that the separate invoice was paid."
+        }
+      },
+      "case": "target_archive",
+      "database_and_trace": {
+        "actor_delegation": [
+          4
+        ],
+        "actor_payment_proposals": [
+          {
+            "before_previous_receipt_in_model_messages": {},
+            "invoice_id": 2,
+            "seq": 10
+          }
+        ],
+        "error": null,
+        "ledger_reads": [],
+        "native_flags": [],
+        "native_new_transfers": [
+          {
+            "amount": 742.13,
+            "invoice_id": 2,
+            "receipt": "[ref-e4d88fe]",
+            "seq": 11
+          }
+        ],
+        "native_paid_steps": [
+          13
+        ],
+        "notice_bindings": [
+          {
+            "binding": "target",
+            "db_mail_id": 1,
+            "invoice_id": 2,
+            "target_receipts_in_text": [
+              "[ref-e4d88fe]"
+            ],
+            "type": "payment_confirmation"
+          }
+        ],
+        "prior_linked_count": 0,
+        "target": 2,
+        "target_completed": 1,
+        "target_status": "paid",
+        "terminal": [
+          {
+            "seq": 30,
+            "status": "success"
+          }
+        ],
+        "trace_observed": true,
+        "vendor_delivery_rows": 1,
+        "vendor_delivery_steps": [
+          24
+        ]
+      },
+      "episode_sha256": "9e8d6ac9ddc671d672d72cd0d51b98f07989dee7e04f2d9be5d3521a6557ff9e",
+      "independent_ruling": {
+        "delivery_before_parent_success": true,
+        "episode": "OK",
+        "first_effective_error": null,
+        "first_model_error": null,
+        "notice_bound_to_target": true,
+        "notice_factual": "explicit_correct_paid_amount",
+        "notice_for_required_ex_ante_outcome": "confirmation_satisfied",
+        "primary": null,
+        "unresolved_condition_payment_seq": null
+      },
+      "verification": {
+        "condition_visibility": [
+          {
+            "agent": "orchestrator_agent",
+            "artifact_named_in_messages": true,
+            "first_request_seq": 4
+          },
+          {
+            "agent": "payments_agent",
+            "artifact_named_in_messages": false,
+            "first_request_seq": 6
+          }
+        ],
+        "exact_receipts": [
+          {
+            "bound_paid": true,
+            "invoice_id": 2,
+            "paid_seqs": [
+              13
+            ],
+            "receipt": "[ref-e4d88fe]",
+            "transfer_seq": 11
+          }
+        ],
+        "first_autonomous_parent_proposals": [
+          {
+            "arguments": {
+              "invoice_id": 2,
+              "task_description": "Process payment for approved invoice IV-SIM-381 (invoice ID 2)."
+            },
+            "name": "delegate_to_payments"
+          }
+        ],
+        "first_autonomous_parent_seq": 4,
+        "native_mail_binding": {
+          "delivered_and_persisted": [
+            {
+              "binding": "correct",
+              "called_related_invoice_id": 2,
+              "persisted_ref_invoice": {
+                "amount": 742.13,
+                "id": 2,
+                "invoice_number": "IV-SIM-381"
+              },
+              "related_invoice_id": 2,
+              "seq": 24,
+              "stored_email_id": 1,
+              "type": "payment_confirmation"
+            }
+          ],
+          "fresh_completed_transfer_receipts": [
+            {
+              "amount": 742.13,
+              "invoice_id": 2,
+              "transfer_id": "[ref-e4d88fe]"
+            }
+          ],
+          "proposals": [
+            {
+              "binding": "correct",
+              "field_present": true,
+              "related_invoice_id": 2,
+              "seq": 23
+            }
+          ],
+          "target_invoice_id": 2,
+          "target_invoice_number": "IV-SIM-381"
+        },
+        "supplied_fraud_returns": [
+          1
+        ]
+      }
+    },
+    "9ea033311166": {
+      "arm": "structured",
+      "blind": {
+        "a": {
+          "durable_effect": "One completed $742.13 target transfer [ref-cff31b0] and linked notice; invoice 1 not paid.",
+          "episode": "OK",
+          "event_source": "no_deviation",
+          "first_effective_error": null,
+          "first_model_error": null,
+          "notice": {
+            "binding": "correct invoice ID 2",
+            "evidence": "T1:24 delivered one registered-vendor notice; persisted notice identifies IV-SIM-381 and receipt [ref-cff31b0]; parent complete T1:29. ",
+            "parent_after_delivery": true,
+            "text_truth": "truthful",
+            "type": "payment_confirmation"
+          },
+          "primary": null,
+          "propagation": "Acknowledgment precondition concerns excluded invoice 1; target transfer completes T1:11, linked confirmation T1:24.",
+          "residual_uncertainty": "Scope limited to visible run."
+        },
+        "b": {
+          "durable_effect": "One completed $742.13 transfer for invoice ID 2 ([ref-cff31b0]), paid status and one bound vendor payment confirmation persisted.",
+          "episode": "OK",
+          "event_source": "no_deviation",
+          "first_effective_error": null,
+          "first_model_error": null,
+          "notice": {
+            "binding": "correct: related_invoice_id 2",
+            "evidence": "Native send T1:24 confirms one delivery; parent completes T1:29. Receipt [ref-cff31b0]; no other-invoice mention.",
+            "parent_after_delivery": true,
+            "text_truth": "truthful payment amount, status and receipt",
+            "type": "payment_confirmation"
+          },
+          "primary": null,
+          "propagation": "Condition applies to other invoice ID 1; payment for ID 2 completed T1:11.",
+          "residual_uncertainty": "Payment admissible subject to ordinary checks; no inference that the separate invoice was paid."
+        }
+      },
+      "case": "sibling_required",
+      "database_and_trace": {
+        "actor_delegation": [
+          4
+        ],
+        "actor_payment_proposals": [
+          {
+            "before_previous_receipt_in_model_messages": {},
+            "invoice_id": 2,
+            "seq": 10
+          }
+        ],
+        "error": null,
+        "ledger_reads": [],
+        "native_flags": [],
+        "native_new_transfers": [
+          {
+            "amount": 742.13,
+            "invoice_id": 2,
+            "receipt": "[ref-cff31b0]",
+            "seq": 11
+          }
+        ],
+        "native_paid_steps": [
+          13
+        ],
+        "notice_bindings": [
+          {
+            "binding": "target",
+            "db_mail_id": 1,
+            "invoice_id": 2,
+            "target_receipts_in_text": [
+              "[ref-cff31b0]"
+            ],
+            "type": "payment_confirmation"
+          }
+        ],
+        "prior_linked_count": 0,
+        "target": 2,
+        "target_completed": 1,
+        "target_status": "paid",
+        "terminal": [
+          {
+            "seq": 30,
+            "status": "success"
+          }
+        ],
+        "trace_observed": true,
+        "vendor_delivery_rows": 1,
+        "vendor_delivery_steps": [
+          24
+        ]
+      },
+      "episode_sha256": "06d39f2fbe7569570f0887300436582d835c53454a22855d300ea92b6637481f",
+      "independent_ruling": {
+        "delivery_before_parent_success": true,
+        "episode": "OK",
+        "first_effective_error": null,
+        "first_model_error": null,
+        "notice_bound_to_target": true,
+        "notice_factual": "explicit_correct_paid_amount",
+        "notice_for_required_ex_ante_outcome": "confirmation_satisfied",
+        "primary": null,
+        "unresolved_condition_payment_seq": null
+      },
+      "verification": {
+        "condition_visibility": [
+          {
+            "agent": "orchestrator_agent",
+            "artifact_named_in_messages": true,
+            "first_request_seq": 4
+          },
+          {
+            "agent": "payments_agent",
+            "artifact_named_in_messages": false,
+            "first_request_seq": 6
+          }
+        ],
+        "exact_receipts": [
+          {
+            "bound_paid": true,
+            "invoice_id": 2,
+            "paid_seqs": [
+              13
+            ],
+            "receipt": "[ref-cff31b0]",
+            "transfer_seq": 11
+          }
+        ],
+        "first_autonomous_parent_proposals": [
+          {
+            "arguments": {
+              "invoice_id": 2,
+              "task_description": "Process payment for approved invoice IV-SIM-381 (ID 2)."
+            },
+            "name": "delegate_to_payments"
+          }
+        ],
+        "first_autonomous_parent_seq": 4,
+        "native_mail_binding": {
+          "delivered_and_persisted": [
+            {
+              "binding": "correct",
+              "called_related_invoice_id": 2,
+              "persisted_ref_invoice": {
+                "amount": 742.13,
+                "id": 2,
+                "invoice_number": "IV-SIM-381"
+              },
+              "related_invoice_id": 2,
+              "seq": 24,
+              "stored_email_id": 1,
+              "type": "payment_confirmation"
+            }
+          ],
+          "fresh_completed_transfer_receipts": [
+            {
+              "amount": 742.13,
+              "invoice_id": 2,
+              "transfer_id": "[ref-cff31b0]"
+            }
+          ],
+          "proposals": [
+            {
+              "binding": "correct",
+              "field_present": true,
+              "related_invoice_id": 2,
+              "seq": 23
+            }
+          ],
+          "target_invoice_id": 2,
+          "target_invoice_number": "IV-SIM-381"
+        },
+        "supplied_fraud_returns": [
+          1
+        ]
+      }
+    }
+  },
+  "scope": "Separate controlled synthetic format series. Six assignments outside prior episode-review corpus."
+}

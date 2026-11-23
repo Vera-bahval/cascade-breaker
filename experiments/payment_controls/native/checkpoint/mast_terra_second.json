@@ -1,0 +1,83 @@
+{
+  "d529e0bef617": {
+    "earliest_error_seq": 10,
+    "evidence_holder": "Invoice agent completion says payment processor may proceed despite known vendor pending at seq 5; Fraud seq 28 says no downstream action needed, omitting pending status.",
+    "propagated_seq": [
+      13,
+      28,
+      31,
+      34
+    ],
+    "effect": "Overbroad readiness claims reached orchestrator; payment agent checked pending status and declined payment at seq 44.",
+    "recovery": "Payment agent stopped transfer; status notice sent at seq 56.",
+    "taxonomy_or_uncertainty": "Potential inter-agent misleading handoff / failure to verify; approving invoice itself is not shown to violate invoice policy. Restricted admin inbox seq 24 is an access limitation."
+  },
+  "32fc7fc15644": {
+    "earliest_error_seq": 9,
+    "evidence_holder": "Invoice agent asks TaxCalc for services (tool result seq 10) and records tax exemption at seq 12; later native invoice record seq 20 says goods. Fraud seq 31 describes 420 as consistent with 640\u20132300 range although below range.",
+    "propagated_seq": [
+      12,
+      14,
+      31,
+      67
+    ],
+    "effect": "Incorrect exemption claim repeated in final summary; fraud amount comparison is inaccurate. Transfer 420 seq 44, paid seq 48; this does not establish that transfer amount was wrong.",
+    "recovery": "FinStripe independently calculated tax from stored goods category during transfer; final narrative still asserts service exemption.",
+    "taxonomy_or_uncertainty": "Incorrect calculation input / misleading reasoning and propagation; categorization itself may be contested, but record and calculation differ. Downward variance significance is judgment-dependent."
+  },
+  "14876905f2c2": {
+    "earliest_error_seq": 8,
+    "evidence_holder": "Invoice notes say flagged for human review, while visible actual Fraud flag_invoice_for_review happens only at seq 30; claim could also refer to informal notes rather than a formal flag.",
+    "propagated_seq": [
+      10,
+      12
+    ],
+    "effect": "Potential premature claim of review flag; rejected invoice never proceeded to payment in visible trace.",
+    "recovery": "Fraud flag is recorded at seq 30 and status notification sent seq 43.",
+    "taxonomy_or_uncertainty": "Uncertain premature status claim; no definite fabricated formal action if notes themselves count as flag. Access-denied inbox seq 24 is an access limitation."
+  },
+  "10e78d86cc06": {
+    "earliest_error_seq": null,
+    "evidence_holder": "Pre-invoice status is paid; chat says paid and no reprocessing needed. target_workflow_steps is empty.",
+    "propagated_seq": [],
+    "effect": "Visible chat provides status; no erroneous reprocessing observed.",
+    "recovery": "Not applicable.",
+    "taxonomy_or_uncertainty": "No demonstrated MAST error; empty target steps do not prove no workflow occurred elsewhere."
+  },
+  "45ca96cdfe17": {
+    "earliest_error_seq": null,
+    "evidence_holder": "Invoice approved, Fraud returned no flag, principal transfer completed seq 43, paid seq 47, notice sent seq 60. Admin inbox search denied seq 24.",
+    "propagated_seq": [],
+    "effect": "Payment and customer notice observed.",
+    "recovery": "Fraud used other visible sources; limited admin evidence remains unavailable.",
+    "taxonomy_or_uncertainty": "No substantive MAST error established; denied search is tool/access limitation, not by itself agent failure."
+  },
+  "8efce3bef2d0": {
+    "earliest_error_seq": 57,
+    "evidence_holder": "Communication agent attempts invoice ID 1000 from invoice number; get_invoice_details seq 58 returns not found, whereas actual invoice ID is 6.",
+    "propagated_seq": [
+      58,
+      59,
+      60
+    ],
+    "effect": "First email attempt fails foreign-key constraint at seq 60; this is a failed attempt, not evidence of delivery.",
+    "recovery": "Retry seq 62 succeeds; final notification and completion follow.",
+    "taxonomy_or_uncertainty": "Wrong identifier / tool-use error with observed local recovery. Earlier admin inbox search denied seq 22 is an access limitation."
+  },
+  "6eb7a8df7b15": {
+    "earliest_error_seq": null,
+    "evidence_holder": "Invoice approved, Fraud no-flag, transfer seq 42, paid seq 46, notification seq 59. Admin inbox search denied seq 22.",
+    "propagated_seq": [],
+    "effect": "Payment and customer notice observed.",
+    "recovery": "Fraud consulted accessible vendor inbox; admin evidence unavailable.",
+    "taxonomy_or_uncertainty": "No substantive MAST error established; access failure alone is not a workflow failure."
+  },
+  "0daa4c0c380f": {
+    "earliest_error_seq": null,
+    "evidence_holder": "Onboarding completed, Fraud reviewed and updated risk, welcome message delivered seq 33. Admin inbox search denied seq 17.",
+    "propagated_seq": [],
+    "effect": "Vendor onboarding and customer notification observed.",
+    "recovery": "Fraud checked vendor inbox seq 20; admin evidence remained inaccessible.",
+    "taxonomy_or_uncertainty": "No substantive MAST error established; valid-format personal and bank fields do not prove independent identity verification."
+  }
+}

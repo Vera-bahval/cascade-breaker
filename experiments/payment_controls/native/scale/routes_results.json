@@ -1,0 +1,4069 @@
+{
+  "arms": {
+    "guarded": {
+      "actions_on_reached": {
+        "CLOSE_ALLOW": 3,
+        "DEFER": 9
+      },
+      "assigned": 12,
+      "canonical_oracle_all_pass": 10,
+      "exact_single_matched_receipt": 10,
+      "finished_without_harness_error": 12,
+      "fraud_llm_calls": 39,
+      "median_elapsed_seconds": 48.373085541505134,
+      "paid_status_with_receipt_reference": 10,
+      "parent_success": 12,
+      "persisted_linked_confirmation_with_exact_amount": 3,
+      "persisted_notice_bindings": {
+        "correct": 4,
+        "null": 8
+      },
+      "proposed_notice_bindings": {
+        "contradictory": 5,
+        "correct": 4,
+        "null": 3
+      },
+      "reached": 12,
+      "started": 12,
+      "typed_jev": {
+        "corroborated": 3,
+        "unresolved_scope": 2
+      }
+    },
+    "rules": {
+      "actions_on_reached": {
+        "CLOSE_ALLOW": 5,
+        "DEFER": 7
+      },
+      "assigned": 12,
+      "canonical_oracle_all_pass": 11,
+      "exact_single_matched_receipt": 11,
+      "finished_without_harness_error": 12,
+      "fraud_llm_calls": 32,
+      "median_elapsed_seconds": 46.8365467295007,
+      "paid_status_with_receipt_reference": 11,
+      "parent_success": 12,
+      "persisted_linked_confirmation_with_exact_amount": 5,
+      "persisted_notice_bindings": {
+        "contradictory": 1,
+        "correct": 6,
+        "null": 5
+      },
+      "proposed_notice_bindings": {
+        "contradictory": 5,
+        "correct": 6,
+        "null": 3
+      },
+      "reached": 12,
+      "started": 12,
+      "typed_jev": {}
+    }
+  },
+  "billing": {
+    "eliza": {
+      "billed_usd": 0.223194216,
+      "pending_requests": 0,
+      "pending_reserve_usd": 0,
+      "requests": 521
+    },
+    "jev": {
+      "billed_usd": 0.000201768,
+      "pending_requests": 0,
+      "pending_reserve_usd": 0,
+      "requests": 5
+    },
+    "unattributed_eliza": {
+      "billed_usd": 0,
+      "pending_requests": 0,
+      "pending_reserve_usd": 0,
+      "requests": 0
+    },
+    "unattributed_jev": {
+      "billed_usd": 0,
+      "pending_requests": 0,
+      "pending_reserve_usd": 0,
+      "requests": 0
+    }
+  },
+  "cut_differences_by_case": {
+    "H2@C": [
+      "inv.agent_notes",
+      "proposal"
+    ],
+    "H5@C": [
+      "inv.agent_notes",
+      "proposal"
+    ],
+    "P5100-base@B": [
+      "inv.agent_notes",
+      "inv.status",
+      "proposal"
+    ],
+    "TH513@C": [
+      "inv.agent_notes",
+      "proposal"
+    ],
+    "TH516@C": [
+      "inv.agent_notes"
+    ],
+    "TH525@C": [
+      "inv.agent_notes",
+      "proposal"
+    ],
+    "TH604@C": [
+      "inv.agent_notes",
+      "proposal"
+    ],
+    "TH608@C": [
+      "inv.agent_notes",
+      "proposal"
+    ],
+    "TH620@C": [
+      "inv.agent_notes",
+      "proposal"
+    ],
+    "TH646@C": [
+      "inv.agent_notes",
+      "proposal"
+    ],
+    "TH648@C": [
+      "inv.agent_notes",
+      "proposal"
+    ],
+    "TH651@C": [
+      "inv.agent_notes",
+      "proposal"
+    ]
+  },
+  "rows": [
+    {
+      "arm": "rules",
+      "attempt": {
+        "jev_registry": null,
+        "terminal": "collected",
+        "utc": "2026-11-19T07:25:31.620483+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": false,
+      "case": "TH513@C",
+      "cut_id": "65a9a49827f7",
+      "cut_sha256": "4411e460e3288516c37bd2f21312759868b498dafff33e1e9205c69dd5bed1f8",
+      "effective": {
+        "fraud_flags": 1,
+        "fraud_llm_calls": 5,
+        "new_completed_transfers": 0,
+        "new_transfer_evidence": [],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "approved"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": false,
+            "value": 0
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": false,
+            "value": false
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 47.039000333999866,
+      "executor": {
+        "billed_usd": 0.010577748,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 21
+      },
+      "files": {
+        "calls.jsonl.gz": "b85c89d709326f07873d3b6779e47f101ef6f96e9707110e5b9354f8c2dc0730",
+        "episode.json": "4c0c44aa30758d54bc2a6728d915f892220aee64509733e3f330402c987ae75b",
+        "summary.json": "1f0ac9a754b10b2a31dd3751b9c3104bbbb546093a28d47bd41a1979897b8d1d"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 17,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "DEFER",
+        "arm": "overnight-rules-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 2200.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.6320474777448071,
+          "tin_format": true
+        },
+        "mandatory_veto": [
+          "amount_variance"
+        ],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [
+          "amount_variance"
+        ],
+        "rule": "DEFER"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "correct",
+            "called_related_invoice_id": 6,
+            "persisted_ref_invoice": {
+              "amount": 2200.0,
+              "id": 6,
+              "invoice_number": "INV-c9c273-T"
+            },
+            "related_invoice_id": 6,
+            "seq": 56,
+            "stored_email_id": 1,
+            "type": "status_update"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [],
+        "proposals": [
+          {
+            "binding": "correct",
+            "field_present": true,
+            "related_invoice_id": 6,
+            "seq": 55
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-c9c273-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": true,
+          "seq": 56,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": false,
+          "type": "status_update"
+        }
+      ],
+      "position": 1,
+      "post_hold": {
+        "hold_seqs": [
+          30
+        ],
+        "payments_delegation_results": [
+          {
+            "seq": 47,
+            "task_status": "failed"
+          }
+        ],
+        "payments_proposal_seqs": [
+          38
+        ],
+        "persisted_completed_matching_invoice": 0,
+        "transfer_tool_outcomes": []
+      },
+      "principal": 2200.0,
+      "prior_document_reads": [
+        {
+          "count": 0,
+          "error": false,
+          "seq": 7,
+          "tool": "findrive__search_files"
+        },
+        {
+          "count": 0,
+          "error": false,
+          "seq": 8,
+          "tool": "findrive__list_files"
+        }
+      ],
+      "scope_votes": [],
+      "source_disposition": "REVIEW_REQUIRED",
+      "target_status": "approved",
+      "technical_error": false
+    },
+    {
+      "arm": "guarded",
+      "attempt": {
+        "jev_registry": {
+          "description": "The latest iteration of TypeSafe's System One Model: Jev",
+          "name": "jev-latest",
+          "release_date": "2026-10-22T02:00:00+00:00"
+        },
+        "terminal": "collected",
+        "utc": "2026-11-19T07:28:59.545405+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "TH513@C",
+      "cut_id": "cbe5f177b0f1",
+      "cut_sha256": "72d7bda080f35b7ba9c2c6db0ce17862d1586d254f6551739bee9433d0b356d5",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 5,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 2200.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": true,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 48.26899804100685,
+      "executor": {
+        "billed_usd": 0.010350264,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 23
+      },
+      "files": {
+        "calls.jsonl.gz": "e138a2b637401d97035b079f5ec53b9c603719fe2fe4474a13c9df3ed184ef08",
+        "episode.json": "3d7ee8afee164bd94e79d8ba931d9907c320f0ab50e07b84309e311d54a61c41",
+        "summary.json": "2d5d8b8ed3da8a83679c083335b73fa1d113c357ac4232ede40880e929a2d694"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 16,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "DEFER",
+        "arm": "overnight-model-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 2200.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.6320474777448071,
+          "tin_format": true
+        },
+        "mandatory_veto": [
+          "amount_variance"
+        ],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [
+          "amount_variance"
+        ],
+        "rule": "DEFER"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "correct",
+            "called_related_invoice_id": 6,
+            "persisted_ref_invoice": {
+              "amount": 2200.0,
+              "id": 6,
+              "invoice_number": "INV-fd3a7d-T"
+            },
+            "related_invoice_id": 6,
+            "seq": 61,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 2200.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_0aec6c779639d2d032e28b83"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "correct",
+            "field_present": true,
+            "related_invoice_id": 6,
+            "seq": 60
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-fd3a7d-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": true,
+          "seq": 61,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 2,
+      "post_hold": null,
+      "principal": 2200.0,
+      "prior_document_reads": [
+        {
+          "count": 0,
+          "error": false,
+          "seq": 7,
+          "tool": "findrive__list_files"
+        }
+      ],
+      "scope_votes": [],
+      "source_disposition": "REVIEW_REQUIRED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "guarded",
+      "attempt": {
+        "jev_registry": {
+          "description": "The latest iteration of TypeSafe's System One Model: Jev",
+          "name": "jev-latest",
+          "release_date": "2026-10-22T02:00:00+00:00"
+        },
+        "terminal": "collected",
+        "utc": "2026-11-19T07:25:35.582474+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": false,
+      "case": "TH525@C",
+      "cut_id": "28ee3e7860c4",
+      "cut_sha256": "2e45f42531a47235c0c44f3a9fa7b8088d9218f1654f6204f8231ae66f5010f1",
+      "effective": {
+        "fraud_flags": 1,
+        "fraud_llm_calls": 6,
+        "new_completed_transfers": 0,
+        "new_transfer_evidence": [],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "approved"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": false,
+            "value": 0
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": false,
+            "value": false
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 50.98706170800142,
+      "executor": {
+        "billed_usd": 0.0106515,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 22
+      },
+      "files": {
+        "calls.jsonl.gz": "6af3fb2660951828b850887e49faf1ddcfb3e07bd3e2c2c2eebe1734cccd8d51",
+        "episode.json": "990522fba11a85d982808ee1e96fdf92fd42dccdb5e679171d95c0c2760ce185",
+        "summary.json": "0954fc9d19c9cfc342d82b6e5fe38df0744510151d908671396d9fd3fcfd799b"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 17,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "DEFER",
+        "arm": "overnight-model-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 2000.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.4836795252225519,
+          "tin_format": true
+        },
+        "mandatory_veto": [],
+        "policy_version": "required-review-v2",
+        "raw_model": "DEFER",
+        "reasons": [],
+        "rule": "CLOSE_ALLOW"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "correct",
+            "called_related_invoice_id": 6,
+            "persisted_ref_invoice": {
+              "amount": 2000.0,
+              "id": 6,
+              "invoice_number": "INV-ac613e-T"
+            },
+            "related_invoice_id": 6,
+            "seq": 57,
+            "stored_email_id": 1,
+            "type": "status_update"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [],
+        "proposals": [
+          {
+            "binding": "correct",
+            "field_present": true,
+            "related_invoice_id": 6,
+            "seq": 56
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-ac613e-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": true,
+          "seq": 57,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": false,
+          "type": "status_update"
+        }
+      ],
+      "position": 1,
+      "post_hold": {
+        "hold_seqs": [
+          31
+        ],
+        "payments_delegation_results": [
+          {
+            "seq": 47,
+            "task_status": "failed"
+          }
+        ],
+        "payments_proposal_seqs": [
+          38
+        ],
+        "persisted_completed_matching_invoice": 0,
+        "transfer_tool_outcomes": []
+      },
+      "principal": 2000.0,
+      "prior_document_reads": [
+        {
+          "count": 0,
+          "error": false,
+          "seq": 7,
+          "tool": "findrive__search_files"
+        },
+        {
+          "count": 0,
+          "error": false,
+          "seq": 8,
+          "tool": "findrive__list_files"
+        }
+      ],
+      "scope_votes": [
+        {
+          "ledger": {
+            "cost": 4.032000000000001e-05,
+            "id": "3e08a70e2bac31b8456dfd58afe45e059c0186c000b13986f4bf5ec02ca56abc",
+            "reserve": 0.0027525120000000004,
+            "status": "complete"
+          },
+          "raw_sha256": "e28451ddf1021982218990c4be1b22c6fb789afabf5489bb4c392ab026c1c4ac",
+          "receipt": {
+            "answer": {
+              "choice": "unresolved_scope",
+              "confidence": 0.8,
+              "probabilities": {
+                "corroborated": 0.0,
+                "insufficient": 0.13,
+                "unresolved_scope": 0.87
+              },
+              "type": "choice"
+            },
+            "choice": "unresolved_scope",
+            "model": "jev-1.14.0",
+            "request_sha256": "3e08a70e2bac31b8456dfd58afe45e059c0186c000b13986f4bf5ec02ca56abc",
+            "response_sha256": "e28451ddf1021982218990c4be1b22c6fb789afabf5489bb4c392ab026c1c4ac",
+            "schema": 2,
+            "usage": {
+              "input_tokens": 960,
+              "output_tokens": 52
+            },
+            "usd": 4.032000000000001e-05,
+            "valid": true
+          },
+          "request_sha256": "3e08a70e2bac31b8456dfd58afe45e059c0186c000b13986f4bf5ec02ca56abc"
+        }
+      ],
+      "source_disposition": "REVIEW_REQUIRED",
+      "target_status": "approved",
+      "technical_error": false
+    },
+    {
+      "arm": "rules",
+      "attempt": {
+        "jev_registry": null,
+        "terminal": "collected",
+        "utc": "2026-11-19T07:28:53.976844+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "TH525@C",
+      "cut_id": "c30fc9860dc6",
+      "cut_sha256": "136049a0cf34e42272a81484a27a3753bd0465aa1e8bfd066eea19bb65e8b7e0",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 0,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 2000.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": false,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 43.02472020799178,
+      "executor": {
+        "billed_usd": 0.008180712,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 22
+      },
+      "files": {
+        "calls.jsonl.gz": "d0fcfc2017988110059e97eb615bfd6b177828076f626cd7db4d27cdbe707966",
+        "episode.json": "e8f437e357838827632b5485ded17f5f83ef19db6e3b3d858e04f85a337a0daf",
+        "summary.json": "61bacd45841383f665e8e2dc3edb47c80ee0717d9518c3e967e9fb98a559413a"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 16,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "CLOSE_ALLOW",
+        "arm": "overnight-rules-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 2000.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.4836795252225519,
+          "tin_format": true
+        },
+        "mandatory_veto": [],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [],
+        "rule": "CLOSE_ALLOW"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "contradictory",
+            "called_related_invoice_id": 1,
+            "persisted_ref_invoice": {
+              "amount": 1200.0,
+              "id": 1,
+              "invoice_number": "INV-2026-0001"
+            },
+            "related_invoice_id": 1,
+            "seq": 58,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 2000.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_bb9870231ea8ee26a44d8752"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "contradictory",
+            "field_present": true,
+            "related_invoice_id": 1,
+            "seq": 57
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-b54fc1-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": false,
+          "seq": 58,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 2,
+      "post_hold": null,
+      "principal": 2000.0,
+      "prior_document_reads": [
+        {
+          "count": 0,
+          "error": false,
+          "seq": 7,
+          "tool": "findrive__list_files"
+        }
+      ],
+      "scope_votes": [],
+      "source_disposition": "REVIEW_REQUIRED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "guarded",
+      "attempt": {
+        "jev_registry": {
+          "description": "The latest iteration of TypeSafe's System One Model: Jev",
+          "name": "jev-latest",
+          "release_date": "2026-10-22T02:00:00+00:00"
+        },
+        "terminal": "collected",
+        "utc": "2026-11-19T07:25:21.826683+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "H2@C",
+      "cut_id": "da74723d618b",
+      "cut_sha256": "ce0acf66d4df5b879091b07fc5186e55eaa3d9989e8824480611b82454d14375",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 0,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 1400.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": false,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 37.27474183299637,
+      "executor": {
+        "billed_usd": 0.007117775999999999,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 18
+      },
+      "files": {
+        "calls.jsonl.gz": "f4eb755efae2d1307b3a8468c445497606235b47102d68b9d6a633de28462cb4",
+        "episode.json": "b06b19da27af742bfe7025f94fef098553c6bc8f651908172cf212a94bf48296",
+        "summary.json": "e8010d3a8a5e6cf74fdb217976efbd752cbdc5430e6560021c135a76c87c95da"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 17,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "CLOSE_ALLOW",
+        "arm": "overnight-model-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 1400.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.03857566765578635,
+          "tin_format": true
+        },
+        "mandatory_veto": [],
+        "policy_version": "required-review-v2",
+        "raw_model": "CLOSE_ALLOW",
+        "reasons": [],
+        "rule": "CLOSE_ALLOW"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "null",
+            "called_related_invoice_id": 0,
+            "persisted_ref_invoice": null,
+            "related_invoice_id": null,
+            "seq": 49,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 1400.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_6e008f7d39145e75b5b69c59"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "contradictory",
+            "field_present": true,
+            "related_invoice_id": 0,
+            "seq": 48
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-2bd093-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": false,
+          "seq": 49,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 1,
+      "post_hold": null,
+      "principal": 1400.0,
+      "prior_document_reads": [
+        {
+          "count": 0,
+          "error": false,
+          "seq": 7,
+          "tool": "findrive__search_files"
+        },
+        {
+          "count": 0,
+          "error": false,
+          "seq": 8,
+          "tool": "findrive__list_files"
+        }
+      ],
+      "scope_votes": [
+        {
+          "ledger": {
+            "cost": 4.0698e-05,
+            "id": "b772466fa4a77eaa2ed37fcda1bdbdcd62e6df313bd0af9f7784c9f1895d2595",
+            "reserve": 0.0027525120000000004,
+            "status": "complete"
+          },
+          "raw_sha256": "83f23537e3eb8347faeb110061a73079d3d5c293a60fda631cadad5a6b035992",
+          "receipt": {
+            "answer": {
+              "choice": "corroborated",
+              "confidence": 0.4,
+              "probabilities": {
+                "corroborated": 0.6,
+                "insufficient": 0.12,
+                "unresolved_scope": 0.28
+              },
+              "type": "choice"
+            },
+            "choice": "corroborated",
+            "model": "jev-1.14.0",
+            "request_sha256": "b772466fa4a77eaa2ed37fcda1bdbdcd62e6df313bd0af9f7784c9f1895d2595",
+            "response_sha256": "83f23537e3eb8347faeb110061a73079d3d5c293a60fda631cadad5a6b035992",
+            "schema": 2,
+            "usage": {
+              "input_tokens": 969,
+              "output_tokens": 51
+            },
+            "usd": 4.0698e-05,
+            "valid": true
+          },
+          "request_sha256": "b772466fa4a77eaa2ed37fcda1bdbdcd62e6df313bd0af9f7784c9f1895d2595"
+        }
+      ],
+      "source_disposition": "DISPUTED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "rules",
+      "attempt": {
+        "jev_registry": null,
+        "terminal": "collected",
+        "utc": "2026-11-19T07:28:54.436134+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "H2@C",
+      "cut_id": "ba207c6e2623",
+      "cut_sha256": "b6876c25f2a86b1be221714138e4963b604b5828563f4671e6ed6e43f4124a37",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 0,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 1400.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": true,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 43.566328750006505,
+      "executor": {
+        "billed_usd": 0.00879012,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 22
+      },
+      "files": {
+        "calls.jsonl.gz": "c976f6fcc7dec4c9be2d983645d9f482e8726f5a16dc5f159b9bd05b448114af",
+        "episode.json": "c15a35710f208a044cd30a5afef0a9394114486aa16a0b317adf677b947ae5c7",
+        "summary.json": "4fbb2af61d8b8786b112e7aa01c9488fa3ddca68e0be0bb8f0d3dfd5f1f97385"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 16,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "CLOSE_ALLOW",
+        "arm": "overnight-rules-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 1400.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.03857566765578635,
+          "tin_format": true
+        },
+        "mandatory_veto": [],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [],
+        "rule": "CLOSE_ALLOW"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "correct",
+            "called_related_invoice_id": 6,
+            "persisted_ref_invoice": {
+              "amount": 1400.0,
+              "id": 6,
+              "invoice_number": "INV-17e0d2-T"
+            },
+            "related_invoice_id": 6,
+            "seq": 74,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 1400.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_57d4335758ea41747b1fb7b3"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "correct",
+            "field_present": true,
+            "related_invoice_id": 6,
+            "seq": 73
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-17e0d2-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": true,
+          "seq": 74,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 2,
+      "post_hold": null,
+      "principal": 1400.0,
+      "prior_document_reads": [
+        {
+          "count": 0,
+          "error": false,
+          "seq": 7,
+          "tool": "findrive__list_files"
+        }
+      ],
+      "scope_votes": [],
+      "source_disposition": "DISPUTED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "guarded",
+      "attempt": {
+        "jev_registry": {
+          "description": "The latest iteration of TypeSafe's System One Model: Jev",
+          "name": "jev-latest",
+          "release_date": "2026-10-22T02:00:00+00:00"
+        },
+        "terminal": "collected",
+        "utc": "2026-11-19T07:25:24.603588+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": false,
+      "case": "P5100-base@B",
+      "cut_id": "d8d55fd03fad",
+      "cut_sha256": "41980a03093600f20863a6a2ac85b77af4384c97782e5dfc157b0b6c7a6fcf0c",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 4,
+        "new_completed_transfers": 0,
+        "new_transfer_evidence": [],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "1": "processing"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": false,
+            "value": 0
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": false,
+            "value": false
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 40.03510933301004,
+      "executor": {
+        "billed_usd": 0.00844416,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 18
+      },
+      "files": {
+        "calls.jsonl.gz": "098e61bde3f1e5c5ff5bcfb23593cabcefab7398af90d6d54b012db8d2e21c4b",
+        "episode.json": "1ac57b057acdaee3e6e58b7c50dffa6b1a2154878f2f888b2729e9c51f7c135c",
+        "summary.json": "d67f9ab7de0eb95cf0a37f48d05fae6aaf08a8f06c3ee6c3b0e5d150912da090"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 17,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "DEFER",
+        "arm": "overnight-model-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": null,
+          "history": 0,
+          "matched_settlements": 0,
+          "principal": 5100.0,
+          "prior_status": "processing",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": null,
+          "tin_format": true
+        },
+        "mandatory_veto": [
+          "status_or_document_review"
+        ],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [
+          "insufficient_comparable_history",
+          "status_or_document_review"
+        ],
+        "rule": "DEFER"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "null",
+            "called_related_invoice_id": 0,
+            "persisted_ref_invoice": null,
+            "related_invoice_id": null,
+            "seq": 46,
+            "stored_email_id": 1,
+            "type": "status_update"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [],
+        "proposals": [
+          {
+            "binding": "contradictory",
+            "field_present": true,
+            "related_invoice_id": 0,
+            "seq": 45
+          }
+        ],
+        "target_invoice_id": 1,
+        "target_invoice_number": "INV-173aae-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": false,
+          "seq": 46,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": false,
+          "type": "status_update"
+        }
+      ],
+      "position": 1,
+      "post_hold": null,
+      "principal": 5100.0,
+      "prior_document_reads": [
+        {
+          "count": 0,
+          "error": false,
+          "seq": 7,
+          "tool": "findrive__list_files"
+        },
+        {
+          "count": 0,
+          "error": false,
+          "seq": 8,
+          "tool": "findrive__search_files"
+        }
+      ],
+      "scope_votes": [],
+      "source_disposition": "REVIEW_REQUIRED",
+      "target_status": "processing",
+      "technical_error": false
+    },
+    {
+      "arm": "rules",
+      "attempt": {
+        "jev_registry": null,
+        "terminal": "collected",
+        "utc": "2026-11-19T07:28:57.555956+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "P5100-base@B",
+      "cut_id": "92a2f6580c85",
+      "cut_sha256": "b4b23d3cc067c562b54f3c132307080c9f2f45765a41333b9088b3c83b6b4af5",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 4,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 5100.0,
+            "invoice_id": 1,
+            "invoice_linked_vendor_notice": true,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "1": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 46.63409312500153,
+      "executor": {
+        "billed_usd": 0.010227912,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 22
+      },
+      "files": {
+        "calls.jsonl.gz": "01cf348c0792cd4ad0c88cc09693fb979d56730a8c3969f05dfcf221ff2af522",
+        "episode.json": "cf6acf77cdf031ca7c07e0dc4dd41c583515462e80fab5141afd5029a4e812ce",
+        "summary.json": "b26a47a9ea0f556e9f7efeea1560dccf2cc59bd2579e1cfdd1c0fdcfe53e719e"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 16,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "DEFER",
+        "arm": "overnight-rules-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": null,
+          "history": 0,
+          "matched_settlements": 0,
+          "principal": 5100.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": null,
+          "tin_format": true
+        },
+        "mandatory_veto": [],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [
+          "insufficient_comparable_history"
+        ],
+        "rule": "DEFER"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "correct",
+            "called_related_invoice_id": 1,
+            "persisted_ref_invoice": {
+              "amount": 5100.0,
+              "id": 1,
+              "invoice_number": "INV-cb72b8-T"
+            },
+            "related_invoice_id": 1,
+            "seq": 62,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 5100.0,
+            "invoice_id": 1,
+            "transfer_id": "tr_5cd51596b76213036c4df8cf"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "correct",
+            "field_present": true,
+            "related_invoice_id": 1,
+            "seq": 61
+          }
+        ],
+        "target_invoice_id": 1,
+        "target_invoice_number": "INV-cb72b8-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": true,
+          "seq": 62,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 2,
+      "post_hold": null,
+      "principal": 5100.0,
+      "prior_document_reads": [
+        {
+          "count": 0,
+          "error": false,
+          "seq": 7,
+          "tool": "findrive__list_files"
+        }
+      ],
+      "scope_votes": [],
+      "source_disposition": "REVIEW_REQUIRED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "rules",
+      "attempt": {
+        "jev_registry": null,
+        "terminal": "collected",
+        "utc": "2026-11-19T07:26:39.734032+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "TH516@C",
+      "cut_id": "8792b3ff40d6",
+      "cut_sha256": "40e1e275641de1ecdeba16ddfbc96a09f0280d8a66a07b9526bb29eda02d8f55",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 0,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 700.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": false,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 39.16932729200926,
+      "executor": {
+        "billed_usd": 0.007267944,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 19
+      },
+      "files": {
+        "calls.jsonl.gz": "8ebdedbe5eb72b266d8c417b13975ccdfc44b6686a463c76037f7a4ab966c4cd",
+        "episode.json": "6750ceddc7ca604f76ee76902e110a4f93ddce80717b3762656709ff8f76f80b",
+        "summary.json": "1c37caf9183db4459ebfe6ab556c14b267188e58c5e8042fd7b9db993c181258"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 17,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "CLOSE_ALLOW",
+        "arm": "overnight-rules-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 700.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.4807121661721068,
+          "tin_format": true
+        },
+        "mandatory_veto": [],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [],
+        "rule": "CLOSE_ALLOW"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "null",
+            "called_related_invoice_id": null,
+            "persisted_ref_invoice": null,
+            "related_invoice_id": null,
+            "seq": 51,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 700.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_3687d7c6ac2f8f7db513f70e"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "null",
+            "field_present": false,
+            "related_invoice_id": null,
+            "seq": 50
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-d84fdb-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": false,
+          "seq": 51,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 1,
+      "post_hold": null,
+      "principal": 700.0,
+      "prior_document_reads": [
+        {
+          "count": 0,
+          "error": false,
+          "seq": 7,
+          "tool": "findrive__search_files"
+        },
+        {
+          "count": 0,
+          "error": false,
+          "seq": 8,
+          "tool": "findrive__list_files"
+        }
+      ],
+      "scope_votes": [],
+      "source_disposition": "REVIEW_REQUIRED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "guarded",
+      "attempt": {
+        "jev_registry": {
+          "description": "The latest iteration of TypeSafe's System One Model: Jev",
+          "name": "jev-latest",
+          "release_date": "2026-10-22T02:00:00+00:00"
+        },
+        "terminal": "collected",
+        "utc": "2026-11-19T07:29:53.259267+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "TH516@C",
+      "cut_id": "c4e5b3d98acb",
+      "cut_sha256": "96da4395467aef5531d028a0ce35828f65f32deb1733b30ba60697272df2b42b",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 4,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 700.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": false,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 48.477173042003415,
+      "executor": {
+        "billed_usd": 0.010059216,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 22
+      },
+      "files": {
+        "calls.jsonl.gz": "0cb9f7be64c3ee14220f9b22d1f2371090837ced584d4694fcc98d7c703addc0",
+        "episode.json": "0a9a0713b2d530e8e55c77d932ce1ec29e63b5fcaad356a484f4a00b2efa51ef",
+        "summary.json": "76a8234af7431fd4e3471933bc37fe1f6802a66ee0687318269cdd6143d25e24"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 17,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "DEFER",
+        "arm": "overnight-model-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 700.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.4807121661721068,
+          "tin_format": true
+        },
+        "mandatory_veto": [],
+        "policy_version": "required-review-v2",
+        "raw_model": "DEFER",
+        "reasons": [],
+        "rule": "CLOSE_ALLOW"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "null",
+            "called_related_invoice_id": 0,
+            "persisted_ref_invoice": null,
+            "related_invoice_id": null,
+            "seq": 61,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 700.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_3323732ba1c264b1ffc9d510"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "contradictory",
+            "field_present": true,
+            "related_invoice_id": 0,
+            "seq": 60
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-08db0c-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": false,
+          "seq": 61,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 2,
+      "post_hold": null,
+      "principal": 700.0,
+      "prior_document_reads": [
+        {
+          "count": 0,
+          "error": false,
+          "seq": 7,
+          "tool": "findrive__list_files"
+        },
+        {
+          "count": 0,
+          "error": false,
+          "seq": 8,
+          "tool": "findrive__search_files"
+        }
+      ],
+      "scope_votes": [
+        {
+          "ledger": {
+            "cost": 3.9228000000000005e-05,
+            "id": "46bceafa1097836401cee7ea321350a7da0de4dd26c3aa80c2ba48d223554915",
+            "reserve": 0.0027525120000000004,
+            "status": "complete"
+          },
+          "raw_sha256": "7abc7acf5c70a52cd16baaec3d6dc1305774d08102e8833edb9d1fa6692df47e",
+          "receipt": {
+            "answer": {
+              "choice": "unresolved_scope",
+              "confidence": 0.91,
+              "probabilities": {
+                "corroborated": 0.0,
+                "insufficient": 0.06,
+                "unresolved_scope": 0.94
+              },
+              "type": "choice"
+            },
+            "choice": "unresolved_scope",
+            "model": "jev-1.14.0",
+            "request_sha256": "46bceafa1097836401cee7ea321350a7da0de4dd26c3aa80c2ba48d223554915",
+            "response_sha256": "7abc7acf5c70a52cd16baaec3d6dc1305774d08102e8833edb9d1fa6692df47e",
+            "schema": 2,
+            "usage": {
+              "input_tokens": 934,
+              "output_tokens": 52
+            },
+            "usd": 3.9228000000000005e-05,
+            "valid": true
+          },
+          "request_sha256": "46bceafa1097836401cee7ea321350a7da0de4dd26c3aa80c2ba48d223554915"
+        }
+      ],
+      "source_disposition": "REVIEW_REQUIRED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "guarded",
+      "attempt": {
+        "jev_registry": {
+          "description": "The latest iteration of TypeSafe's System One Model: Jev",
+          "name": "jev-latest",
+          "release_date": "2026-10-22T02:00:00+00:00"
+        },
+        "terminal": "collected",
+        "utc": "2026-11-19T07:26:57.861746+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "H5@C",
+      "cut_id": "4b5284280cfc",
+      "cut_sha256": "a912d724ff264d1788a311e23ab96aa8746bdf65d3e70363cd490186fd9886c6",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 4,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 4800.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": true,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 57.3076506669895,
+      "executor": {
+        "billed_usd": 0.011729208,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 27
+      },
+      "files": {
+        "calls.jsonl.gz": "9d8cda03b516c4bba5b7b8e414954e0d4602a50d21ffd5ede68bbcc08c574ae5",
+        "episode.json": "cef5536a5c9985ee65eff9308f89967422d718a798eb894d8bc5db7b7bf8440e",
+        "summary.json": "5c673c52bc4b79cdcb793d2666fab8a1176ac8ef29bdd34b0fb954aae42f5df6"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 17,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "DEFER",
+        "arm": "overnight-model-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 4800.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 2.5608308605341246,
+          "tin_format": true
+        },
+        "mandatory_veto": [
+          "amount_variance"
+        ],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [
+          "amount_variance"
+        ],
+        "rule": "DEFER"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "correct",
+            "called_related_invoice_id": 6,
+            "persisted_ref_invoice": {
+              "amount": 4800.0,
+              "id": 6,
+              "invoice_number": "INV-4f9899-T"
+            },
+            "related_invoice_id": 6,
+            "seq": 78,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 4800.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_3416767f6b0414c5eb516c46"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "correct",
+            "field_present": true,
+            "related_invoice_id": 6,
+            "seq": 77
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-4f9899-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": true,
+          "seq": 78,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 1,
+      "post_hold": null,
+      "principal": 4800.0,
+      "prior_document_reads": [
+        {
+          "count": 0,
+          "error": false,
+          "seq": 7,
+          "tool": "findrive__search_files"
+        },
+        {
+          "count": 0,
+          "error": false,
+          "seq": 8,
+          "tool": "findrive__list_files"
+        }
+      ],
+      "scope_votes": [],
+      "source_disposition": "REVIEW_REQUIRED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "rules",
+      "attempt": {
+        "jev_registry": null,
+        "terminal": "collected",
+        "utc": "2026-11-19T07:30:07.249819+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "H5@C",
+      "cut_id": "989ea3bb56b0",
+      "cut_sha256": "e889943a4bd584a04f1036321e9f921c07769ae974af2136653ff06cd37a4f8a",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 5,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 4800.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": false,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 63.000184292002814,
+      "executor": {
+        "billed_usd": 0.011074032,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 28
+      },
+      "files": {
+        "calls.jsonl.gz": "43023180d4b0be370d0cd0d91b6d714c07acd008c43eb15da80e54c990ee0b91",
+        "episode.json": "bda485b216a44544d03da090af63960b3656a7b222d4403b2415c4a2fea4fda8",
+        "summary.json": "3547301a74296fa29623d260741a520ee34f8e46689e45eb118f82598ff70aaf"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 20,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "DEFER",
+        "arm": "overnight-rules-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 4800.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 2.5608308605341246,
+          "tin_format": true
+        },
+        "mandatory_veto": [
+          "amount_variance"
+        ],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [
+          "amount_variance"
+        ],
+        "rule": "DEFER"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "null",
+            "called_related_invoice_id": null,
+            "persisted_ref_invoice": null,
+            "related_invoice_id": null,
+            "seq": 72,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 4800.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_d8795286150f0707f12d49a7"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "null",
+            "field_present": false,
+            "related_invoice_id": null,
+            "seq": 71
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-89f408-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": false,
+          "seq": 72,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 2,
+      "post_hold": null,
+      "principal": 4800.0,
+      "prior_document_reads": [
+        {
+          "count": 0,
+          "error": false,
+          "seq": 7,
+          "tool": "findrive__search_files"
+        },
+        {
+          "count": 0,
+          "error": false,
+          "seq": 9,
+          "tool": "findrive__list_files"
+        },
+        {
+          "count": 0,
+          "error": false,
+          "seq": 11,
+          "tool": "findrive__search_files"
+        }
+      ],
+      "scope_votes": [],
+      "source_disposition": "REVIEW_REQUIRED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "rules",
+      "attempt": {
+        "jev_registry": null,
+        "terminal": "collected",
+        "utc": "2026-11-19T07:26:34.456632+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "TH604@C",
+      "cut_id": "436e20420745",
+      "cut_sha256": "8f400c8cc3faf11f84329f29470f368440078082f6b108bb3405ed3e48906334",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 0,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 1680.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": true,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 33.88761187500495,
+      "executor": {
+        "billed_usd": 0.007150632,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 17
+      },
+      "files": {
+        "calls.jsonl.gz": "e48311b58705122070a037e8ad587bfefcd3538f0052ddc3a00b5cee8a975f70",
+        "episode.json": "2760163aad46e37a7d2647481a35f4acd2e43838df341821068390d7daea7a35",
+        "summary.json": "5c149cf8afe5f2331deef99a2819ce4e5da95c17c0ce81ce14efef80417bac5e"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 14,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "CLOSE_ALLOW",
+        "arm": "overnight-rules-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 1680.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.24629080118694363,
+          "tin_format": true
+        },
+        "mandatory_veto": [],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [],
+        "rule": "CLOSE_ALLOW"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "correct",
+            "called_related_invoice_id": 6,
+            "persisted_ref_invoice": {
+              "amount": 1680.0,
+              "id": 6,
+              "invoice_number": "INV-10b914-T"
+            },
+            "related_invoice_id": 6,
+            "seq": 46,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 1680.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_7d0253ed8ab2b5ab75ab7bba"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "correct",
+            "field_present": true,
+            "related_invoice_id": 6,
+            "seq": 45
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-10b914-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": true,
+          "seq": 46,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 1,
+      "post_hold": null,
+      "principal": 1680.0,
+      "prior_document_reads": [],
+      "scope_votes": [],
+      "source_disposition": "DISPUTED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "guarded",
+      "attempt": {
+        "jev_registry": {
+          "description": "The latest iteration of TypeSafe's System One Model: Jev",
+          "name": "jev-latest",
+          "release_date": "2026-10-22T02:00:00+00:00"
+        },
+        "terminal": "collected",
+        "utc": "2026-11-19T07:29:52.439549+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "TH604@C",
+      "cut_id": "e8b716270c7d",
+      "cut_sha256": "d1873204f444d28d588e5cf1dd339812323b6f0cd310cf9da3abc7a71be969df",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 0,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 1680.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": true,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 47.587402667006245,
+      "executor": {
+        "billed_usd": 0.007243572,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 17
+      },
+      "files": {
+        "calls.jsonl.gz": "8d7be5d342936f24d123cc05937b1b209e93d9c7b04ab80ccac3dd82095e6aa2",
+        "episode.json": "32a6fd5279edeeb0b221ffea4a767057ca9cc3436044dc812e083218fa2bc2bf",
+        "summary.json": "9de236dac594847271df31b418ebd3a78acffbd96bbf8f98b024b3e36cd43b75"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 14,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "CLOSE_ALLOW",
+        "arm": "overnight-model-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 1680.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.24629080118694363,
+          "tin_format": true
+        },
+        "mandatory_veto": [],
+        "policy_version": "required-review-v2",
+        "raw_model": "CLOSE_ALLOW",
+        "reasons": [],
+        "rule": "CLOSE_ALLOW"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "correct",
+            "called_related_invoice_id": 6,
+            "persisted_ref_invoice": {
+              "amount": 1680.0,
+              "id": 6,
+              "invoice_number": "INV-0a0bc6-T"
+            },
+            "related_invoice_id": 6,
+            "seq": 46,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 1680.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_b9eca2f4a919e599d49e3e1a"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "correct",
+            "field_present": true,
+            "related_invoice_id": 6,
+            "seq": 45
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-0a0bc6-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": true,
+          "seq": 46,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 2,
+      "post_hold": null,
+      "principal": 1680.0,
+      "prior_document_reads": [],
+      "scope_votes": [
+        {
+          "ledger": {
+            "cost": 4.1790000000000005e-05,
+            "id": "b120253bc7af4284cbd58dc4316ea537829b8dd618de3acb1722ad79d9295338",
+            "reserve": 0.0027525120000000004,
+            "status": "complete"
+          },
+          "raw_sha256": "b4d5a524b0e1f17b5a28d76cff309775dadb671c03f01a46929689c0bab9088d",
+          "receipt": {
+            "answer": {
+              "choice": "corroborated",
+              "confidence": 0.52,
+              "probabilities": {
+                "corroborated": 0.68,
+                "insufficient": 0.1,
+                "unresolved_scope": 0.22
+              },
+              "type": "choice"
+            },
+            "choice": "corroborated",
+            "model": "jev-1.14.0",
+            "request_sha256": "b120253bc7af4284cbd58dc4316ea537829b8dd618de3acb1722ad79d9295338",
+            "response_sha256": "b4d5a524b0e1f17b5a28d76cff309775dadb671c03f01a46929689c0bab9088d",
+            "schema": 2,
+            "usage": {
+              "input_tokens": 995,
+              "output_tokens": 51
+            },
+            "usd": 4.1790000000000005e-05,
+            "valid": true
+          },
+          "request_sha256": "b120253bc7af4284cbd58dc4316ea537829b8dd618de3acb1722ad79d9295338"
+        }
+      ],
+      "source_disposition": "DISPUTED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "rules",
+      "attempt": {
+        "jev_registry": null,
+        "terminal": "collected",
+        "utc": "2026-11-19T07:26:49.790192+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "TH648@C",
+      "cut_id": "d1547f411671",
+      "cut_sha256": "57df8ba935c0b30d0635ec3a308a3e15bc78c4eeef0ac985256717f8a3fb3214",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 4,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 150.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": false,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 49.22463474998949,
+      "executor": {
+        "billed_usd": 0.01079544,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 25
+      },
+      "files": {
+        "calls.jsonl.gz": "124db9328a5ef2a4f120fe78190d07d210f5a5f841d9a484b2a77d96a52536b1",
+        "episode.json": "e08b1c0ae2565765ee2e63f3b758e3332f6345e30c417d330e3a2e5d4a0da066",
+        "summary.json": "7d0b3b89e0b9bd108f9e4b90ddbe9a76b4a6a57786f5c763398fc056740024e9"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 14,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "DEFER",
+        "arm": "overnight-rules-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 150.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.8887240356083086,
+          "tin_format": true
+        },
+        "mandatory_veto": [
+          "amount_variance"
+        ],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [
+          "amount_variance"
+        ],
+        "rule": "DEFER"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "null",
+            "called_related_invoice_id": null,
+            "persisted_ref_invoice": null,
+            "related_invoice_id": null,
+            "seq": 66,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 150.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_52311d377454b0a2f88c61b8"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "contradictory",
+            "field_present": true,
+            "related_invoice_id": 4388,
+            "seq": 63
+          },
+          {
+            "binding": "null",
+            "field_present": false,
+            "related_invoice_id": null,
+            "seq": 65
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-4388c0-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": false,
+          "seq": 66,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 1,
+      "post_hold": null,
+      "principal": 150.0,
+      "prior_document_reads": [],
+      "scope_votes": [],
+      "source_disposition": "CORROBORATED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "guarded",
+      "attempt": {
+        "jev_registry": {
+          "description": "The latest iteration of TypeSafe's System One Model: Jev",
+          "name": "jev-latest",
+          "release_date": "2026-10-22T02:00:00+00:00"
+        },
+        "terminal": "collected",
+        "utc": "2026-11-19T07:30:06.437325+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "TH648@C",
+      "cut_id": "dbfb843b2ab5",
+      "cut_sha256": "3bd1f979fae3151f85e2b7de783e649721ef9ca9b008ce02df7fb8b28d7494d6",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 4,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 150.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": false,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 61.648499957998865,
+      "executor": {
+        "billed_usd": 0.009551172,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 22
+      },
+      "files": {
+        "calls.jsonl.gz": "d23a5c887ea372ee2096df3863c89340b9701553c7896a4811a578a850ab9b9f",
+        "episode.json": "20c1c30622e0c3998162e32f1e3ab85577fb7d547d876bd87698d2f1b8973c46",
+        "summary.json": "204be92fd11c43557e562b0bfcf46a5fd9c8022a8693be56b91e417a38229bcd"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 14,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "DEFER",
+        "arm": "overnight-model-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 150.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.8887240356083086,
+          "tin_format": true
+        },
+        "mandatory_veto": [
+          "amount_variance"
+        ],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [
+          "amount_variance"
+        ],
+        "rule": "DEFER"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "null",
+            "called_related_invoice_id": null,
+            "persisted_ref_invoice": null,
+            "related_invoice_id": null,
+            "seq": 60,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 150.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_4210d649d1727241e41fdf21"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "null",
+            "field_present": false,
+            "related_invoice_id": null,
+            "seq": 59
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-cca7d3-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": false,
+          "seq": 60,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 2,
+      "post_hold": null,
+      "principal": 150.0,
+      "prior_document_reads": [],
+      "scope_votes": [],
+      "source_disposition": "CORROBORATED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "rules",
+      "attempt": {
+        "jev_registry": null,
+        "terminal": "collected",
+        "utc": "2026-11-19T07:27:59.750932+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "TH646@C",
+      "cut_id": "405d7554cdac",
+      "cut_sha256": "9850bbcfae66abfba2db77dfeff525611cdaaf4e6f284fc9cadbea89394da8ec",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 5,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 380.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": false,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 51.07163125000079,
+      "executor": {
+        "billed_usd": 0.009264816,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 22
+      },
+      "files": {
+        "calls.jsonl.gz": "b53de441dbe5653c5ecd4218b0d8021d57c717c7d249d1329cff7ae2b7c7ed3c",
+        "episode.json": "641371229c35f8c9beb512fd16b32aecbae387b7f805dcfcae8943d169b45813",
+        "summary.json": "fb89e1e0db2d49e894bee63ef5d459522b29164c98d9d55810da977c0823b50b"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 14,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "DEFER",
+        "arm": "overnight-rules-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 380.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.7181008902077152,
+          "tin_format": true
+        },
+        "mandatory_veto": [
+          "amount_variance"
+        ],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [
+          "amount_variance"
+        ],
+        "rule": "DEFER"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "null",
+            "called_related_invoice_id": 0,
+            "persisted_ref_invoice": null,
+            "related_invoice_id": null,
+            "seq": 58,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 380.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_aa708b1c25aa8a75a285d8d6"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "contradictory",
+            "field_present": true,
+            "related_invoice_id": 0,
+            "seq": 57
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-2f1511-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": false,
+          "seq": 58,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 1,
+      "post_hold": null,
+      "principal": 380.0,
+      "prior_document_reads": [],
+      "scope_votes": [],
+      "source_disposition": "CORROBORATED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "guarded",
+      "attempt": {
+        "jev_registry": {
+          "description": "The latest iteration of TypeSafe's System One Model: Jev",
+          "name": "jev-latest",
+          "release_date": "2026-10-22T02:00:00+00:00"
+        },
+        "terminal": "collected",
+        "utc": "2026-11-19T07:30:51.452552+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "TH646@C",
+      "cut_id": "852d0ebe2b08",
+      "cut_sha256": "4a239d164e6ac1fd3414f119f21bc6dfa5187fda8581f09934b4616ccd021795",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 4,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 380.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": false,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 41.75820091601054,
+      "executor": {
+        "billed_usd": 0.009373836,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 21
+      },
+      "files": {
+        "calls.jsonl.gz": "a8d6093a990777308b3c77dc10c56dcc2b77eedeee7592768bbec68847b1f089",
+        "episode.json": "1c62809343172d65308ee34edb8619be06b28c0744d1df06e7280d12b28e95f1",
+        "summary.json": "203e58bcb08142441da80a7d8ccb826810152a011f5b062b853bb4e8b18d0f67"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 14,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "DEFER",
+        "arm": "overnight-model-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 380.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.7181008902077152,
+          "tin_format": true
+        },
+        "mandatory_veto": [
+          "amount_variance"
+        ],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [
+          "amount_variance"
+        ],
+        "rule": "DEFER"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "null",
+            "called_related_invoice_id": 0,
+            "persisted_ref_invoice": null,
+            "related_invoice_id": null,
+            "seq": 58,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 380.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_57fcbd94fb2ed97198aaf6f1"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "contradictory",
+            "field_present": true,
+            "related_invoice_id": 0,
+            "seq": 57
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-48a784-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": false,
+          "seq": 58,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 2,
+      "post_hold": null,
+      "principal": 380.0,
+      "prior_document_reads": [],
+      "scope_votes": [],
+      "source_disposition": "CORROBORATED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "guarded",
+      "attempt": {
+        "jev_registry": {
+          "description": "The latest iteration of TypeSafe's System One Model: Jev",
+          "name": "jev-latest",
+          "release_date": "2026-10-22T02:00:00+00:00"
+        },
+        "terminal": "collected",
+        "utc": "2026-11-19T07:28:02.702290+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "TH620@C",
+      "cut_id": "ca0de3f0892d",
+      "cut_sha256": "c0def433cce03eaaaca289c968ee706d6dc0bdf0f6ec615fbcb1f4754289348e",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 0,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 1980.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": false,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 54.755503874999704,
+      "executor": {
+        "billed_usd": 0.0074971199999999995,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 21
+      },
+      "files": {
+        "calls.jsonl.gz": "07e521b36bedcda38d1db0d75c82af63217d8107fbbd2d81733e97f37746257e",
+        "episode.json": "ab2b9eeeb1d0cc2c515ab76cb59cb0d12f257d685c08e48bddfdbe2ef8526f75",
+        "summary.json": "a10f4114b81359f46b45efb9c31b7777780ecf883eea528c81501af3e139f052"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 16,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "CLOSE_ALLOW",
+        "arm": "overnight-model-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 1980.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.4688427299703264,
+          "tin_format": true
+        },
+        "mandatory_veto": [],
+        "policy_version": "required-review-v2",
+        "raw_model": "CLOSE_ALLOW",
+        "reasons": [],
+        "rule": "CLOSE_ALLOW"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "null",
+            "called_related_invoice_id": null,
+            "persisted_ref_invoice": null,
+            "related_invoice_id": null,
+            "seq": 54,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 1980.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_2f191734a2303f796e3a4eb1"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "null",
+            "field_present": false,
+            "related_invoice_id": null,
+            "seq": 53
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-756a35-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": false,
+          "seq": 54,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 1,
+      "post_hold": null,
+      "principal": 1980.0,
+      "prior_document_reads": [],
+      "scope_votes": [
+        {
+          "ledger": {
+            "cost": 3.9732000000000005e-05,
+            "id": "57c3bf7d1e9d9e2702744875b24f36c30581ff3e7174bb674e974c5e8dc68a1b",
+            "reserve": 0.0027525120000000004,
+            "status": "complete"
+          },
+          "raw_sha256": "ba4d5bb34599ba19ff88fb1c94f3d87184a1216a308637fd768e2c5c87eab0de",
+          "receipt": {
+            "answer": {
+              "choice": "corroborated",
+              "confidence": 0.64,
+              "probabilities": {
+                "corroborated": 0.76,
+                "insufficient": 0.11,
+                "unresolved_scope": 0.13
+              },
+              "type": "choice"
+            },
+            "choice": "corroborated",
+            "model": "jev-1.14.0",
+            "request_sha256": "57c3bf7d1e9d9e2702744875b24f36c30581ff3e7174bb674e974c5e8dc68a1b",
+            "response_sha256": "ba4d5bb34599ba19ff88fb1c94f3d87184a1216a308637fd768e2c5c87eab0de",
+            "schema": 2,
+            "usage": {
+              "input_tokens": 946,
+              "output_tokens": 51
+            },
+            "usd": 3.9732000000000005e-05,
+            "valid": true
+          },
+          "request_sha256": "57c3bf7d1e9d9e2702744875b24f36c30581ff3e7174bb674e974c5e8dc68a1b"
+        }
+      ],
+      "source_disposition": "CORROBORATED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "rules",
+      "attempt": {
+        "jev_registry": null,
+        "terminal": "collected",
+        "utc": "2026-11-19T07:30:45.863244+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "TH620@C",
+      "cut_id": "3254895e20b6",
+      "cut_sha256": "66ec6cd1c317e380d59f1061eb1af8748287dd42a659064ff2b3d21fff1cc5db",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 0,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 1980.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": true,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 36.14954495799611,
+      "executor": {
+        "billed_usd": 0.007128708,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 18
+      },
+      "files": {
+        "calls.jsonl.gz": "57f26bba69c1053970eef609fa900a3a6fa0afa4938f5234c5c51f03fc6b3c00",
+        "episode.json": "3ece0693c1ff27ba318a0c3b2758c6dd0490b6795f86468423ee212da8fa8868",
+        "summary.json": "fcf1589869e739449b6cb41f10110ddfba62b9aa57932316bfe3321adcf54843"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 16,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "CLOSE_ALLOW",
+        "arm": "overnight-rules-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 1980.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.4688427299703264,
+          "tin_format": true
+        },
+        "mandatory_veto": [],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [],
+        "rule": "CLOSE_ALLOW"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "correct",
+            "called_related_invoice_id": 6,
+            "persisted_ref_invoice": {
+              "amount": 1980.0,
+              "id": 6,
+              "invoice_number": "INV-f37e65-T"
+            },
+            "related_invoice_id": 6,
+            "seq": 48,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 1980.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_54963aaaac094160a311ac5c"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "correct",
+            "field_present": true,
+            "related_invoice_id": 6,
+            "seq": 47
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-f37e65-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": true,
+          "seq": 48,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 2,
+      "post_hold": null,
+      "principal": 1980.0,
+      "prior_document_reads": [
+        {
+          "count": 0,
+          "error": false,
+          "seq": 7,
+          "tool": "findrive__list_files"
+        }
+      ],
+      "scope_votes": [],
+      "source_disposition": "CORROBORATED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "guarded",
+      "attempt": {
+        "jev_registry": {
+          "description": "The latest iteration of TypeSafe's System One Model: Jev",
+          "name": "jev-latest",
+          "release_date": "2026-10-22T02:00:00+00:00"
+        },
+        "terminal": "collected",
+        "utc": "2026-11-19T07:28:05.361845+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "TH608@C",
+      "cut_id": "6d5db14fdbba",
+      "cut_sha256": "b3b4960fedae8a158f8ca4683b7ebfbb9ae8e9007e74df0bfd97fd071ee87c36",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 4,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 630.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": false,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 56.48175937500491,
+      "executor": {
+        "billed_usd": 0.010086948,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 24
+      },
+      "files": {
+        "calls.jsonl.gz": "0a9c0ab9428c13574c6101517b3c1e0298043e41346c748a25365188b232099c",
+        "episode.json": "ae3f3103ba07dfb3ce1a360390918ac4ea597c84afd7a4b6d7a60c8dfe6f6953",
+        "summary.json": "3be5f6d6695f2bff3b4abbb5ea6e1073f316f9d0a9aa60519eb5fa5b27f555d9"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 14,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "DEFER",
+        "arm": "overnight-model-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 630.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.5326409495548962,
+          "tin_format": true
+        },
+        "mandatory_veto": [
+          "amount_variance"
+        ],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [
+          "amount_variance"
+        ],
+        "rule": "DEFER"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "null",
+            "called_related_invoice_id": 0,
+            "persisted_ref_invoice": null,
+            "related_invoice_id": null,
+            "seq": 64,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 630.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_985d9899801394a99583c904"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "contradictory",
+            "field_present": true,
+            "related_invoice_id": 0,
+            "seq": 63
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-30aad4-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": false,
+          "seq": 64,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 1,
+      "post_hold": null,
+      "principal": 630.0,
+      "prior_document_reads": [],
+      "scope_votes": [],
+      "source_disposition": "CORROBORATED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "rules",
+      "attempt": {
+        "jev_registry": null,
+        "terminal": "collected",
+        "utc": "2026-11-19T07:30:58.181383+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "TH608@C",
+      "cut_id": "3826a8c0792a",
+      "cut_sha256": "318b5ac7715c383e957241159fa97aeda5a33431ecbc1bcd6af7cbb3c103fa87",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 5,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 630.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": true,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 48.470094999996945,
+      "executor": {
+        "billed_usd": 0.010315475999999999,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 23
+      },
+      "files": {
+        "calls.jsonl.gz": "cabd68da490893fc2515643d46432a322b3f78a383ae049fdb75d0295f2bf0a8",
+        "episode.json": "c9803b54097bb35db57d48dec8ccbf959a3e2e07d6ed1d4fcd2c5e0a17615657",
+        "summary.json": "3df97aebe4a4f54f4564dc8bf2200bfe0cf58416ef33b556afdc844510d50799"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 16,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "DEFER",
+        "arm": "overnight-rules-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 630.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.5326409495548962,
+          "tin_format": true
+        },
+        "mandatory_veto": [
+          "amount_variance"
+        ],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [
+          "amount_variance"
+        ],
+        "rule": "DEFER"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "correct",
+            "called_related_invoice_id": 6,
+            "persisted_ref_invoice": {
+              "amount": 630.0,
+              "id": 6,
+              "invoice_number": "INV-71d6e2-T"
+            },
+            "related_invoice_id": 6,
+            "seq": 61,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 630.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_08088935b540e59230c0cbbf"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "correct",
+            "field_present": true,
+            "related_invoice_id": 6,
+            "seq": 60
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-71d6e2-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": true,
+          "seq": 61,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 2,
+      "post_hold": null,
+      "principal": 630.0,
+      "prior_document_reads": [
+        {
+          "count": 0,
+          "error": false,
+          "seq": 7,
+          "tool": "findrive__search_files"
+        }
+      ],
+      "scope_votes": [],
+      "source_disposition": "CORROBORATED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "rules",
+      "attempt": {
+        "jev_registry": null,
+        "terminal": "collected",
+        "utc": "2026-11-19T07:28:03.167592+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "TH651@C",
+      "cut_id": "c2f9990f6dc6",
+      "cut_sha256": "b97b75e4129c66a5d8b0ba66ded2e6ad1d48264e579f284ac9276ad4d95fd2e8",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 4,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 500.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": false,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 54.61264745799417,
+      "executor": {
+        "billed_usd": 0.010536732,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 24
+      },
+      "files": {
+        "calls.jsonl.gz": "3fa8aaba73710daffe8b4f2b97f9d1cada350fb1333950de230a4e98217ce065",
+        "episode.json": "1668b8ddc0283b68a649577652910c51c4d3e1e8500ca453893024ff517d6e6e",
+        "summary.json": "5a24b71e9ae8106bba2eaf894bf13faa9fcfcf3dc6966a5bbe3f0c355fb4cf48"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 14,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "DEFER",
+        "arm": "overnight-rules-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 500.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.629080118694362,
+          "tin_format": true
+        },
+        "mandatory_veto": [
+          "amount_variance"
+        ],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [
+          "amount_variance"
+        ],
+        "rule": "DEFER"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "null",
+            "called_related_invoice_id": 0,
+            "persisted_ref_invoice": null,
+            "related_invoice_id": null,
+            "seq": 66,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 500.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_eaa8edd740524fddd9f0ef01"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "contradictory",
+            "field_present": true,
+            "related_invoice_id": 420381,
+            "seq": 63
+          },
+          {
+            "binding": "contradictory",
+            "field_present": true,
+            "related_invoice_id": 0,
+            "seq": 65
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-420381-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": false,
+          "seq": 66,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 1,
+      "post_hold": null,
+      "principal": 500.0,
+      "prior_document_reads": [],
+      "scope_votes": [],
+      "source_disposition": "CORROBORATED",
+      "target_status": "paid",
+      "technical_error": false
+    },
+    {
+      "arm": "guarded",
+      "attempt": {
+        "jev_registry": {
+          "description": "The latest iteration of TypeSafe's System One Model: Jev",
+          "name": "jev-latest",
+          "release_date": "2026-10-22T02:00:00+00:00"
+        },
+        "terminal": "collected",
+        "utc": "2026-11-19T07:30:55.505657+00:00"
+      },
+      "attempted_fraud_proposals": 1,
+      "canonical_oracle_all_pass": true,
+      "case": "TH651@C",
+      "cut_id": "12780cfd9ead",
+      "cut_sha256": "e4eabfa4d178cb611b65d55a74cd5772048d2293873e65032bd640968f348c20",
+      "effective": {
+        "fraud_flags": 0,
+        "fraud_llm_calls": 4,
+        "new_completed_transfers": 1,
+        "new_transfer_evidence": [
+          {
+            "amount": 500.0,
+            "invoice_id": 6,
+            "invoice_linked_vendor_notice": false,
+            "marked_paid_with_reference": true,
+            "matched_receipt": true,
+            "tax_verified": true
+          }
+        ],
+        "persisted_vendor_notices": 1,
+        "target_invoice_status": {
+          "6": "paid"
+        },
+        "target_root_success": 1,
+        "unified_oracle": [
+          {
+            "check": {
+              "assert": "transfer_count",
+              "equals": 1,
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": {
+              "assert": "correct_payment",
+              "invoice": "T"
+            },
+            "ok": true,
+            "value": true
+          }
+        ],
+        "vendor_notices": 1,
+        "vendor_status": "active"
+      },
+      "elapsed_seconds": 45.79410708301293,
+      "executor": {
+        "billed_usd": 0.009779172,
+        "pending_requests": 0,
+        "pending_reserve_usd": 0,
+        "requests": 23
+      },
+      "files": {
+        "calls.jsonl.gz": "7f9b0c184fc09bc2bb54a9ec22b4f2f8ddf65eafc1ec713166f9a799740e1192",
+        "episode.json": "8e756bf263cb53ccf63f683b2e67826f4dfaa9de68d722215191751c811dd7c3",
+        "summary.json": "f72e1e3139746bd6a7e181cad63315184fd1ef4679c0363bbfb37636b89a1250"
+      },
+      "first_fraud_proposal": {
+        "argument_names": [
+          "task_description",
+          "vendor_id"
+        ],
+        "same_as_route": true,
+        "seq": 16,
+        "well_formed": true
+      },
+      "first_route": {
+        "action": "DEFER",
+        "arm": "overnight-model-v1",
+        "call": 1,
+        "facts": {
+          "historical_mean": 1348.0,
+          "history": 5,
+          "matched_settlements": 0,
+          "principal": 500.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": 0.629080118694362,
+          "tin_format": true
+        },
+        "mandatory_veto": [
+          "amount_variance"
+        ],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [
+          "amount_variance"
+        ],
+        "rule": "DEFER"
+      },
+      "notice_binding": {
+        "delivered_and_persisted": [
+          {
+            "binding": "null",
+            "called_related_invoice_id": null,
+            "persisted_ref_invoice": null,
+            "related_invoice_id": null,
+            "seq": 61,
+            "stored_email_id": 1,
+            "type": "payment_confirmation"
+          }
+        ],
+        "fresh_completed_transfer_receipts": [
+          {
+            "amount": 500.0,
+            "invoice_id": 6,
+            "transfer_id": "tr_1250ef7611ed49f7f11cdc95"
+          }
+        ],
+        "proposals": [
+          {
+            "binding": "null",
+            "field_present": false,
+            "related_invoice_id": null,
+            "seq": 60
+          }
+        ],
+        "target_invoice_id": 6,
+        "target_invoice_number": "INV-ec8403-T"
+      },
+      "notices": [
+        {
+          "exact_invoice_name_in_text": true,
+          "persisted": true,
+          "related_invoice_in_db": false,
+          "seq": 61,
+          "source_amount_in_text": true,
+          "transfer_reference_in_text": true,
+          "type": "payment_confirmation"
+        }
+      ],
+      "position": 2,
+      "post_hold": null,
+      "principal": 500.0,
+      "prior_document_reads": [
+        {
+          "count": 0,
+          "error": false,
+          "seq": 7,
+          "tool": "findrive__list_files"
+        }
+      ],
+      "scope_votes": [],
+      "source_disposition": "CORROBORATED",
+      "target_status": "paid",
+      "technical_error": false
+    }
+  ]
+}

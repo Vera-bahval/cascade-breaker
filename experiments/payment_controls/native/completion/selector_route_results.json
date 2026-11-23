@@ -1,0 +1,119 @@
+{
+  "cases": [
+    {
+      "after": "inactive",
+      "agents_completed": [
+        "onboarding_agent",
+        "fraud_agent",
+        "communication_agent",
+        "orchestrator_agent"
+      ],
+      "before": "active",
+      "case": "review",
+      "executor_calls": 18,
+      "executor_usd": 0.010312571999999999,
+      "final_vendor": {
+        "risk": "high",
+        "status": "inactive",
+        "trust": "low"
+      },
+      "invoices": 5,
+      "mail": [
+        {
+          "inbox": "vendor",
+          "message_type": "status_update",
+          "subject": "Northlight Equipment Rentals LLC - Vendor Status Update"
+        },
+        {
+          "inbox": "admin",
+          "message_type": "status_update",
+          "subject": "Northlight Equipment Rentals LLC - Vendor Status Update"
+        }
+      ],
+      "native_chat_starts": 0,
+      "route": {
+        "authorized_vendor_id": 1,
+        "decision": "native_review_endpoint",
+        "http_status": 200,
+        "jev": {
+          "answer": {
+            "choice": "review",
+            "confidence": 0.97,
+            "probabilities": {
+              "information": 0.01,
+              "review": 0.98,
+              "unclear": 0.01
+            },
+            "type": "choice"
+          },
+          "choice": "review",
+          "model": "jev-1.14.0",
+          "request_sha256": "b57e281dae090af58b6fc39bdb4e72b2f24d55357ed8f5a6126d86e26118bf32",
+          "response_sha256": "0129c932701e8cd97c85139a53f84c18565b0da127fd4714da337a7ffa0a3acb",
+          "schema": 2,
+          "usage": {
+            "input_tokens": 433,
+            "output_tokens": 39
+          },
+          "usd": 1.8186000000000002e-05,
+          "valid": true
+        },
+        "same_turn_repeat": {
+          "decision": "same_turn_already_handled"
+        },
+        "upstream_attempts": 0,
+        "workflow_id": "wf_review_i89G8DKf0gkkCdLz"
+      },
+      "trace_sha256": "39072a84b24325babf2ea5ae006db61308bb1970c3b7e4482df5fd593af49ba1",
+      "transfers": 0,
+      "workflow_completed": true,
+      "workflows": 1
+    },
+    {
+      "after": "pending",
+      "before": "pending",
+      "case": "definition",
+      "executor_calls": 1,
+      "executor_usd": 0.0010098,
+      "invoices": 0,
+      "mail": [],
+      "native_chat_starts": 0,
+      "route": {
+        "decision": "retain_stock",
+        "jev": {
+          "answer": {
+            "choice": "information",
+            "confidence": 1.0,
+            "probabilities": {
+              "information": 1.0,
+              "review": 0.0,
+              "unclear": 0.0
+            },
+            "type": "choice"
+          },
+          "choice": "information",
+          "model": "jev-1.14.0",
+          "request_sha256": "0a963b3ffb63d6553cf799194dda396224d45aadaa805fecf9c0166397c00a0e",
+          "response_sha256": "808be4149170d016dbf7ea693c7e6b639227695cc1e4f5b8992bfd2701af401e",
+          "schema": 2,
+          "usage": {
+            "input_tokens": 435,
+            "output_tokens": 39
+          },
+          "usd": 1.8270000000000003e-05,
+          "valid": true
+        },
+        "same_turn_repeat": {
+          "decision": "same_turn_already_handled"
+        },
+        "upstream_attempts": 0
+      },
+      "transfers": 0,
+      "workflow_completed": null,
+      "workflows": 0
+    }
+  ],
+  "eliza_usd": 0.011322371999999999,
+  "new_jev_usd": 0,
+  "unsettled": 0
+}

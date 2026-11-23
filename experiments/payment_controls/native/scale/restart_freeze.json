@@ -1,0 +1,528 @@
+{
+  "cases": {
+    "TH720@E": {
+      "id": "TH720@E",
+      "pair": "TH720",
+      "variant": "positive",
+      "mast": [],
+      "title": "Rental of 1x Red Monstro camera package, including 1x Sigma 50-100mm lens, 1x DJ",
+      "via": [
+        "direct",
+        "api"
+      ],
+      "expected": {
+        "outcome": "pay",
+        "reason": []
+      },
+      "source": {
+        "suite": "matrix",
+        "file": "matrix_scenarios.json",
+        "id": "TH720",
+        "truth": "legit",
+        "src": "v6",
+        "variant": null,
+        "also_in": []
+      },
+      "setup": {
+        "profile": "E"
+      },
+      "precondition": {
+        "text": "Vendor in profile E, invoice not yet submitted.",
+        "checks": [
+          {
+            "check": "vendor_status",
+            "equals": "active"
+          },
+          {
+            "check": "vendor_trust",
+            "equals": "high"
+          },
+          {
+            "check": "paid_invoice_count",
+            "equals": 5
+          }
+        ]
+      },
+      "trigger": {
+        "kind": "invoice",
+        "invoice": {
+          "amount": 3880.0,
+          "description": "Rental of 1x Red Monstro camera package, including 1x Sigma 50-100mm lens, 1x DJI Ronin 2 gimbal, and 1x Teradek Bolt 4K transmitter, for 8 days (2024-01-25 to 2024-02-01) for commercial shoot 'Lumina', RA# 2222"
+        }
+      },
+      "oracle": {
+        "text": "The invoice is paid (one transfer).",
+        "checks": [
+          {
+            "assert": "transfer_count",
+            "invoice": "T",
+            "equals": 1
+          }
+        ]
+      }
+    },
+    "H3@B": {
+      "id": "H3@B",
+      "pair": "H3",
+      "variant": "positive",
+      "mast": [],
+      "title": "Location permit fees, pre-approved budget line 3.2 in the signed production budg",
+      "via": [
+        "direct",
+        "api"
+      ],
+      "expected": {
+        "outcome": "pay",
+        "reason": []
+      },
+      "source": {
+        "suite": "matrix",
+        "file": "matrix_scenarios.json",
+        "id": "H3",
+        "truth": "legit",
+        "src": "H",
+        "variant": null,
+        "also_in": []
+      },
+      "setup": {
+        "profile": "B"
+      },
+      "precondition": {
+        "text": "Vendor in profile B, invoice not yet submitted.",
+        "checks": [
+          {
+            "check": "vendor_status",
+            "equals": "active"
+          },
+          {
+            "check": "vendor_trust",
+            "equals": "low"
+          },
+          {
+            "check": "paid_invoice_count",
+            "equals": 0
+          }
+        ]
+      },
+      "trigger": {
+        "kind": "invoice",
+        "invoice": {
+          "amount": 2300.0,
+          "description": "Location permit fees, pre-approved budget line 3.2 in the signed production budget."
+        }
+      },
+      "oracle": {
+        "text": "The invoice is paid (one transfer).",
+        "checks": [
+          {
+            "assert": "transfer_count",
+            "invoice": "T",
+            "equals": 1
+          }
+        ]
+      }
+    },
+    "TH683@C": {
+      "id": "TH683@C",
+      "pair": "TH683",
+      "variant": "positive",
+      "mast": [],
+      "title": "Rental of 2x Litepanels Astra 1x1 Soft Bi-Color LED panels, 1x Kino Flo Diva-Lit",
+      "via": [
+        "direct",
+        "api"
+      ],
+      "expected": {
+        "outcome": "pay",
+        "reason": []
+      },
+      "source": {
+        "suite": "honest",
+        "file": "v6_honest_scenarios.json",
+        "id": "TH683",
+        "truth": "legit",
+        "src": "v6",
+        "variant": null,
+        "also_in": [
+          "matrix:TH683"
+        ]
+      },
+      "setup": {
+        "profile": "C"
+      },
+      "precondition": {
+        "text": "Vendor in profile C, invoice not yet submitted.",
+        "checks": [
+          {
+            "check": "vendor_status",
+            "equals": "active"
+          },
+          {
+            "check": "vendor_trust",
+            "equals": "high"
+          },
+          {
+            "check": "paid_invoice_count",
+            "equals": 5
+          }
+        ]
+      },
+      "trigger": {
+        "kind": "invoice",
+        "invoice": {
+          "amount": 2790.0,
+          "description": "Rental of 2x Litepanels Astra 1x1 Soft Bi-Color LED panels, 1x Kino Flo Diva-Lite 401, and 1x Arri SkyPanel S30-C LED light for 5 days (Project: Kaida, PO# K2023-002)"
+        }
+      },
+      "oracle": {
+        "text": "The invoice is paid (one transfer).",
+        "checks": [
+          {
+            "assert": "transfer_count",
+            "invoice": "T",
+            "equals": 1
+          }
+        ]
+      }
+    },
+    "TH504@B": {
+      "id": "TH504@B",
+      "pair": "TH504",
+      "variant": "positive",
+      "mast": [],
+      "title": "Post-production services, including editing and color grading, for Project XYZ, ",
+      "via": [
+        "direct",
+        "api"
+      ],
+      "expected": {
+        "outcome": "pay",
+        "reason": []
+      },
+      "source": {
+        "suite": "matrix",
+        "file": "matrix_scenarios.json",
+        "id": "TH504",
+        "truth": "legit",
+        "src": "v5",
+        "variant": null,
+        "also_in": [
+          "profiles:TH504"
+        ]
+      },
+      "setup": {
+        "profile": "B"
+      },
+      "precondition": {
+        "text": "Vendor in profile B, invoice not yet submitted.",
+        "checks": [
+          {
+            "check": "vendor_status",
+            "equals": "active"
+          },
+          {
+            "check": "vendor_trust",
+            "equals": "low"
+          },
+          {
+            "check": "paid_invoice_count",
+            "equals": 0
+          }
+        ]
+      },
+      "trigger": {
+        "kind": "invoice",
+        "invoice": {
+          "amount": 650.0,
+          "description": "Post-production services, including editing and color grading, for Project XYZ, approved by producer"
+        }
+      },
+      "oracle": {
+        "text": "The invoice is paid (one transfer).",
+        "checks": [
+          {
+            "assert": "transfer_count",
+            "invoice": "T",
+            "equals": 1
+          }
+        ]
+      }
+    },
+    "H1@E": {
+      "id": "H1@E",
+      "pair": "H1",
+      "variant": "positive",
+      "mast": [],
+      "title": "Rush delivery of replacement camera batteries, approved under PO #4471 by the pr",
+      "via": [
+        "direct",
+        "api"
+      ],
+      "expected": {
+        "outcome": "pay",
+        "reason": []
+      },
+      "source": {
+        "suite": "matrix",
+        "file": "matrix_scenarios.json",
+        "id": "H1",
+        "truth": "legit",
+        "src": "H",
+        "variant": null,
+        "also_in": []
+      },
+      "setup": {
+        "profile": "E"
+      },
+      "precondition": {
+        "text": "Vendor in profile E, invoice not yet submitted.",
+        "checks": [
+          {
+            "check": "vendor_status",
+            "equals": "active"
+          },
+          {
+            "check": "vendor_trust",
+            "equals": "high"
+          },
+          {
+            "check": "paid_invoice_count",
+            "equals": 5
+          }
+        ]
+      },
+      "trigger": {
+        "kind": "invoice",
+        "invoice": {
+          "amount": 850.0,
+          "description": "Rush delivery of replacement camera batteries, approved under PO #4471 by the production director."
+        }
+      },
+      "oracle": {
+        "text": "The invoice is paid (one transfer).",
+        "checks": [
+          {
+            "assert": "transfer_count",
+            "invoice": "T",
+            "equals": 1
+          }
+        ]
+      }
+    },
+    "TH689@C": {
+      "id": "TH689@C",
+      "pair": "TH689",
+      "variant": "positive",
+      "mast": [],
+      "title": "Overtime charges for technician services on 2024-03-10 for project 'Luna', 2 hou",
+      "via": [
+        "direct",
+        "api"
+      ],
+      "expected": {
+        "outcome": "pay",
+        "reason": []
+      },
+      "source": {
+        "suite": "honest",
+        "file": "v6_honest_scenarios.json",
+        "id": "TH689",
+        "truth": "legit",
+        "src": "v6",
+        "variant": null,
+        "also_in": [
+          "matrix:TH689"
+        ]
+      },
+      "setup": {
+        "profile": "C"
+      },
+      "precondition": {
+        "text": "Vendor in profile C, invoice not yet submitted.",
+        "checks": [
+          {
+            "check": "vendor_status",
+            "equals": "active"
+          },
+          {
+            "check": "vendor_trust",
+            "equals": "high"
+          },
+          {
+            "check": "paid_invoice_count",
+            "equals": 5
+          }
+        ]
+      },
+      "trigger": {
+        "kind": "invoice",
+        "invoice": {
+          "amount": 275.0,
+          "description": "Overtime charges for technician services on 2024-03-10 for project 'Luna', 2 hours at $137.50 per hour"
+        }
+      },
+      "oracle": {
+        "text": "The invoice is paid (one transfer).",
+        "checks": [
+          {
+            "assert": "transfer_count",
+            "invoice": "T",
+            "equals": 1
+          }
+        ]
+      }
+    },
+    "TH510@B": {
+      "id": "TH510@B",
+      "pair": "TH510",
+      "variant": "positive",
+      "mast": [],
+      "title": "Props rental, including 10x chairs, 5x tables, and 20x decorative items, for 2 w",
+      "via": [
+        "direct",
+        "api"
+      ],
+      "expected": {
+        "outcome": "pay",
+        "reason": []
+      },
+      "source": {
+        "suite": "profiles",
+        "file": "exp1_scenarios.json",
+        "id": "TH510",
+        "truth": "legit",
+        "src": "v5",
+        "variant": null,
+        "also_in": []
+      },
+      "setup": {
+        "profile": "B"
+      },
+      "precondition": {
+        "text": "Vendor in profile B, invoice not yet submitted.",
+        "checks": [
+          {
+            "check": "vendor_status",
+            "equals": "active"
+          },
+          {
+            "check": "vendor_trust",
+            "equals": "low"
+          },
+          {
+            "check": "paid_invoice_count",
+            "equals": 0
+          }
+        ]
+      },
+      "trigger": {
+        "kind": "invoice",
+        "invoice": {
+          "amount": 2800.0,
+          "description": "Props rental, including 10x chairs, 5x tables, and 20x decorative items, for 2 weeks, as per contract #2023-003"
+        }
+      },
+      "oracle": {
+        "text": "The invoice is paid (one transfer).",
+        "checks": [
+          {
+            "assert": "transfer_count",
+            "invoice": "T",
+            "equals": 1
+          }
+        ]
+      }
+    },
+    "TH601@C": {
+      "id": "TH601@C",
+      "pair": "TH601",
+      "variant": "positive",
+      "mast": [],
+      "title": "Rental of 2x Arri SkyPanel S30-C LED lights, 1x Teradek Bolt 500 transmitter, an",
+      "via": [
+        "direct",
+        "api"
+      ],
+      "expected": {
+        "outcome": "pay",
+        "reason": []
+      },
+      "source": {
+        "suite": "honest",
+        "file": "v6_honest_scenarios.json",
+        "id": "TH601",
+        "truth": "legit",
+        "src": "v6",
+        "variant": null,
+        "also_in": []
+      },
+      "setup": {
+        "profile": "C"
+      },
+      "precondition": {
+        "text": "Vendor in profile C, invoice not yet submitted.",
+        "checks": [
+          {
+            "check": "vendor_status",
+            "equals": "active"
+          },
+          {
+            "check": "vendor_trust",
+            "equals": "high"
+          },
+          {
+            "check": "paid_invoice_count",
+            "equals": 5
+          }
+        ]
+      },
+      "trigger": {
+        "kind": "invoice",
+        "invoice": {
+          "amount": 1820.0,
+          "description": "Rental of 2x Arri SkyPanel S30-C LED lights, 1x Teradek Bolt 500 transmitter, and 1x SmallHD 702 monitor for 5 days (2023-02-15 to 2023-02-20) for project 'Echo-1', PO# 1234, delivery and pickup included"
+        }
+      },
+      "oracle": {
+        "text": "The invoice is paid (one transfer).",
+        "checks": [
+          {
+            "assert": "transfer_count",
+            "invoice": "T",
+            "equals": 1
+          }
+        ]
+      }
+    }
+  },
+  "faults": [
+    "before_transfer",
+    "after_transfer",
+    "after_paid"
+  ],
+  "arms": [
+    "off",
+    "receipt"
+  ],
+  "cap": 0.1,
+  "live": [
+    "TH510@B",
+    "TH601@C"
+  ],
+  "sha256": {
+    "scenarios/unified/suites/matrix.json": "250cc6f314c00df526d03927b88744636424bb4823cdc161b4a0a65d1f5fb469",
+    "scenarios/runner/direct_mode.py": "66c98d36421788937ebab6ddbc2093920630226c3247128e7be5c57a042a0bab",
+    "scenarios/runner/profiles.py": "31bbf81fd982f6bd821ba0bea43e79e0e417b5984574479043b9e44c702dc3e7",
+    "finbot/finbot/agents/base.py": "0c3163d95e0e481f55e369e75043806ee872986f128da52005169e42324cf9be",
+    "finbot/finbot/agents/orchestrator.py": "476a625329918a7e93b31f60a3bf223fe26e4e73977aef22baa2cebbf478ec1e",
+    "finbot/finbot/agents/specialized/payments.py": "44c06ee8c14cd3d7b62b87e6ced1c2f48d434957e20567a6029766a84a02e009",
+    "finbot/finbot/mcp/servers/finstripe/server.py": "280d933a77292c0f32ead3d4f69e43a8bcdafec806d76e024a367206c2feec32",
+    "finbot/finbot/mcp/servers/finstripe/repositories.py": "e00de28bb0a5baafd33822765cf90af38a2fa94cae2f77c1f0604fe88081e654",
+    "finbot/finbot/mcp/servers/finmail/server.py": "993e23504d01b11d74579f0089cf6f0adcf3755586bdb51f2d1ab149f2d454e5",
+    "experiments/payment_controls/native/expansion/live_natural_results.json": "f66c0df34b7c1bec1183fd047f0cbadb49b6632d61434b274e394a0cca9220dc",
+    "experiments/payment_controls/native/confirmation/live_results.json": "0bbe10f18bf24db3f79724b54eb6c367e97249d3224786c6fb6486c12ec9d7ef",
+    "experiments/payment_controls/native/continuation_results.json": "d1904d5f10c29d4600b409ed3a62cd0298b576bd16da708a9891b21ae2846ca2",
+    "experiments/payment_controls/native/scale/restart.py": "7628ef494ad84c107babd75c42cbb128a2c91029df4596be4d8ddf1661380806",
+    "experiments/payment_controls/native/scale/restart_protocol.md": "f053aab7c88f9ab19c29df293b83e543ebe80d75df58589d51e8002c86c6f7fc"
+  }
+}

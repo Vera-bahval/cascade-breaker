@@ -1,0 +1,76 @@
+{
+  "data_scope": "Manually verified public administrative evidence. IDs are document-local aliases. USD amounts are reported face amounts. Each row is one linked check sequence, not a FinBot run.",
+  "records": [
+    {
+      "case": "NJ-1",
+      "source": "https://www.midlandparknj.gov/sites/g/files/vyhlif896/f/agendas/agenda_-_september_14_2023.pdf",
+      "locator": "July 27, 2023 open public meeting minutes, printed p. 4, resolution 136-2023",
+      "linkage": "Council resolution explicitly connects original and replacement to one parade invoice. Invoice number not published.",
+      "events": [
+        {"check": "A", "date": "2023-06-08", "kind": "payment_processed_and_mailed", "usd": "500.00"},
+        {"check": "A", "date": null, "kind": "stop_payment_and_void_after_nondelivery", "usd": "500.00"},
+        {"check": "B", "date": "2023-07-17", "kind": "replacement_issued", "usd": "500.00"}
+      ],
+      "reconciliation_observed_for_replacement": false
+    },
+    {
+      "case": "NJ-2",
+      "source": "https://www.midlandparknj.gov/sites/g/files/vyhlif896/f/agendas/agenda_-_september_14_2023.pdf",
+      "locator": "July 27, 2023 open public meeting minutes, printed p. 4, resolution immediately above 136-2023",
+      "linkage": "Council resolution links one quarterly billing correction to the voided and corrected checks. It identifies a corrected invoice received July 13 but supplies neither invoice number.",
+      "events": [
+        {"check": "A", "date": "2023-07-13", "kind": "payment_processed", "usd": "48.00"},
+        {"check": "A", "date": null, "kind": "withdrawn_before_mailing_and_voided", "usd": "48.00"},
+        {"check": "B", "date": null, "kind": "corrected_check_identified_in_minutes", "usd": "81.00"}
+      ],
+      "reconciliation_observed_for_replacement": false
+    },
+    {
+      "case": "IN-1",
+      "source": "https://www.in.gov/duab/files/DUAB-3.18.22.pdf",
+      "locator": "Claims Docket for February 2022, February 1 rows, $71.96 offset and replacement",
+      "linkage": "Replacement row explicitly references original check number. No invoice number, deposit or reconciliation evidence in these rows.",
+      "events": [
+        {"check": "A", "date": "2022-01-14", "kind": "wrong_recipient_deduction_referenced_in_void_row", "usd": "71.96"},
+        {"check": "A", "date": "2022-02-01", "kind": "void_offset_posted", "usd": "-71.96"},
+        {"check": "B", "date": "2022-02-01", "kind": "replacement_posted", "usd": "71.96"}
+      ],
+      "reconciliation_observed_for_replacement": false
+    },
+    {
+      "case": "IN-2",
+      "source": "https://www.in.gov/duab/files/DUAB-3.18.22.pdf",
+      "locator": "Claims Docket for February 2022, February 8 rows, $689.73 offset and replacement",
+      "linkage": "Replacement row explicitly references original check number. No original issue date, invoice number or reconciliation evidence in these rows.",
+      "events": [
+        {"check": "A", "date": "2022-02-08", "kind": "stop_payment_offset_posted_lost_mail", "usd": "-689.73"},
+        {"check": "B", "date": "2022-02-08", "kind": "replacement_posted", "usd": "689.73"}
+      ],
+      "reconciliation_observed_for_replacement": false
+    },
+    {
+      "case": "CA-1",
+      "source": "https://files.dhsrecords.com/desert-hot-springs/city-documents/2021-03-16_staff_report_8645.pdf#page=30",
+      "locator": "January 2021 Payment Register, PDF page 30; March 2021 Payment Register, PDF page 12",
+      "documents": [
+        {"url": "https://files.dhsrecords.com/desert-hot-springs/city-documents/2021-03-16_staff_report_8645.pdf", "page": 30, "sha256": "c9c3c9bacee466f1ae0c50c4de6d686b84e391164b0d82ed7494ef96607460af"},
+        {"url": "https://files.dhsrecords.com/desert-hot-springs/city-documents/2021-05-18_staff_report_9748.pdf", "page": 12, "sha256": "6100f61e5810d4d8f357939e1766017be02d225513f05a5fad86e971d0d02dbd"}
+      ],
+      "linkage": "Same printed invoice number, invoice date, description, payee and USD line amount on two distinct check records. The Open status is the January register snapshot, not a verified final disposition of A.",
+      "events": [
+        {"check": "A", "date": "2021-01-28", "kind": "issued_later_listed_open", "usd": "2037.00"},
+        {"check": "B", "date": "2021-03-11", "kind": "issued", "usd": "2037.00"},
+        {"check": "B", "date": "2021-03-31", "kind": "reconciled", "usd": "2037.00"}
+      ],
+      "original_void_primary_verified": false,
+      "reconciliation_observed_for_replacement": true
+    }
+  ],
+  "native": {
+    "documented_payment_transaction_statuses": ["pending", "completed", "failed"],
+    "created_by_transfer_tool": "completed",
+    "native_void_or_reversal_supported": false,
+    "admitted_reversal_scenes": 0,
+    "new_runs": 0
+  }
+}

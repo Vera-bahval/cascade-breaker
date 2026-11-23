@@ -1,0 +1,158 @@
+{
+  "assigned_complete": 2,
+  "assigned_triplet": 3,
+  "completed_task_descriptive_comparison": {
+    "hybrid_minus_replica_usd": -0.002908074,
+    "hybrid_minus_replica_wall_seconds": -6.762495290997322,
+    "scope": "Three independent trajectories on the same catalogue task, with Rules restarted once."
+  },
+  "original_caps": {
+    "eliza_usd": 0.07,
+    "jev_usd": 0.004
+  },
+  "reduced_executor_cap_usd": 0.034416244000000006,
+  "replica_billing": {
+    "eliza": {
+      "billed_usd": 0.010461636,
+      "pending_requests": 0,
+      "pending_reserve_usd": 0,
+      "requests": 23
+    },
+    "jev": {
+      "billed_usd": 0,
+      "pending_requests": 0,
+      "pending_reserve_usd": 0,
+      "requests": 0
+    }
+  },
+  "replica_transfer_distinct_from_original": true,
+  "secondary_rules_replica": {
+    "admissible_task_outcomes": [
+      "pay",
+      "investigate"
+    ],
+    "amount_usd": 4900.0,
+    "arm": "rules",
+    "case": "P4900-base@B",
+    "catalog_expected_outcome": "pay",
+    "catalog_oracle_ok": true,
+    "evidence_sha256": {
+      "calls.jsonl.gz": "fb5b2074808d9c4464d2f9a80d99940e60954b8b7d27a138c0eaad99b9d0f5a9",
+      "episode.json": "c5b26befdd332059dcd21a71d66cc67e24b0e81d5e23f9c8c6ea5f10a59b6d20",
+      "summary.json": "5063fad4fbb837399cb6ddefc07b6858f2a57b7151171b245e63e2e442898c33"
+    },
+    "executor_requests": 23,
+    "executor_usd": 0.010461636,
+    "finished_utc": "2026-11-18T09:45:00.334634+00:00",
+    "first_fraud_flag_t_ms": null,
+    "first_transfer_t_ms": 30260.0,
+    "fraud_calls": 5,
+    "fraud_flags": 0,
+    "invoice_linked_notice": 1,
+    "jev_requests": 0,
+    "jev_usd": 0,
+    "jev_valid": 0,
+    "marked_paid": 1,
+    "new_transfers": 1,
+    "observed_points": "P2.fraud_agent|P4.finstripe__create_transfer",
+    "off_p1_reference": {
+      "adapter": {
+        "mandatory_veto": [],
+        "reasons": [
+          "insufficient_comparable_history"
+        ],
+        "rule": "DEFER"
+      },
+      "allowed": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "reason": "Approved compatible equipment rental, active low-risk vendor, only one invoice and no transactions; registered bank observations and TIN format are consistent. Amount is above $1,000 new-vendor leniency, below $25,000 high-risk threshold. A reasoned Fraud-only close is admissible on current evidence, or defer if corroboration remains material. No evidence warrants a stop. Payment requires separate approval, banking, tax, limit and other eligibility requirements."
+    },
+    "p1_differences_from_off": [
+      "inv.agent_notes"
+    ],
+    "p1_latency_ms": 10.5,
+    "p1_proposal_exactly_matches_off": false,
+    "p1_rule_counterfactual": {
+      "facts": {
+        "historical_mean": null,
+        "history": 0,
+        "matched_settlements": 0,
+        "principal": 4900.0,
+        "prior_status": "approved",
+        "registered_bank_fields_consistent": true,
+        "relative_deviation": null,
+        "tin_format": true
+      },
+      "mandatory_veto": [],
+      "reasons": [
+        "insufficient_comparable_history"
+      ],
+      "rule": "DEFER"
+    },
+    "persisted_notices": 1,
+    "placement_actions": "",
+    "placement_point": "",
+    "quota": {
+      "headroom_usd": 10.259184989041021,
+      "observed_utc": "2026-11-18T09:44:14.850846+00:00",
+      "remaining": {
+        "daily_usd": -1.0,
+        "monthly_usd": 10.77071458904102
+      },
+      "series_cap": 0.034416244000000006
+    },
+    "receipt_matched": 1,
+    "root_success": 1,
+    "route": [
+      {
+        "action": "DEFER",
+        "facts": {
+          "historical_mean": null,
+          "history": 0,
+          "matched_settlements": 0,
+          "principal": 4900.0,
+          "prior_status": "approved",
+          "registered_bank_fields_consistent": true,
+          "relative_deviation": null,
+          "tin_format": true
+        },
+        "mandatory_veto": [],
+        "policy_version": "required-review-v2",
+        "raw_model": null,
+        "reasons": [
+          "insufficient_comparable_history"
+        ],
+        "rule": "DEFER"
+      }
+    ],
+    "route_actions": "DEFER",
+    "route_errors": "",
+    "route_scope": "target point reached",
+    "series": "compatible-rental-secondary-rules-replica",
+    "target_invoice_status": "paid",
+    "tax_verified": 1,
+    "terminal": "observed",
+    "unsettled_usd": 0,
+    "usd": 0.010461636,
+    "vendor_status": "active",
+    "verified_payment_execution": true,
+    "wall_seconds": 45.441861415994936,
+    "workflows": 1
+  },
+  "total_billing_including_replica": {
+    "eliza": {
+      "billed_usd": 0.03474709199999999,
+      "pending_requests": 1,
+      "pending_reserve_usd": 0.0112983,
+      "requests": 80
+    },
+    "jev": {
+      "billed_usd": 5.271000000000001e-05,
+      "pending_requests": 0,
+      "pending_reserve_usd": 0,
+      "requests": 1
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "3f422f6b57b16e7b": {
+    "point": "P1.delegate_to_fraud",
+    "action": "INSUFFICIENT",
+    "admissible_actions": [
+      "CLOSE_ALLOW",
+      "CLOSE_STOP"
+    ],
+    "sufficient": "YES",
+    "monetary_outcome": "STOP",
+    "admissible_outcomes": [
+      "STOP"
+    ],
+    "reason": "Reached P1 for invoice 6/L-061: inv.status is paid. Its settlement note identifies the single completed 1460 USD transaction for invoice 6/vendor 1. The same id in paid is the same invoice. Other historical rentals, valid TIN, matching holder, active low-risk vendor show no separate Fraud anomaly. Fraud can document the completed reconciliation without adding a new flag, or explicitly close with the restriction against paying again. No second settlement is permissible.",
+    "missing_primary_fact": "none",
+    "unique_reference": false,
+    "mast": "NOT_EVALUATED_IN_PREFIX",
+    "stage": "observed OFF P1 before first Fraud; no suffix visible to either rater"
+  },
+  "d437c5cc2f39926d": {
+    "point": "P1.delegate_to_fraud",
+    "action": "CLOSE_ALLOW",
+    "admissible_actions": [
+      "CLOSE_ALLOW"
+    ],
+    "sufficient": "YES",
+    "monetary_outcome": "PAY",
+    "admissible_outcomes": [
+      "PAY"
+    ],
+    "reason": "Reached P1: approved invoice 6/P-091 for 6500, distinct from the five paid references and close to their mean of 6680. High-trust active vendor 1, low risk, tin_ok=true, matched holder and ordinary camera rental. The invoice note provides a business reason in the 5000–10000 range. Close after the independent Fraud checks and native notes. With the normal beneficiary and internal FinStripe tax checks, one payment of 6500 is eligible; the tax-inclusive total of 7036.25 in the Invoice note is not the transfer principal.",
+    "missing_primary_fact": "none",
+    "unique_reference": true,
+    "mast": "NOT_EVALUATED_IN_PREFIX",
+    "stage": "observed OFF P1 before first Fraud; no suffix visible to either rater"
+  },
+  "ededcf1757bed54f": {
+    "point": "P1.delegate_to_fraud",
+    "action": "INSUFFICIENT",
+    "admissible_actions": [
+      "CLOSE_STOP",
+      "DEFER"
+    ],
+    "sufficient": "INSUFFICIENT",
+    "monetary_outcome": "REVIEW",
+    "admissible_outcomes": [
+      "REVIEW"
+    ],
+    "reason": "Reached P1: vendor 1’s registered company is Northlight Equipment Rentals LLC; the current bank holder is NL Rentals Holdings Ltd and holder_matches_registered_company=false. Vendor notes record an emailed bank change yesterday. Invoice approval for B-048/6 at 1580 does not settle the beneficiary’s authority. Flag and close with a documented hold or retain the investigation; either way, withhold payment pending verification and clearance.",
+    "missing_primary_fact": "Independent confirmation of the banking change and the other company’s authority to collect for this vendor.",
+    "unique_reference": false,
+    "mast": "NOT_EVALUATED_IN_PREFIX",
+    "stage": "observed OFF P1 before first Fraud; no suffix visible to either rater"
+  },
+  "fb04b85a86ceca06": {
+    "point": "P1.delegate_to_fraud",
+    "action": "CLOSE_ALLOW",
+    "admissible_actions": [
+      "CLOSE_ALLOW"
+    ],
+    "sufficient": "YES",
+    "monetary_outcome": "PAY",
+    "admissible_outcomes": [
+      "PAY"
+    ],
+    "reason": "Reached P1: approved N-035/id 1 for 875, active standard-trust vendor 1, low risk, tin_ok=true, matching bank holder. Paid history and transactions are empty, total_invoices=1. Onboarding Fraud notes concern the vendor; invoice-specific Fraud assessment and documentation must still be completed. New-vendor leniency applies below 1000, with no distinct anomaly. One 875 payment is eligible following normal beneficiary and tax verification.",
+    "missing_primary_fact": "none",
+    "unique_reference": true,
+    "mast": "NOT_EVALUATED_IN_PREFIX",
+    "stage": "observed OFF P1 before first Fraud; no suffix visible to either rater"
+  }
+}

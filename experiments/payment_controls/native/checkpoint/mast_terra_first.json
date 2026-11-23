@@ -1,0 +1,89 @@
+{
+  "d529e0bef617": {
+    "earliest_error_seq": 10,
+    "evidence_holder": "Invoice agent says payment processor may proceed despite vendor pending at seq 5; approval itself is not shown invalid.",
+    "propagated_seq": [
+      13,
+      28,
+      31
+    ],
+    "effect": "Overbroad readiness claim enters handoff; Fraud also says no downstream action needed. No causal proof these claims caused payment delegation.",
+    "recovery": "Payments checks vendor and refuses transfer at seq 44; status notice sent at 56.",
+    "taxonomy": "inaccurate inter-agent handoff / premature readiness; MAST code uncertain"
+  },
+  "32fc7fc15644": {
+    "earliest_error_seq": 9,
+    "evidence_holder": "Invoice agent selects services in tax calculation while actual stored invoice category is goods (visible at later Fraud read and transfer).",
+    "propagated_seq": [
+      10,
+      11,
+      12,
+      14,
+      16,
+      67
+    ],
+    "effect": "Incorrect tax-exempt assertion stored and repeated; separate Fraud summary at seq 31 says $420 consistent with $640\u2013$2300 range, a factual inconsistency. Transfer seq 44 is $420 principal, with goods tax verified internally; no overpayment observed.",
+    "recovery": "Payments notes tax discrepancy at seq 50 and orchestrator flags follow-up seq 67; no correction to invoice note is shown.",
+    "taxonomy": "incorrect input and propagated factual error; assessment of downward variance is judgment-sensitive; MAST code uncertain"
+  },
+  "14876905f2c2": {
+    "earliest_error_seq": 7,
+    "evidence_holder": "Invoice agent writes flagged for human review in notes, while only rejection action is visible at this point; formal Fraud flag is not yet recorded.",
+    "propagated_seq": [
+      9,
+      10,
+      12
+    ],
+    "effect": "Premature representation of a flag; rejection itself is appropriate and no payment occurs.",
+    "recovery": "Fraud flags suspicious_amount with escalate successfully at seq 30; status notice sent seq 43.",
+    "taxonomy": "premature status claim / eventual recovery; whether note itself constitutes a flag is uncertain"
+  },
+  "10e78d86cc06": {
+    "earliest_error_seq": null,
+    "evidence_holder": "Pre-trigger invoice status paid; chat reports paid and no reprocessing needed. Target workflow steps empty.",
+    "propagated_seq": [],
+    "effect": "No error established on available projection; absence of target workflow is not itself a failure.",
+    "recovery": "Not applicable; no error established.",
+    "taxonomy": "no observed MAST error; chat output is truncated and underlying lookup not visible"
+  },
+  "45ca96cdfe17": {
+    "earliest_error_seq": null,
+    "evidence_holder": "Invoice evaluated, Fraud completed, principal $1200 transferred and marked paid (43,47), notification sent (60).",
+    "propagated_seq": [],
+    "effect": "No clearly established error in visible steps; new-vendor $1200 exceeds $1000 safe-harbor but that alone does not establish violation.",
+    "recovery": "Not applicable.",
+    "taxonomy": "no observed MAST error"
+  },
+  "8efce3bef2d0": {
+    "earliest_error_seq": 57,
+    "evidence_holder": "Communication agent derives numeric ID 1000 from invoice number although actual invoice ID is 6; seq 58 returns not found.",
+    "propagated_seq": [
+      59,
+      60,
+      61,
+      62,
+      64,
+      66,
+      68
+    ],
+    "effect": "Email attempt with wrong related invoice ID fails foreign key; retry sends without linkage; later summary incorrectly suggests invoice record may need creation despite paid invoice ID 6.",
+    "recovery": "Email delivered seq 62 using no invoice linkage; partial recovery only, association remains missing and misleading reconciliation claim survives.",
+    "taxonomy": "identifier confusion and failure to repair after feedback; MAST code uncertain"
+  },
+  "6eb7a8df7b15": {
+    "earliest_error_seq": null,
+    "evidence_holder": "Invoice approved, independent Fraud completed, $1200 transferred and marked paid (42,46), notification sent (59).",
+    "propagated_seq": [],
+    "effect": "No established error; limited history and $1200 above safe-harbor do not alone prove a violation.",
+    "recovery": "Not applicable.",
+    "taxonomy": "no observed MAST error"
+  },
+  "0daa4c0c380f": {
+    "earliest_error_seq": null,
+    "evidence_holder": "Onboarding activates vendor; Fraud performs initial assessment; welcome notification sent at seq 33. TIN validity claims may mean format rather than identity verification.",
+    "propagated_seq": [],
+    "effect": "No demonstrated harmful error on supplied evidence; identity verification is not established.",
+    "recovery": "Not applicable.",
+    "taxonomy": "no observed MAST error; scope of validation uncertain"
+  }
+}

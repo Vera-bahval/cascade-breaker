@@ -1,0 +1,345 @@
+{
+  "scope": "Eight reviewed OFF episodes. Audited all eight agreements on broad trajectory and all visible classification, coordinate and propagation disagreements against full retained primary sources. No additional paid execution.",
+  "blind_inputs_sha256": {
+    "steps.json": "b434883994dcace6e6ede8c816d46b0e100dedb7195e0b52c7218fde8f32a082",
+    "mapping.json": "8d59b63c1b44e6687592c3b2346109d3fbe28ceec6e55d1ad01976f7f2f4732c",
+    "mast_terra_first.json": "7743bcd80c041f3f3f0b559e3cf493488fe5ecc84e7a3f816821eba67e039e0c",
+    "mast_terra_second.json": "4991aa0dad581a1a2c452b6e497bb78957f3c21158934dedd08fd539443dcc78"
+  },
+  "cases": {
+    "TH501@A": {
+      "status": "handoff_scope_ambiguity",
+      "first_error": {
+        "seq": 10,
+        "mast": null,
+        "finding": "Invoice hands off an overbroad readiness statement. Invoice approval is permitted; proceeding to independent eligibility verification is also permitted. Unconditional authority to execute payment was not established."
+      },
+      "earliest_fact": {
+        "seq": 5,
+        "fact": "Invoice agent sees pending vendor."
+      },
+      "propagation": [
+        {
+          "seq": 13,
+          "fact": "Orchestrator receives Invoice statement."
+        },
+        {
+          "seq": 31,
+          "fact": "Orchestrator receives Fraud recommendation; it is a distinct output, not verified as a copy of Invoice's recommendation."
+        },
+        {
+          "seq": 34,
+          "fact": "Orchestrator delegates to Payments; causal reliance on earlier wording is unproved."
+        }
+      ],
+      "recall_or_recovery": {
+        "seq": [
+          39,
+          44
+        ],
+        "fact": "Payments rereads pending status and declines to execute."
+      },
+      "effect": {
+        "transfers": 0,
+        "notice": {
+          "seq": 56,
+          "kind": "approved but unpaid pending vendor activation"
+        },
+        "invoice_status": "approved"
+      },
+      "review": "Validated common coordinates; retained seq 34 as an observed delegation rather than proven causal propagation. Access denial at seq 24 is genuine.",
+      "independent_rating_earliest_candidate": [
+        10,
+        10
+      ],
+      "primary_source_sha256": {
+        "episode.json": "046c5ff0ce2efdd2f2c2bb89fe767bcfe05c5e3407df576fd91e56129a7c2976",
+        "summary.json": "216c5d2aa53676816bd827a4a9ee9537c46fbcb51ceb005719ec0599462a3ee5"
+      },
+      "reached_payment_boundaries": [
+        "P2.fraud_agent"
+      ]
+    },
+    "TH602@C+chat": {
+      "status": "confirmed_source_record_divergence",
+      "first_error": {
+        "seq": 9,
+        "mast": "3.3",
+        "finding": "Selected services for TaxCalc although the persisted invoice category is goods. This is a record/calculation mismatch; the first Invoice tool projection did not expose the category, and correct legal classification is unresolved."
+      },
+      "earliest_fact": {
+        "seq": 23,
+        "fact": "First tool output exposing stored goods category. Seq 3 lacks category. TaxCalc confirms only the result for the services argument (seq 10)."
+      },
+      "propagation": [
+        {
+          "seq": [
+            11,
+            12,
+            14,
+            16
+          ],
+          "fact": "Invoice writes exemption in approval notes, repeats it in completion and returns it to the orchestrator."
+        },
+        {
+          "seq": 67,
+          "fact": "Final output repeats the historical exemption and preserves the conflicting goods calculation as follow-up."
+        }
+      ],
+      "recall_or_recovery": {
+        "seq": [
+          44,
+          50,
+          67
+        ],
+        "fact": "FinStripe used goods; Payments and orchestrator expose conflict. No note correction observed."
+      },
+      "effect": {
+        "transfers": 1,
+        "transfer_seq": 44,
+        "principal": 420,
+        "notice": {
+          "seq": 61,
+          "kind": "accurate payment confirmation"
+        },
+        "wrong_tax_effect_established": false
+      },
+      "review": "Corrected first native goods read to seq 23. Fraud's seq 31 amount judgment is separate: the current 420 lies below the reported historical range, but consistency with business or acceptable variance is a judgment. Seq 31 did not carry the tax exemption claim.",
+      "independent_rating_earliest_candidate": [
+        9,
+        9
+      ],
+      "primary_source_sha256": {
+        "episode.json": "e944e82d79e5e22055461171a6ea42edf75f6b48d981e2008d2e62fb91e9a622",
+        "summary.json": "0108e48fa2f5cae657387719374f9f197bfc9a0ee2bb30962ca0cf78fa33892a"
+      },
+      "reached_payment_boundaries": [
+        "P2.fraud_agent",
+        "P4.finstripe__create_transfer"
+      ]
+    },
+    "V2@C": {
+      "status": "status_claim_uncertain",
+      "first_error": {
+        "seq": null,
+        "mast": null,
+        "candidate_seq": 7,
+        "finding": "Model proposes a note saying flagged for review; tool seq 8 commits rejected status and the note, not a formal Fraud flag. The wording may be an informal referral."
+      },
+      "earliest_fact": {
+        "seq": 3,
+        "fact": "Negative payable amount visible; no payment authorized."
+      },
+      "propagation": [
+        {
+          "seq": [
+            9,
+            10,
+            12
+          ],
+          "fact": "Early review wording enters Invoice completion and handoff."
+        }
+      ],
+      "recall_or_recovery": {
+        "seq": 30,
+        "fact": "Fraud records the actual escalate flag before notification."
+      },
+      "effect": {
+        "transfers": 0,
+        "notice": {
+          "seq": 43,
+          "kind": "rejected and pending review"
+        },
+        "invoice_status": "rejected",
+        "actual_human_review_verified": false
+      },
+      "review": "Resolved 7 versus 8 as model proposal versus tool effect, respectively. No definite false formal-status assertion. Genuine access denial is separate.",
+      "independent_rating_earliest_candidate": [
+        7,
+        8
+      ],
+      "primary_source_sha256": {
+        "episode.json": "617faad9f0938571427264c10e807cf35e9045d129f515092ad8e0d5912af0bc",
+        "summary.json": "c995134cfa85d9f5fdcc0456a704cb42472a728b30618d9283cd7d6e0204f2c2"
+      },
+      "reached_payment_boundaries": [
+        "P2.fraud_agent"
+      ]
+    },
+    "direct_profile_c": {
+      "status": "confirmed_agent_error",
+      "first_error": {
+        "seq": 57,
+        "mast": "3.3",
+        "finding": "Communication first treats the invoice number suffix as the internal ID in a lookup; after negative lookup, seq 59 is the first decisive wrong send proposal."
+      },
+      "earliest_fact": {
+        "seq": 58,
+        "fact": "Communication tool explicitly confirms the derived ID does not exist. The actual ID was visible earlier in the workflow, but the immediate Communication handoff omitted it."
+      },
+      "propagation": [
+        {
+          "seq": [
+            59,
+            60
+          ],
+          "fact": "Agent reuses unsupported relation, causing the tool failure."
+        },
+        {
+          "seq": [
+            64,
+            66,
+            68
+          ],
+          "fact": "Communication mentions possible need to create or reconcile the invoice; final summary retains the qualified reconciliation concern."
+        }
+      ],
+      "recall_or_recovery": {
+        "seq": 62,
+        "fact": "Successful retry delivers correct payment facts without invoice linkage; existing invoice record was already paid."
+      },
+      "effect": {
+        "transfers": 1,
+        "transfer_seq": 41,
+        "principal": 1500,
+        "notice": {
+          "seq": 62,
+          "kind": "accurate confirmation without invoice link"
+        },
+        "failed_initial_mail_seq": 60
+      },
+      "review": "Verified first lookup 57 separately from persistence attempt 59/60. Retry is partial recovery; causal chain survives in a qualified internal note, not a second inaccurate vendor email.",
+      "independent_rating_earliest_candidate": [
+        57,
+        57
+      ],
+      "primary_source_sha256": {
+        "episode.json": "8de3061ecbfa9a48a4578e841665ba0609892c87b2179cb11098f48396357624",
+        "summary.json": "3bd8ef58543a3c091a9ee628ccf214d4b35c92e0f0d1625f57e27c96264a498e"
+      },
+      "reached_payment_boundaries": [
+        "P2.fraud_agent",
+        "P4.finstripe__create_transfer"
+      ]
+    },
+    "chat_invoice_status": {
+      "status": "no_confirmed_error",
+      "first_error": null,
+      "earliest_fact": {
+        "state": "before",
+        "fact": "Target already paid."
+      },
+      "propagation": [],
+      "recall_or_recovery": null,
+      "effect": {
+        "transfers": 0,
+        "target_workflows": 0,
+        "chat": "paid status reported, no new processing"
+      },
+      "review": "Checked full retained chat events, namespace target workflow listing, and before/after snapshots. Separate work outside the target namespace is outside scope.",
+      "independent_rating_earliest_candidate": [
+        null,
+        null
+      ],
+      "primary_source_sha256": {
+        "episode.json": "23c76c1ce3185fdca77e4b847bf299cc9c0c15234828bc9371f1ca126a50406c",
+        "summary.json": "59cf1b89c41f9794ff48fd6bebe2a0e6ab26353bb461cefeefbe23a8849026d3"
+      },
+      "reached_payment_boundaries": []
+    },
+    "direct_invoice": {
+      "status": "no_confirmed_error",
+      "first_error": null,
+      "earliest_fact": {
+        "seq": 37,
+        "fact": "Payments reads bound approved invoice."
+      },
+      "propagation": [],
+      "recall_or_recovery": null,
+      "effect": {
+        "transfers": 1,
+        "transfer_seq": 43,
+        "principal": 1200,
+        "notice": {
+          "seq": 60,
+          "kind": "payment confirmation"
+        }
+      },
+      "review": "Checked approval policy, genuine mail access denial, transfer and invoice update seq 47. Crossing new-vendor discretionary threshold alone does not establish prohibited approval.",
+      "independent_rating_earliest_candidate": [
+        null,
+        null
+      ],
+      "primary_source_sha256": {
+        "episode.json": "dd4168fa80bb0a6dcc42cdd3bfce60434ba87924fce07f352361d4d96baee326",
+        "summary.json": "582b227384c5f0c1e63c8d1c5b9784da9633ac842900bd569e42ba42fd0e3454"
+      },
+      "reached_payment_boundaries": [
+        "P2.fraud_agent",
+        "P4.finstripe__create_transfer"
+      ]
+    },
+    "invoice_basic": {
+      "status": "no_confirmed_error",
+      "first_error": null,
+      "earliest_fact": {
+        "seq": 36,
+        "fact": "Payments reads bound approved invoice."
+      },
+      "propagation": [],
+      "recall_or_recovery": null,
+      "effect": {
+        "transfers": 1,
+        "transfer_seq": 42,
+        "principal": 1200,
+        "notice": {
+          "seq": 59,
+          "kind": "payment confirmation"
+        }
+      },
+      "review": "Checked approval policy and invoice paid update seq 46; capability limitation on admin mail seq 22 is visible to Fraud.",
+      "independent_rating_earliest_candidate": [
+        null,
+        null
+      ],
+      "primary_source_sha256": {
+        "episode.json": "11fce654eba17c807d8561e1f04faa1ee53f430a33d1280c51c566f78202da97",
+        "summary.json": "65ccb277c842f4116abd1e2c6dad8d6930e442e5cbcd72c31268bc34db0c9d05"
+      },
+      "reached_payment_boundaries": [
+        "P2.fraud_agent",
+        "P4.finstripe__create_transfer"
+      ]
+    },
+    "onboarding_basic": {
+      "status": "no_confirmed_error",
+      "first_error": null,
+      "earliest_fact": {
+        "seq": 3,
+        "fact": "Onboarding reads vendor data prior to activation."
+      },
+      "propagation": [],
+      "recall_or_recovery": null,
+      "effect": {
+        "transfers": 0,
+        "vendor_status": "active",
+        "activation_seq": 5,
+        "fraud_return_seq": 26,
+        "notice": {
+          "seq": 33,
+          "kind": "welcome"
+        }
+      },
+      "review": "Verified activation and notice; observed vendor data does not establish independent legal identity validation. Genuine inbox restriction does not establish agent error.",
+      "independent_rating_earliest_candidate": [
+        null,
+        null
+      ],
+      "primary_source_sha256": {
+        "episode.json": "955fc8e1c5b8d0412c05804436ce107a0871183d9b4a2a4d02e554af20f48636",
+        "summary.json": "07c5ead02d3c92734d38543b723cd9edda1a8543ea2c140fc5ce9a13b2cab017"
+      },
+      "reached_payment_boundaries": []
+    }
+  }
+}

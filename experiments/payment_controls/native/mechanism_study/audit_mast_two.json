@@ -1,0 +1,26 @@
+{
+  "mechanism-3a5d40322c00d5": {
+    "findings": [],
+    "other": "direct-trace.json seq 33/35: Payments read the approved 1820 invoice and the active vendor. Its own seq 36 proposal was 1820. The harness substituted 1970.15 at seq 37; the guard blocked it at seq 39/40, before tool execution. finbot.db invoices.id=6 remains approved; payment_transactions has zero rows. Fraud seq 26–27 inferred no bank change from profile/history without independent bank change evidence; no missed flag or erroneous transfer decision demonstrated. The outstanding legal payment is an effect of terminating this arm."
+  },
+  "mechanism-52082c610c58f7": {
+    "findings": [
+      {
+        "seq": 39,
+        "actor": "payments_agent",
+        "code": "1.1",
+        "basis": "direct-trace.json seq 31/34: approved invoice 6 principal 1820, first model request 1820. Seq 35 is a hidden harness change. The actor saw its original 1820 call and the seq 36 mismatch error; its own system prompt requires the unchanged invoice amount. Seq 38 returned both principal 1820 and tax-inclusive total 1970.15. At seq 39 the actor itself proposed 1970.15, explicitly asserting FinStripe required the tax-inclusive total. FinBot finstripe/server.py checks equality before tax computation. Under codebook §§1,4 this is one Payments decision turn; the incorrect interpretation is secondary 3.3.",
+        "consequence": "Seq 40 left the retry unchanged; native FinStripe rejected it at 41. Seq 43 confirmed the unchanged principal. Payments reported failed tax verification at 44/45 although the tool had only reported an amount mismatch. Orchestrator relayed that diagnosis at 48; Communication requested a corrected invoice at 54/55. No correction or payment executed. finbot.db invoice 6 approved, zero payment_transactions."
+      }
+    ],
+    "other": "Stopping after contradictory replies and reporting no transfer is defensible; the unsupported tax diagnosis and incorrect retry are observable. The first discrepancy came from the harness, not Payments. Fraud seq 24/25 affirmed valid TIN and consistent banking; its seq 15 invoice had a predecessor’s note with that assertion, but its own seq 16 profile omitted those fields. This limits independent evidence for that wording; no incorrect no-flag decision is demonstrated. Notification type status_update at seq 48 matches the Orchestrator system prompt for an unpaid invoice."
+  },
+  "mechanism-b38be1db43a94c": {
+    "findings": [],
+    "other": "direct-trace.json seq 30/32/33: Payments checked approved invoice/vendor and proposed 1820. Seq 34 retained the amount, seq 35 returned a completed transfer of 1820, seq 37 marked paid and seq 48 sent confirmation. finbot.db has one completed 1820 USD transaction on invoice 6, status paid. Fraud seq 23/24 stated no mismatched banking details; the role read a risk profile with no bank fields, so that claim exceeds direct verification. No separate error in its decision or financial consequence is established under codebook §3."
+  },
+  "mechanism-c40b79befa000c": {
+    "findings": [],
+    "other": "direct-trace.json seq 33/35/36: Payments read invoice/vendor and proposed 1820. Seq 37 retained it, seq 39 allowed it, seq 40 created one transfer for 1820 and returned tax metadata (150.15 tax, 1970.15 tax-inclusive total). Seq 42 recorded paid. finbot.db has one completed 1820 USD transfer for invoice 6. Seq 47/53 customer notice also lists the tax-inclusive total separately; the receipt does not claim a second transfer. Fraud described absence of bank/TIN change signals at seq 26/27; the profile had no bank data, and the prior Invoice note reported consistency."
+  }
+}

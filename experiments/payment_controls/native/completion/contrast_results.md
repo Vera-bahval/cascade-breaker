@@ -1,0 +1,28 @@
+# Jev prompt and choice-letter sensitivity on retained settlement states
+
+The evidence-focused wording improved Jev on the same retained settlement states, with and without the added FinStripe receipt view. It also reduced sensitivity to choice-letter rotation. The original wording sometimes asserted a distinct-invoice settlement when the receipt view was unavailable, even though the native paid-invoice view alone could establish neither settlement link.
+
+| Receipt view | Wording | Correct | DEFER choices | Mean log loss | Multiclass Brier loss | Mean rotation TV |
+|---|---|---:|---:|---:|---:|---:|
+| Full | Original | 29/36 | 7 | 0.378 | 0.215 | 0.0739 |
+| Full | Evidence-focused | 36/36 | 0 | 0.017 | 0.001 | 0.0061 |
+| Unavailable | Original | 11/36 | 11 | 0.995 | 0.753 | 0.0883 |
+| Unavailable | Evidence-focused | 36/36 | 36 | 0.084 | 0.017 | 0.0194 |
+
+With the full view, all seven original errors were DEFER on SAME reference states. Without the view, all 25 original errors were OTHER on DEFER reference states. Under the focused wording, all 18 SAME and all 18 OTHER choices with the full view switched to DEFER when that view was removed. The endpoint gold also changes when evidence is removed. It measures the settlement link supported by the supplied observation.
+
+The paired family-mean change in log loss, focused minus original, was −0.361 with the ledger (95% stratified family bootstrap interval [−0.438, −0.266]), −0.911 without the ledger ([−0.994, −0.832]) and −0.636 averaged over both ([−0.690, −0.580]). Each family contributed equally. The intervals describe only this balanced cohort under resampling within its four selection strata.
+
+After mapping A/B/C probabilities back to the SAME/OTHER/DEFER meanings, mean pairwise total variation across rotations was 0.04694 ([0.04201, 0.05181]). A total variation of 0.04694 means that on average 4.694 percentage points of probability mass would have to move to recover the other rotation's distribution. Every family had a distribution change somewhere. Four of 144 rotation-pair comparisons changed the selected meaning, across two families and only under the original wording. Focused wording still changed probabilities: at least one pair differed in seven of 12 families with the full ledger and 12 of 12 without it. Each rotation simultaneously changes the letter and list position assigned to each meaning.
+
+The official response contained a distinct `confidence` field on all 144 answers. Under the original wording and full view, mean confidence was 0.802 on correct and 0.327 on incorrect choices. Under the original wording without the view, mean confidence was 0.442 on correct choices and 0.534 on incorrect choices. Mean chosen-option probability in that ablation was also higher on errors, 0.690 versus 0.629. The two focused arms had no errors for a within-arm confidence comparison. Each reported choice was the unique maximum in its returned probability distribution. These are descriptive comparisons of returned fields on a small repeated panel.
+
+## Frozen design and evidence
+
+The source was the existing New Britain study of official municipal payment rows projected into isolated FinBot simulations. The 244 source families already had private native packets and blind full-view reviews. Thirty families selected by the previous paid panel were ineligible. From the other 214, a preregistered hash rank selected three distinct supplier families per combination of status fixture (paid or approved, where approved is the stale status) and SQLite link (SAME/OTHER). The 12 original full-view questions used the exact retained stock projections and receipt states. The no-receipt variants retained all nonreceipt fields, marked the receipt view unavailable and removed its receipt list. In each family the experiment crossed those two exposures with two instruction wordings and all three cyclic permutations of the same semantic choice definitions. [Source frame](../expansion/secondary_frame.md) · [Selection and exact requests](contrast.py)
+
+The primary reference came from a read-only query of the original sealed `packets.db` cutoff, checked against exact native packets and the previous gold. Both prior blind readers agreed for the 12 selected full views. Two new independent Terra readers agreed on DEFER for all 12 no-receipt views; the runner bound their report hashes and sent only the question, criteria and projected state to the provider. The deterministic evidence rule also matched these 24 references. The API call order, model, body hashes, probability scoring convention, clustering and resampling were fixed before the study responses. Calibration comparisons use unmodified provider probability and confidence fields. [Scorer and receipt verification](contrast_run.py)
+
+The original and focused wording isolate the effect of these particular instructions with fixed criteria on these projections. The study shares source and fixture construction with the previous panel while using different supplier families. A family was the unit of uncertainty; 144 calls are repeated measurements on 12 families. The public records provide authentic supplier, invoice and payment provenance; the cutoffs and settlement states are from the preexisting simulation.
+
+The official TypeSafe endpoint resolved all 144 unique request bodies as `jev-1.14.0`. Registry release matched the earlier panel. The cost ledger reconciled 115,344 input tokens at the pinned tariff to **$0.004844448**, with zero unresolved reserves and $0 Eliza spend. Median completed-call latency was 0.265 seconds. Private raw responses, SHA-256 hashes, typed request-bound receipts and cost rows were retained. [Aggregate readback and release hashes](contrast_results.json)

@@ -1,0 +1,239 @@
+{
+  "reviewer": "audit_p1_current",
+  "p1_packets_sha256": "70c6eb05f113d5c75d0e5f9b383e2e577e2a29075a271f6e706ccd23435236f5",
+  "scope": "Blind adjudication of six current pre-Fraud proposals, using the two ratings and native policy and route source.",
+  "source_basis": [
+    "finbot/finbot/agents/specialized/fraud.py",
+    "finbot/finbot/tools/data/fraud.py",
+    "finbot/finbot/agents/specialized/payments.py",
+    "experiments/payment_controls/native/pre_fraud/native_reads.py",
+    "experiments/payment_controls/native/overnight/route.py"
+  ],
+  "common_evidence_limits": "Each packet has one total invoice, no returned paid history or transactions, and no attachments. A successful local TIN format check and banking field consistency are limited observations. The evidence does not establish bank ownership, full tax verification, a vendor’s complete business capabilities, contractual authorization, or absence of all fraud.",
+  "native_fraud_scope": "An independent evidence-grounded assessment can finish the Fraud task without a second LLM. Native Fraud can investigate, document, flag for hold/escalation and update risk as warranted. Ambiguity can justify a review flag without a definitive finding. The underlying tool writes a note for hold or escalation and can set rejected only for a reject recommendation on a submitted or processing invoice. Fraud does not decide payment eligibility or approve the invoice.",
+  "adapter_scope": "CLOSE_ALLOW writes a vendor-level note and closes only the Fraud delegation. The adapter does not perform invoice-level fraud flagging. CLOSE_STOP is reserved to the implemented route for a fully bound prior settlement of this exact invoice, absent in all six packets. An evidence-based Fraud hold or escalation goes through native Fraud via DEFER. Settlement discovered later must be re-evaluated under the exact binding and normal confirmation safeguards.",
+  "payment_checks": "Preserve native invoice approval and review requirements, current active vendor status, bank checks, enhanced low-trust verification and tax verification before transfer.",
+  "decisions": {
+    "2a1826e7947b": {
+      "allowed": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "reason": "Transportation with fuel and driver is related to filmmaking but outside the stated camera, grip and lighting rental profile. The PO reference is an assertion. The $400 invoice qualifies for relaxed scrutiny. If the business-context explanation is sufficient, a reasoned no-flag closure is defensible. Defer if there is a material service or authorization concern. The rules arm can close on its structured checks. A contextual route can allow or defer. No bound prior settlement.",
+      "ratings": {
+        "terra1": [
+          "CLOSE_ALLOW",
+          "DEFER"
+        ],
+        "terra2": [
+          "CLOSE_ALLOW",
+          "DEFER"
+        ]
+      },
+      "substantive_fraud_admissible": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "adapter_rule_reasons": [],
+      "current_invoice_status": "approved",
+      "current_vendor_status": "active",
+      "later_conditions": {
+        "CLOSE_ALLOW": "If material, confirm the transportation service and PO against reliable billing or production records. If the remaining evidence supports no material fraud indicator and the adapter vetoes clear, document and allow the Fraud-only closure.",
+        "CLOSE_STOP": "Concrete evidence of a material discrepancy may justify a native Fraud flag and hold or escalation. The adapter stop still requires a fully bound prior settlement.",
+        "DEFER": "Use native Fraud if material ambiguity remains, necessary corroboration is unavailable, or an invoice-level flag, risk update, or other native action is warranted."
+      },
+      "adapter_permitted_current": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ]
+    },
+    "91e9dd3ea17a": {
+      "allowed": [
+        "DEFER"
+      ],
+      "reason": "The vendor profile lists equipment rentals and the invoice instead bills a filming location fee. A 2023 date in the description and a 2026 invoice date could refer to different events. Their relationship and the vendor’s basis for billing the fee are both unclear, and the $1,200 invoice exceeds the configured $1,000 leniency limit. Under native Fraud’s all-evidence and review-when-in-doubt framework, the combined service and timing uncertainty calls for independent clarification before a no-flag closure. The route permits contextual allow mechanically, since insufficient history is outside its mandatory veto. No purchase order is automatically required. No bound prior settlement.",
+      "ratings": {
+        "terra1": [
+          "CLOSE_ALLOW",
+          "DEFER"
+        ],
+        "terra2": [
+          "CLOSE_ALLOW",
+          "DEFER"
+        ]
+      },
+      "substantive_fraud_admissible": [
+        "DEFER"
+      ],
+      "adapter_rule_reasons": [
+        "insufficient_comparable_history"
+      ],
+      "current_invoice_status": "approved",
+      "current_vendor_status": "active",
+      "later_conditions": {
+        "CLOSE_ALLOW": "If material, clarify the date and the vendor’s basis for billing the location fee using relevant records. There is no mandatory PO requirement. If the remaining evidence supports no material fraud indicator and the adapter vetoes clear, document and allow the Fraud-only closure.",
+        "CLOSE_STOP": "Concrete evidence of a material discrepancy may justify a native Fraud flag and hold or escalation. The adapter stop still requires a fully bound prior settlement.",
+        "DEFER": "Use native Fraud if material ambiguity remains, necessary corroboration is unavailable, or an invoice-level flag, risk update, or other native action is warranted."
+      },
+      "adapter_permitted_current": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ]
+    },
+    "a0be4cb152f0": {
+      "allowed": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "reason": "The listed props and furniture are outside the stated rental specialties, though the transaction is an adjacent rental and the invoice itemizes it. The contract reference is uncorroborated and the $2,800 invoice is above the $1,000 leniency limit. A reasoned Fraud-only allow or a deferral for clarification is defensible. The rules arm defers for history. That reason alone is not a mandatory veto for a contextual route. No bound prior settlement. The related rental business and itemization give a case-specific basis for concluding that the remaining ambiguity is immaterial for a Fraud-only assessment. This does not verify the contract.",
+      "ratings": {
+        "terra1": [
+          "CLOSE_ALLOW",
+          "DEFER"
+        ],
+        "terra2": [
+          "CLOSE_ALLOW",
+          "DEFER"
+        ]
+      },
+      "substantive_fraud_admissible": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "adapter_rule_reasons": [
+        "insufficient_comparable_history"
+      ],
+      "current_invoice_status": "approved",
+      "current_vendor_status": "active",
+      "later_conditions": {
+        "CLOSE_ALLOW": "If material, corroborate the props rental and the cited contract. If the remaining evidence supports no material fraud indicator and the adapter vetoes clear, document and allow the Fraud-only closure.",
+        "CLOSE_STOP": "Concrete evidence of a material discrepancy may justify a native Fraud flag and hold or escalation. The adapter stop still requires a fully bound prior settlement.",
+        "DEFER": "Use native Fraud if material ambiguity remains, necessary corroboration is unavailable, or an invoice-level flag, risk update, or other native action is warranted."
+      },
+      "adapter_permitted_current": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ]
+    },
+    "b17dfcf853c0": {
+      "allowed": [
+        "DEFER"
+      ],
+      "reason": "Crew staffing is outside the stated rental profile and the contract reference is uncorroborated. The approval note applies small-value good faith to $2,100 above the $1,000 limit and proposes post-payment verification. Neither the approval nor the note supplies activation: the current vendor and risk profile are both pending. The first rating misstates the note as explicitly calling the vendor active; the note says newly onboarded. A Fraud-only no-flag assessment may be defensible if those concerns are adequately addressed. The current adapter must defer. Pending vendor status triggers a mandatory adapter veto. Payment separately requires an active vendor. No bound prior settlement.",
+      "ratings": {
+        "terra1": [
+          "CLOSE_ALLOW",
+          "DEFER"
+        ],
+        "terra2": [
+          "CLOSE_ALLOW",
+          "DEFER"
+        ]
+      },
+      "substantive_fraud_admissible": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "adapter_rule_reasons": [
+        "vendor_status_or_risk",
+        "insufficient_comparable_history"
+      ],
+      "current_invoice_status": "approved",
+      "current_vendor_status": "pending",
+      "later_conditions": {
+        "CLOSE_ALLOW": "Clarify onboarding and the basis for crew billing if material. Re-read the vendor and profile after a verified activation before any shortcut can allow. If the remaining evidence supports no material fraud indicator and the adapter vetoes clear, document and allow the Fraud-only closure.",
+        "CLOSE_STOP": "Concrete evidence of a material discrepancy may justify a native Fraud flag and hold or escalation. The adapter stop still requires a fully bound prior settlement.",
+        "DEFER": "Use native Fraud if material ambiguity remains, necessary corroboration is unavailable, or an invoice-level flag, risk update, or other native action is warranted."
+      },
+      "adapter_permitted_current": [
+        "DEFER"
+      ]
+    },
+    "e71734d58ce9": {
+      "allowed": [
+        "DEFER"
+      ],
+      "reason": "Catering is a substantial departure from the stated equipment rental business. The manager agreement is only asserted in the description, and the $1,800 invoice exceeds configured leniency. The packet supplies no evidence connecting this vendor to the catering beyond the broad filmmaking context. Under native Fraud’s instruction to assess the totality of evidence and flag for review when in doubt, defer for independent clarification of the supplier relationship or agreement. The route permits contextual allow mechanically, since insufficient history is outside its mandatory veto. No bound prior settlement.",
+      "ratings": {
+        "terra1": [
+          "CLOSE_ALLOW",
+          "DEFER"
+        ],
+        "terra2": [
+          "CLOSE_ALLOW",
+          "DEFER"
+        ]
+      },
+      "substantive_fraud_admissible": [
+        "DEFER"
+      ],
+      "adapter_rule_reasons": [
+        "insufficient_comparable_history"
+      ],
+      "current_invoice_status": "approved",
+      "current_vendor_status": "active",
+      "later_conditions": {
+        "CLOSE_ALLOW": "If material, confirm the basis for the vendor to bill for catering and the manager’s authorization. If the remaining evidence supports no material fraud indicator and the adapter vetoes clear, document and allow the Fraud-only closure.",
+        "CLOSE_STOP": "Concrete evidence of a material discrepancy may justify a native Fraud flag and hold or escalation. The adapter stop still requires a fully bound prior settlement.",
+        "DEFER": "Use native Fraud if material ambiguity remains, necessary corroboration is unavailable, or an invoice-level flag, risk update, or other native action is warranted."
+      },
+      "adapter_permitted_current": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ]
+    },
+    "f05243f0bbff": {
+      "allowed": [
+        "DEFER"
+      ],
+      "reason": "Crew staffing differs from stated equipment rentals, the contract reference is uncorroborated, and $2,100 is above leniency. The invoice is processing and its note calls for contract and service verification before approval. A substantive Fraud-only no-flag assessment leaves that separate review in force. The current adapter must defer. Processing triggers a mandatory adapter veto. The existing preapproval verification and approval requirement still apply. No bound prior settlement.",
+      "ratings": {
+        "terra1": [
+          "CLOSE_ALLOW",
+          "DEFER"
+        ],
+        "terra2": [
+          "CLOSE_ALLOW",
+          "DEFER"
+        ]
+      },
+      "substantive_fraud_admissible": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "adapter_rule_reasons": [
+        "insufficient_comparable_history",
+        "status_or_document_review"
+      ],
+      "current_invoice_status": "processing",
+      "current_vendor_status": "active",
+      "later_conditions": {
+        "CLOSE_ALLOW": "Review the crew-service basis and underlying contract in the normal invoice process. Re-read after legitimate approval before any shortcut can allow. If the remaining evidence supports no material fraud indicator and the adapter vetoes clear, document and allow the Fraud-only closure.",
+        "CLOSE_STOP": "Concrete evidence of a material discrepancy may justify a native Fraud flag and hold or escalation. The adapter stop still requires a fully bound prior settlement.",
+        "DEFER": "Use native Fraud if material ambiguity remains, necessary corroboration is unavailable, or an invoice-level flag, risk update, or other native action is warranted."
+      },
+      "adapter_permitted_current": [
+        "DEFER"
+      ]
+    }
+  },
+  "comparison": {
+    "rubric": "Allow substantive closure only when the available evidence provides a case-specific reason to conclude no material discrepancy remains for Fraud. Defer where a mismatch materially changes what the vendor appears to be billing or an additional unresolved anomaly changes the assessment. Treat missing history under native leniency as context rather than a standalone flag. Apply the route vetoes independently. Use neither contextual plausibility nor prior approval as proof of contractual authority.",
+    "raw_raters": {
+      "CLOSE_ALLOW": 6,
+      "DEFER": 6,
+      "CLOSE_STOP": 0
+    },
+    "adapter_permitted": {
+      "CLOSE_ALLOW": 4,
+      "DEFER": 6,
+      "CLOSE_STOP": 0
+    },
+    "adjudicated": {
+      "CLOSE_ALLOW": 2,
+      "DEFER": 6,
+      "CLOSE_STOP": 0
+    },
+    "sensitivity": "The final review admits allow on two of six packets, compared with six under either raw rating and four under the contextual adapter’s permissions alone. This is a sensitivity of admissible action sets on the frozen packets. The review did not use live decisions or outcomes."
+  }
+}

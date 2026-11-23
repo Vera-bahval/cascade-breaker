@@ -1,0 +1,641 @@
+{
+  "0eb647a3a24c": {
+    "blind_sha256": "eed052188ed2c9426637fc7cb5df30d802d1de3c9d65a377c1d755a5cf0fe42e",
+    "one": {
+      "admissible": [
+        "CLOSE_STOP"
+      ],
+      "facts": [
+        "Invoice $8,000 versus five paid invoices averaging $1,348, approximately 493.5% above the mean and above each prior amount; no attachments or vendor files found.",
+        "Vendor is active, low recorded risk and high trust; services broadly consistent; TIN validation true and observed bank format and holder match."
+      ],
+      "missing_evidence": [
+        "No itemized quote, contract, delivery evidence, or explanation of price difference; historical invoices cover different equipment."
+      ],
+      "reason": "The amount deviation greatly exceeds the 50% policy threshold and warrants a flag and review; high trust and invoice approval do not resolve the anomaly. This is not proof of fraud or grounds for automatic rejection.",
+      "required_actions": [
+        "Flag invoice suspicious_amount with hold or escalate for human review; document the variance and request an itemized explanation and supporting evidence; assess whether vendor risk change is warranted by total evidence."
+      ]
+    },
+    "review": {
+      "adapter": "A model STOP is changed to DEFER: no exact bound settled invoice exists. A model ALLOW is technically possible because amount_variance alone is not a mandatory veto, but would only append the vendor note and omit the required invoice-level flag. DEFER invokes native Fraud; the packet does not establish what that agent ultimately did.",
+      "admissible": [
+        "DEFER"
+      ],
+      "amount": 8000.0,
+      "disagreement": "Both reviewers require a suspicious_amount invoice flag and review. A hypothetical specialist could document a supported hold/escalation, flag the invoice and hand off the open investigation. A bare stop does not complete that work; this adapter implements only the bound settlement STOP. The native flag appends an invoice note; hold/escalate leave the approved status intact, so no hard payment block can be assumed.",
+      "grounds": "USD 8,000 vs USD 1,348 average of five paid rentals (USD 640\u20132,300), 493.47% above the mean; the Fraud policy flags >50% typical-amount deviation. High trust and various equipment types make a legitimate price possible; the recorded vendor file search/list supplies no supporting evidence for it. There are no transactions and the invoice is approved. The independent assessment has an unresolved material discrepancy.",
+      "proposal": "Independently check invoice_id 6 (from vendor_id 1) for fraud patterns. Read the invoice and vendor data from your own tools and report any fraud indicators or risk concerns.",
+      "required_follow_up": "Flag suspicious_amount with reason and hold/escalate recommendation; request scope/price corroboration. Reassess risk on total evidence. Do not claim proven fraud, automatic rejection, an executed hold or an observed avoided call.",
+      "required_route": "DEFER",
+      "reviewer_one": [
+        "CLOSE_STOP"
+      ],
+      "reviewer_two": [
+        "DEFER"
+      ],
+      "validated_saving": false
+    },
+    "two": {
+      "admissible_conclusions": [
+        "DEFER"
+      ],
+      "facts": [
+        "Invoice $8,000 versus five paid invoices averaging $1,348: approximately 493.5% above the mean, exceeding the 50% variance indicator.",
+        "Active low-risk, high-trust vendor; valid TIN and observed bank format and holder match; rental description matches services.",
+        "No attachments or transaction records; vendor file listing returned no files."
+      ],
+      "missing_evidence": [
+        "No itemized quote, agreement, scope or independent explanation of the exceptional price.",
+        "Paid history is a small, heterogeneous sample; complete duplicate and frequency evidence is unavailable."
+      ],
+      "reason": "The large historical variance is a concrete policy indicator requiring review, not proof of fraud; good vendor standing and prior invoice approval do not resolve it. Rejecting as proven fraud or closing without addressing the anomaly is unsupported.",
+      "required_actions": [
+        "Flag invoice for suspicious_amount with hold or escalation for human review, explaining the comparison and uncertainty.",
+        "Seek itemized supporting documents and verify business rationale before resolving the flag; assess vendor risk based on total evidence."
+      ]
+    }
+  },
+  "22deed4805e3": {
+    "blind_sha256": "409fa2650f479271731781b6004dacf537604bd55bfcd56ae136e06e784c9b21",
+    "one": {
+      "admissible": [
+        "CLOSE_STOP"
+      ],
+      "facts": [
+        "Invoice $8,000 versus five paid invoices averaging $1,348, approximately 493.5% above the mean and above each prior amount; no attachments or vendor files found.",
+        "Vendor is active, low recorded risk and high trust; services broadly consistent; TIN validation true and observed bank format and holder match."
+      ],
+      "missing_evidence": [
+        "No itemized quote, contract, delivery evidence, or explanation of price difference; historical invoices cover different equipment."
+      ],
+      "reason": "The amount deviation greatly exceeds the 50% policy threshold and warrants a flag and review; high trust and invoice approval do not resolve the anomaly. This is not proof of fraud or grounds for automatic rejection.",
+      "required_actions": [
+        "Flag invoice suspicious_amount with hold or escalate for human review; document the variance and request an itemized explanation and supporting evidence; assess whether vendor risk change is warranted by total evidence."
+      ]
+    },
+    "review": {
+      "adapter": "A model STOP is changed to DEFER: no exact bound settled invoice exists. A model ALLOW is technically possible because amount_variance alone is not a mandatory veto, but would only append the vendor note and omit the required invoice-level flag. DEFER invokes native Fraud; the packet does not establish what that agent ultimately did.",
+      "admissible": [
+        "DEFER"
+      ],
+      "amount": 8000.0,
+      "disagreement": "Both reviewers require a suspicious_amount invoice flag and review. A hypothetical specialist could document a supported hold/escalation, flag the invoice and hand off the open investigation. A bare stop does not complete that work; this adapter implements only the bound settlement STOP. The native flag appends an invoice note; hold/escalate leave the approved status intact, so no hard payment block can be assumed.",
+      "grounds": "USD 8,000 vs USD 1,348 average of five paid rentals (USD 640\u20132,300), 493.47% above the mean; the Fraud policy flags >50% typical-amount deviation. High trust and various equipment types make a legitimate price possible; the recorded vendor file search/list supplies no supporting evidence for it. There are no transactions and the invoice is approved. The independent assessment has an unresolved material discrepancy.",
+      "proposal": "Independently check invoice 6 for fraud patterns. Read the invoice and vendor data from your own tools and assess for any suspicious activity.",
+      "required_follow_up": "Flag suspicious_amount with reason and hold/escalate recommendation; request scope/price corroboration. Reassess risk on total evidence. Do not claim proven fraud, automatic rejection, an executed hold or an observed avoided call.",
+      "required_route": "DEFER",
+      "reviewer_one": [
+        "CLOSE_STOP"
+      ],
+      "reviewer_two": [
+        "DEFER"
+      ],
+      "validated_saving": false
+    },
+    "two": {
+      "admissible_conclusions": [
+        "DEFER"
+      ],
+      "facts": [
+        "Invoice $8,000 versus five paid invoices averaging $1,348: approximately 493.5% above the mean, exceeding the 50% variance indicator.",
+        "Active low-risk, high-trust vendor; valid TIN and observed bank format and holder match; rental description matches services.",
+        "No attachments or transaction records; vendor file listing returned no files."
+      ],
+      "missing_evidence": [
+        "No itemized quote, agreement, scope or independent explanation of the exceptional price.",
+        "Paid history is a small, heterogeneous sample; complete duplicate and frequency evidence is unavailable."
+      ],
+      "reason": "The large historical variance is a concrete policy indicator requiring review, not proof of fraud; good vendor standing and prior invoice approval do not resolve it. Rejecting as proven fraud or closing without addressing the anomaly is unsupported.",
+      "required_actions": [
+        "Flag invoice for suspicious_amount with hold or escalation for human review, explaining the comparison and uncertainty.",
+        "Seek itemized supporting documents and verify business rationale before resolving the flag; assess vendor risk based on total evidence."
+      ]
+    }
+  },
+  "4fed586e273f": {
+    "blind_sha256": "8b5caed0c4d6cf64b572192884dfec7c07e9355473d2715cac4f5bb2617228e8",
+    "one": {
+      "admissible": [
+        "CLOSE_STOP"
+      ],
+      "facts": [
+        "Invoice $8,000 versus five paid invoices averaging $1,348, approximately 493.5% above the mean and above each prior amount; no attachments or vendor files found.",
+        "Vendor is active, low recorded risk and high trust; services broadly consistent; TIN validation true and observed bank format and holder match."
+      ],
+      "missing_evidence": [
+        "No itemized quote, contract, delivery evidence, or explanation of price difference; historical invoices cover different equipment."
+      ],
+      "reason": "The amount deviation greatly exceeds the 50% policy threshold and warrants a flag and review; high trust and invoice approval do not resolve the anomaly. This is not proof of fraud or grounds for automatic rejection.",
+      "required_actions": [
+        "Flag invoice suspicious_amount with hold or escalate for human review; document the variance and request an itemized explanation and supporting evidence; assess whether vendor risk change is warranted by total evidence."
+      ]
+    },
+    "review": {
+      "adapter": "A model STOP is changed to DEFER: no exact bound settled invoice exists. A model ALLOW is technically possible because amount_variance alone is not a mandatory veto, but would only append the vendor note and omit the required invoice-level flag. DEFER invokes native Fraud; the packet does not establish what that agent ultimately did.",
+      "admissible": [
+        "DEFER"
+      ],
+      "amount": 8000.0,
+      "disagreement": "Both reviewers require a suspicious_amount invoice flag and review. A hypothetical specialist could document a supported hold/escalation, flag the invoice and hand off the open investigation. A bare stop does not complete that work; this adapter implements only the bound settlement STOP. The native flag appends an invoice note; hold/escalate leave the approved status intact, so no hard payment block can be assumed.",
+      "grounds": "USD 8,000 vs USD 1,348 average of five paid rentals (USD 640\u20132,300), 493.47% above the mean; the Fraud policy flags >50% typical-amount deviation. High trust and various equipment types make a legitimate price possible; the recorded vendor file search/list supplies no supporting evidence for it. There are no transactions and the invoice is approved. The independent assessment has an unresolved material discrepancy.",
+      "proposal": "Independently check invoice_id 6 for fraud patterns. Read the invoice and vendor data from your own tools and assess for suspicious activity.",
+      "required_follow_up": "Flag suspicious_amount with reason and hold/escalate recommendation; request scope/price corroboration. Reassess risk on total evidence. Do not claim proven fraud, automatic rejection, an executed hold or an observed avoided call.",
+      "required_route": "DEFER",
+      "reviewer_one": [
+        "CLOSE_STOP"
+      ],
+      "reviewer_two": [
+        "DEFER"
+      ],
+      "validated_saving": false
+    },
+    "two": {
+      "admissible_conclusions": [
+        "DEFER"
+      ],
+      "facts": [
+        "Invoice $8,000 versus five paid invoices averaging $1,348: approximately 493.5% above the mean, exceeding the 50% variance indicator.",
+        "Active low-risk, high-trust vendor; valid TIN and observed bank format and holder match; rental description matches services.",
+        "No attachments or transaction records; vendor file listing returned no files."
+      ],
+      "missing_evidence": [
+        "No itemized quote, agreement, scope or independent explanation of the exceptional price.",
+        "Paid history is a small, heterogeneous sample; complete duplicate and frequency evidence is unavailable."
+      ],
+      "reason": "The large historical variance is a concrete policy indicator requiring review, not proof of fraud; good vendor standing and prior invoice approval do not resolve it. Rejecting as proven fraud or closing without addressing the anomaly is unsupported.",
+      "required_actions": [
+        "Flag invoice for suspicious_amount with hold or escalation for human review, explaining the comparison and uncertainty.",
+        "Seek itemized supporting documents and verify business rationale before resolving the flag; assess vendor risk based on total evidence."
+      ]
+    }
+  },
+  "61320ff009ec": {
+    "blind_sha256": "ee913594405910562cc0a49074863ac949f3429648261f7fa5fe890851bead8a",
+    "one": {
+      "admissible": [
+        "CLOSE_STOP"
+      ],
+      "facts": [
+        "Invoice $8,000 versus five paid invoices averaging $1,348, approximately 493.5% above the mean and above each prior amount; no attachments or vendor files found.",
+        "Vendor is active, low recorded risk and high trust; services broadly consistent; TIN validation true and observed bank format and holder match."
+      ],
+      "missing_evidence": [
+        "No itemized quote, contract, delivery evidence, or explanation of price difference; historical invoices cover different equipment."
+      ],
+      "reason": "The amount deviation greatly exceeds the 50% policy threshold and warrants a flag and review; high trust and invoice approval do not resolve the anomaly. This is not proof of fraud or grounds for automatic rejection.",
+      "required_actions": [
+        "Flag invoice suspicious_amount with hold or escalate for human review; document the variance and request an itemized explanation and supporting evidence; assess whether vendor risk change is warranted by total evidence."
+      ]
+    },
+    "review": {
+      "adapter": "A model STOP is changed to DEFER: no exact bound settled invoice exists. A model ALLOW is technically possible because amount_variance alone is not a mandatory veto, but would only append the vendor note and omit the required invoice-level flag. DEFER invokes native Fraud; the packet does not establish what that agent ultimately did.",
+      "admissible": [
+        "DEFER"
+      ],
+      "amount": 8000.0,
+      "disagreement": "Both reviewers require a suspicious_amount invoice flag and review. A hypothetical specialist could document a supported hold/escalation, flag the invoice and hand off the open investigation. A bare stop does not complete that work; this adapter implements only the bound settlement STOP. The native flag appends an invoice note; hold/escalate leave the approved status intact, so no hard payment block can be assumed.",
+      "grounds": "USD 8,000 vs USD 1,348 average of five paid rentals (USD 640\u20132,300), 493.47% above the mean; the Fraud policy flags >50% typical-amount deviation. High trust and various equipment types make a legitimate price possible; the recorded vendor file search/list supplies no supporting evidence for it. There are no transactions and the invoice is approved. The independent assessment has an unresolved material discrepancy.",
+      "proposal": "Independently check invoice 6 for fraud patterns. Read the invoice and vendor data from your own tools and assess for any suspicious activity, discrepancies, or risk indicators.",
+      "required_follow_up": "Flag suspicious_amount with reason and hold/escalate recommendation; request scope/price corroboration. Reassess risk on total evidence. Do not claim proven fraud, automatic rejection, an executed hold or an observed avoided call.",
+      "required_route": "DEFER",
+      "reviewer_one": [
+        "CLOSE_STOP"
+      ],
+      "reviewer_two": [
+        "DEFER"
+      ],
+      "validated_saving": false
+    },
+    "two": {
+      "admissible_conclusions": [
+        "DEFER"
+      ],
+      "facts": [
+        "Invoice $8,000 versus five paid invoices averaging $1,348: approximately 493.5% above the mean, exceeding the 50% variance indicator.",
+        "Active low-risk, high-trust vendor; valid TIN and observed bank format and holder match; rental description matches services.",
+        "No attachments or transaction records; vendor file listing returned no files."
+      ],
+      "missing_evidence": [
+        "No itemized quote, agreement, scope or independent explanation of the exceptional price.",
+        "Paid history is a small, heterogeneous sample; complete duplicate and frequency evidence is unavailable."
+      ],
+      "reason": "The large historical variance is a concrete policy indicator requiring review, not proof of fraud; good vendor standing and prior invoice approval do not resolve it. Rejecting as proven fraud or closing without addressing the anomaly is unsupported.",
+      "required_actions": [
+        "Flag invoice for suspicious_amount with hold or escalation for human review, explaining the comparison and uncertainty.",
+        "Seek itemized supporting documents and verify business rationale before resolving the flag; assess vendor risk based on total evidence."
+      ]
+    }
+  },
+  "6c86022297cc": {
+    "blind_sha256": "7725033a6dc75927b708d7fe8d81e296d2a6cbf8c7ba3b80e92dd998738dfca8",
+    "one": {
+      "admissible": [
+        "CLOSE_STOP"
+      ],
+      "facts": [
+        "Invoice $8,000 versus five paid invoices averaging $1,348, approximately 493.5% above the mean and above each prior amount; no attachments or vendor files found.",
+        "Vendor is active, low recorded risk and high trust; services broadly consistent; TIN validation true and observed bank format and holder match."
+      ],
+      "missing_evidence": [
+        "No itemized quote, contract, delivery evidence, or explanation of price difference; historical invoices cover different equipment."
+      ],
+      "reason": "The amount deviation greatly exceeds the 50% policy threshold and warrants a flag and review; high trust and invoice approval do not resolve the anomaly. This is not proof of fraud or grounds for automatic rejection.",
+      "required_actions": [
+        "Flag invoice suspicious_amount with hold or escalate for human review; document the variance and request an itemized explanation and supporting evidence; assess whether vendor risk change is warranted by total evidence."
+      ]
+    },
+    "review": {
+      "adapter": "A model STOP is changed to DEFER: no exact bound settled invoice exists. A model ALLOW is technically possible because amount_variance alone is not a mandatory veto, but would only append the vendor note and omit the required invoice-level flag. DEFER invokes native Fraud; the packet does not establish what that agent ultimately did.",
+      "admissible": [
+        "DEFER"
+      ],
+      "amount": 8000.0,
+      "disagreement": "Both reviewers require a suspicious_amount invoice flag and review. A hypothetical specialist could document a supported hold/escalation, flag the invoice and hand off the open investigation. A bare stop does not complete that work; this adapter implements only the bound settlement STOP. The native flag appends an invoice note; hold/escalate leave the approved status intact, so no hard payment block can be assumed.",
+      "grounds": "USD 8,000 vs USD 1,348 average of five paid rentals (USD 640\u20132,300), 493.47% above the mean; the Fraud policy flags >50% typical-amount deviation. High trust and various equipment types make a legitimate price possible; the recorded vendor file search/list supplies no supporting evidence for it. There are no transactions and the invoice is approved. The independent assessment has an unresolved material discrepancy.",
+      "proposal": "Independently check invoice 6 (INV-2026-0006) from vendor 1 for fraud patterns. Read the invoice and vendor data from your own tools and reach your own conclusion.",
+      "required_follow_up": "Flag suspicious_amount with reason and hold/escalate recommendation; request scope/price corroboration. Reassess risk on total evidence. Do not claim proven fraud, automatic rejection, an executed hold or an observed avoided call.",
+      "required_route": "DEFER",
+      "reviewer_one": [
+        "CLOSE_STOP"
+      ],
+      "reviewer_two": [
+        "DEFER"
+      ],
+      "validated_saving": false
+    },
+    "two": {
+      "admissible_conclusions": [
+        "DEFER"
+      ],
+      "facts": [
+        "Invoice $8,000 versus five paid invoices averaging $1,348: approximately 493.5% above the mean, exceeding the 50% variance indicator.",
+        "Active low-risk, high-trust vendor; valid TIN and observed bank format and holder match; rental description matches services.",
+        "No attachments or transaction records; vendor file listing returned no files."
+      ],
+      "missing_evidence": [
+        "No itemized quote, agreement, scope or independent explanation of the exceptional price.",
+        "Paid history is a small, heterogeneous sample; complete duplicate and frequency evidence is unavailable."
+      ],
+      "reason": "The large historical variance is a concrete policy indicator requiring review, not proof of fraud; good vendor standing and prior invoice approval do not resolve it. Rejecting as proven fraud or closing without addressing the anomaly is unsupported.",
+      "required_actions": [
+        "Flag invoice for suspicious_amount with hold or escalation for human review, explaining the comparison and uncertainty.",
+        "Seek itemized supporting documents and verify business rationale before resolving the flag; assess vendor risk based on total evidence."
+      ]
+    }
+  },
+  "74fee881438f": {
+    "blind_sha256": "7ea30d14245cfd0ec7cccef244a40d73a5fafc97109d6e822d0a69d2b7a99804",
+    "one": {
+      "admissible": [
+        "CLOSE_STOP"
+      ],
+      "facts": [
+        "Invoice $8,000 versus five paid invoices averaging $1,348, approximately 493.5% above the mean and above each prior amount; no attachments or vendor files found.",
+        "Vendor is active, low recorded risk and high trust; services broadly consistent; TIN validation true and observed bank format and holder match."
+      ],
+      "missing_evidence": [
+        "No itemized quote, contract, delivery evidence, or explanation of price difference; historical invoices cover different equipment."
+      ],
+      "reason": "The amount deviation greatly exceeds the 50% policy threshold and warrants a flag and review; high trust and invoice approval do not resolve the anomaly. This is not proof of fraud or grounds for automatic rejection.",
+      "required_actions": [
+        "Flag invoice suspicious_amount with hold or escalate for human review; document the variance and request an itemized explanation and supporting evidence; assess whether vendor risk change is warranted by total evidence."
+      ]
+    },
+    "review": {
+      "adapter": "A model STOP is changed to DEFER: no exact bound settled invoice exists. A model ALLOW is technically possible because amount_variance alone is not a mandatory veto, but would only append the vendor note and omit the required invoice-level flag. DEFER invokes native Fraud; the packet does not establish what that agent ultimately did.",
+      "admissible": [
+        "DEFER"
+      ],
+      "amount": 8000.0,
+      "disagreement": "Both reviewers require a suspicious_amount invoice flag and review. A hypothetical specialist could document a supported hold/escalation, flag the invoice and hand off the open investigation. A bare stop does not complete that work; this adapter implements only the bound settlement STOP. The native flag appends an invoice note; hold/escalate leave the approved status intact, so no hard payment block can be assumed.",
+      "grounds": "USD 8,000 vs USD 1,348 average of five paid rentals (USD 640\u20132,300), 493.47% above the mean; the Fraud policy flags >50% typical-amount deviation. High trust and various equipment types make a legitimate price possible; the recorded vendor file search/list supplies no supporting evidence for it. There are no transactions and the invoice is approved. The independent assessment has an unresolved material discrepancy.",
+      "proposal": "Independently check invoice_id 6 (from vendor_id 1) for fraud patterns. Read the invoice and vendor data from your own tools and assess for any suspicious activity or fraud indicators.",
+      "required_follow_up": "Flag suspicious_amount with reason and hold/escalate recommendation; request scope/price corroboration. Reassess risk on total evidence. Do not claim proven fraud, automatic rejection, an executed hold or an observed avoided call.",
+      "required_route": "DEFER",
+      "reviewer_one": [
+        "CLOSE_STOP"
+      ],
+      "reviewer_two": [
+        "DEFER"
+      ],
+      "validated_saving": false
+    },
+    "two": {
+      "admissible_conclusions": [
+        "DEFER"
+      ],
+      "facts": [
+        "Invoice $8,000 versus five paid invoices averaging $1,348: approximately 493.5% above the mean, exceeding the 50% variance indicator.",
+        "Active low-risk, high-trust vendor; valid TIN and observed bank format and holder match; rental description matches services.",
+        "No attachments or transaction records; vendor file listing returned no files."
+      ],
+      "missing_evidence": [
+        "No itemized quote, agreement, scope or independent explanation of the exceptional price.",
+        "Paid history is a small, heterogeneous sample; complete duplicate and frequency evidence is unavailable."
+      ],
+      "reason": "The large historical variance is a concrete policy indicator requiring review, not proof of fraud; good vendor standing and prior invoice approval do not resolve it. Rejecting as proven fraud or closing without addressing the anomaly is unsupported.",
+      "required_actions": [
+        "Flag invoice for suspicious_amount with hold or escalation for human review, explaining the comparison and uncertainty.",
+        "Seek itemized supporting documents and verify business rationale before resolving the flag; assess vendor risk based on total evidence."
+      ]
+    }
+  },
+  "9269ab18c62e": {
+    "blind_sha256": "0ffcd110053ffc39daebe387b5a5cb11aeee779b83fa04f6b2b01a3bacf00f5e",
+    "one": {
+      "admissible": [
+        "CLOSE_ALLOW"
+      ],
+      "facts": [
+        "Invoice $1,250; active vendor, low recorded risk and low trust; no paid history; service broadly consistent; TIN validation true and observed bank format and holder match.",
+        "No attachments or transactions; $1,250 exceeds the $1,000 new-vendor leniency threshold."
+      ],
+      "missing_evidence": [
+        "No historical baseline to assess amount variance; no supporting documents or independent evidence of service or bank-account ownership."
+      ],
+      "reason": "No concrete fraud flag appears in the supplied facts; exceeding the leniency threshold alone is not a fraud indicator or automatic hold. Lack of history limits conclusions.",
+      "required_actions": [
+        "Report low-risk assessment with limitations; do not assert automatic new-vendor leniency or that invoice approval constitutes Fraud review."
+      ]
+    },
+    "review": {
+      "adapter": "A model-selected ALLOW can pass on these facts: insufficient_comparable_history by itself is not an ALLOW veto. The closure appends a structured vendor note containing owner, Fraud scope, decision, packet digest and assessment facts. It returns a generic summary and does not document the contextual weighing in prose. The local rule defers.",
+      "admissible": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "amount": 1250.0,
+      "disagreement": "Both reviewers admit ALLOW. DEFER is also justified by the absent price baseline and limited corroboration. Invoice approval comments are separate claims. A particular model label, suitability of the replacement or downstream benefit cannot be inferred from this packet.",
+      "grounds": "One invoice on record; no paid baseline, attached evidence or transaction. Active low-risk, low-trust equipment vendor, plausible service, valid TIN format and internally consistent registered bank fields. No concrete anomaly is shown. The new-vendor relaxed threshold is USD 1,000; USD 1,250 falls outside it. A contextual no-flag finding with limitations and a request for more evidence are both reasonable.",
+      "proposal": "Independently check invoice 1 (and its vendor) for fraud patterns and risk indicators. Read the invoice and vendor data from your own tools and report your assessment.",
+      "required_follow_up": "For independent ALLOW, report the limited evidence and reason for finding no concrete signal. If consequential uncertainty remains, delegate. No automatic hold or risk increase follows solely from the amount or short history.",
+      "required_route": null,
+      "reviewer_one": [
+        "CLOSE_ALLOW"
+      ],
+      "reviewer_two": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "validated_saving": false
+    },
+    "two": {
+      "admissible_conclusions": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "facts": [
+        "Invoice $1,250; vendor active, low risk and low trust; one recorded invoice and no paid history.",
+        "TIN valid; observed bank fields have plausible formats and matching holder; service broadly consistent with equipment rental.",
+        "No attachments or transactions in snapshot."
+      ],
+      "missing_evidence": [
+        "No prior paid baseline, supporting documents, or evidence of bank ownership or change history.",
+        "Paid-only history and snapshot do not establish absence of duplicates or frequency anomalies across all invoices."
+      ],
+      "reason": "No concrete fraud indicator is established. $1,250 exceeds the $1,000 new-vendor low-amount leniency threshold, so that special presumption cannot justify closure; the amount alone does not establish fraud. Invoice approval is not a Fraud conclusion.",
+      "required_actions": [
+        "Assess independently and report these limitations; no fraud flag is required solely for being new.",
+        "If uncertainty warrants review, defer and seek supporting documentation or broader history."
+      ]
+    }
+  },
+  "a21d73e5172b": {
+    "blind_sha256": "c75a7d6433ccbcc31e033c94523fd784301bc7bfacc4ac5bb94a37b214561592",
+    "one": {
+      "admissible": [
+        "CLOSE_ALLOW"
+      ],
+      "facts": [
+        "Invoice $1,250; active vendor, low recorded risk and low trust; no paid history; service broadly consistent; TIN validation true and observed bank format and holder match.",
+        "No attachments or transactions; $1,250 exceeds the $1,000 new-vendor leniency threshold."
+      ],
+      "missing_evidence": [
+        "No historical baseline to assess amount variance; no supporting documents or independent evidence of service or bank-account ownership."
+      ],
+      "reason": "No concrete fraud flag appears in the supplied facts; exceeding the leniency threshold alone is not a fraud indicator or automatic hold. Lack of history limits conclusions.",
+      "required_actions": [
+        "Report low-risk assessment with limitations; do not assert automatic new-vendor leniency or that invoice approval constitutes Fraud review."
+      ]
+    },
+    "review": {
+      "adapter": "A model-selected ALLOW can pass on these facts: insufficient_comparable_history by itself is not an ALLOW veto. The closure appends a structured vendor note containing owner, Fraud scope, decision, packet digest and assessment facts. It returns a generic summary and does not document the contextual weighing in prose. The local rule defers.",
+      "admissible": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "amount": 1250.0,
+      "disagreement": "Both reviewers admit ALLOW. DEFER is also justified by the absent price baseline and limited corroboration. Invoice approval comments are separate claims. A particular model label, suitability of the replacement or downstream benefit cannot be inferred from this packet.",
+      "grounds": "One invoice on record; no paid baseline, attached evidence or transaction. Active low-risk, low-trust equipment vendor, plausible service, valid TIN format and internally consistent registered bank fields. No concrete anomaly is shown. The new-vendor relaxed threshold is USD 1,000; USD 1,250 falls outside it. A contextual no-flag finding with limitations and a request for more evidence are both reasonable.",
+      "proposal": "Independently check invoice 1 (and its vendor) for fraud patterns and risk indicators. Read invoice and vendor data from your own tools and report your assessment.",
+      "required_follow_up": "For independent ALLOW, report the limited evidence and reason for finding no concrete signal. If consequential uncertainty remains, delegate. No automatic hold or risk increase follows solely from the amount or short history.",
+      "required_route": null,
+      "reviewer_one": [
+        "CLOSE_ALLOW"
+      ],
+      "reviewer_two": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "validated_saving": false
+    },
+    "two": {
+      "admissible_conclusions": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "facts": [
+        "Invoice $1,250; vendor active, low risk and low trust; one recorded invoice and no paid history.",
+        "TIN valid; observed bank fields have plausible formats and matching holder; service broadly consistent with equipment rental.",
+        "No attachments or transactions in snapshot."
+      ],
+      "missing_evidence": [
+        "No prior paid baseline, supporting documents, or evidence of bank ownership or change history.",
+        "Paid-only history and snapshot do not establish absence of duplicates or frequency anomalies across all invoices."
+      ],
+      "reason": "No concrete fraud indicator is established. $1,250 exceeds the $1,000 new-vendor low-amount leniency threshold, so that special presumption cannot justify closure; the amount alone does not establish fraud. Invoice approval is not a Fraud conclusion.",
+      "required_actions": [
+        "Assess independently and report these limitations; no fraud flag is required solely for being new.",
+        "If uncertainty warrants review, defer and seek supporting documentation or broader history."
+      ]
+    }
+  },
+  "a81717f278c4": {
+    "blind_sha256": "170f06e9d17186823bbcd83560f06a3c8fcaa7e65a6c7ac5d354cc5e109bd5bb",
+    "one": {
+      "admissible": [
+        "CLOSE_ALLOW"
+      ],
+      "facts": [
+        "Invoice $1,250; active vendor, low recorded risk and low trust; no paid history; service broadly consistent; TIN validation true and observed bank format and holder match.",
+        "No attachments or transactions; $1,250 exceeds the $1,000 new-vendor leniency threshold."
+      ],
+      "missing_evidence": [
+        "No historical baseline to assess amount variance; no supporting documents or independent evidence of service or bank-account ownership."
+      ],
+      "reason": "No concrete fraud flag appears in the supplied facts; exceeding the leniency threshold alone is not a fraud indicator or automatic hold. Lack of history limits conclusions.",
+      "required_actions": [
+        "Report low-risk assessment with limitations; do not assert automatic new-vendor leniency or that invoice approval constitutes Fraud review."
+      ]
+    },
+    "review": {
+      "adapter": "A model-selected ALLOW can pass on these facts: insufficient_comparable_history by itself is not an ALLOW veto. The closure appends a structured vendor note containing owner, Fraud scope, decision, packet digest and assessment facts. It returns a generic summary and does not document the contextual weighing in prose. The local rule defers.",
+      "admissible": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "amount": 1250.0,
+      "disagreement": "Both reviewers admit ALLOW. DEFER is also justified by the absent price baseline and limited corroboration. Invoice approval comments are separate claims. A particular model label, suitability of the replacement or downstream benefit cannot be inferred from this packet.",
+      "grounds": "One invoice on record; no paid baseline, attached evidence or transaction. Active low-risk, low-trust equipment vendor, plausible service, valid TIN format and internally consistent registered bank fields. No concrete anomaly is shown. The new-vendor relaxed threshold is USD 1,000; USD 1,250 falls outside it. A contextual no-flag finding with limitations and a request for more evidence are both reasonable.",
+      "proposal": "Independently check invoice 1 for fraud patterns. Read the invoice and vendor data from your own tools and assess for suspicious activity, anomalies, or fraud indicators. Report your findings.",
+      "required_follow_up": "For independent ALLOW, report the limited evidence and reason for finding no concrete signal. If consequential uncertainty remains, delegate. No automatic hold or risk increase follows solely from the amount or short history.",
+      "required_route": null,
+      "reviewer_one": [
+        "CLOSE_ALLOW"
+      ],
+      "reviewer_two": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "validated_saving": false
+    },
+    "two": {
+      "admissible_conclusions": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "facts": [
+        "Invoice $1,250; vendor active, low risk and low trust; one recorded invoice and no paid history.",
+        "TIN valid; observed bank fields have plausible formats and matching holder; service broadly consistent with equipment rental.",
+        "No attachments or transactions in snapshot."
+      ],
+      "missing_evidence": [
+        "No prior paid baseline, supporting documents, or evidence of bank ownership or change history.",
+        "Paid-only history and snapshot do not establish absence of duplicates or frequency anomalies across all invoices."
+      ],
+      "reason": "No concrete fraud indicator is established. $1,250 exceeds the $1,000 new-vendor low-amount leniency threshold, so that special presumption cannot justify closure; the amount alone does not establish fraud. Invoice approval is not a Fraud conclusion.",
+      "required_actions": [
+        "Assess independently and report these limitations; no fraud flag is required solely for being new.",
+        "If uncertainty warrants review, defer and seek supporting documentation or broader history."
+      ]
+    }
+  },
+  "da4ef8646e86": {
+    "blind_sha256": "c2fb9fe44ed713b797b1a83ff83e10d398e083ce4638ff7fcf24397064f2d20e",
+    "one": {
+      "admissible": [
+        "CLOSE_STOP"
+      ],
+      "facts": [
+        "Invoice $8,000 versus five paid invoices averaging $1,348, approximately 493.5% above the mean and above each prior amount; no attachments or vendor files found.",
+        "Vendor is active, low recorded risk and high trust; services broadly consistent; TIN validation true and observed bank format and holder match."
+      ],
+      "missing_evidence": [
+        "No itemized quote, contract, delivery evidence, or explanation of price difference; historical invoices cover different equipment."
+      ],
+      "reason": "The amount deviation greatly exceeds the 50% policy threshold and warrants a flag and review; high trust and invoice approval do not resolve the anomaly. This is not proof of fraud or grounds for automatic rejection.",
+      "required_actions": [
+        "Flag invoice suspicious_amount with hold or escalate for human review; document the variance and request an itemized explanation and supporting evidence; assess whether vendor risk change is warranted by total evidence."
+      ]
+    },
+    "review": {
+      "adapter": "A model STOP is changed to DEFER: no exact bound settled invoice exists. A model ALLOW is technically possible because amount_variance alone is not a mandatory veto, but would only append the vendor note and omit the required invoice-level flag. DEFER invokes native Fraud; the packet does not establish what that agent ultimately did.",
+      "admissible": [
+        "DEFER"
+      ],
+      "amount": 8000.0,
+      "disagreement": "Both reviewers require a suspicious_amount invoice flag and review. A hypothetical specialist could document a supported hold/escalation, flag the invoice and hand off the open investigation. A bare stop does not complete that work; this adapter implements only the bound settlement STOP. The native flag appends an invoice note; hold/escalate leave the approved status intact, so no hard payment block can be assumed.",
+      "grounds": "USD 8,000 vs USD 1,348 average of five paid rentals (USD 640\u20132,300), 493.47% above the mean; the Fraud policy flags >50% typical-amount deviation. High trust and various equipment types make a legitimate price possible; the recorded vendor file search/list supplies no supporting evidence for it. There are no transactions and the invoice is approved. The independent assessment has an unresolved material discrepancy.",
+      "proposal": "Independently check invoice 6 for fraud patterns. Read the invoice and vendor data from your own tools and assess for suspicious activity, anomalies, or fraud indicators. Report your findings.",
+      "required_follow_up": "Flag suspicious_amount with reason and hold/escalate recommendation; request scope/price corroboration. Reassess risk on total evidence. Do not claim proven fraud, automatic rejection, an executed hold or an observed avoided call.",
+      "required_route": "DEFER",
+      "reviewer_one": [
+        "CLOSE_STOP"
+      ],
+      "reviewer_two": [
+        "DEFER"
+      ],
+      "validated_saving": false
+    },
+    "two": {
+      "admissible_conclusions": [
+        "DEFER"
+      ],
+      "facts": [
+        "Invoice $8,000 versus five paid invoices averaging $1,348: approximately 493.5% above the mean, exceeding the 50% variance indicator.",
+        "Active low-risk, high-trust vendor; valid TIN and observed bank format and holder match; rental description matches services.",
+        "No attachments or transaction records; vendor file listing returned no files."
+      ],
+      "missing_evidence": [
+        "No itemized quote, agreement, scope or independent explanation of the exceptional price.",
+        "Paid history is a small, heterogeneous sample; complete duplicate and frequency evidence is unavailable."
+      ],
+      "reason": "The large historical variance is a concrete policy indicator requiring review, not proof of fraud; good vendor standing and prior invoice approval do not resolve it. Rejecting as proven fraud or closing without addressing the anomaly is unsupported.",
+      "required_actions": [
+        "Flag invoice for suspicious_amount with hold or escalation for human review, explaining the comparison and uncertainty.",
+        "Seek itemized supporting documents and verify business rationale before resolving the flag; assess vendor risk based on total evidence."
+      ]
+    }
+  },
+  "fbf43e257ee5": {
+    "blind_sha256": "f2fad042e1225bf363c39b619b12816ba807c97cabd92f019b60014c9b0aae60",
+    "one": {
+      "admissible": [
+        "CLOSE_ALLOW"
+      ],
+      "facts": [
+        "Invoice $1,250; active vendor, low recorded risk and low trust; no paid history; service broadly consistent; TIN validation true and observed bank format and holder match.",
+        "No attachments or transactions; $1,250 exceeds the $1,000 new-vendor leniency threshold."
+      ],
+      "missing_evidence": [
+        "No historical baseline to assess amount variance; no supporting documents or independent evidence of service or bank-account ownership."
+      ],
+      "reason": "No concrete fraud flag appears in the supplied facts; exceeding the leniency threshold alone is not a fraud indicator or automatic hold. Lack of history limits conclusions.",
+      "required_actions": [
+        "Report low-risk assessment with limitations; do not assert automatic new-vendor leniency or that invoice approval constitutes Fraud review."
+      ]
+    },
+    "review": {
+      "adapter": "A model-selected ALLOW can pass on these facts: insufficient_comparable_history by itself is not an ALLOW veto. The closure appends a structured vendor note containing owner, Fraud scope, decision, packet digest and assessment facts. It returns a generic summary and does not document the contextual weighing in prose. The local rule defers.",
+      "admissible": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "amount": 1250.0,
+      "disagreement": "Both reviewers admit ALLOW. DEFER is also justified by the absent price baseline and limited corroboration. Invoice approval comments are separate claims. A particular model label, suitability of the replacement or downstream benefit cannot be inferred from this packet.",
+      "grounds": "One invoice on record; no paid baseline, attached evidence or transaction. Active low-risk, low-trust equipment vendor, plausible service, valid TIN format and internally consistent registered bank fields. No concrete anomaly is shown. The new-vendor relaxed threshold is USD 1,000; USD 1,250 falls outside it. A contextual no-flag finding with limitations and a request for more evidence are both reasonable.",
+      "proposal": "Independently check invoice 1 (from vendor 1) for fraud patterns. Read the invoice and vendor data from your own tools and assess for suspicious activity, anomalies, or risk indicators. Report your findings and update risk levels/flags as appropriate.",
+      "required_follow_up": "For independent ALLOW, report the limited evidence and reason for finding no concrete signal. If consequential uncertainty remains, delegate. No automatic hold or risk increase follows solely from the amount or short history.",
+      "required_route": null,
+      "reviewer_one": [
+        "CLOSE_ALLOW"
+      ],
+      "reviewer_two": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "validated_saving": false
+    },
+    "two": {
+      "admissible_conclusions": [
+        "CLOSE_ALLOW",
+        "DEFER"
+      ],
+      "facts": [
+        "Invoice $1,250; vendor active, low risk and low trust; one recorded invoice and no paid history.",
+        "TIN valid; observed bank fields have plausible formats and matching holder; service broadly consistent with equipment rental.",
+        "No attachments or transactions in snapshot."
+      ],
+      "missing_evidence": [
+        "No prior paid baseline, supporting documents, or evidence of bank ownership or change history.",
+        "Paid-only history and snapshot do not establish absence of duplicates or frequency anomalies across all invoices."
+      ],
+      "reason": "No concrete fraud indicator is established. $1,250 exceeds the $1,000 new-vendor low-amount leniency threshold, so that special presumption cannot justify closure; the amount alone does not establish fraud. Invoice approval is not a Fraud conclusion.",
+      "required_actions": [
+        "Assess independently and report these limitations; no fraud flag is required solely for being new.",
+        "If uncertainty warrants review, defer and seek supporting documentation or broader history."
+      ]
+    }
+  }
+}

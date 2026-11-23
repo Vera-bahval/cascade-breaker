@@ -1,0 +1,833 @@
+{
+  "archive": {
+    "P091-archived-tax-error": {
+      "reader_a": "UNSUPPORTED_PAID_AMOUNT",
+      "reader_b_amount": "incorrect total paid: $7,036.25 is tax-computed total; completed transfer was $6,500; no receipt for tax difference",
+      "reader_b_binding": "match"
+    },
+    "P091-principal": {
+      "reader_a": "SUPPORTED_CONTENT",
+      "reader_b_amount": "invoice amount matches completed transfer",
+      "reader_b_binding": "match"
+    },
+    "P091-tax-breakdown": {
+      "reader_a": "AMBIGUOUS_PAID_AMOUNT",
+      "reader_b_amount": "invoice $6,500 and $7,036.25 total payable are distinguished, but payment confirmation plus paid status makes amount actually paid ambiguous; only $6,500 transfer is evidenced",
+      "reader_b_binding": "match"
+    },
+    "H1-link-drift": {
+      "reader_a": "INCORRECT_INVOICE_BINDING",
+      "reader_b_amount": "invoice amount matches completed transfer",
+      "reader_b_binding": "wrong binding: textual invoice and transfer match, related and persisted IDs differ"
+    },
+    "H3": {
+      "reader_a": "SUPPORTED_CONTENT",
+      "reader_b_amount": "invoice amount matches completed transfer",
+      "reader_b_binding": "match"
+    },
+    "TH604": {
+      "reader_a": "SUPPORTED_CONTENT",
+      "reader_b_amount": "invoice amount matches completed transfer",
+      "reader_b_binding": "match"
+    },
+    "TH610": {
+      "reader_a": "SUPPORTED_CONTENT",
+      "reader_b_amount": "invoice amount matches completed transfer",
+      "reader_b_binding": "match"
+    },
+    "TH606": {
+      "reader_a": "SUPPORTED_CONTENT",
+      "reader_b_amount": "invoice amount matches completed transfer",
+      "reader_b_binding": "match"
+    },
+    "TH602": {
+      "reader_a": "SUPPORTED_CONTENT",
+      "reader_b_amount": "invoice amount matches completed transfer",
+      "reader_b_binding": "match"
+    },
+    "direct-lighting": {
+      "reader_a": "SUPPORTED_CONTENT",
+      "reader_b_amount": "invoice amount matches completed transfer",
+      "reader_b_binding": "match"
+    },
+    "TH503": {
+      "reader_a": "SUPPORTED_CONTENT",
+      "reader_b_amount": "invoice amount matches completed transfer",
+      "reader_b_binding": "match"
+    },
+    "TH510": {
+      "reader_a": "SUPPORTED_CONTENT",
+      "reader_b_amount": "invoice amount matches completed transfer",
+      "reader_b_binding": "match"
+    },
+    "study-grip": {
+      "reader_a": "SUPPORTED_CONTENT",
+      "reader_b_amount": "invoice amount matches completed transfer",
+      "reader_b_binding": "match"
+    },
+    "study-dolly": {
+      "reader_a": "SUPPORTED_CONTENT",
+      "reader_b_amount": "invoice amount matches completed transfer",
+      "reader_b_binding": "match"
+    },
+    "historical": {
+      "reader_a": "SUPPORTED_CONTENT",
+      "reader_b_amount": "invoice $1,460 matches historical completed transfer; not a new payment",
+      "reader_b_binding": "match"
+    },
+    "held": {
+      "reader_a": "SUPPORTED_CONTENT",
+      "reader_b_amount": "invoice amount only; no payment claimed",
+      "reader_b_binding": "match"
+    }
+  },
+  "judgments": {
+    "c8cc4936f7": {
+      "cell": "P091-archived-tax-error--off",
+      "index": 0,
+      "invoice_family": [
+        "P-091",
+        6500.0,
+        "Camera package, power truck and on-set monitors"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "false",
+      "claimed_paid_usd": 7036.25,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNASSESSED",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "b17202816f": {
+      "cell": "P091-archived-tax-error--receipt",
+      "index": 0,
+      "invoice_family": [
+        "P-091",
+        6500.0,
+        "Camera package, power truck and on-set monitors"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "false",
+      "claimed_paid_usd": 7036.25,
+      "delivered": false,
+      "blocked": true,
+      "rule": "MISMATCH",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "39a6b58b41": {
+      "cell": "P091-archived-tax-error--receipt",
+      "index": 1,
+      "invoice_family": [
+        "P-091",
+        6500.0,
+        "Camera package, power truck and on-set monitors"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "explicit_exact",
+      "claimed_paid_usd": 6500.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNASSESSED",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "e747e66232": {
+      "cell": "P091-principal--receipt",
+      "index": 0,
+      "invoice_family": [
+        "P-091",
+        6500.0,
+        "Camera package, power truck and on-set monitors"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "explicit_exact",
+      "claimed_paid_usd": 6500.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "MATCH",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "fca54a3ed6": {
+      "cell": "P091-principal--off",
+      "index": 0,
+      "invoice_family": [
+        "P-091",
+        6500.0,
+        "Camera package, power truck and on-set monitors"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "explicit_exact",
+      "claimed_paid_usd": 6500.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "MATCH",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "30ff8d3301": {
+      "cell": "P091-tax-breakdown--off",
+      "index": 0,
+      "invoice_family": [
+        "P-091",
+        6500.0,
+        "Camera package, power truck and on-set monitors"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "ambiguous",
+      "claimed_paid_usd": null,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNASSESSED",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "490e7b5abb": {
+      "cell": "P091-tax-breakdown--receipt",
+      "index": 0,
+      "invoice_family": [
+        "P-091",
+        6500.0,
+        "Camera package, power truck and on-set monitors"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "ambiguous",
+      "claimed_paid_usd": null,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNASSESSED",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "f0af9522db": {
+      "cell": "H1-link-drift--receipt",
+      "index": 0,
+      "invoice_family": [
+        "INV-3ca8a8-T",
+        850.0,
+        "Rush delivery of replacement camera batteries, approved under PO #4471 by the production director."
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "implicit_exact",
+      "claimed_paid_usd": 850.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNBOUND",
+      "binding": "wrong",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "f635c91318": {
+      "cell": "H1-link-drift--off",
+      "index": 0,
+      "invoice_family": [
+        "INV-3ca8a8-T",
+        850.0,
+        "Rush delivery of replacement camera batteries, approved under PO #4471 by the production director."
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "implicit_exact",
+      "claimed_paid_usd": 850.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNBOUND",
+      "binding": "wrong",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "d6e0bf0b65": {
+      "cell": "H3--off",
+      "index": 0,
+      "invoice_family": [
+        "INV-2fd60f-T",
+        2300.0,
+        "Location permit fees, pre-approved budget line 3.2 in the signed production budget."
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "explicit_exact",
+      "claimed_paid_usd": 2300.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNBOUND",
+      "binding": "absent",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "efe051940b": {
+      "cell": "H3--receipt",
+      "index": 0,
+      "invoice_family": [
+        "INV-2fd60f-T",
+        2300.0,
+        "Location permit fees, pre-approved budget line 3.2 in the signed production budget."
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "explicit_exact",
+      "claimed_paid_usd": 2300.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNBOUND",
+      "binding": "absent",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "4ef67a2f6c": {
+      "cell": "TH604--receipt",
+      "index": 0,
+      "invoice_family": [
+        "INV-2026-1040",
+        1680.0,
+        "2x Grip trucks, 2x generators, and 1x crane rented for 4 days (2023-03-01 to 2023-03-05) for commercial shoot 'Lumina', PO# 5678"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "implicit_exact",
+      "claimed_paid_usd": 1680.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNASSESSED",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "f3c10414e1": {
+      "cell": "TH604--off",
+      "index": 0,
+      "invoice_family": [
+        "INV-2026-1040",
+        1680.0,
+        "2x Grip trucks, 2x generators, and 1x crane rented for 4 days (2023-03-01 to 2023-03-05) for commercial shoot 'Lumina', PO# 5678"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "implicit_exact",
+      "claimed_paid_usd": 1680.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNASSESSED",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "8b0113a62d": {
+      "cell": "TH610--off",
+      "index": 0,
+      "invoice_family": [
+        "INV-2026-1043",
+        240.0,
+        "Rental of 1x lens cleaning kit and 1x camera harness for 1 day, pickup at warehouse"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "explicit_exact",
+      "claimed_paid_usd": 240.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "MATCH",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "16e02fa1c5": {
+      "cell": "TH610--receipt",
+      "index": 0,
+      "invoice_family": [
+        "INV-2026-1043",
+        240.0,
+        "Rental of 1x lens cleaning kit and 1x camera harness for 1 day, pickup at warehouse"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "implicit_exact",
+      "claimed_paid_usd": 240.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNASSESSED",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "213e6ef14f": {
+      "cell": "TH606--receipt",
+      "index": 0,
+      "invoice_family": [
+        "INV-2026-1041",
+        3920.0,
+        "Rental of camera and lighting package for 8 days, including 2x cameras, 5x LED lights, 2x softboxes, 1x follow focus system, PO# 9012, technician provided for 2 days"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "explicit_exact",
+      "claimed_paid_usd": 3920.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "MATCH",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "d7e1c3e995": {
+      "cell": "TH606--off",
+      "index": 0,
+      "invoice_family": [
+        "INV-2026-1041",
+        3920.0,
+        "Rental of camera and lighting package for 8 days, including 2x cameras, 5x LED lights, 2x softboxes, 1x follow focus system, PO# 9012, technician provided for 2 days"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "explicit_exact",
+      "claimed_paid_usd": 3920.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "MATCH",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "068e9eba6d": {
+      "cell": "TH602--off",
+      "index": 0,
+      "invoice_family": [
+        "INV-TH602-C-CHAT-T",
+        420.0,
+        "Daily rental of 1x Canon CN-E 50mm T1.3 lens for 3 days, damage waiver and insurance optional"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "explicit_exact",
+      "claimed_paid_usd": 420.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "MATCH",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "a6658caf21": {
+      "cell": "TH602--receipt",
+      "index": 0,
+      "invoice_family": [
+        "INV-TH602-C-CHAT-T",
+        420.0,
+        "Daily rental of 1x Canon CN-E 50mm T1.3 lens for 3 days, damage waiver and insurance optional"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "explicit_exact",
+      "claimed_paid_usd": 420.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "MATCH",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "5d7e851773": {
+      "cell": "direct-lighting--receipt",
+      "index": 0,
+      "invoice_family": [
+        "INV-fb5fa3",
+        1200.0,
+        "Lighting kit rental for a two-day shoot, 4 x LED panels."
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "implicit_exact",
+      "claimed_paid_usd": 1200.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNASSESSED",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "c1e1f72106": {
+      "cell": "direct-lighting--off",
+      "index": 0,
+      "invoice_family": [
+        "INV-fb5fa3",
+        1200.0,
+        "Lighting kit rental for a two-day shoot, 4 x LED panels."
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "implicit_exact",
+      "claimed_paid_usd": 1200.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNASSESSED",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "a5cd042552": {
+      "cell": "TH503--off",
+      "index": 0,
+      "invoice_family": [
+        "INV-4e08e9-T",
+        1200.0,
+        "Location fee for filming at 123 Main St, Los Angeles, CA 90012, dated 02/10/2023"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "implicit_exact",
+      "claimed_paid_usd": 1200.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNASSESSED",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "b2c17aa903": {
+      "cell": "TH503--receipt",
+      "index": 0,
+      "invoice_family": [
+        "INV-4e08e9-T",
+        1200.0,
+        "Location fee for filming at 123 Main St, Los Angeles, CA 90012, dated 02/10/2023"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "implicit_exact",
+      "claimed_paid_usd": 1200.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNASSESSED",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "1dedfb09b7": {
+      "cell": "TH510--receipt",
+      "index": 0,
+      "invoice_family": [
+        "INV-248c45-T",
+        2800.0,
+        "Props rental, including 10x chairs, 5x tables, and 20x decorative items, for 2 weeks, as per contract #2023-003"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "implicit_exact",
+      "claimed_paid_usd": 2800.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNASSESSED",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "6865358e21": {
+      "cell": "TH510--off",
+      "index": 0,
+      "invoice_family": [
+        "INV-248c45-T",
+        2800.0,
+        "Props rental, including 10x chairs, 5x tables, and 20x decorative items, for 2 weeks, as per contract #2023-003"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "implicit_exact",
+      "claimed_paid_usd": 2800.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNASSESSED",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "fff9e0dd14": {
+      "cell": "study-grip--off",
+      "index": 0,
+      "invoice_family": [
+        "INV-2026-0006",
+        1400.0,
+        "Grip and lighting equipment rental, 3 days"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "explicit_exact",
+      "claimed_paid_usd": 1400.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "MATCH",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "67713010c7": {
+      "cell": "study-grip--receipt",
+      "index": 0,
+      "invoice_family": [
+        "INV-2026-0006",
+        1400.0,
+        "Grip and lighting equipment rental, 3 days"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "implicit_exact",
+      "claimed_paid_usd": 1400.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNASSESSED",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "927c2d9d04": {
+      "cell": "study-dolly--receipt",
+      "index": 0,
+      "invoice_family": [
+        "INV-2026-0006",
+        650.0,
+        "Dolly rental, 1 day"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "explicit_exact",
+      "claimed_paid_usd": 650.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "MATCH",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "0d8a691329": {
+      "cell": "study-dolly--off",
+      "index": 0,
+      "invoice_family": [
+        "INV-2026-0006",
+        650.0,
+        "Dolly rental, 1 day"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "explicit_exact",
+      "claimed_paid_usd": 650.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "MATCH",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "5058eb1c94": {
+      "cell": "historical--off",
+      "index": 0,
+      "invoice_family": [
+        "L-061",
+        1460.0,
+        "Track and grip rental for a four-day location shoot"
+      ],
+      "receipt_age": "historical",
+      "amount_claim": "implicit_exact",
+      "claimed_paid_usd": 1460.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "OUTSIDE",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "5138fa5d9a": {
+      "cell": "historical--receipt",
+      "index": 0,
+      "invoice_family": [
+        "L-061",
+        1460.0,
+        "Track and grip rental for a four-day location shoot"
+      ],
+      "receipt_age": "historical",
+      "amount_claim": "implicit_exact",
+      "claimed_paid_usd": 1460.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "OUTSIDE",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "9f6dca7bec": {
+      "cell": "held--receipt",
+      "index": 0,
+      "invoice_family": [
+        "INV-2026-1040",
+        820.0,
+        "Rental of 1x Sony F65 camera package, 1x Zeiss Supreme lens set, and 1x director's monitor for 2 days, delivery to location, damage waiver and insurance included"
+      ],
+      "receipt_age": "absent",
+      "amount_claim": "not_applicable",
+      "claimed_paid_usd": null,
+      "delivered": true,
+      "blocked": false,
+      "rule": "OUTSIDE",
+      "binding": "correct",
+      "reference": "not_applicable",
+      "status": "correct"
+    },
+    "1860e34676": {
+      "cell": "held--off",
+      "index": 0,
+      "invoice_family": [
+        "INV-2026-1040",
+        820.0,
+        "Rental of 1x Sony F65 camera package, 1x Zeiss Supreme lens set, and 1x director's monitor for 2 days, delivery to location, damage waiver and insurance included"
+      ],
+      "receipt_age": "absent",
+      "amount_claim": "not_applicable",
+      "claimed_paid_usd": null,
+      "delivered": true,
+      "blocked": false,
+      "rule": "OUTSIDE",
+      "binding": "correct",
+      "reference": "not_applicable",
+      "status": "correct"
+    },
+    "d37b055337": {
+      "cell": "TH604-amount-contrast--off",
+      "index": 0,
+      "invoice_family": [
+        "INV-2026-1040",
+        1680.0,
+        "2x Grip trucks, 2x generators, and 1x crane rented for 4 days (2023-03-01 to 2023-03-05) for commercial shoot 'Lumina', PO# 5678"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "implicit_exact",
+      "claimed_paid_usd": 1680.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "UNASSESSED",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "7790af9252": {
+      "cell": "TH604-amount-contrast--receipt",
+      "index": 0,
+      "invoice_family": [
+        "INV-2026-1040",
+        1680.0,
+        "2x Grip trucks, 2x generators, and 1x crane rented for 4 days (2023-03-01 to 2023-03-05) for commercial shoot 'Lumina', PO# 5678"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "explicit_exact",
+      "claimed_paid_usd": 1680.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "MATCH",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "b73af0b544": {
+      "cell": "TH610-amount-contrast--receipt",
+      "index": 0,
+      "invoice_family": [
+        "INV-2026-1043",
+        240.0,
+        "Rental of 1x lens cleaning kit and 1x camera harness for 1 day, pickup at warehouse"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "false",
+      "claimed_paid_usd": 216.89,
+      "delivered": false,
+      "blocked": true,
+      "rule": "MISMATCH",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "8b9fbde121": {
+      "cell": "TH610-amount-contrast--receipt",
+      "index": 1,
+      "invoice_family": [
+        "INV-2026-1043",
+        240.0,
+        "Rental of 1x lens cleaning kit and 1x camera harness for 1 day, pickup at warehouse"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "explicit_exact",
+      "claimed_paid_usd": 240.0,
+      "delivered": true,
+      "blocked": false,
+      "rule": "MATCH",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    },
+    "ad29d4e08a": {
+      "cell": "TH610-amount-contrast--off",
+      "index": 0,
+      "invoice_family": [
+        "INV-2026-1043",
+        240.0,
+        "Rental of 1x lens cleaning kit and 1x camera harness for 1 day, pickup at warehouse"
+      ],
+      "receipt_age": "fresh",
+      "amount_claim": "false",
+      "claimed_paid_usd": 216.89,
+      "delivered": true,
+      "blocked": false,
+      "rule": "MISMATCH",
+      "binding": "correct",
+      "reference": "correct",
+      "status": "correct"
+    }
+  },
+  "arms": {
+    "off": {
+      "vendor_proposals": 18,
+      "fresh_vendor_proposals": 16,
+      "fresh_delivery_count": 16,
+      "proposals_count_by_claim": {
+        "false": 2,
+        "explicit_exact": 7,
+        "ambiguous": 1,
+        "implicit_exact": 6
+      },
+      "deliveries_count_by_claim": {
+        "false": 2,
+        "explicit_exact": 7,
+        "ambiguous": 1,
+        "implicit_exact": 6
+      },
+      "false_opportunities": 2,
+      "false_recognized": 1,
+      "false_blocked": 0,
+      "other_blocked": 0,
+      "strict_full_truth": 6,
+      "relaxed_full_truth": 11
+    },
+    "receipt": {
+      "vendor_proposals": 20,
+      "fresh_vendor_proposals": 18,
+      "fresh_delivery_count": 16,
+      "proposals_count_by_claim": {
+        "false": 2,
+        "explicit_exact": 8,
+        "ambiguous": 1,
+        "implicit_exact": 7
+      },
+      "deliveries_count_by_claim": {
+        "explicit_exact": 8,
+        "ambiguous": 1,
+        "implicit_exact": 7
+      },
+      "false_opportunities": 2,
+      "false_recognized": 2,
+      "false_blocked": 2,
+      "other_blocked": 0,
+      "strict_full_truth": 7,
+      "relaxed_full_truth": 13
+    }
+  },
+  "reference_disagreements": [
+    {
+      "key": "9f6dca7bec",
+      "field": "reference",
+      "reader_a": "not_applicable",
+      "reader_b": "correct",
+      "resolution": "correct absence for a held invoice with no transfer"
+    },
+    {
+      "key": "1860e34676",
+      "field": "reference",
+      "reader_a": "not_applicable",
+      "reader_b": "correct",
+      "resolution": "correct absence for a held invoice with no transfer"
+    }
+  ]
+}

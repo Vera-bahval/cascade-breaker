@@ -1,0 +1,39 @@
+series,case,arm,terminal,workflows,root_success,route_scope,route_actions,route_errors,observed_points,placement_point,placement_actions,fraud_calls,fraud_flags,new_transfers,amount_usd,receipt_matched,tax_verified,marked_paid,invoice_linked_notice,persisted_notices,executor_requests,jev_requests,jev_valid,wall_seconds,executor_usd,jev_usd,unsettled_usd,usd
+initial,direct_profile_c,off,observed,1,1,target point reached,DEFER,,P2.fraud_agent|P4.finstripe__create_transfer,,,4,0,1,1500.0,1,1,1,0,1,23,0,0,43.802962750000006,0.010639787999999999,0,0,0.010639787999999999
+initial,direct_profile_c,rules,observed,1,1,target point reached,CLOSE_ALLOW,,P2.fraud_agent|P4.finstripe__create_transfer,,,0,0,1,1500.0,1,1,1,1,1,17,0,0,30.728071584002464,0.006822228,0,0,0.006822228
+initial,direct_profile_c,hybrid,observed,1,1,target point reached,CLOSE_ALLOW,,P2.fraud_agent|P4.finstripe__create_transfer,,,0,0,1,1500.0,1,1,1,1,1,18,0,0,34.159683666999626,0.00700944,0,0,0.00700944
+initial,direct_profile_c,after-fraud,observed,1,1,target point reached,DEFER,,,P2.fraud_agent,DEFER,4,0,1,1500.0,1,1,1,0,1,25,0,0,47.42476658299711,0.010894272,0,0,0.010894272
+initial,direct_profile_c,before-transfer,observed,1,1,target point reached,DEFER,,,P4.finstripe__create_transfer,DEFER,4,0,1,1500.0,1,1,1,1,1,21,0,0,36.26282558299863,0.009350256,0,0,0.009350256
+initial,direct_invoice,off,observed,1,1,target point reached,DEFER,,P2.fraud_agent|P4.finstripe__create_transfer,,,4,0,1,1200.0,1,1,1,1,1,22,0,0,42.43141679200198,0.009585528,0,0,0.009585528
+initial,direct_invoice,rules,observed,1,1,target point reached,DEFER,,P2.fraud_agent|P4.finstripe__create_transfer,,,4,0,1,1200.0,1,1,1,0,1,24,0,0,43.41073870900436,0.0097527,0,0,0.0097527
+initial,direct_invoice,hybrid,official Jev auth unavailable; native Fraud fallback,1,1,target point reached,DEFER,route_error:CalledProcessError,P2.fraud_agent|P4.finstripe__create_transfer,,,4,0,1,1200.0,1,1,1,1,1,22,0,0,41.29737879099412,0.009445392,0,0,0.009445392
+initial,direct_invoice,after-fraud,observed,1,1,target point reached,DEFER,,,P2.fraud_agent,DEFER,4,0,1,1200.0,1,1,1,1,1,22,0,0,42.48263225000119,0.009644195999999999,0,0,0.009644195999999999
+initial,direct_invoice,before-transfer,observed,1,1,target point reached,DEFER,,,P4.finstripe__create_transfer,DEFER,4,0,1,1200.0,1,1,1,0,1,24,0,0,46.014320000002044,0.010011612,0,0,0.010011612
+initial,invoice_basic,off,observed,1,1,target point reached,DEFER,,P2.fraud_agent|P4.finstripe__create_transfer,,,5,0,1,1200.0,1,1,1,1,1,36,0,0,73.4279713750002,0.016635384,0,0,0.016635384
+initial,invoice_basic,rules,observed,1,1,target point reached,DEFER,,P2.fraud_agent|P4.finstripe__create_transfer,,,5,0,1,1200.0,1,1,1,1,1,38,0,0,76.19281754200347,0.017321472,0,0,0.017321472
+initial,invoice_basic,hybrid,observed,1,1,target point reached,DEFER,,P2.fraud_agent|P4.finstripe__create_transfer,,,5,0,1,1200.0,1,1,1,1,1,38,0,0,75.63306829200155,0.016917384,0,0,0.016917384
+initial,invoice_basic,after-fraud,observed,1,1,target point reached,DEFER,,,P2.fraud_agent,DEFER,4,0,1,1200.0,1,1,1,1,1,37,0,0,73.04536291599652,0.01654986,0,0,0.01654986
+initial,invoice_basic,before-transfer,observed,1,1,target point reached,DEFER,,,P4.finstripe__create_transfer,DEFER,4,0,1,1200.0,1,1,1,1,1,35,0,0,72.12989337500039,0.016505567999999998,0,0,0.016505567999999998
+initial,chat_invoice_status,off,observed,0,0,target point not reached,,,,,,0,0,0,0,0,0,0,0,0,38,0,0,75.52584879200003,0.017928084,0,0,0.017928084
+initial,chat_invoice_status,hybrid,observed,0,0,target point not reached,,,,,,0,0,0,0,0,0,0,0,0,40,0,0,75.20371462500043,0.018131808,0,0,0.018131808
+initial,onboarding_basic,off,observed,1,1,"vendor-only, no invoice",DEFER,route_error:ValueError,,,,5,0,0,0,0,0,0,0,1,15,0,0,30.068391834000067,0.00693972,0,0,0.00693972
+initial,onboarding_basic,hybrid,observed,1,1,"vendor-only, no invoice",DEFER,route_error:ValueError,,,,5,0,0,0,0,0,0,0,1,15,0,0,30.29328041699773,0.006793416,0,0,0.006793416
+initial,TH602@C+chat,off,observed,1,1,target point reached,DEFER,,P2.fraud_agent|P4.finstripe__create_transfer,,,4,0,1,420.0,1,1,1,1,1,40,0,0,77.18365612500202,0.018950243999999998,0,0,0.018950243999999998
+initial,TH602@C+chat,hybrid,observed,1,1,target point reached,DEFER,,P2.fraud_agent|P4.finstripe__create_transfer,,,5,0,1,420.0,1,1,1,1,1,40,0,0,81.83980791599606,0.019571831999999997,0,0,0.019571831999999997
+initial,V2@C,off,observed,1,1,target point reached,DEFER,,P2.fraud_agent,,,6,1,0,0,0,0,0,0,1,17,0,0,33.575404625000374,0.008332368,0,0,0.008332368
+initial,V2@C,rules,observed,1,1,target point reached,DEFER,,P2.fraud_agent,,,6,1,0,0,0,0,0,0,1,17,0,0,37.96962558400264,0.008881356,0,0,0.008881356
+initial,V2@C,hybrid,HTTP 401 with unsettled reservation,,,partial route trace,DEFER,,,,,,,,,,,,,,15,0,0,,0.007633979999999999,0,0.0125103,0.007633979999999999
+initial,V2@C,after-fraud,executor ledger stopped after earlier unsettled attempt,,,no route evidence before interruption,,,,,,,,,,,,,,,0,0,0,,0,0,0,0
+initial,V2@C,before-transfer,executor ledger stopped after earlier unsettled attempt,,,no route evidence before interruption,,,,,,,,,,,,,,,0,0,0,,0,0,0,0
+initial,TH501@A,off,observed,1,1,target point reached,DEFER,,P2.fraud_agent,,,4,0,0,0,0,0,0,0,1,21,0,0,43.88462549999531,0.009913163999999999,0,0,0.009913163999999999
+initial,TH501@A,rules,observed,1,1,target point reached,DEFER,,P2.fraud_agent,,,5,0,0,0,0,0,0,0,1,23,0,0,46.58233462499629,0.010090295999999999,0,0,0.010090295999999999
+initial,TH501@A,hybrid,executor ledger stopped after earlier unsettled attempt,,,partial route trace,DEFER,,,,,,,,,,,,,,14,0,0,,0.006142788,0,0,0.006142788
+initial,TH501@A,after-fraud,executor ledger stopped after earlier unsettled attempt,,,no route evidence before interruption,,,,,,,,,,,,,,,0,0,0,,0,0,0,0
+initial,TH501@A,before-transfer,executor ledger stopped after earlier unsettled attempt,,,no route evidence before interruption,,,,,,,,,,,,,,,0,0,0,,0,0,0,0
+auth-restored,direct_invoice,hybrid,observed,1,1,target point reached,CLOSE_ALLOW,,P2.fraud_agent|P4.finstripe__create_transfer,,,0,0,1,1200.0,1,1,1,0,1,21,1,1,39.288135916998726,0.008127096,4.930800000000001e-05,0,0.008176404
+auth-restored,V2@C,hybrid,observed,1,1,target point reached,DEFER,,P2.fraud_agent,,,5,1,0,0,0,0,0,0,1,16,0,0,33.66536745800113,0.00841752,0,0,0.00841752
+auth-restored,V2@C,after-fraud,observed,1,1,target point reached,DEFER,,,P2.fraud_agent,DEFER,5,0,0,0,0,0,0,0,1,16,0,0,34.35548733299947,0.008519088,0,0,0.008519088
+auth-restored,V2@C,before-transfer,observed,1,1,target point reached,DEFER,,,,,4,0,0,0,0,0,0,0,1,15,0,0,29.140273874996637,0.0076475399999999995,0,0,0.0076475399999999995
+auth-restored,TH501@A,hybrid,observed,1,1,target point reached,DEFER,,P2.fraud_agent,,,4,0,0,0,0,0,0,0,1,21,0,0,43.69591545800358,0.00947772,0,0,0.00947772
+auth-restored,TH501@A,after-fraud,observed,1,1,target point reached,DEFER,,,P2.fraud_agent,DEFER,4,0,0,0,0,0,0,0,1,20,0,0,37.32920825000474,0.009153155999999999,0,0,0.009153155999999999
+auth-restored,TH501@A,before-transfer,observed,1,1,target point reached,DEFER,,,,,6,0,0,0,0,0,0,0,1,23,0,0,48.12399245900451,0.010812912,0,0,0.010812912
