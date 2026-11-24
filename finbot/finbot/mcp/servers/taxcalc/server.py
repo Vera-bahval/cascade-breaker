@@ -30,6 +30,63 @@ DEFAULT_CONFIG: dict[str, Any] = {
 }
 
 
+def invoice_tax(amount: float, jurisdiction: str, category: str, config: dict) -> dict[str, Any]:
+    """Calculate the same tax breakdown for MCP queries and payment admission."""
+    if category not in {"goods", "services", "entertainment"}:
+        return {"error": "Unknown tax category"}
+    jurisdiction = jurisdiction or config.get("default_jurisdiction", "US-CA")
+    tax_rates = config.get("tax_rates", DEFAULT_CONFIG["tax_rates"])
+    rates = tax_rates.get(jurisdiction)
+
+    if not rates:
+        return {
+            "error": f"Unknown jurisdiction: {jurisdiction}",
+            "available_jurisdictions": list(tax_rates.keys()),
+        }
+
+    if category == "services" and config.get("service_tax_exempt", True):
+        return {
+            "amount": amount,
+            "jurisdiction": jurisdiction,
+            "category": category,
+            "tax_exempt": True,
+            "tax_amount": 0.0,
+            "total_amount": amount,
+            "breakdown": {"note": "Services are tax-exempt in this jurisdiction"},
+        }
+
+    state_tax = amount * (rates["state"] / 100)
+    county_tax = amount * (rates["county"] / 100)
+    city_tax = amount * (rates["city"] / 100)
+    subtotal_tax = state_tax + county_tax + city_tax
+
+    surcharge = 0.0
+    if category == "entertainment":
+        surcharge_pct = config.get("entertainment_surcharge_pct", 2.5)
+        surcharge = amount * (surcharge_pct / 100)
+
+    total_tax = subtotal_tax + surcharge
+
+    return {
+        "amount": amount,
+        "jurisdiction": jurisdiction,
+        "jurisdiction_label": rates.get("label", jurisdiction),
+        "category": category,
+        "tax_exempt": False,
+        "breakdown": {
+            "state_tax": round(state_tax, 2),
+            "state_rate": rates["state"],
+            "county_tax": round(county_tax, 2),
+            "county_rate": rates["county"],
+            "city_tax": round(city_tax, 2),
+            "city_rate": rates["city"],
+            "entertainment_surcharge": round(surcharge, 2) if surcharge else None,
+        },
+        "tax_amount": round(total_tax, 2),
+        "total_amount": round(amount + total_tax, 2),
+    }
+
+
 def create_taxcalc_server(
     session_context: SessionContext,
     server_config: dict[str, Any] | None = None,
@@ -49,57 +106,7 @@ def create_taxcalc_server(
         Returns a breakdown of applicable taxes and the total amount including tax.
         Categories: 'goods' (standard tax), 'services' (may be exempt), 'entertainment' (surcharge applies).
         """
-        jurisdiction = jurisdiction or config.get("default_jurisdiction", "US-CA")
-        tax_rates = config.get("tax_rates", DEFAULT_CONFIG["tax_rates"])
-        rates = tax_rates.get(jurisdiction)
-
-        if not rates:
-            return {
-                "error": f"Unknown jurisdiction: {jurisdiction}",
-                "available_jurisdictions": list(tax_rates.keys()),
-            }
-
-        if category == "services" and config.get("service_tax_exempt", True):
-            return {
-                "amount": amount,
-                "jurisdiction": jurisdiction,
-                "category": category,
-                "tax_exempt": True,
-                "tax_amount": 0.0,
-                "total_amount": amount,
-                "breakdown": {"note": "Services are tax-exempt in this jurisdiction"},
-            }
-
-        state_tax = amount * (rates["state"] / 100)
-        county_tax = amount * (rates["county"] / 100)
-        city_tax = amount * (rates["city"] / 100)
-        subtotal_tax = state_tax + county_tax + city_tax
-
-        surcharge = 0.0
-        if category == "entertainment":
-            surcharge_pct = config.get("entertainment_surcharge_pct", 2.5)
-            surcharge = amount * (surcharge_pct / 100)
-
-        total_tax = subtotal_tax + surcharge
-
-        return {
-            "amount": amount,
-            "jurisdiction": jurisdiction,
-            "jurisdiction_label": rates.get("label", jurisdiction),
-            "category": category,
-            "tax_exempt": False,
-            "breakdown": {
-                "state_tax": round(state_tax, 2),
-                "state_rate": rates["state"],
-                "county_tax": round(county_tax, 2),
-                "county_rate": rates["county"],
-                "city_tax": round(city_tax, 2),
-                "city_rate": rates["city"],
-                "entertainment_surcharge": round(surcharge, 2) if surcharge else None,
-            },
-            "tax_amount": round(total_tax, 2),
-            "total_amount": round(amount + total_tax, 2),
-        }
+        return invoice_tax(amount, jurisdiction, category, config)
 
     @mcp.tool
     def get_tax_rates(jurisdiction: str = "") -> dict[str, Any]:

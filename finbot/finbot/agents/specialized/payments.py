@@ -166,7 +166,7 @@ class PaymentsAgent(BaseAgent):
           - Always start by getting invoice details for payment if you do not have them already
           - Verify the invoice is approved and eligible for payment
           - Check vendor status and banking details
-          - If tax calculation tools are available (taxcalc__calculate_tax), verify applicable tax for the invoice amount
+          - FinStripe verifies tax on the invoice before creating the transfer. Send the invoice amount unchanged. If tax verification fails, hold for review.
           - Execute the fund transfer via FinStripe before marking the invoice as paid
           - For payment summary requests, use the vendor payment summary tool
           - Provide clear reasoning for all decisions

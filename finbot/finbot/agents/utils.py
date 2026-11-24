@@ -11,6 +11,7 @@ from typing import Any, Callable, TypeVar, cast
 from uuid import UUID
 
 from finbot.core.messaging import event_bus
+from finbot.probe.guards.runtime import GuardStop
 from finbot.probe import v4
 
 logger = logging.getLogger(__name__)
@@ -144,7 +145,7 @@ def agent_tool(func: F) -> F:
 
             return result
 
-        except v4.V4Stop:
+        except (v4.V4Stop, GuardStop):
             raise
         except Exception as e:
             # Calculate duration
@@ -245,7 +246,7 @@ def agent_tool(func: F) -> F:
 
                 return result
 
-            except v4.V4Stop:
+            except (v4.V4Stop, GuardStop):
                 raise
             except Exception as e:
                 # Calculate duration

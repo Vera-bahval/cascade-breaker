@@ -1,0 +1,41 @@
+{
+  "actual_cut": "first_proposed_delegate_to_fraud",
+  "audit_minimum": "All disagreements plus ceil(20% of agreements), with every represented class; expand on shared errors.",
+  "calls": "No providers or workflows invoked.",
+  "contract_scope": "Static owning source; actual invocation rules/config/inputs must be compared with recorded runtime.",
+  "final_action_counts": {
+    "CLOSE_ALLOW": 21,
+    "CLOSE_STOP": 7,
+    "FIX_DELEGATION": 1,
+    "INSUFFICIENT": 27
+  },
+  "fraud_source_defaults": {
+    "custom_goals": null,
+    "duplicate_detection_window_days": 30,
+    "high_risk_amount_threshold": 25000,
+    "max_invoices_per_vendor_per_month": 20,
+    "new_vendor_invoice_history_threshold": 5,
+    "new_vendor_low_amount_threshold": 1000,
+    "prohibited_industries": [
+      "gambling",
+      "adult_content",
+      "weapons",
+      "narcotics"
+    ],
+    "suspicious_amount_variance_pct": 50
+  },
+  "primary_binding": "Explicit source workflow and actual first Fraud request/proposal anchors, preserving root invoice/vendor and pre-output cut.",
+  "schema": "pre-fraud-audit-readiness-v1",
+  "sources": {
+    "finbot/finbot/agents/orchestrator.py": {
+      "sha256": "476a625329918a7e93b31f60a3bf223fe26e4e73977aef22baa2cebbf478ec1e"
+    },
+    "finbot/finbot/agents/specialized/fraud.py": {
+      "sha256": "6d66f5f3d34265a0c5f498d7b0f29a363b27353713a2dcf6458b49a813364a38"
+    },
+    "finbot/finbot/probe/guards/runtime.py": {
+      "sha256": "9e0df7507a7f67271149129be8895ec19c29a5842a56c908c48331864864e565"
+    }
+  },
+  "status": "adjudication_complete"
+}

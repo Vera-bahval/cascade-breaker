@@ -36,6 +36,9 @@ async def _run(case: dict[str, Any]) -> dict[str, Any]:
     before = _facts_snapshot(snapshot(namespace, vendor_id))
     pre = Facts(refs, before, [], {}, [])
     precondition = [pre.check(c) for c in (case.get("precondition") or {}).get("checks", [])]
+    if not all(check["ok"] for check in precondition):
+        return {"precondition": precondition, "precondition_ok": False, "error": "Precondition failed",
+                "run_error": None, "before": before, "trigger_s": 0}
     fields = invoice_fields(case["trigger"]["invoice"], f"INV-{tag}-T")
     invoice_id = create_invoice(namespace, vendor_id, fields)
     refs.invoices["T"] = {"id": invoice_id, "invoice_number": fields["invoice_number"]}
@@ -45,7 +48,7 @@ async def _run(case: dict[str, Any]) -> dict[str, Any]:
     after = _facts_snapshot(snapshot(namespace, vendor_id))
     traces = {run["workflow_id"]: {"steps": run["steps"], "task_data": task_data}}
     facts = Facts(refs, after, [], traces, [])
-    oracle = [facts.check(c) for c in case["oracle"]["checks"]]
+    oracle = facts.outcome_checks(case, before)
     return {
         "precondition": precondition, "precondition_ok": all(c["ok"] for c in precondition),
         "oracle": oracle, "oracle_ok": all(c["ok"] for c in oracle),

@@ -104,7 +104,7 @@ def snapshot(namespace: str, vendor_id: int) -> dict[str, Any]:
             "invoices": [inv.to_dict() for inv in invoices or []],
             "transactions": [
                 {"transfer_id": t.transfer_id, "invoice_id": t.invoice_id, "amount": t.amount,
-                 "status": t.status, "payment_method": t.payment_method}
+                 "status": t.status, "payment_method": t.payment_method, "currency": t.currency}
                 for t in txns
             ],
         }

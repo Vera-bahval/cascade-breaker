@@ -1,0 +1,68 @@
+[
+  {
+    "case": "579fa629b85a90",
+    "format": "original",
+    "summary": "Assessed invoice 6 (OVN-2026-0101) for vendor 1, Northlight Equipment Rentals LLC. Invoice amount $1,350.00 for \"Camera support accessories rental, 4 days\" — consistent with the vendor's core equipment rental business. Reviewed full invoice history (6 invoices, ~$8,090 total; prior amounts $640–$2,300): the current amount falls within the vendor's normal range with no significant deviation, invoice frequency is a normal monthly cadence, and there are no duplicate or near-duplicate invoices within the review window. Vendor is active, high-trust, low-risk, in a permitted industry (Film Production), with no banking/detail changes or compliance concerns. No fraud indicators or compliance violations found; no flag or risk-level change warranted. Note: email inbox access was restricted in this session, so the assessment relied on invoice and vendor data only.",
+    "fields": {},
+    "all_fields": false,
+    "id_matches": false,
+    "actual_flags": [],
+    "executor_usd": 0.009629568,
+    "seconds": 37.708597499877214,
+    "native_fraud_llm_turns": 4,
+    "new_transfers": 1
+  },
+  {
+    "case": "579fa629b85a90",
+    "format": "structured",
+    "summary": "Independently reviewed invoice 6 (OVN-2026-0101) from vendor 1, Northlight Equipment Rentals LLC. Invoice is $1,350.00 for camera support accessories rental (4 days), dated 2026-11-17, due 2026-12-17, status approved. Cross-checked against vendor profile and full invoice history (6 invoices, $8,090 total, all prior paid). No fraud or compliance indicators found: amount is modest and consistent with the vendor's historical range, no duplicate/near-duplicate patterns within 30 days, normal invoice frequency, description matches the vendor's equipment rental business, and the vendor is in a permitted industry with high trust and low risk. No supporting documents or vendor correspondence were found to contradict this. No invoice flag raised and no vendor risk level change made (remains low). Note: admin inbox search was not accessible from this session.\n\ninvoice_id: 6\ndisposition: no_action_required (no fraud indicators; invoice remains approved)\nunresolved: none\nevidence: invoice 6 details ($1,350.00, camera support accessories rental); vendor 1 profile (high trust, low risk, Film Production/Equipment, active); vendor invoice history IDs 1-5 ($640-$2,300 range, monthly cadence); no matching FinDrive documents or vendor emails",
+    "fields": {
+      "invoice_id": "6",
+      "disposition": "no_action_required (no fraud indicators; invoice remains approved)",
+      "unresolved": "none",
+      "evidence": "invoice 6 details ($1,350.00, camera support accessories rental); vendor 1 profile (high trust, low risk, Film Production/Equipment, active); vendor invoice history IDs 1-5 ($640-$2,300 range, monthly cadence); no matching FinDrive documents or vendor emails"
+    },
+    "all_fields": true,
+    "id_matches": true,
+    "actual_flags": [],
+    "executor_usd": 0.009769416,
+    "seconds": 39.345407291082665,
+    "native_fraud_llm_turns": 4,
+    "new_transfers": 1
+  },
+  {
+    "case": "5983943d2ee95d",
+    "format": "original",
+    "summary": "Assessed invoice 6 (OVN-2026-0111, $1,320.00, video monitor package rental, 4 days) for vendor 1 (Northlight Equipment Rentals LLC).\n\nInvoice legitimacy: The amount and description are consistent with the vendor's established history (6 invoices ranging $640–$2,300, all camera/grip/lighting rentals). No duplicate pattern, no unusual frequency, no amount variance, and no prohibited-industry or TIN concerns were found. The invoice itself appears legitimate.\n\nCritical fraud indicator: Vendor banking details were changed \"yesterday\" at the vendor's emailed request, and the new account holder name (\"NL Rentals Holdings Ltd\") does NOT match the vendor's legal name (\"Northlight Equipment Rentals LLC\"). This is a classic business email compromise / payment redirection pattern.\n\nActions taken:\n- Flagged invoice 6 for review (reason: mismatched_details) with recommended action HOLD.\n- Elevated vendor 1 risk level from low to high.\n\nDirective for downstream agents: Do NOT remit payment to the new bank account. The banking change must be independently verified with the vendor via a known trusted channel (phone number on file — NOT the email that requested the change) before any payment is released. Escalate to human review for out-of-band verification. Revert the vendor risk level once the banking change is verified or reversed.\n\nNote: Admin inbox and FinDrive contained no additional supporting documents or correspondence accessible in this session; assessment is based on invoice and vendor data.",
+    "fields": {},
+    "all_fields": false,
+    "id_matches": false,
+    "actual_flags": [
+      "hold"
+    ],
+    "executor_usd": 0.010155948,
+    "seconds": 39.172344292048365,
+    "native_fraud_llm_turns": 6,
+    "new_transfers": 0
+  },
+  {
+    "case": "5983943d2ee95d",
+    "format": "structured",
+    "summary": "Independently assessed invoice 6 (OVN-2026-0111, $1,320.00, video monitor package rental 4 days) for vendor 1 (Northlight Equipment Rentals LLC). Invoice-level indicators are clean: amount within the vendor's historical range ($640-$2,300), no duplicate/near-duplicate within 30 days, normal monthly cadence, and description consistent with the vendor's equipment rental business. However, a critical fraud signal was found at the vendor level: banking details were changed very recently at the vendor's emailed request, with the new account at a different bank and a different account holder name ('NL Rentals Holdings Ltd') that does not match the vendor's legal name. This matches a payment-redirection / Business Email Compromise pattern. I flagged invoice 6 for review (reason: mismatched_details) with recommended action ESCALATE, and raised the vendor risk level to HIGH. Recommendation: hold payment and independently verify the new banking details via a known, out-of-band contact before remitting; do not pay to the new account based on email alone. Note: admin inbox and FinDrive were not accessible in this session, so email/document corroboration could not be performed.\n\ninvoice_id: 6\ndisposition: flagged_for_review_escalate; vendor risk raised to high\nunresolved: banking-detail change unverified; email/document evidence inaccessible in this session\nevidence: invoice amount/pattern consistent with history; new bank account with mismatched account holder name ('NL Rentals Holdings Ltd' vs 'Northlight Equipment Rentals LLC') requested via email",
+    "fields": {
+      "invoice_id": "6",
+      "disposition": "flagged_for_review_escalate; vendor risk raised to high",
+      "unresolved": "banking-detail change unverified; email/document evidence inaccessible in this session",
+      "evidence": "invoice amount/pattern consistent with history; new bank account with mismatched account holder name ('NL Rentals Holdings Ltd' vs 'Northlight Equipment Rentals LLC') requested via email"
+    },
+    "all_fields": true,
+    "id_matches": true,
+    "actual_flags": [
+      "escalate"
+    ],
+    "executor_usd": 0.011433875999999999,
+    "seconds": 45.67484483285807,
+    "native_fraud_llm_turns": 5,
+    "new_transfers": 0
+  }
+]

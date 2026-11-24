@@ -55,6 +55,12 @@ class GuardRuntime:
             return [v for v in self.verifiers if v.name == name and family in v.families]
         return [v for v in self.verifiers if family in v.families]
 
+    async def check_workflow_input(self) -> None:
+        if self._applicable("P0.input", "P0"):
+            invoice = self.snapshot()["invoice"]
+            await self.check("P0.input", None, {key: invoice.get(key) for key in
+                             ("id", "invoice_number", "vendor_id", "amount", "description", "status")})
+
     async def check(self, point: str, agent: str | None, payload: dict[str, Any]) -> None:
         if self.stopped_by is not None:
             raise GuardStop(f"workflow stopped at {self.stopped_by['point']}")
@@ -81,6 +87,7 @@ class GuardRuntime:
                 payload=payload, db_snapshot=ctx.db_snapshot, pause_ms=pause_ms,
             )["seq"]
         blocking = None
+        review = None
         for verifier, result in zip(verifiers, results):
             probe_trace.record(
                 "guard", point=point, family=family, agent=agent,
@@ -89,8 +96,17 @@ class GuardRuntime:
                 latency_ms=result.latency_ms, tokens_in=result.tokens_in,
                 tokens_out=result.tokens_out, cost_usd=result.cost_usd,
             )
+            if result.decision == "review" and review is None:
+                review = verifier.name
             if result.decision == "block" and blocking is None:
                 blocking = verifier.name
+        # A sibling task may have stopped this workflow while its verifier was awaiting I/O.
+        if self.stopped_by is not None:
+            raise GuardStop(f"workflow stopped at {self.stopped_by['point']}")
+        if self.mode == "enforce" and review and not blocking:
+            self.stopped_by = {"point": point, "verifier": review, "reason": "technical_review"}
+            probe_trace.record("guard_stop", **self.stopped_by)
+            raise GuardStop(f"Review required at {point}")
         if self.mode == "enforce" and blocking is not None:
             self.stopped_by = {"point": point, "verifier": blocking}
             probe_trace.record("guard_stop", point=point, verifier=blocking)
@@ -102,8 +118,7 @@ class GuardRuntime:
         try:
             result = await verifier.check(ctx)
         except Exception as e:  # pylint: disable=broad-exception-caught
-            # A verifier failure must not change the run; it fails open and is logged.
-            result = GuardResult(decision="allow", reason=f"verifier_error: {e}"[:300])
+            result = GuardResult(decision="review", reason=f"verifier_error: {type(e).__name__}")
         result.latency_ms = round((time.perf_counter() - started) * 1000, 1)
         return result
 

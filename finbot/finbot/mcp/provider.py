@@ -12,6 +12,7 @@ from typing import Any, Callable
 
 from fastmcp import Client, FastMCP
 
+from finbot.probe.guards.runtime import GuardStop
 from finbot.probe import v4
 from finbot.core.auth.session import SessionContext
 from finbot.core.data.database import db_session
@@ -246,7 +247,7 @@ class MCPToolProvider:
                 )
                 return output
 
-            except v4.V4Stop:
+            except (v4.V4Stop, GuardStop):
                 raise
             except Exception as e:  # pylint: disable=broad-exception-caught
                 duration_ms = (time.time() - start) * 1000
