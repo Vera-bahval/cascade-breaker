@@ -1,0 +1,37 @@
+--- finbot-cp3/scripts/cp3_live.py	2026-11-25 18:52:01
++++ <scratchpad>/cp3_live_patched.py	2026-11-25 19:12:44
+@@ -9,6 +9,7 @@
+ import json
+ import logging
+ import os
++import re
+ from pathlib import Path
+ import shutil
+ from types import SimpleNamespace
+@@ -168,6 +169,12 @@
+             raise Halt("authorization_preflight_expired")
+     except (ValueError, TypeError, KeyError):
+         raise Halt("authorization_preflight_invalid_response") from None
++    try:                                    # авторизация самого POST /responses без генерации: ожидается 400 (модель не найдена)
++        await sdk.responses.create(model="cp3-auth-probe/nonexistent-model", input="ping", max_output_tokens=16)
++        raise Halt("authorization_preflight_probe_unexpected_success")
++    except APIStatusError as error:
++        if error.status_code != 400:
++            raise Halt(f"authorization_preflight_responses_http_{error.status_code}") from None
+     return metadata
+ 
+ 
+@@ -192,6 +199,13 @@
+     entry = {"error_type": type(error).__name__, "failure_stage": "sdk_request"}
+     if isinstance(error, APIStatusError):
+         entry.update(failure_stage="http_response", http_status=error.status_code)
++        body = error.body if isinstance(error.body, dict) else {}
++        detail = body.get("error", body) if isinstance(body, dict) else {}
++        if isinstance(detail, dict):        # тело ошибки без секретов: тип, код, сообщение, источник
++            clean = lambda v: re.sub(r"(sk-or-|Bearer\s+)[A-Za-z0-9._-]+", r"\1<redacted>", str(v))[:300]
++            entry["provider_error"] = {k: clean(detail.get(k)) for k in ("type", "code", "message") if detail.get(k) is not None}
++            meta = detail.get("metadata") if isinstance(detail.get("metadata"), dict) else {}
++            entry["provider_error"].update({k: clean(meta[k]) for k in ("provider_name", "raw", "limit_source") if k in meta})
+     elif isinstance(error, (APITimeoutError, APIConnectionError)):
+         entry["failure_stage"] = "http_transport"
+     elif isinstance(error, (APIResponseValidationError, json.JSONDecodeError)):

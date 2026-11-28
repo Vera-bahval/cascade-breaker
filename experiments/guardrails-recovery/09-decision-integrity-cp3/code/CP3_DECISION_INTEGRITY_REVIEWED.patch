@@ -1,0 +1,899 @@
+--- a/finbot/core/data/models.py
++++ b/finbot/core/data/models.py
+@@ -346,6 +346,22 @@
+         return f"<Vendor(id='{self.id}', company_name='{self.company_name}', namespace='{self.namespace}')>"
+ 
+ 
++class InvoiceTransferFlag(Base):
++    __tablename__ = "invoice_transfer_flags"
++    __table_args__ = (Index("ix_invoice_transfer_flags_active", "namespace", "invoice_id", "released_at"),)
++
++    id = Column[int](Integer, primary_key=True)
++    namespace = Column[str](String(64), nullable=False)
++    invoice_id = Column[int](Integer, ForeignKey("invoices.id"), nullable=False)
++    action = Column[str](String(16), nullable=False)
++    reason = Column[str](Text, nullable=False)
++    note = Column[str](Text, nullable=False)
++    source = Column[str](String(32), nullable=False)
++    installed_at = Column[datetime](DateTime, default=lambda: datetime.now(UTC), nullable=False)
++    released_at = Column[datetime](DateTime, nullable=True)
++    released_by = Column[str](String(32), nullable=True)
++
++
+ class Invoice(Base):
+     """Invoice Model"""
+ 
+@@ -370,6 +386,7 @@
+     agent_notes = Column[str](Text, nullable=True)
+     # JSON list of FinDrive file attachments: [{"file_id": 5, "filename": "...", "file_type": "pdf"}]
+     attachments = Column[str](Text, nullable=True)
++    transfer_flags_verified = Column[bool](Boolean, nullable=False, server_default="0")
+ 
+     created_at = Column[datetime](DateTime, default=lambda: datetime.now(UTC))
+     updated_at = Column[datetime](
+--- a/finbot/core/data/repositories.py
++++ b/finbot/core/data/repositories.py
+@@ -567,7 +567,7 @@
+             self.db.query(Invoice).filter(Invoice.id == invoice_id), Invoice
+         ).first()
+ 
+-    def update_invoice(self, invoice_id: int, **updates) -> Invoice | None:
++    def update_invoice(self, invoice_id: int, *, commit: bool = True, **updates) -> Invoice | None:
+         """Flexible: Update invoice (validates namespace)"""
+         invoice = self.get_invoice(invoice_id)
+         if not invoice:
+@@ -578,7 +578,8 @@
+                 setattr(invoice, key, value)
+ 
+         invoice.updated_at = datetime.now(UTC)
+-        self.db.commit()
++        if commit:
++            self.db.commit()
+ 
+         return invoice
+ 
+--- /dev/null
++++ b/finbot/core/data/transfer_flags.py
+@@ -0,0 +1,49 @@
++from datetime import UTC, datetime
++
++from sqlalchemy import text
++from sqlalchemy.orm import Session
++
++from finbot.core.auth.session import SessionContext
++from finbot.core.data.database import db_session
++from finbot.core.data.models import Invoice, InvoiceTransferFlag
++
++BLOCKING_ACTIONS = frozenset(("hold", "escalate", "reject"))
++
++
++def begin_transfer_write(db: Session) -> None:
++    if db.get_bind().dialect.name != "sqlite":
++        raise RuntimeError("CP3 transfer integrity requires SQLite")
++    db.execute(text("BEGIN IMMEDIATE"))
++
++
++def record_flag(db: Session, invoice: Invoice, action: str, reason: str, note: str, source: str) -> InvoiceTransferFlag:
++    if action not in BLOCKING_ACTIONS:
++        raise ValueError("Unsupported transfer flag")
++    flag = InvoiceTransferFlag(
++        namespace=invoice.namespace, invoice_id=invoice.id, action=action,
++        reason=reason, note=note, source=source,
++    )
++    db.add(flag)
++    return flag
++
++
++def active_flags(db: Session, invoice: Invoice) -> list[InvoiceTransferFlag]:
++    return db.query(InvoiceTransferFlag).filter_by(
++        namespace=invoice.namespace, invoice_id=invoice.id, released_at=None,
++    ).order_by(InvoiceTransferFlag.id).all()
++
++
++def release_flag(session_context: SessionContext, invoice_id: int, flag_id: int) -> bool:
++    if session_context.portal_type != "admin" or session_context.is_temporary or not session_context.is_valid():
++        raise PermissionError("An authenticated administrator must release the flag")
++    with db_session() as db:
++        begin_transfer_write(db)
++        flag = db.query(InvoiceTransferFlag).filter_by(
++            id=flag_id, namespace=session_context.namespace, invoice_id=invoice_id, released_at=None,
++        ).one_or_none()
++        if flag is None:
++            return False
++        flag.released_at = datetime.now(UTC)
++        flag.released_by = session_context.user_id
++        db.commit()
++        return True
+--- a/finbot/mcp/factory.py
++++ b/finbot/mcp/factory.py
+@@ -65,6 +65,8 @@
+ async def create_mcp_server(
+     server_type: str,
+     session_context: SessionContext,
++    *,
++    authorized_invoice_id: int | None = None,
+ ) -> FastMCP | None:
+     """Create a namespace-scoped MCP server instance.
+ 
+@@ -98,9 +100,11 @@
+             tool_overrides = db_config.get_tool_overrides()
+ 
+     factory_fn = _import_factory(factory_path)
++    binding = {"authorized_invoice_id": authorized_invoice_id} if server_type == "finstripe" else {}
+     server = factory_fn(
+         session_context=session_context,
+         server_config=server_config,
++        **binding,
+     )
+ 
+     if tool_overrides:
+--- a/finbot/mcp/servers/finstripe/models.py
++++ b/finbot/mcp/servers/finstripe/models.py
+@@ -4,7 +4,7 @@
+ from datetime import UTC, datetime
+ from typing import Literal
+ 
+-from sqlalchemy import Column, Float, ForeignKey, Index, Integer, String, Text
++from sqlalchemy import Boolean, Column, Float, ForeignKey, Index, Integer, String, Text, text
+ from sqlalchemy import DateTime as _DateTime
+ from sqlalchemy.orm import relationship
+ 
+@@ -33,6 +33,7 @@
+     status = Column[Literal["pending", "completed", "failed"]](
+         String(20), nullable=False, default="pending"
+     )
++    receipt_applied = Column[bool](Boolean, nullable=False, server_default="0")
+ 
+     # In CTF, tool poisoning may cause agents to leak sensitive data
+     # (e.g., bank routing numbers) into this field
+@@ -53,6 +54,8 @@
+         Index("idx_ptx_namespace_invoice", "namespace", "invoice_id"),
+         Index("idx_ptx_transfer_id", "transfer_id"),
+         Index("idx_ptx_namespace_status", "namespace", "status"),
++        Index("uq_ptx_completed_invoice", "namespace", "invoice_id", unique=True,
++              sqlite_where=text("status = 'completed'")).ddl_if(dialect="sqlite"),
+     )
+ 
+     def __repr__(self) -> str:
+--- a/finbot/mcp/servers/finstripe/repositories.py
++++ b/finbot/mcp/servers/finstripe/repositories.py
+@@ -20,6 +20,8 @@
+         status: str = "pending",
+         description: str | None = None,
+         metadata_json: str | None = None,
++        *,
++        commit: bool = True,
+     ) -> PaymentTransaction:
+         txn = PaymentTransaction(
+             namespace=self.namespace,
+@@ -34,9 +36,17 @@
+             metadata_json=metadata_json,
+         )
+         self.db.add(txn)
+-        self.db.commit()
+-        self.db.refresh(txn)
++        if commit:
++            self.db.commit()
++            self.db.refresh(txn)
++        else:
++            self.db.flush()
+         return txn
++
++    def has_completed_transfer(self, invoice_id: int) -> bool:
++        return self.db.query(PaymentTransaction.id).filter_by(
++            namespace=self.namespace, invoice_id=invoice_id, status="completed",
++        ).limit(1).first() is not None
+ 
+     def get_by_transfer_id(self, transfer_id: str) -> PaymentTransaction | None:
+         return (
+--- a/finbot/mcp/servers/finstripe/server.py
++++ b/finbot/mcp/servers/finstripe/server.py
+@@ -6,13 +6,17 @@
+ """
+ 
+ import logging
++import math
+ import secrets
+ from typing import Any
+ 
+ from fastmcp import FastMCP
++from sqlalchemy.exc import SQLAlchemyError
+ 
+ from finbot.core.auth.session import SessionContext
+ from finbot.core.data.database import db_session
++from finbot.core.data.repositories import InvoiceRepository, VendorRepository
++from finbot.core.data.transfer_flags import active_flags, begin_transfer_write
+ from finbot.mcp.servers.finstripe.repositories import PaymentTransactionRepository
+ 
+ logger = logging.getLogger(__name__)
+@@ -33,6 +37,8 @@
+ def create_finstripe_server(
+     session_context: SessionContext,
+     server_config: dict[str, Any] | None = None,
++    *,
++    authorized_invoice_id: int | None = None,
+ ) -> FastMCP:
+     """Create a namespace-scoped FinStripe MCP server instance.
+ 
+@@ -59,41 +65,49 @@
+         Transfers funds from the company account to a vendor's bank account.
+         Returns the transfer details including a unique transfer ID for tracking.
+         """
+-        if amount <= 0:
++        if not math.isfinite(amount) or amount <= 0:
+             return {"error": "amount must be greater than zero"}
+ 
+-        transfer_id = _generate_transfer_id()
+-
+-        with db_session() as db:
+-            repo = PaymentTransactionRepository(db, session_context)
+-            txn = repo.create_transaction(
+-                invoice_id=invoice_id,
+-                vendor_id=vendor_id,
+-                transfer_id=transfer_id,
+-                amount=amount,
+-                currency=currency,
+-                payment_method=payment_method,
+-                status="completed",
+-                description=description,
+-            )
+-
+-            logger.info(
+-                "FinStripe transfer created: %s, amount=%.2f, vendor_account=%s",
+-                transfer_id,
+-                amount,
+-                vendor_account,
+-            )
+-
+-            return {
+-                "transfer_id": txn.transfer_id,
+-                "status": txn.status,
+-                "amount": txn.amount,
+-                "currency": txn.currency,
+-                "payment_method": txn.payment_method,
+-                "vendor_account": vendor_account,
+-                "invoice_reference": invoice_reference,
+-                "description": txn.description,
+-            }
++        if authorized_invoice_id is None or invoice_id != authorized_invoice_id:
++            return {"error": "Invoice differs from the trusted payment target", "code": "invoice_binding"}
++        try:
++            with db_session() as db:
++                begin_transfer_write(db)
++                invoice = InvoiceRepository(db, session_context).get_invoice(authorized_invoice_id)
++                if invoice is None or not invoice.transfer_flags_verified:
++                    return {"error": "Transfer state is not verified", "code": "unknown_state"}
++                if invoice.vendor_id != vendor_id:
++                    return {"error": "Vendor differs from invoice", "code": "recipient"}
++                vendor = VendorRepository(db, session_context).get_vendor(invoice.vendor_id)
++                if vendor is None or not vendor.bank_account_number or vendor.bank_account_number != vendor_account:
++                    return {"error": "Recipient differs from vendor record", "code": "recipient"}
++                flags = active_flags(db, invoice)
++                if flags:
++                    return {"error": "Active transfer restriction", "code": "active_flag",
++                            "actions": [flag.action for flag in flags]}
++                if invoice.status != "approved":
++                    return {"error": "Invoice is not approved", "code": "invoice_status"}
++                if invoice.amount != amount:
++                    return {"error": "Amount differs from invoice", "code": "invoice_amount"}
++                repo = PaymentTransactionRepository(db, session_context)
++                if repo.has_completed_transfer(invoice.id):
++                    return {"error": "Invoice already has a completed transfer", "code": "already_transferred"}
++                txn = repo.create_transaction(
++                    invoice_id=invoice.id, vendor_id=vendor.id, transfer_id=_generate_transfer_id(),
++                    amount=amount, currency=currency, payment_method=payment_method,
++                    status="completed", description=description, commit=False,
++                )
++                receipt = {
++                    "transfer_id": txn.transfer_id, "status": txn.status, "amount": txn.amount,
++                    "currency": txn.currency, "payment_method": txn.payment_method,
++                    "vendor_account": vendor_account, "invoice_reference": invoice_reference,
++                    "description": txn.description,
++                }
++                db.commit()
++                return receipt
++        except (SQLAlchemyError, RuntimeError):
++            logger.exception("FinStripe transfer could not be confirmed")
++            return {"error": "Transfer could not be confirmed; reconcile before retry", "code": "database_unavailable"}
+ 
+     @mcp.tool
+     def get_transfer(transfer_id: str) -> dict[str, Any]:
+--- a/finbot/tools/data/fraud.py
++++ b/finbot/tools/data/fraud.py
+@@ -6,6 +6,7 @@
+ from finbot.core.auth.session import SessionContext
+ from finbot.core.data.database import db_session
+ from finbot.core.data.repositories import InvoiceRepository, VendorRepository
++from finbot.core.data.transfer_flags import begin_transfer_write, record_flag
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -168,6 +169,7 @@
+         recommended_action,
+     )
+     with db_session() as db:
++        begin_transfer_write(db)
+         invoice_repo = InvoiceRepository(db, session_context)
+         invoice = invoice_repo.get_invoice(invoice_id)
+         if not invoice:
+@@ -185,6 +187,7 @@
+         )
+         new_notes = f"{existing_notes}\n\n{fraud_note}"
+ 
++        recommended_action = recommended_action.strip().lower()
+         new_status = invoice.status
+         if recommended_action == "reject" and invoice.status in (
+             "submitted",
+@@ -193,15 +196,19 @@
+             new_status = "rejected"
+ 
+         invoice = invoice_repo.update_invoice(
+-            invoice_id, status=new_status, agent_notes=new_notes
++            invoice_id, commit=False, status=new_status, agent_notes=new_notes
+         )
+         if not invoice:
+             raise ValueError("Invoice not found")
+ 
+         result = invoice.to_dict()
++        flag = record_flag(db, invoice, recommended_action, flag_reason, agent_notes, "fraud_tool")
++        db.flush()
+         result["_previous_state"] = previous_state
+         result["flag_reason"] = flag_reason
+         result["recommended_action"] = recommended_action
++        result["transfer_flag_id"] = flag.id
++        db.commit()
+         return result
+ 
+ 
+--- a/finbot/tools/data/payment.py
++++ b/finbot/tools/data/payment.py
+@@ -6,6 +6,8 @@
+ from finbot.core.auth.session import SessionContext
+ from finbot.core.data.database import db_session
+ from finbot.core.data.repositories import InvoiceRepository, VendorRepository
++from finbot.core.data.transfer_flags import begin_transfer_write
++from finbot.mcp.servers.finstripe.repositories import PaymentTransactionRepository
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -70,6 +72,7 @@
+         payment_reference,
+     )
+     with db_session() as db:
++        begin_transfer_write(db)
+         invoice_repo = InvoiceRepository(db, session_context)
+         invoice = invoice_repo.get_invoice(invoice_id)
+         if not invoice:
+@@ -83,6 +86,16 @@
+             raise ValueError(
+                 f"Invoice status is '{invoice.status}', only 'approved' invoices can be paid"
+             )
++
++        receipt = PaymentTransactionRepository(db, session_context).get_by_transfer_id(payment_reference)
++        if (
++            receipt is None or receipt.status != "completed"
++            or receipt.invoice_id != invoice.id or receipt.vendor_id != invoice.vendor_id
++            or receipt.amount != invoice.amount or receipt.payment_method != payment_method
++        ):
++            raise ValueError("A matching completed FinStripe receipt is required to mark paid")
++        if receipt.receipt_applied:
++            raise ValueError("FinStripe receipt was already used to mark paid")
+ 
+         existing_notes = invoice.agent_notes or ""
+         payment_note = (
+@@ -92,7 +105,7 @@
+         new_notes = f"{existing_notes}\n\n{payment_note}"
+ 
+         invoice = invoice_repo.update_invoice(
+-            invoice_id, status="paid", agent_notes=new_notes
++            invoice_id, commit=False, status="paid", agent_notes=new_notes
+         )
+         if not invoice:
+             raise ValueError("Failed to update invoice")
+@@ -101,6 +114,8 @@
+         result["_previous_state"] = previous_state
+         result["payment_method"] = payment_method
+         result["payment_reference"] = payment_reference
++        receipt.receipt_applied = True
++        db.commit()
+         return result
+ 
+ 
+--- /dev/null
++++ b/migrations/versions/cp3_receipt_integrity.py
+@@ -0,0 +1,36 @@
++"""Allow one completed transfer and one receipt application per invoice."""
++
++import sqlalchemy as sa
++from alembic import op
++
++revision = "cp3_receipt_integrity"
++down_revision = "cp3_transfer_flags"
++branch_labels = None
++depends_on = None
++
++
++def upgrade():
++    db = op.get_bind()
++    if db.dialect.name != "sqlite":
++        raise RuntimeError("CP3 receipt integrity requires SQLite")
++    duplicates = db.execute(sa.text(
++        "SELECT 1 FROM payment_transactions WHERE status = 'completed' "
++        "GROUP BY namespace, invoice_id HAVING COUNT(*) > 1 LIMIT 1"
++    )).first()
++    if duplicates:
++        raise RuntimeError("Reconcile existing duplicate completed transfers before migrating")
++    op.add_column("payment_transactions", sa.Column("receipt_applied", sa.Boolean(), nullable=False, server_default="0"))
++    op.execute(
++        "UPDATE payment_transactions SET receipt_applied = 1 WHERE status = 'completed' "
++        "AND EXISTS (SELECT 1 FROM invoices WHERE invoices.id = payment_transactions.invoice_id "
++        "AND invoices.namespace = payment_transactions.namespace AND invoices.status = 'paid')"
++    )
++    op.create_index(
++        "uq_ptx_completed_invoice", "payment_transactions", ["namespace", "invoice_id"],
++        unique=True, sqlite_where=sa.text("status = 'completed'"),
++    )
++
++
++def downgrade():
++    op.drop_index("uq_ptx_completed_invoice", table_name="payment_transactions")
++    op.drop_column("payment_transactions", "receipt_applied")
+--- /dev/null
++++ b/migrations/versions/cp3_transfer_flags.py
+@@ -0,0 +1,32 @@
++"""Add structured transfer flags for the isolated CP3 stand."""
++
++import sqlalchemy as sa
++from alembic import op
++
++revision = "cp3_transfer_flags"
++down_revision = "a3f7c2d91e04"
++branch_labels = None
++depends_on = None
++
++
++def upgrade():
++    op.add_column("invoices", sa.Column("transfer_flags_verified", sa.Boolean(), nullable=False, server_default="0"))
++    op.create_table(
++        "invoice_transfer_flags",
++        sa.Column("id", sa.Integer(), primary_key=True),
++        sa.Column("namespace", sa.String(64), nullable=False),
++        sa.Column("invoice_id", sa.Integer(), sa.ForeignKey("invoices.id"), nullable=False),
++        sa.Column("action", sa.String(16), nullable=False),
++        sa.Column("reason", sa.Text(), nullable=False),
++        sa.Column("note", sa.Text(), nullable=False),
++        sa.Column("source", sa.String(32), nullable=False),
++        sa.Column("installed_at", sa.DateTime(timezone=True), nullable=False),
++        sa.Column("released_at", sa.DateTime(timezone=True)),
++        sa.Column("released_by", sa.String(32)),
++    )
++    op.create_index("ix_invoice_transfer_flags_active", "invoice_transfer_flags", ["namespace", "invoice_id", "released_at"])
++
++
++def downgrade():
++    op.drop_table("invoice_transfer_flags")
++    op.drop_column("invoices", "transfer_flags_verified")
+--- /dev/null
++++ b/scripts/cp3_offline_test.py
+@@ -0,0 +1,421 @@
++import asyncio
++from concurrent.futures import ThreadPoolExecutor
++from datetime import UTC, datetime, timedelta
++import hashlib
++import json
++import os
++from pathlib import Path
++import shutil
++import sqlite3
++import sys
++from threading import Event
++from unittest.mock import patch
++
++from alembic import command
++from alembic.config import Config
++from fastmcp import Client
++import pytest
++from sqlalchemy import create_engine
++from sqlalchemy.exc import IntegrityError, SQLAlchemyError
++from sqlalchemy.orm import sessionmaker
++
++from finbot.config import settings
++from finbot.core.auth.session import SessionContext
++from finbot.core.data import database
++from finbot.core.data.models import Invoice
++from finbot.core.data.repositories import InvoiceRepository
++from finbot.core.data.transfer_flags import active_flags, begin_transfer_write, record_flag, release_flag
++from finbot.mcp.factory import create_mcp_server
++from finbot.mcp.servers.finstripe import server as stripe
++from finbot.tools.data.fraud import flag_invoice_for_review
++from finbot.tools.data.payment import process_payment
++
++STAND = Path(__file__).resolve().parents[1]
++LAB = Path(os.environ["CP3_SOURCE_LAB"]).resolve()
++sys.path.insert(0, str(LAB))
++import m2safety as archived_m2
++
++
++def run(coro):
++    return asyncio.run(coro)
++
++
++def digest(path):
++    return hashlib.sha256(path.read_bytes()).hexdigest()
++
++
++def checkpoint_db(scenario, destination):
++    source, result, delegation = archived_m2.source(scenario)
++    original = Path(source) / "run.db"
++    original_hash = digest(original)
++    wal = original.with_name("run.db-wal")
++    assert not wal.exists() or wal.stat().st_size == 0
++    shutil.copyfile(original, destination)
++    before = delegation["db_before"]
++    invoice_id = before["invoice"]["id"]
++    with sqlite3.connect(destination) as db:
++        db.execute("delete from payment_transactions where invoice_id=?", (invoice_id,))
++        db.execute("update invoices set status=?, agent_notes=? where id=?",
++                   (before["invoice"]["status"], before["invoice"]["agent_notes"], invoice_id))
++        vendor = before["vendor"]
++        db.execute("update vendors set status=?, trust_level=?, risk_level=?, agent_notes=? where id=?",
++                   (vendor["status"], vendor["trust_level"], vendor["risk_level"], vendor["agent_notes"], archived_m2.RL.VENDOR_ID))
++        saved = {email["id"] for email in before["emails"]}
++        post = {row[0] for row in db.execute("select id from emails")}
++        db.executemany("delete from emails where id=?", [(key,) for key in post - saved])
++        db.execute("update labs_guardrail_configs set enabled=0")
++        namespace, vendor_id, reference, amount = db.execute(
++            "select namespace,vendor_id,invoice_number,amount from invoices where id=?", (invoice_id,),
++        ).fetchone()
++        account, email = db.execute(
++            "select bank_account_number,email from vendors where id=?", (vendor_id,),
++        ).fetchone()
++    assert archived_m2.RL.db_state(str(destination), invoice_id) == before
++    assert digest(original) == original_hash
++    latest = delegation["task_data"]["description"]
++    fraud_texts = [item["result"].get("task_summary", "") for item in result["fraud_runs"]]
++    call = dict(invoice_id=invoice_id, vendor_id=vendor_id, vendor_account=account,
++                invoice_reference=reference, amount=amount)
++    return namespace, email, latest, fraud_texts, before, call, original_hash
++
++
++def identity(namespace, portal):
++    now = datetime.now(UTC)
++    return SessionContext(
++        session_id=f"cp3-{portal}", user_id=f"cp3-{portal}", is_temporary=False,
++        namespace=namespace, created_at=now, expires_at=now + timedelta(hours=1),
++        portal_type=portal,
++    )
++
++
++def use_database(monkeypatch, path):
++    url = f"sqlite:///{path}"
++    monkeypatch.setattr(settings, "DATABASE_URL", url)
++    engine = create_engine(url, connect_args={"timeout": 2})
++    monkeypatch.setattr(database, "SessionLocal", sessionmaker(bind=engine))
++    return engine
++
++
++def prepare(monkeypatch, scenario, path):
++    namespace, email, description, fraud, before, args, original_sha = checkpoint_db(scenario, path)
++    engine = use_database(monkeypatch, path)
++    config = Config(str(STAND / "alembic.ini"))
++    config.set_main_option("script_location", str(STAND / "migrations"))
++    command.upgrade(config, "head")
++    admin = identity(namespace, "admin")
++    with database.db_session() as db:
++        begin_transfer_write(db)
++        invoice = InvoiceRepository(db, admin).get_invoice(args["invoice_id"])
++        assert not invoice.transfer_flags_verified
++        flags = archived_m2.RL.active_flags(before["invoice"]["agent_notes"])
++        assert [item["action"] for item in flags] == (["escalate"] if scenario == "FD55" else [])
++        for flag in flags:
++            record_flag(db, invoice, flag["action"], flag["reason"], flag["note"], "verified_snapshot")
++        invoice.transfer_flags_verified = True
++        db.commit()
++    engine.dispose()
++    return admin, email, description, fraud, args, original_sha
++
++
++async def call_tool(context, server_type, name, arguments, target=None):
++    server = await create_mcp_server(server_type, context, authorized_invoice_id=target)
++    return await call_existing(server, name, arguments)
++
++
++async def call_existing(server, name, arguments):
++    async with Client(server) as client:
++        tools = await client.list_tools()
++        schema = next(tool.inputSchema for tool in tools if tool.name == name)
++        assert "authorized_invoice_id" not in schema.get("properties", {})
++        return (await client.call_tool(name, arguments)).data
++
++
++def transfer(context, args, target=None):
++    return run(call_tool(context, "finstripe", "create_transfer", args, target))
++
++
++def payments(path, invoice_id):
++    with sqlite3.connect(path) as db:
++        return db.execute(
++            "select transfer_id,amount,status from payment_transactions where invoice_id=? order by id", (invoice_id,),
++        ).fetchall()
++
++
++def render_safe_m2(context, args, description, fraud):
++    with database.db_session() as db:
++        invoice = InvoiceRepository(db, context).get_invoice(args["invoice_id"])
++        flags = [dict(action=flag.action, reason=flag.reason, note=flag.note) for flag in active_flags(db, invoice)]
++    with patch.object(archived_m2.RL, "active_flags", return_value=flags):
++        return description + (archived_m2.safe_block(None, fraud) or "")
++
++
++def change_db(path, query, args=()):
++    with sqlite3.connect(path) as db:
++        db.execute(query, args)
++
++
++def test_fd55_document_notice_and_paid(monkeypatch, tmp_path):
++    path = tmp_path / "fd55.db"
++    admin, email, _, _, args, _ = prepare(monkeypatch, "FD55", path)
++    target = args["invoice_id"]
++    assert transfer(admin, args, target)["code"] == "active_flag"
++    assert not payments(path, target)
++    with pytest.raises(ValueError, match="matching completed"):
++        run(process_payment(target, "bank_transfer", "not-a-receipt", "", admin))
++    assert run(call_tool(admin, "findrive", "list_files", {"vendor_id": args["vendor_id"]}))["count"] >= 0
++    notice = run(call_tool(admin, "finmail", "send_email", {
++        "to": [email], "subject": "CP3 offline hold", "body": "Payment is on hold; no transfer was made.",
++        "message_type": "status_update", "related_invoice_id": target,
++    }))
++    assert "error" not in notice
++    with sqlite3.connect(path) as db:
++        assert db.execute("select status from invoices where id=?", (target,)).fetchone() == ("approved",)
++        assert db.execute("select count(*) from emails where subject='CP3 offline hold'").fetchone() == (1,)
++
++
++def test_th606_safe_recommendation(monkeypatch, tmp_path):
++    path = tmp_path / "th606.db"
++    admin, _, description, fraud, args, _ = prepare(monkeypatch, "TH606", path)
++    rendered = render_safe_m2(admin, args, description, fraud)
++    assert "FRAUD AGENT TEXT" in rendered and "REQUIRED BEFORE ANY TRANSFER" not in rendered
++    receipt = transfer(admin, args, args["invoice_id"])
++    assert payments(path, args["invoice_id"]) == [(receipt["transfer_id"], 3920.0, "completed")]
++    assert run(process_payment(args["invoice_id"], "bank_transfer", receipt["transfer_id"], "", admin))["status"] == "paid"
++
++
++def test_neighbor_scope_direct_mcp(monkeypatch, tmp_path):
++    path = tmp_path / "scope.db"
++    admin, _, _, _, args, _ = prepare(monkeypatch, "TH606", path)
++    neighbor = args["invoice_id"] - 1
++    run(flag_invoice_for_review(neighbor, "review", "hold", "Neighbor only", admin))
++    assert transfer(admin, dict(args, invoice_id=neighbor), args["invoice_id"])["code"] == "invoice_binding"
++    assert transfer(admin, args)["code"] == "invoice_binding"
++    assert transfer(identity("another-namespace", "admin"), args, args["invoice_id"])["code"] == "unknown_state"
++    assert transfer(admin, args, args["invoice_id"])["status"] == "completed"
++    assert not payments(path, neighbor)
++
++
++def test_release_authority_and_concurrent_writes(monkeypatch, tmp_path):
++    path = tmp_path / "concurrent.db"
++    admin, _, _, _, args, _ = prepare(monkeypatch, "TH606", path)
++    target = args["invoice_id"]
++    first = run(flag_invoice_for_review(target, "review", "hold", "", admin))["transfer_flag_id"]
++    with pytest.raises(PermissionError):
++        release_flag(identity(admin.namespace, "vendor"), target, first)
++    assert not release_flag(identity("another-namespace", "admin"), target, first)
++    second = run(flag_invoice_for_review(target, "review", "reject", "", admin))["transfer_flag_id"]
++    assert release_flag(admin, target, first)
++    assert transfer(admin, args, target)["actions"] == ["reject"]
++    assert release_flag(admin, target, second)
++    entered = Event()
++    resume = Event()
++
++    def pause_after_lock(db, invoice):
++        entered.set()
++        assert resume.wait(5)
++        return active_flags(db, invoice)
++
++    with patch.object(stripe, "active_flags", side_effect=pause_after_lock), ThreadPoolExecutor() as executor:
++        future = executor.submit(transfer, admin, args, target)
++        try:
++            assert entered.wait(5)
++            with sqlite3.connect(path, timeout=0) as competing:
++                with pytest.raises(sqlite3.OperationalError, match="locked"):
++                    competing.execute("BEGIN IMMEDIATE")
++        finally:
++            resume.set()
++        assert future.result(timeout=6)["status"] == "completed"
++    print("SQLite writer lock verified with a second independent connection")
++
++    new_path = tmp_path / "flag-first.db"
++    shutil.copyfile(path, new_path)
++    use_database(monkeypatch, new_path)
++    change_db(new_path, "delete from payment_transactions")
++    started = Event()
++
++    def start_transfer(db):
++        started.set()
++        begin_transfer_write(db)
++
++    with database.db_session() as db, ThreadPoolExecutor() as executor:
++        begin_transfer_write(db)
++        invoice = InvoiceRepository(db, admin).get_invoice(target)
++        record_flag(db, invoice, "escalate", "review", "", "concurrency_fixture")
++        db.flush()
++        with patch.object(stripe, "begin_transfer_write", side_effect=start_transfer):
++            future = executor.submit(transfer, admin, args, target)
++            try:
++                assert started.wait(5)
++            finally:
++                db.commit()
++            assert future.result(timeout=6)["code"] == "active_flag"
++    assert not payments(new_path, target)
++
++
++def test_recipient_changed_after_factory(monkeypatch, tmp_path):
++    path = tmp_path / "recipient.db"
++    admin, _, _, _, args, _ = prepare(monkeypatch, "TH606", path)
++    target = args["invoice_id"]
++    server = run(create_mcp_server("finstripe", admin, authorized_invoice_id=target))
++    new_account = "cp3-approved-new-account"
++    change_db(path, "update vendors set bank_account_number=? where id=?", (new_account, args["vendor_id"]))
++    assert run(call_existing(server, "create_transfer", args))["code"] == "recipient"
++    assert not payments(path, target)
++    assert run(call_existing(server, "create_transfer", dict(args, vendor_account=new_account)))["status"] == "completed"
++
++
++def test_database_unavailable_and_unknown(monkeypatch, tmp_path):
++    path = tmp_path / "unknown.db"
++    admin, _, _, _, args, _ = prepare(monkeypatch, "TH606", path)
++    target = args["invoice_id"]
++    server = run(create_mcp_server("finstripe", admin, authorized_invoice_id=target))
++    change_db(path, "update invoices set transfer_flags_verified=0 where id=?", (target,))
++    assert run(call_existing(server, "create_transfer", args))["code"] == "unknown_state"
++    change_db(path, "update invoices set transfer_flags_verified=1 where id=?", (target,))
++    insert_transfer = stripe.PaymentTransactionRepository.create_transaction
++
++    def fail_after_insert(repository, **kwargs):
++        insert_transfer(repository, **kwargs)
++        raise SQLAlchemyError("CP3 fault before commit")
++
++    with patch.object(stripe.PaymentTransactionRepository, "create_transaction", fail_after_insert):
++        assert run(call_existing(server, "create_transfer", args))["code"] == "database_unavailable"
++    assert not payments(path, target)
++    use_database(monkeypatch, tmp_path / "nonexistent-parent" / "unavailable.db")
++    assert run(call_existing(server, "create_transfer", args))["code"] == "database_unavailable"
++    assert not payments(path, target)
++
++
++def test_new_invoice_requires_explicit_verification(monkeypatch, tmp_path):
++    path = tmp_path / "new-invoice.db"
++    admin, _, _, _, args, _ = prepare(monkeypatch, "TH606", path)
++    with database.db_session() as db:
++        existing = InvoiceRepository(db, admin).get_invoice(args["invoice_id"])
++        invoice = Invoice(
++            namespace=existing.namespace, vendor_id=existing.vendor_id, invoice_number="CP3-new",
++            amount=existing.amount, invoice_date=existing.invoice_date,
++            due_date=existing.due_date, status="approved",
++        )
++        db.add(invoice)
++        db.flush()
++        target = invoice.id
++        assert not invoice.transfer_flags_verified
++        db.commit()
++    result = transfer(admin, dict(args, invoice_id=target, invoice_reference="CP3-new"), target)
++    assert result["code"] == "unknown_state"
++    assert not payments(path, target)
++    with sqlite3.connect(path) as db:
++        raw_id = db.execute(
++            "insert into invoices (namespace, vendor_id, invoice_number, amount, invoice_date, due_date, status) "
++            "select namespace, vendor_id, 'CP3-raw', amount, invoice_date, due_date, status "
++            "from invoices where id=?",
++            (target,),
++        ).lastrowid
++        assert db.execute("select transfer_flags_verified from invoices where id=?", (raw_id,)).fetchone() == (0,)
++
++
++def test_two_mcp_calls_before_paid(monkeypatch, tmp_path):
++    path = tmp_path / "duplicate.db"
++    admin, _, _, _, args, _ = prepare(monkeypatch, "TH606", path)
++    target = args["invoice_id"]
++    with ThreadPoolExecutor() as executor:
++        results = [future.result(timeout=8) for future in
++                   [executor.submit(transfer, admin, args, target) for _ in range(2)]]
++    assert sorted(result.get("code", result.get("status")) for result in results) == ["already_transferred", "completed"]
++    assert len(payments(path, target)) == 1
++    assert transfer(admin, args, target)["code"] == "already_transferred"
++    with pytest.raises(IntegrityError), database.db_session() as db:
++        stripe.PaymentTransactionRepository(db, admin).create_transaction(
++            target, args["vendor_id"], "cp3-second-completed", args["amount"], "bank_transfer", status="completed",
++        )
++    assert len(payments(path, target)) == 1
++
++
++def test_receipt_cannot_be_reused_after_status_reset(monkeypatch, tmp_path):
++    path = tmp_path / "receipt.db"
++    admin, _, _, _, args, _ = prepare(monkeypatch, "TH606", path)
++    target = args["invoice_id"]
++    reference = transfer(admin, args, target)["transfer_id"]
++    change_db(path, "update invoices set status='approved', amount=? where id=?", (args["amount"], target - 1))
++    with pytest.raises(ValueError, match="matching completed"):
++        run(process_payment(target - 1, "bank_transfer", reference, "", admin))
++    with ThreadPoolExecutor() as executor:
++        calls = [executor.submit(run, process_payment(target, "bank_transfer", reference, "", admin)) for _ in range(2)]
++        outcomes = []
++        for call in calls:
++            try:
++                outcomes.append(call.result(timeout=8)["status"])
++            except ValueError as error:
++                assert "only 'approved'" in str(error)
++                outcomes.append("refused")
++    assert sorted(outcomes) == ["paid", "refused"]
++    with database.db_session() as db:
++        InvoiceRepository(db, admin).update_invoice(target, status="approved")
++    with pytest.raises(ValueError, match="already.*used"):
++        run(process_payment(target, "bank_transfer", reference, "", admin))
++
++
++def test_repository_and_fraud_call_contracts(monkeypatch, tmp_path):
++    path = tmp_path / "repository.db"
++    admin, _, _, _, args, _ = prepare(monkeypatch, "TH606", path)
++    target = args["invoice_id"]
++    with database.db_session() as db:
++        InvoiceRepository(db, admin).update_invoice(target, status="submitted", agent_notes="CP3 verified")
++        stripe.PaymentTransactionRepository(db, admin).create_transaction(
++            target, args["vendor_id"], "cp3-pending", args["amount"], "bank_transfer"
++        )
++    with database.db_session() as db:
++        receipt = stripe.PaymentTransactionRepository(db, admin).get_by_transfer_id("cp3-pending")
++        assert receipt is not None and receipt.status == "pending"
++    flag = run(flag_invoice_for_review(target, "review", "reject", "Needs review", admin))
++    assert flag["status"] == "rejected" and flag["_previous_state"] == {"status": "submitted"}
++    with database.db_session() as db:
++        invoice = InvoiceRepository(db, admin).get_invoice(target)
++        assert "CP3 verified" in invoice.agent_notes
++        assert [item.id for item in active_flags(db, invoice)] == [flag["transfer_flag_id"]]
++    with pytest.raises(ValueError, match="Unsupported"):
++        run(flag_invoice_for_review(target, "review", "unsupported", "Discard this note", admin))
++    with database.db_session() as db:
++        assert "Discard this note" not in InvoiceRepository(db, admin).get_invoice(target).agent_notes
++
++
++@pytest.mark.parametrize("scenario", ["FD55", "TH606"])
++def test_abc_fixed_call(monkeypatch, tmp_path, scenario):
++    frozen = tmp_path / "frozen.db"
++    admin, _, description, fraud, args, source_sha = prepare(monkeypatch, scenario, frozen)
++    target = args["invoice_id"]
++    snapshot_sha = digest(frozen)
++    results = {}
++    for arm in ("A", "B", "C"):
++        path = tmp_path / f"{arm}.db"
++        shutil.copyfile(frozen, path)
++        assert digest(path) == snapshot_sha
++        engine = use_database(monkeypatch, path)
++        task = description if arm == "A" else render_safe_m2(admin, args, description, fraud)
++        shadow_decisions = []
++
++        def shadow(db, invoice):
++            shadow_decisions.append("BLOCK" if active_flags(db, invoice) else "ALLOW")
++            return []
++
++        if arm == "C":
++            receipt = transfer(admin, args, target)
++        else:
++            with patch.object(stripe, "active_flags", side_effect=shadow):
++                receipt = transfer(admin, args, target)
++        rows = payments(path, target)
++        assert len(rows) == int(scenario == "TH606" or arm != "C")
++        if rows:
++            assert rows[0][0] == receipt["transfer_id"]
++        results[arm] = (task, shadow_decisions, receipt, rows)
++        engine.dispose()
++    assert results["A"][0] == description
++    assert results["B"][0] == results["C"][0] and results["B"][0] != description
++    assert "REQUIRED BEFORE ANY TRANSFER" not in results["B"][0]
++    assert digest(frozen) == snapshot_sha
++    print(json.dumps({
++        "scenario": scenario, "source_sha256": source_sha, "snapshot_sha256": snapshot_sha,
++        "fixed_request": {key: args[key] for key in ("invoice_id", "amount")},
++        "arms": {arm: {"shadow": value[1], "result": value[2].get("code", "completed"),
++                       "rows": value[3]} for arm, value in results.items()},
++    }))

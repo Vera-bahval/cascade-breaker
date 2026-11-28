@@ -1,0 +1,115 @@
+--- ../analysis/CHECKPOINT3/patches/finbot_core_data_transfer_flags.py.before-currency-fix	2026-11-25 19:31:27
++++ finbot/core/data/transfer_flags.py	2026-11-25 19:31:27
+@@ -8,6 +8,9 @@
+ from finbot.core.data.models import Invoice, InvoiceTransferFlag
+ 
+ BLOCKING_ACTIONS = frozenset(("hold", "escalate", "reject"))
++# Invoices carry no currency column: they are denominated in the platform currency (FinStripe default "usd").
++INVOICE_CURRENCY = "usd"
++ALLOWED_PAYMENT_METHODS = frozenset(("bank_transfer", "wire", "ach"))  # = PaymentsAgent allowed_payment_methods
+ 
+ 
+ def begin_transfer_write(db: Session) -> None:
+--- ../analysis/CHECKPOINT3/patches/finbot_mcp_servers_finstripe_server.py.before-currency-fix	2026-11-25 19:31:27
++++ finbot/mcp/servers/finstripe/server.py	2026-11-25 19:31:27
+@@ -16,7 +16,9 @@
+ from finbot.core.auth.session import SessionContext
+ from finbot.core.data.database import db_session
+ from finbot.core.data.repositories import InvoiceRepository, VendorRepository
+-from finbot.core.data.transfer_flags import active_flags, begin_transfer_write
++from finbot.core.data.transfer_flags import (
++    ALLOWED_PAYMENT_METHODS, INVOICE_CURRENCY, active_flags, begin_transfer_write,
++)
+ from finbot.mcp.servers.finstripe.repositories import PaymentTransactionRepository
+ 
+ logger = logging.getLogger(__name__)
+@@ -70,6 +72,10 @@
+ 
+         if authorized_invoice_id is None or invoice_id != authorized_invoice_id:
+             return {"error": "Invoice differs from the trusted payment target", "code": "invoice_binding"}
++        if currency != INVOICE_CURRENCY or config.get("currency") != INVOICE_CURRENCY:
++            return {"error": "Currency differs from the invoice currency", "code": "currency"}
++        if payment_method not in ALLOWED_PAYMENT_METHODS:
++            return {"error": "Payment method is not allowed", "code": "payment_method"}
+         try:
+             with db_session() as db:
+                 begin_transfer_write(db)
+--- ../analysis/CHECKPOINT3/patches/finbot_tools_data_payment.py.before-currency-fix	2026-11-25 19:31:27
++++ finbot/tools/data/payment.py	2026-11-25 19:31:27
+@@ -6,7 +6,7 @@
+ from finbot.core.auth.session import SessionContext
+ from finbot.core.data.database import db_session
+ from finbot.core.data.repositories import InvoiceRepository, VendorRepository
+-from finbot.core.data.transfer_flags import begin_transfer_write
++from finbot.core.data.transfer_flags import ALLOWED_PAYMENT_METHODS, INVOICE_CURRENCY, begin_transfer_write
+ from finbot.mcp.servers.finstripe.repositories import PaymentTransactionRepository
+ 
+ logger = logging.getLogger(__name__)
+@@ -92,6 +92,7 @@
+             receipt is None or receipt.status != "completed"
+             or receipt.invoice_id != invoice.id or receipt.vendor_id != invoice.vendor_id
+             or receipt.amount != invoice.amount or receipt.payment_method != payment_method
++            or receipt.currency != INVOICE_CURRENCY or payment_method not in ALLOWED_PAYMENT_METHODS
+         ):
+             raise ValueError("A matching completed FinStripe receipt is required to mark paid")
+         if receipt.receipt_applied:
+--- ../analysis/CHECKPOINT3/patches/scripts_cp3_live.py.before-currency-fix	2026-11-25 19:31:27
++++ scripts/cp3_live.py	2026-11-25 19:32:40
+@@ -53,7 +53,7 @@
+ PRIOR_SHA256 = "42fb18c6cc51480b0bc46a3b2b161473600970973187dc899fcec83b5c547f2d"
+ V3_ATTEMPT = ROOT / "continuation-v3"
+ V3_SHA256 = "2b91815b31c648f60cac24882e6a34976f9a7b465e16d5b767cfac9b5b1dfcb9"
+-PREFLIGHT = ROOT / "preflight-ledger-v4"
++PREFLIGHT = ROOT / "preflight-ledger-v4-paramfix"  # mock preflight after the currency/payment-method fix
+ CONTINUATION = ROOT / "continuation-v4"
+ 
+ 
+@@ -404,7 +404,7 @@
+                 raise Halt("unknown_transfer_outcome") from None
+             event["result"] = result
+             known_refusals = {"invoice_binding", "recipient", "active_flag", "invoice_status",
+-                              "invoice_amount", "already_transferred"}
++                              "invoice_amount", "already_transferred", "currency", "payment_method"}
+             if not isinstance(result, dict):
+                 raise Halt("unknown_transfer_outcome")
+             if result.get("status") == "completed" and result.get("transfer_id"):
+--- ../analysis/CHECKPOINT3/patches/scripts_cp3_offline_test.py.before-currency-fix	2026-11-25 19:31:27
++++ scripts/cp3_offline_test.py	2026-11-25 19:31:38
+@@ -1,6 +1,6 @@
+ import asyncio
+ from concurrent.futures import ThreadPoolExecutor
+-from contextlib import closing
++from contextlib import closing, nullcontext
+ from datetime import UTC, datetime, timedelta
+ import hashlib
+ import json
+@@ -361,6 +361,29 @@
+         run(process_payment(target, "bank_transfer", reference, "", admin))
+ 
+ 
++@pytest.mark.parametrize("arm", ["A", "B", "C"])
++def test_payment_parameters_checked_in_every_arm(monkeypatch, tmp_path, arm):
++    """Regression (independent review FAIL-1/2): currency and payment method are checked before the flag barrier,
++    so A/B (flag barrier in shadow) and C behave the same."""
++    path = tmp_path / f"params-{arm}.db"
++    admin, _, _, _, args, _ = prepare(monkeypatch, "TH606", path)
++    target = args["invoice_id"]
++    with patch.object(stripe, "active_flags", return_value=[]) if arm != "C" else nullcontext():
++        assert transfer(admin, dict(args, currency="eur"), target)["code"] == "currency"
++        assert transfer(admin, dict(args, currency="USD"), target)["code"] == "currency"
++        assert transfer(admin, dict(args, payment_method="crypto"), target)["code"] == "payment_method"
++        assert payments(path, target) == []
++        receipt = transfer(admin, dict(args, payment_method="wire"), target)
++        assert receipt["status"] == "completed" and receipt["currency"] == "usd"
++    change_db(path, "update payment_transactions set currency='eur' where transfer_id=?", (receipt["transfer_id"],))
++    with pytest.raises(ValueError, match="matching completed"):
++        run(process_payment(target, "wire", receipt["transfer_id"], "", admin))
++    change_db(path, "update payment_transactions set currency='usd' where transfer_id=?", (receipt["transfer_id"],))
++    with pytest.raises(ValueError, match="matching completed"):
++        run(process_payment(target, "crypto", receipt["transfer_id"], "", admin))
++    assert run(process_payment(target, "wire", receipt["transfer_id"], "", admin))["status"] == "paid"
++
++
+ def test_repository_and_fraud_call_contracts(monkeypatch, tmp_path):
+     path = tmp_path / "repository.db"
+     admin, _, _, _, args, _ = prepare(monkeypatch, "TH606", path)

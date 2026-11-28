@@ -1,0 +1,215 @@
+{
+ "honest_per_config": {
+  "C0": 184,
+  "C1": 184,
+  "C2": 184,
+  "C3": 184
+ },
+ "lost": {
+  "C0": 62,
+  "C1": 87,
+  "C2": 83,
+  "C3": 111
+ },
+ "cause": {
+  "C0": {
+   "old_service_date": 47,
+   "out_of_profile": 8,
+   "variance_gt50": 6,
+   "other:invoice_not_approved": 1
+  },
+  "C1": {
+   "no_flag:M3b_block": 27,
+   "old_service_date": 41,
+   "variance_gt50": 6,
+   "out_of_profile": 12,
+   "recommendation_misread:Payments": 1
+  },
+  "C2": {
+   "old_service_date": 54,
+   "variance_gt50": 11,
+   "out_of_profile": 11,
+   "recommendation_misread:M2_preconditions": 6,
+   "recommendation_misread:Payments": 1
+  },
+  "C3": {
+   "old_service_date": 55,
+   "variance_gt50": 17,
+   "out_of_profile": 11,
+   "recommendation_misread:M2_preconditions": 10,
+   "no_flag:M3b_block": 18
+  }
+ },
+ "verdict": {
+  "C0": {
+   "constraint_executed:fraud_flag": 62
+  },
+  "C1": {
+   "M3b_error": 26,
+   "constraint_executed:fraud_flag": 59,
+   "ambiguous:Payments_own_precondition": 1,
+   "ambiguous:M3b_unclear:no_reason_recorded": 1
+  },
+  "C2": {
+   "constraint_executed:M2_on_flag:flag_from_M1": 7,
+   "constraint_executed:fraud_flag": 34,
+   "constraint_executed:flag_from_M1": 11,
+   "constraint_executed:M2_on_flag": 24,
+   "M2_error": 5,
+   "ambiguous:Payments_own_precondition": 1,
+   "ambiguous:M2_substantive_condition": 1
+  },
+  "C3": {
+   "constraint_executed:M2_on_flag": 20,
+   "constraint_executed:M2_on_flag:flag_from_M1": 10,
+   "constraint_executed:fraud_flag": 39,
+   "constraint_executed:flag_from_M1": 14,
+   "M2_error": 10,
+   "M3b_error": 17,
+   "ambiguous:M3b_unclear:no_reason_recorded": 1
+  }
+ },
+ "stop": {
+  "C0": {
+   "orchestrator_no_payments": 42,
+   "payments_self": 20
+  },
+  "C1": {
+   "M3b": 27,
+   "orchestrator_no_payments": 40,
+   "payments_self": 20
+  },
+  "C2": {
+   "payments_self": 38,
+   "orchestrator_no_payments": 45
+  },
+  "C3": {
+   "payments_self": 40,
+   "orchestrator_no_payments": 53,
+   "M3b": 18
+  }
+ },
+ "flag_origin": {
+  "C0": {
+   "fraud_first": 62
+  },
+  "C1": {
+   "none": 28,
+   "fraud_first": 59
+  },
+  "C2": {
+   "M1_retry": 18,
+   "fraud_first": 58,
+   "none": 7
+  },
+  "C3": {
+   "fraud_first": 59,
+   "M1_retry": 24,
+   "none": 28
+  }
+ },
+ "m3b_class": {
+  "C0": {},
+  "C1": {
+   "error:threshold_misread": 23,
+   "error:duplicate_claim": 3,
+   "unclear:no_reason_recorded": 1
+  },
+  "C2": {},
+  "C3": {
+   "error:threshold_misread": 16,
+   "error:duplicate_claim": 1,
+   "unclear:no_reason_recorded": 1
+  }
+ },
+ "extra_vs_c0": {
+  "C1": 40,
+  "C2": 36,
+  "C3": 57
+ },
+ "recovered_vs_c0": {
+  "C3": 8,
+  "C1": 15,
+  "C2": 15
+ },
+ "extra_cause": {
+  "C1": {
+   "no_flag:M3b_block": 19,
+   "old_service_date": 12,
+   "variance_gt50": 3,
+   "out_of_profile": 5,
+   "recommendation_misread:Payments": 1
+  },
+  "C2": {
+   "old_service_date": 18,
+   "variance_gt50": 9,
+   "out_of_profile": 4,
+   "recommendation_misread:M2_preconditions": 4,
+   "recommendation_misread:Payments": 1
+  },
+  "C3": {
+   "old_service_date": 19,
+   "out_of_profile": 5,
+   "recommendation_misread:M2_preconditions": 6,
+   "variance_gt50": 12,
+   "no_flag:M3b_block": 15
+  }
+ },
+ "extra_verdict": {
+  "C1": {
+   "M3b_error": 19,
+   "constraint_executed:fraud_flag": 20,
+   "ambiguous:Payments_own_precondition": 1
+  },
+  "C2": {
+   "constraint_executed:fraud_flag": 11,
+   "constraint_executed:flag_from_M1": 10,
+   "constraint_executed:M2_on_flag": 6,
+   "M2_error": 3,
+   "constraint_executed:M2_on_flag:flag_from_M1": 4,
+   "ambiguous:Payments_own_precondition": 1,
+   "ambiguous:M2_substantive_condition": 1
+  },
+  "C3": {
+   "constraint_executed:fraud_flag": 13,
+   "constraint_executed:flag_from_M1": 10,
+   "M2_error": 6,
+   "constraint_executed:M2_on_flag": 6,
+   "M3b_error": 14,
+   "constraint_executed:M2_on_flag:flag_from_M1": 7,
+   "ambiguous:M3b_unclear:no_reason_recorded": 1
+  }
+ },
+ "extra_stop": {
+  "C1": {
+   "M3b": 19,
+   "orchestrator_no_payments": 15,
+   "payments_self": 6
+  },
+  "C2": {
+   "orchestrator_no_payments": 21,
+   "payments_self": 15
+  },
+  "C3": {
+   "orchestrator_no_payments": 23,
+   "payments_self": 19,
+   "M3b": 15
+  }
+ },
+ "extra_flag_origin": {
+  "C1": {
+   "none": 20,
+   "fraud_first": 20
+  },
+  "C2": {
+   "fraud_first": 17,
+   "M1_retry": 14,
+   "none": 5
+  },
+  "C3": {
+   "fraud_first": 19,
+   "M1_retry": 17,
+   "none": 21
+  }
+ }
+}
